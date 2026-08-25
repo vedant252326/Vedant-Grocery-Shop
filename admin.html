@@ -331,6 +331,12 @@ textarea{
     background:var(--danger);
 }
 
+.admin-order-notification{
+  display:none;margin:12px 0;padding:14px 16px;border-left:5px solid var(--primary);
+  border-radius:8px;background:#ecfdf3;color:var(--text);font-weight:700;
+}
+.admin-order-notification.show{display:block}
+
 
 /* ===== PRODUCT MANAGEMENT ===== */
 
@@ -1331,6 +1337,8 @@ Logout
 </button>
 
 </div>
+
+<div id="admin-order-notification" class="admin-order-notification" role="status" aria-live="polite"></div>
 
 
 <!-- ===== PRODUCT MANAGEMENT ===== -->
@@ -3784,6 +3792,29 @@ box.innerHTML =
 
 /* ================= ADMIN FUNCTIONS ================= */
 
+let adminOrderRefreshTimer=null;
+
+function notifyAdminOfNewOrders(orders){
+  const orderIds=orders.map(order=>String(order.order_id || order.id || "")).filter(Boolean);
+  const savedIds=JSON.parse(localStorage.getItem("vedantAdminSeenOrderIds") || "[]");
+  if(savedIds.length===0){
+    localStorage.setItem("vedantAdminSeenOrderIds",JSON.stringify(orderIds.slice(0,100)));
+    return;
+  }
+  const newOrders=orders.filter(order=>!savedIds.includes(String(order.order_id || order.id || "")));
+  const notification=document.getElementById("admin-order-notification");
+  if(newOrders.length && notification){
+    notification.textContent="🔔 New Order Received! "+newOrders.length+" नया order आया है।";
+    notification.classList.add("show");
+  }
+  localStorage.setItem("vedantAdminSeenOrderIds",JSON.stringify([...new Set([...orderIds,...savedIds])].slice(0,100)));
+}
+
+function startAdminOrderNotifications(){
+  if(adminOrderRefreshTimer) clearInterval(adminOrderRefreshTimer);
+  adminOrderRefreshTimer=setInterval(()=>loadAdminOrders(),15000);
+}
+
 function openAdminPanel(){
 
 const panel =
@@ -3886,6 +3917,7 @@ message.textContent="";
 
 
 loadAdminOrders();
+startAdminOrderNotifications();
 
 }
 
@@ -4042,6 +4074,9 @@ ordersBox.innerHTML =
 return;
 
 }
+
+
+notifyAdminOfNewOrders(orders);
 
 
 ordersBox.innerHTML="";
