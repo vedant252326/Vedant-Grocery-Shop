@@ -1,0 +1,6569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vedant Grocery Shop • Fast Local Delivery</title>
+
+<style>
+:root{
+    --bg:#f4f7f5;
+    --card:#fff;
+    --text:#222;
+    --muted:#666;
+    --primary:#198754;
+    --blue:#0d6efd;
+    --danger:#dc3545;
+    --border:#ddd;
+    --gold:#ffc107;
+}
+
+*{box-sizing:border-box}
+
+body{
+    font-family:Arial,sans-serif;
+    margin:0;
+    padding:20px;
+    background:var(--bg);
+    color:var(--text);
+}
+
+body.dark{
+    --bg:#121212;
+    --card:#1f1f1f;
+    --text:#f5f5f5;
+    --muted:#bbb;
+    --border:#444;
+}
+
+.top{
+    text-align:center;
+    padding:20px 10px;
+}
+
+h1{margin-bottom:8px}
+
+button{
+    padding:9px 13px;
+    margin:4px;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    font-weight:bold;
+}
+
+.shop-btn,.place-order{
+    background:var(--primary);
+    color:white;
+}
+
+.dark-btn{
+    background:#333;
+    color:white;
+}
+
+#searchBox{
+    display:block;
+    width:90%;
+    max-width:500px;
+    padding:12px;
+    margin:15px auto;
+    border:1px solid var(--border);
+    border-radius:7px;
+    background:var(--card);
+    color:var(--text);
+}
+
+.categories{
+    text-align:center;
+    margin:15px 0;
+}
+
+.categories button{
+    background:var(--card);
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+#products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:15px;
+}
+
+.product{
+    background:var(--card);
+    padding:16px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.product-icon{
+    font-size:55px;
+    text-align:center;
+    padding:25px 0;
+}
+
+.price{
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.rating{
+    color:#e6a800;
+}
+
+.cart-btn{
+    background:var(--blue);
+    color:white;
+}
+
+.wish-btn{
+    background:var(--card);
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+.remove-btn,.clear-btn{
+    background:var(--danger);
+    color:white;
+}
+
+.quantity-btn{
+    background:var(--blue);
+    color:white;
+    min-width:35px;
+}
+
+#cart,#history,#adminPanel{
+    margin-top:30px;
+    padding:20px;
+    background:var(--card);
+    border-radius:12px;
+}
+
+#cart{
+    border-top:4px solid var(--primary);
+}
+
+#history{
+    border-top:4px solid var(--blue);
+}
+
+#adminPanel{
+    display:none;
+    border-top:4px solid #6f42c1;
+}
+
+.cart-item,.history-item,.summary{
+    padding:14px;
+    margin:10px 0;
+    border:1px solid var(--border);
+    border-radius:8px;
+}
+
+input,textarea,select{
+    display:block;
+    width:90%;
+    max-width:450px;
+    padding:11px;
+    margin:8px 0;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:var(--card);
+    color:var(--text);
+}
+
+textarea{
+    min-height:90px;
+}
+
+#delivery{
+    color:var(--primary);
+    font-weight:bold;
+}
+
+.total{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:15px;
+    background:var(--primary);
+    color:white;
+    font-size:12px;
+}
+
+.payment-box{
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    margin:10px 0;
+}
+
+.payment-note{
+    color:var(--muted);
+    font-size:14px;
+}
+
+.location-success{
+    color:var(--primary);
+    font-weight:bold;
+}
+
+.tracking-step{
+    padding:8px 10px;
+    margin:5px 0;
+    border-radius:6px;
+    border:1px solid var(--border);
+}
+
+.tracking-active{
+    background:var(--primary);
+    color:#fff;
+}
+
+#order-message{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+.success{
+    color:var(--primary);
+}
+
+.error{
+    color:var(--danger);
+}
+
+/* ===== ADMIN PANEL ===== */
+
+#adminPanel{
+    display:none;
+    margin-top:30px;
+    padding:20px;
+    background:var(--card);
+    border-radius:12px;
+    border-top:4px solid #6f42c1;
+}
+
+.admin-toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.admin-order{
+    padding:16px;
+    margin:12px 0;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--card);
+}
+
+.admin-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:10px;
+}
+
+.admin-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:10px;
+}
+
+.admin-actions select{
+    width:auto;
+    max-width:none;
+    margin:0;
+}
+
+.admin-login{
+    max-width:420px;
+    margin:15px auto;
+    padding:18px;
+    border:1px solid var(--border);
+    border-radius:10px;
+}
+
+.admin-login input{
+    width:100%;
+    max-width:none;
+}
+
+.admin-btn{
+    background:#6f42c1;
+    color:#fff;
+}
+
+.admin-refresh{
+    background:var(--blue);
+    color:#fff;
+}
+
+.admin-logout{
+    background:var(--danger);
+    color:#fff;
+}
+
+.admin-small{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.status-confirmed{
+    background:var(--primary);
+}
+
+.status-pending{
+    background:#ffc107;
+    color:#222;
+}
+
+.status-cancelled{
+    background:var(--danger);
+}
+
+.admin-order-notification{
+  display:none;margin:12px 0;padding:14px 16px;border-left:5px solid var(--primary);
+  border-radius:8px;background:#ecfdf3;color:var(--text);font-weight:700;
+}
+.admin-order-notification.show{display:block}
+
+
+/* ===== PRODUCT MANAGEMENT ===== */
+
+#adminProductsSection{
+    margin-top:22px;
+    padding:18px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--card)
+}
+
+.product-admin-card{
+    padding:14px;
+    margin:10px 0;
+    border:1px solid var(--border);
+    border-radius:8px
+}
+
+.product-admin-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:8px
+}
+
+.product-admin-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:10px
+}
+
+.product-admin-actions button{
+    margin:0
+}
+
+.stock-in-btn{
+    background:var(--primary);
+    color:#fff
+}
+
+.stock-out-btn{
+    background:#ffc107;
+    color:#222
+}
+
+.product-save-btn{
+    background:var(--blue);
+    color:#fff
+}
+
+.product-delete-btn{
+    background:var(--danger);
+    color:#fff
+}
+
+.order-delete-btn{
+    background:var(--danger);
+    color:#fff
+}
+
+.stock-badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:15px;
+    font-size:12px;
+    font-weight:bold
+}
+
+.stock-in{
+    background:var(--primary);
+    color:#fff
+}
+
+.stock-out{
+    background:var(--danger);
+    color:#fff
+}
+
+
+/* ===== LIVE LOCATION ===== */
+
+.live-location-box{
+    border-left:4px solid var(--primary);
+}
+
+.live-location-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+}
+
+.live-location-buttons button{
+    margin:0;
+}
+
+
+/* ===== NAVIGATION BUTTON ===== */
+
+.navigate-btn{
+    background:#198754;
+    color:#fff;
+}
+
+
+/* ===== MOBILE ===== */
+
+@media(max-width:600px){
+
+    body{
+        padding:10px;
+    }
+
+    .admin-grid{
+        grid-template-columns:1fr;
+    }
+
+    .admin-actions button,
+    .admin-actions select{
+        width:100%;
+    }
+
+    .live-location-buttons button{
+        width:100%;
+    }
+
+}
+
+/* ================= MODERN VEDANT UI ================= */
+:root{
+  --bg:#f5f7f6;
+  --surface:#ffffff;
+  --surface-2:#eef8f1;
+  --text:#15231a;
+  --muted:#6b776f;
+  --primary:#16a34a;
+  --primary-dark:#087f3c;
+  --accent:#f59e0b;
+  --danger:#dc3545;
+  --border:#e4ebe6;
+  --shadow:0 10px 30px rgba(16,48,30,.08);
+  --radius:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  padding:0 0 88px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(22,163,74,.10),transparent 28%),
+    radial-gradient(circle at 100% 10%,rgba(245,158,11,.10),transparent 25%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+body.dark{
+  --bg:#0d1510;
+  --surface:#152019;
+  --surface-2:#193322;
+  --text:#f2f7f3;
+  --muted:#aebbb2;
+  --border:#294132;
+  --shadow:0 10px 30px rgba(0,0,0,.28);
+}
+body.dark .modern-nav{background:rgba(21,32,25,.88)}
+.modern-nav{
+  position:sticky;top:0;z-index:1000;
+  display:flex;align-items:center;gap:14px;
+  padding:12px max(16px,calc((100vw - 1180px)/2));
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;white-space:nowrap}
+.brand-logo{
+  width:42px;height:42px;border-radius:14px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;font-size:22px;box-shadow:var(--shadow)
+}
+.nav-links{display:flex;gap:5px;margin-left:auto}
+.nav-links button{
+  background:transparent;color:var(--muted);margin:0;padding:10px 13px;border-radius:12px
+}
+.nav-links button.active,.nav-links button:hover{background:var(--surface-2);color:var(--primary-dark)}
+.nav-cart{
+  position:relative;background:var(--primary)!important;color:#fff!important;
+  border-radius:14px!important
+}
+.cart-dot{
+  position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;
+  display:grid;place-items:center;border-radius:50%;
+  background:#111;color:#fff;font-size:11px;border:2px solid #fff
+}
+.page{display:none;max-width:1180px;margin:0 auto;padding:24px 16px}
+.page.active{display:block;animation:pageIn .25s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.hero{
+  position:relative;overflow:hidden;
+  border-radius:30px;padding:42px 34px;
+  background:linear-gradient(135deg,#0b7a3c,#18a957 55%,#7acb62);
+  color:#fff;box-shadow:var(--shadow);min-height:330px;
+  display:flex;align-items:center
+}
+.hero:after{
+  content:"🛒";position:absolute;right:7%;bottom:-18px;
+  font-size:180px;opacity:.12;transform:rotate(-10deg)
+}
+.hero-content{position:relative;z-index:1;max-width:650px}
+.hero-kicker{display:inline-flex;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.16);font-weight:800;font-size:13px}
+.hero h1{font-size:clamp(34px,6vw,62px);line-height:1.02;margin:16px 0 12px}
+.hero p{font-size:18px;opacity:.92;max-width:560px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.hero-actions button{margin:0;border-radius:14px;padding:13px 18px}
+.hero-main{background:#fff;color:#087f3c}
+.hero-secondary{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.feature-card,.section-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)
+}
+.feature-icon{font-size:28px}.feature-card h3{margin:9px 0 4px}.feature-card p{margin:0;color:var(--muted)}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:8px 0 18px}
+.section-head h2{margin:0;font-size:28px}
+.section-head p{margin:4px 0 0;color:var(--muted)}
+#searchBox{
+  width:100%;max-width:none;margin:0 0 12px;padding:15px 18px;
+  border-radius:16px;border:1px solid var(--border);background:var(--surface);
+  color:var(--text);box-shadow:0 4px 18px rgba(0,0,0,.04)
+}
+.categories{display:flex;gap:8px;overflow:auto;padding:3px 0 13px;text-align:left}
+.categories button{
+  flex:0 0 auto;margin:0;background:var(--surface);color:var(--text);
+  border:1px solid var(--border);border-radius:999px;padding:10px 15px
+}
+.categories button:hover{border-color:var(--primary);color:var(--primary)}
+#products{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.product{
+  position:relative;background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:15px;box-shadow:var(--shadow);
+  transition:.2s transform,.2s box-shadow
+}
+.product:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(16,48,30,.12)}
+.product-icon{
+  min-height:145px;display:grid;place-items:center;
+  border-radius:16px;background:linear-gradient(145deg,var(--surface-2),var(--surface));
+  font-size:72px;padding:10px
+}
+.product h3{margin:13px 0 5px}.product .price{font-size:18px}
+.cart-btn{background:var(--primary)!important;border-radius:12px!important}
+.wish-btn{border:1px solid var(--border)!important;border-radius:12px!important}
+#cart,#history,#adminPanel{
+  margin:0;padding:0;background:transparent;border:0
+}
+.cart-item,.history-item,.summary,.payment-box,.admin-order,.product-admin-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  box-shadow:var(--shadow)
+}
+#cart > h2,#history > h2,#adminPanel > h2{font-size:30px}
+#cart input,#cart textarea,#cart select,#adminPanel input,#adminPanel textarea,#adminPanel select{
+  width:100%;max-width:none;border-radius:13px;border:1px solid var(--border)
+}
+.place-order{width:100%;padding:15px!important;border-radius:14px!important;background:var(--primary)!important}
+.checkout-title{
+  display:flex;align-items:center;gap:10px;margin:0 0 16px
+}
+.back-btn{background:var(--surface);border:1px solid var(--border);color:var(--text)}
+.checkout-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+.checkout-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+#customer-tracking-box{box-shadow:none;border:1px solid var(--border)}
+.tracking-step{border-radius:12px!important;padding:12px!important}
+.tracking-active{background:var(--primary)!important}
+.modern-bottom-nav{
+  position:fixed;left:50%;bottom:12px;transform:translateX(-50%);
+  z-index:1100;width:min(680px,calc(100% - 20px));
+  display:grid;grid-template-columns:repeat(5,1fr);gap:4px;
+  padding:7px;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);
+  border:1px solid var(--border);border-radius:22px;box-shadow:0 12px 35px rgba(0,0,0,.16)
+}
+body.dark .modern-bottom-nav{background:rgba(21,32,25,.92)}
+.modern-bottom-nav button{margin:0;background:transparent;color:var(--muted);padding:8px 4px;font-size:11px}
+.modern-bottom-nav button.active{color:var(--primary-dark);font-weight:900}
+.modern-bottom-nav span{display:block;font-size:20px;line-height:1.1}
+.badge{border-radius:999px}
+#adminPanel{padding-bottom:30px}
+.admin-toolbar{background:var(--surface);padding:12px;border-radius:16px;border:1px solid var(--border)}
+.status-confirmed{background:var(--primary)!important;color:#fff!important}
+#radius-pill{
+  display:inline-flex;align-items:center;gap:7px;margin-top:10px;
+  padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);
+  font-size:13px;font-weight:700
+}
+@media(max-width:800px){
+  .nav-links{display:none}
+  .feature-grid{grid-template-columns:1fr}
+  .checkout-grid{grid-template-columns:1fr}
+  .hero{padding:30px 22px;min-height:360px}
+  .hero:after{font-size:120px}
+}
+/* ===== VEDANT PAYMENT UI FIX ===== */
+.stvn-payment-choice{padding:12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border)}
+.stvn-upi-payment{margin-top:8px;padding:14px;border:1px solid var(--border);border-radius:16px;background:var(--surface-2);text-align:center}
+.stvn-qr-wrap{display:flex;justify-content:center;align-items:center;margin:12px 0}
+.stvn-upi-qr{width:220px;height:220px;max-width:100%;padding:8px;background:#fff;border-radius:14px;border:1px solid var(--border);object-fit:contain}
+.stvn-upi-id-row{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+.stvn-upi-id-row code{padding:9px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--border);font-size:15px;font-weight:800;color:var(--text)}
+.stvn-copy-upi{margin:0;background:var(--primary);color:#fff;border-radius:10px}
+.stvn-upi-amount{margin:10px 0;font-size:17px}
+.stvn-upi-confirm{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-weight:800;cursor:pointer}
+.stvn-upi-confirm input{display:inline-block;width:auto;max-width:none;margin:0;transform:scale(1.2)}
+
+@media(max-width:600px){
+  body{padding-bottom:84px}
+  .page{padding:16px 12px}
+  .modern-nav{padding:9px 12px}
+  .brand-logo{width:38px;height:38px}
+  .hero h1{font-size:38px}
+  .hero p{font-size:16px}
+  #products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .product{padding:10px;border-radius:16px}
+  .product-icon{min-height:105px;font-size:50px}
+  .product h3{font-size:15px}
+  .product .price{font-size:15px}
+  .product button{width:100%;margin:3px 0}
+}
+
+</style>
+
+<style id="stvn-qty-control-css">
+.stvn-qty-control{
+  display:inline-flex;align-items:center;justify-content:space-between;
+  min-width:112px;height:40px;border-radius:10px;overflow:hidden;
+  background:#19a463;border:1px solid #159054;box-shadow:0 2px 7px rgba(0,0,0,.10);
+}
+.stvn-qty-control button{
+  width:36px;height:40px;border:0;background:transparent;color:#fff;
+  font-size:22px;font-weight:800;cursor:pointer;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+}
+.stvn-qty-control button:hover{background:rgba(255,255,255,.14)}
+.stvn-qty-control .stvn-qty-value{
+  min-width:38px;text-align:center;color:#fff;font-weight:800;font-size:15px;
+}
+.stvn-add-cart-btn.stvn-hidden{display:none!important}
+.stvn-cart-wrap{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap}
+</style>
+
+
+<style id="stvn-delivery-charge-css">
+.stvn-delivery-charge-line{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;padding:8px 0;font-size:14px;
+}
+.stvn-delivery-charge-line strong{font-weight:800}
+</style>
+
+
+<style id="stvn-shop-status-css">
+#stvn-shop-status-banner{
+  display:none;position:sticky;top:0;z-index:9999;
+  padding:11px 16px;text-align:center;font-weight:800;
+  background:#fff3cd;color:#7a5200;border-bottom:1px solid #f0d98a;
+}
+#stvn-shop-status-banner.stvn-closed{display:block}
+.stvn-shop-admin-box{
+  margin:12px 0;padding:14px;border:1px solid var(--border);
+  border-radius:16px;background:var(--surface);box-shadow:var(--shadow);
+}
+.stvn-shop-admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.stvn-shop-admin-actions button{margin:0}
+.stvn-shop-state{
+  display:inline-flex;padding:6px 10px;border-radius:999px;font-weight:800;
+  background:var(--surface-2);
+}
+</style>
+
+
+<style id="radius-availability-style">
+#radius-availability{position:sticky;top:0;z-index:9999;margin:0;padding:10px 14px;text-align:center;font-weight:800;font-size:14px;background:#fff;border-bottom:1px solid #e4ebe6;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+#radius-availability.available{color:#087f3c}
+#radius-availability.unavailable{color:#dc3545;background:#fff5f5}
+#radius-availability.pending{color:#6b7280}
+.radius-locked{pointer-events:none;opacity:.55}
+</style>
+</head>
+
+<body>
+
+<div id="stvn-shop-status-banner">
+  🔴 Shop is currently closed — orders are temporarily unavailable.
+</div>
+
+
+<div class="top">
+
+<h1>🛒 VEDANT GROCERY SHOP</h1>
+
+<p>Fresh Fruits, Vegetables And Daily Essentials</p>
+
+<button class="shop-btn" onclick="scrollToProducts()">
+Shop Now
+</button>
+
+<button class="dark-btn" onclick="toggleDarkMode()">
+🌙 Dark Mode
+</button>
+
+<button class="admin-btn" onclick="openAdminPanel()">
+🔐 Admin Panel
+</button>
+
+</div>
+
+<h2 id="products-heading">Our Products</h2>
+
+<input
+type="text"
+id="searchBox"
+placeholder="🔍 Search products..."
+oninput="searchProducts()"
+>
+
+<div class="categories">
+
+<button onclick="filterCategory('all')">All</button>
+<button onclick="filterCategory('grocery')">Grocery</button>
+<button onclick="filterCategory('snacks')">Snacks</button>
+<button onclick="filterCategory('drinks')">Drinks</button>
+<button onclick="filterCategory('personal')">Personal Care</button>
+
+</div>
+
+
+<div id="products">
+
+<div class="product" data-category="grocery" data-name="rice">
+<div class="product-icon">🍚</div>
+<h3>Rice</h3>
+<p class="price">₹70 per kg</p>
+<p class="rating">⭐ 4.5/5</p>
+<button class="cart-btn" onclick="addToCart('Rice',70)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Rice')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="grocery" data-name="wheat flour atta">
+<div class="product-icon">🌾</div>
+<h3>Wheat Flour (Atta)</h3>
+<p class="price">₹45 per kg</p>
+<p class="rating">⭐ 4.4/5</p>
+<button class="cart-btn" onclick="addToCart('Wheat Flour (Atta)',45)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Wheat Flour (Atta)')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="grocery" data-name="sugar">
+<div class="product-icon">🍬</div>
+<h3>Sugar</h3>
+<p class="price">₹48 per kg</p>
+<p class="rating">⭐ 4.3/5</p>
+<button class="cart-btn" onclick="addToCart('Sugar',48)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Sugar')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="grocery" data-name="salt">
+<div class="product-icon">🧂</div>
+<h3>Salt</h3>
+<p class="price">₹25 per packet</p>
+<p class="rating">⭐ 4.2/5</p>
+<button class="cart-btn" onclick="addToCart('Salt',25)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Salt')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="grocery" data-name="cooking oil">
+<div class="product-icon">🛢️</div>
+<h3>Cooking Oil</h3>
+<p class="price">₹160 per litre</p>
+<p class="rating">⭐ 4.6/5</p>
+<button class="cart-btn" onclick="addToCart('Cooking Oil',160)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Cooking Oil')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="snacks" data-name="namkeen">
+<div class="product-icon">🥨</div>
+<h3>Namkeen</h3>
+<p class="price">₹60</p>
+<p class="rating">⭐ 4.5/5</p>
+<button class="cart-btn" onclick="addToCart('Namkeen',60)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Namkeen')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="grocery" data-name="refine oil">
+<div class="product-icon">🛢️</div>
+<h3>Refine Oil</h3>
+<p class="price">₹160</p>
+<p class="rating">⭐ 4.3/5</p>
+<button class="cart-btn" onclick="addToCart('Refine Oil',160)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Refine Oil')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="snacks" data-name="5 star">
+<div class="product-icon">🍫</div>
+<h3>5 Star</h3>
+<p class="price">₹10</p>
+<p class="rating">⭐ 4.7/5</p>
+<button class="cart-btn" onclick="addToCart('5 Star',10)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('5 Star')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="snacks" data-name="dairy milk">
+<div class="product-icon">🍫</div>
+<h3>Dairy Milk</h3>
+<p class="price">₹10</p>
+<p class="rating">⭐ 4.8/5</p>
+<button class="cart-btn" onclick="addToCart('Dairy Milk',10)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Dairy Milk')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="grocery" data-name="aloo potato">
+<div class="product-icon">🥔</div>
+<h3>Aloo</h3>
+<p class="price">₹30 per kg</p>
+<p class="rating">⭐ 4.4/5</p>
+<button class="cart-btn" onclick="addToCart('Aloo',30)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Aloo')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="drinks" data-name="sprite">
+<div class="product-icon">🥤</div>
+<h3>Sprite</h3>
+<p class="price">₹50 per litre</p>
+<p class="rating">⭐ 4.2/5</p>
+<button class="cart-btn" onclick="addToCart('Sprite',50)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Sprite')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="personal" data-name="shampoo">
+<div class="product-icon">🧴</div>
+<h3>Shampoo</h3>
+<p class="price">₹120 per 250 gram</p>
+<p class="rating">⭐ 4.5/5</p>
+<button class="cart-btn" onclick="addToCart('Shampoo',120)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Shampoo')">❤️ Wishlist</button>
+</div>
+
+<div class="product" data-category="grocery" data-name="suji">
+<div class="product-icon">🌾</div>
+<h3>Suji</h3>
+<p class="price">₹30 per 250 gram</p>
+<p class="rating">⭐ 4.3/5</p>
+<button class="cart-btn" onclick="addToCart('Suji',30)">Add to Cart</button>
+<button class="wish-btn" onclick="addWishlist('Suji')">❤️ Wishlist</button>
+</div>
+
+</div>
+
+
+<div id="cart">
+
+<h2>🛒 My Cart</h2>
+
+<p>
+Items in Cart:
+<strong id="cart-count">0</strong>
+</p>
+
+<div id="cart-items">
+<p>Your cart is empty.</p>
+</div>
+
+<div class="summary">
+
+<p>Subtotal: ₹<span id="subtotal">0</span></p>
+<p>Discount: ₹<span id="discount">0</span></p>
+<p>Delivery Charge: ₹<span id="delivery-charge">0</span></p>
+
+<p class="total">
+Grand Total: ₹<span id="cart-total">0</span>
+</p>
+
+</div>
+<!-- CHECKOUT DETAILS -->
+<div class="checkout-card" id="checkout-payment-box">
+
+  <h3>📦 Delivery Details</h3>
+
+  <label for="customer-name">Full Name</label>
+  <input
+    type="text"
+    id="customer-name"
+    placeholder="Enter your name"
+    autocomplete="name"
+  >
+
+  <label for="customer-phone">Mobile Number</label>
+  <input
+    type="tel"
+    id="customer-phone"
+    placeholder="10-digit mobile number"
+    maxlength="10"
+    inputmode="numeric"
+    autocomplete="tel"
+  >
+
+  <label for="customer-address">Delivery Address</label>
+  <textarea
+    id="customer-address"
+    placeholder="Enter your complete delivery address"
+    autocomplete="street-address"
+  ></textarea>
+
+  <div class="payment-box">
+    <h3>💳 Payment Method</h3>
+
+    <label>
+      <input
+        type="radio"
+        name="payment-option"
+        value="COD"
+        checked
+        onchange="document.getElementById('payment-method').value='COD'"
+      >
+      Cash on Delivery
+    </label>
+
+    <p class="payment-note">
+      Pay cash when your order is delivered.
+    </p>
+
+    <input type="hidden" id="payment-method" value="COD">
+  </div>
+
+  <button
+    type="button"
+    class="place-order"
+    onclick="placeOrder()"
+  >
+    🛒 Place Order
+  </button>
+
+  <div id="order-message"></div>
+
+</div>
+<button class="clear-btn" onclick="clearCart()">
+Clear Cart
+</button>
+
+
+<h2>❤️ Wishlist</h2>
+
+<div id="wishlist">
+<p>Your wishlist is empty.</p>
+</div>
+
+
+<h2>🎟️ Coupon</h2>
+
+<input
+type="text"
+id="coupon"
+placeholder="Enter coupon code"
+>
+
+<button onclick="applyCoupon()">
+Apply Coupon
+</button>
+
+<p id="coupon-message"></p>
+
+
+<h2>🚚 Delivery Details</h2>
+
+<input
+type="text"
+id="customer-name"
+placeholder="Enter your name"
+>
+
+<input
+type="tel"
+id="customer-phone"
+placeholder="Enter mobile number"
+>
+
+<textarea
+id="customer-address"
+placeholder="Enter delivery address"
+></textarea>
+
+<p id="delivery">
+🚀 Estimated Delivery: 20–25 Minutes
+</p>
+
+
+<!-- ================= CUSTOMER LOCATION ================= -->
+
+<div id="customer-location-box" class="payment-box">
+
+<strong>📍 Delivery Location</strong>
+
+<p id="location-status" class="payment-note">
+Order place करते समय आपकी current location की permission मांगी जाएगी।
+</p>
+
+<button
+type="button"
+class="shop-btn"
+onclick="requestCustomerLocation()">
+📍 Use Current Location
+</button>
+
+</div>
+
+
+<!-- ================= CUSTOMER ORDER TRACKING ================= -->
+
+<div id="customer-tracking-box" class="payment-box">
+
+<strong>🚚 Order Tracking</strong>
+
+<p class="payment-note">
+Order ID और वही mobile number डालकर अपना order track करो।
+</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+
+<div>
+
+<label style="display:block;font-size:13px;margin-bottom:4px;">
+Order ID
+</label>
+
+<input
+id="track-order-id"
+type="text"
+placeholder="VEDANT-123456789">
+
+</div>
+
+
+<div>
+
+<label style="display:block;font-size:13px;margin-bottom:4px;">
+Mobile Number
+</label>
+
+<input
+id="track-phone"
+type="tel"
+inputmode="numeric"
+maxlength="10"
+placeholder="10 digit mobile">
+
+</div>
+
+
+<button
+type="button"
+class="admin-btn"
+onclick="trackCustomerOrder()">
+🔎 Track Order
+</button>
+
+</div>
+
+
+<div id="tracking-status"
+class="payment-note"
+style="margin-top:12px;">
+
+Order place होने के बाद tracking यहाँ दिखाई जाएगी।
+
+</div>
+
+
+<div
+id="tracking-live-indicator"
+style="margin-top:8px;">
+</div>
+
+
+<!-- ================= LIVE LOCATION SHARING ================= -->
+
+<div
+id="customer-live-location-box"
+class="payment-box live-location-box">
+
+<strong>📍 Live Customer Location</strong>
+
+<p
+id="live-location-status"
+class="payment-note">
+
+Order track करने के बाद live location share कर सकते हैं।
+
+</p>
+
+<div class="live-location-buttons">
+
+<button
+type="button"
+class="shop-btn"
+onclick="startCustomerLiveLocation()">
+
+📍 Share Live Location
+
+</button>
+
+<button
+type="button"
+class="remove-btn"
+onclick="stopCustomerLiveLocation()">
+
+⛔ Stop Sharing
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<h2>💳 Payment</h2>
+
+<div class="payment-box">
+
+<select
+id="payment-method"
+onchange="showPaymentInfo()">
+
+<option value="COD">
+💵 Cash on Delivery
+</option>
+
+<option value="UPI">
+📱 UPI Payment (QR / UPI ID)
+</option>
+
+</select>
+
+<p
+id="payment-info"
+class="payment-note">
+
+Cash on Delivery selected.
+
+</p>
+
+</div>
+
+
+<h2>📋 Order Summary</h2>
+
+<div
+id="order-summary"
+class="summary">
+
+Your order summary will appear here.
+
+</div>
+
+<button
+class="place-order"
+onclick="placeOrder()">
+
+Place Order
+
+</button>
+
+<p id="order-message"></p>
+
+</div>
+
+
+<div id="history">
+
+<h2>📦 Order History</h2>
+
+<button
+type="button"
+class="admin-refresh"
+onclick="showOrderHistory()">
+
+🔄 Show My Orders
+
+</button>
+
+<div id="order-history">
+<p>No previous orders.</p>
+</div>
+
+</div>
+
+
+<!-- ================= ADMIN PANEL ================= -->
+
+<div id="adminPanel">
+
+<h2>🔐 Admin Panel</h2>
+
+
+<div
+id="adminLoginBox"
+class="admin-login">
+
+<h3>Admin Login</h3>
+
+<input
+type="email"
+id="adminUsername"
+placeholder="Admin email"
+autocomplete="username"
+>
+
+<input
+type="password"
+id="adminPassword"
+placeholder="Admin password"
+autocomplete="current-password"
+>
+
+<button
+class="admin-btn"
+onclick="adminLogin()">
+
+Login
+
+</button>
+
+<p
+id="adminLoginMessage"
+class="error">
+</p>
+
+<p class="admin-small">
+Admin login is securely handled by Supabase Auth.
+Use the admin email and password created in Supabase.
+</p>
+
+</div>
+
+
+<div
+id="adminContent"
+style="display:none">
+
+<div class="admin-toolbar">
+
+<button
+class="admin-refresh"
+onclick="loadAdminOrders()">
+
+🔄 Refresh Orders
+
+</button>
+
+
+<select
+id="adminOrderFilter"
+onchange="loadAdminOrders()">
+
+<option value="all">
+All Orders
+</option>
+
+<option value="pending">
+Pending
+</option>
+
+<option value="confirmed">
+Confirmed
+</option>
+
+<option value="preparing">
+Preparing
+</option>
+
+<option value="out_for_delivery">
+Out for Delivery
+</option>
+
+<option value="delivered">
+Delivered
+</option>
+
+<option value="cancelled">
+Cancelled
+</option>
+
+</select>
+
+
+<button
+class="admin-logout"
+onclick="adminLogout()">
+
+Logout
+
+</button>
+
+</div>
+
+<div id="admin-order-notification" class="admin-order-notification" role="status" aria-live="polite"></div>
+
+
+<!-- ===== PRODUCT MANAGEMENT ===== -->
+
+<div id="adminProductsSection">
+
+<h3>🛍️ Product / Material Management</h3>
+
+<p class="admin-small">
+यहाँ से नया material add, price change, stock in/out और out-of-stock control कर सकते हो.
+</p>
+
+
+<form
+id="productForm"
+onsubmit="saveProduct(event)">
+
+<input
+type="hidden"
+id="product-id">
+
+
+<div class="admin-grid">
+
+<input
+id="product-name"
+type="text"
+placeholder="Product / Material Name"
+required>
+
+<input
+id="product-category"
+type="text"
+placeholder="Category (grocery, snacks...)"
+required>
+
+<input
+id="product-price"
+type="number"
+min="0"
+step="0.01"
+placeholder="Price"
+required>
+
+<input
+id="product-stock"
+type="number"
+min="0"
+step="1"
+placeholder="Stock"
+required>
+
+<input
+id="product-unit"
+type="text"
+placeholder="Unit (kg, litre, piece...)"
+value="piece">
+
+<input
+id="product-image"
+type="url"
+placeholder="Image URL (optional)">
+
+<textarea
+id="product-description"
+placeholder="Description (optional)">
+</textarea>
+
+</div>
+
+
+<label style="display:block;margin:10px 0;">
+
+<input
+type="checkbox"
+id="product-available"
+checked
+style="display:inline-block;width:auto;margin-right:6px;">
+
+In Stock / Available
+
+</label>
+
+
+<button
+type="submit"
+class="product-save-btn">
+
+➕ Add / Save Product
+
+</button>
+
+
+<button
+type="button"
+onclick="resetProductForm()">
+
+Clear
+
+</button>
+
+
+<p id="product-message"></p>
+
+</form>
+
+
+<hr>
+
+
+<div class="admin-toolbar">
+
+<button
+class="admin-refresh"
+onclick="loadAdminProducts()">
+
+🔄 Refresh Products
+
+</button>
+
+</div>
+
+
+<div id="adminProductsList">
+
+<p>
+Products load करने के लिए Refresh Products दबाओ.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="adminOrders">
+
+<p>
+Login करके orders load करो.
+</p>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://wkqptavikimtzvwzdhal.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_94808b2y4z8h7wGGRw5fOg_jlmxSA84";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
+
+
+let cartItems =
+JSON.parse(
+localStorage.getItem("vedantCart")
+) || [];
+
+
+let wishlistItems =
+JSON.parse(
+localStorage.getItem("vedantWishlist")
+) || [];
+
+
+let orderHistory =
+JSON.parse(
+localStorage.getItem("vedantOrders")
+) || [];
+
+
+let discountAmount = 0;
+
+
+/* ================= CART ================= */
+
+function saveData(){
+
+localStorage.setItem(
+"vedantCart",
+JSON.stringify(cartItems)
+);
+
+localStorage.setItem(
+"vedantWishlist",
+JSON.stringify(wishlistItems)
+);
+
+localStorage.setItem(
+"vedantOrders",
+JSON.stringify(orderHistory)
+);
+
+}
+
+
+function addToCart(name,price){
+
+let item =
+cartItems.find(
+x => x.name === name
+);
+
+if(item){
+
+item.quantity++;
+
+}else{
+
+cartItems.push({
+name:name,
+price:price,
+quantity:1
+});
+
+}
+
+saveData();
+updateCart();
+
+}
+
+
+function increaseQuantity(index){
+
+cartItems[index].quantity++;
+
+saveData();
+updateCart();
+
+}
+
+
+function decreaseQuantity(index){
+
+if(cartItems[index].quantity > 1){
+
+cartItems[index].quantity--;
+
+}else{
+
+cartItems.splice(index,1);
+
+}
+
+saveData();
+updateCart();
+
+}
+
+
+function removeFromCart(index){
+
+cartItems.splice(index,1);
+
+saveData();
+updateCart();
+
+}
+
+
+function clearCart(){
+
+cartItems=[];
+
+discountAmount=0;
+
+document.getElementById(
+"coupon-message"
+).textContent="";
+
+saveData();
+updateCart();
+
+}
+
+
+function getSubtotal(){
+
+return cartItems.reduce(
+(total,item)=>
+total +
+item.price *
+item.quantity,
+0
+);
+
+}
+
+
+function updateCart(){
+
+let box =
+document.getElementById(
+"cart-items"
+);
+
+let count=0;
+
+let subtotal=0;
+
+
+if(cartItems.length===0){
+
+box.innerHTML =
+"<p>Your cart is empty.</p>";
+
+}else{
+
+box.innerHTML =
+"<h3>Cart Items</h3>";
+
+
+cartItems.forEach(
+function(item,index){
+
+let itemTotal =
+item.price *
+item.quantity;
+
+count +=
+item.quantity;
+
+subtotal +=
+itemTotal;
+
+
+box.innerHTML += `
+
+<div class="cart-item">
+
+<strong>
+${escapeHtml(item.name)}
+</strong>
+
+<p>
+Price:
+₹${item.price}
+</p>
+
+<p>
+
+Quantity:
+
+<button
+class="quantity-btn"
+onclick="decreaseQuantity(${index})">
+-
+</button>
+
+${item.quantity}
+
+<button
+class="quantity-btn"
+onclick="increaseQuantity(${index})">
++
+</button>
+
+</p>
+
+<p>
+Item Total:
+<strong>
+₹${itemTotal}
+</strong>
+</p>
+
+<button
+class="remove-btn"
+onclick="removeFromCart(${index})">
+
+Remove
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+let deliveryCharge =
+subtotal > 0 ? 0 : 0;
+
+
+let grandTotal =
+Math.max(
+0,
+subtotal -
+discountAmount +
+deliveryCharge
+);
+
+
+document.getElementById(
+"cart-count"
+).textContent=count;
+
+document.getElementById(
+"subtotal"
+).textContent=subtotal;
+
+document.getElementById(
+"discount"
+).textContent=discountAmount;
+
+document.getElementById(
+"delivery-charge"
+).textContent=deliveryCharge;
+
+document.getElementById(
+"cart-total"
+).textContent=grandTotal;
+
+
+updateOrderSummary();
+
+}
+
+
+/* ================= WISHLIST ================= */
+
+function addWishlist(name){
+
+if(!wishlistItems.includes(name)){
+
+wishlistItems.push(name);
+
+saveData();
+
+alert(
+name +
+" added to Wishlist!"
+);
+
+}else{
+
+alert(
+name +
+" is already in Wishlist."
+);
+
+}
+
+showWishlist();
+
+}
+
+
+function showWishlist(){
+
+let box =
+document.getElementById(
+"wishlist"
+);
+
+
+if(wishlistItems.length===0){
+
+box.innerHTML =
+"<p>Your wishlist is empty.</p>";
+
+return;
+
+}
+
+
+box.innerHTML="";
+
+
+wishlistItems.forEach(
+function(item,index){
+
+box.innerHTML += `
+
+<div class="cart-item">
+
+❤️
+<strong>
+${escapeHtml(item)}
+</strong>
+
+<button
+class="remove-btn"
+onclick="removeWishlist(${index})">
+
+Remove
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+function removeWishlist(index){
+
+wishlistItems.splice(index,1);
+
+saveData();
+showWishlist();
+
+}
+
+
+/* ================= SEARCH ================= */
+
+function searchProducts(){
+
+let search =
+document.getElementById(
+"searchBox"
+).value.toLowerCase();
+
+
+let products =
+document.querySelectorAll(
+"#products .product"
+);
+
+
+products.forEach(
+function(product){
+
+let name =
+product.getAttribute(
+"data-name"
+);
+
+
+product.style.display =
+name &&
+name.includes(search)
+? "block"
+: "none";
+
+});
+
+}
+
+
+function filterCategory(category){
+
+let products =
+document.querySelectorAll(
+"#products .product"
+);
+
+
+products.forEach(
+function(product){
+
+let productCategory =
+product.getAttribute(
+"data-category"
+);
+
+
+product.style.display =
+category==="all" ||
+productCategory===category
+? "block"
+: "none";
+
+});
+
+}
+
+
+/* ================= COUPON ================= */
+
+function applyCoupon(){
+
+let coupon =
+document.getElementById(
+"coupon"
+).value.trim().toUpperCase();
+
+
+let subtotal =
+getSubtotal();
+
+
+if(subtotal===0){
+
+document.getElementById(
+"coupon-message"
+).textContent =
+"❌ Add products before applying a coupon.";
+
+return;
+
+}
+
+
+if(coupon==="VEDANT10"){
+
+discountAmount =
+Math.round(
+subtotal*0.10
+);
+
+
+document.getElementById(
+"coupon-message"
+).innerHTML =
+"✅ 10% discount applied!";
+
+}else{
+
+discountAmount=0;
+
+
+document.getElementById(
+"coupon-message"
+).innerHTML =
+"❌ Invalid coupon. Try VEDANT10.";
+
+}
+
+
+updateCart();
+
+}
+
+
+/* ================= ORDER SUMMARY ================= */
+
+function updateOrderSummary(){
+
+let box =
+document.getElementById(
+"order-summary"
+);
+
+
+if(cartItems.length===0){
+
+box.innerHTML =
+"Your order summary will appear here.";
+
+return;
+
+}
+
+
+let html="";
+
+
+cartItems.forEach(
+item=>{
+
+html += `
+
+<p>
+
+${escapeHtml(item.name)}
+× ${item.quantity}
+
+=
+
+₹${item.price *
+item.quantity}
+
+</p>
+
+`;
+
+});
+
+
+html += `
+
+<hr>
+
+<p>
+Subtotal:
+₹${getSubtotal()}
+</p>
+
+<p>
+Discount:
+₹${discountAmount}
+</p>
+
+<p>
+
+<strong>
+
+Grand Total:
+₹${
+document.getElementById(
+"cart-total"
+).textContent
+}
+
+</strong>
+
+</p>
+
+<p>
+🚚 Delivery:
+20–25 Minutes
+</p>
+
+`;
+
+
+box.innerHTML=html;
+
+}
+
+
+/* ================= PAYMENT ================= */
+
+function showPaymentInfo(){
+
+let method =
+document.getElementById(
+"payment-method"
+).value;
+
+
+let info =
+document.getElementById(
+"payment-info"
+);
+
+
+if(method==="COD"){
+  info.innerHTML = `
+    <div class="stvn-payment-choice cod-choice">
+      <strong>💵 Cash on Delivery</strong>
+      <div class="payment-note">Order receive करते समय cash payment करें.</div>
+    </div>`;
+  return;
+}
+
+const total = Number((document.getElementById("cart-total")?.textContent || "0").replace(/[^0-9.]/g,"")) || 0;
+const upiId = "q573765706@ybl";
+const upiLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Vedant Grocery Shop")}&am=${total.toFixed(2)}&cu=INR&tn=${encodeURIComponent("Vedant Grocery Order")}`;
+const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&data=${encodeURIComponent(upiLink)}`;
+
+info.innerHTML = `
+  <div class="stvn-upi-payment">
+    <strong>📱 Pay using UPI</strong>
+    <p class="payment-note">नीचे QR scan करें या UPI ID से payment करें.</p>
+    <div class="stvn-qr-wrap">
+      <img class="stvn-upi-qr" src="${qrUrl}" alt="UPI QR Code" loading="lazy" onerror="this.style.display='none';document.getElementById('stvn-qr-fallback').style.display='block';">
+      <div id="stvn-qr-fallback" class="payment-note" style="display:none">QR load नहीं हुआ। नीचे UPI ID से payment करें.</div>
+    </div>
+    <div class="stvn-upi-id-row">
+      <code id="stvn-upi-id">${upiId}</code>
+      <button type="button" class="stvn-copy-upi" onclick="copyVedantUpiId()">Copy UPI ID</button>
+    </div>
+    <div class="stvn-upi-amount">Amount to pay: <strong>₹${total.toFixed(2)}</strong></div>
+    <label class="stvn-upi-confirm">
+      <input type="checkbox" id="upi-payment-confirmed">
+      मैंने UPI payment कर दिया है
+    </label>
+    <p class="payment-note">Payment करने के बाद ही यह checkbox tick करके Place Order दबाएँ. Payment manual verification के लिए pending रहेगा.</p>
+  </div>`;
+}
+
+function copyVedantUpiId(){
+  const id="q573765706@ybl";
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(id).then(()=>alert("UPI ID copied: "+id));
+  }else{
+    prompt("Copy UPI ID:",id);
+  }
+}
+
+/* ================= DELIVERY RADIUS ================= */
+
+// Shop location: 25°22'11.1"N 83°06'47.2"E
+const SHOP_LATITUDE = 25.3698055556;
+const SHOP_LONGITUDE = 83.1131388889;
+const DELIVERY_RADIUS_KM = 5;
+
+function calculateDistanceKm(lat1, lon1, lat2, lon2){
+
+const earthRadiusKm = 6371;
+const dLat = (lat2 - lat1) * Math.PI / 180;
+const dLon = (lon2 - lon1) * Math.PI / 180;
+
+const a =
+Math.sin(dLat / 2) ** 2 +
+Math.cos(lat1 * Math.PI / 180) *
+Math.cos(lat2 * Math.PI / 180) *
+Math.sin(dLon / 2) ** 2;
+
+const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+return earthRadiusKm * c;
+
+}
+
+function checkDeliveryRadius(){
+
+if(customerLatitude === null || customerLongitude === null){
+return { allowed:false, distance:null };
+}
+
+const distance = calculateDistanceKm(
+customerLatitude,
+customerLongitude,
+SHOP_LATITUDE,
+SHOP_LONGITUDE
+);
+
+return {
+allowed: distance <= DELIVERY_RADIUS_KM,
+distance: distance
+};
+
+}
+
+
+/* ================= CUSTOMER LOCATION ================= */
+
+let customerLatitude = null;
+let customerLongitude = null;
+
+
+function requestCustomerLocation(){
+
+const status =
+document.getElementById(
+"location-status"
+);
+
+
+if(!navigator.geolocation){
+
+status.textContent =
+"❌ इस browser में location support नहीं है।";
+
+status.className="error";
+
+return;
+
+}
+
+
+status.textContent =
+"⏳ Current location ली जा रही है...";
+
+status.className="payment-note";
+
+
+navigator.geolocation.getCurrentPosition(
+
+position => {
+
+customerLatitude =
+position.coords.latitude;
+
+customerLongitude =
+position.coords.longitude;
+
+
+const radiusCheck = checkDeliveryRadius();
+
+if(radiusCheck.allowed){
+
+status.innerHTML =
+"✅ Current location मिल गई।<br>" +
+"📏 Shop से दूरी: " +
+"<strong>" + radiusCheck.distance.toFixed(2) + " km</strong><br>" +
+"🟢 Delivery available (5 km radius के अंदर)";
+
+status.className = "location-success";
+
+}else{
+
+status.innerHTML =
+"❌ Sorry! Currently not available.<br>" +
+"📏 आपकी location shop से " +
+"<strong>" + radiusCheck.distance.toFixed(2) + " km</strong> दूर है.<br>" +
+"🚚 Delivery radius सिर्फ 5 km है.";
+
+status.className = "error";
+
+}
+
+
+},
+
+error => {
+
+console.log(
+"Location error:",
+error
+);
+
+customerLatitude=null;
+customerLongitude=null;
+
+
+status.textContent =
+"⚠️ Location नहीं मिली। Address से order continue किया जा सकता है.";
+
+status.className =
+"payment-note";
+
+},
+
+{
+
+enableHighAccuracy:true,
+timeout:10000,
+maximumAge:0
+
+}
+
+);
+
+}
+
+
+async function getCustomerLocationForOrder(){
+
+if(
+customerLatitude !== null &&
+customerLongitude !== null
+){
+
+return;
+
+}
+
+
+if(!navigator.geolocation){
+
+return;
+
+}
+
+
+try{
+
+const position =
+await new Promise(
+(resolve,reject)=>{
+
+navigator.geolocation.getCurrentPosition(
+resolve,
+reject,
+{
+enableHighAccuracy:true,
+timeout:10000,
+maximumAge:0
+}
+);
+
+}
+);
+
+
+customerLatitude =
+position.coords.latitude;
+
+customerLongitude =
+position.coords.longitude;
+
+
+const status =
+document.getElementById(
+"location-status"
+);
+
+
+if(status){
+
+status.innerHTML =
+"✅ Current location order के साथ save होगी.";
+
+status.className =
+"location-success";
+
+}
+
+}catch(error){
+
+console.log(
+"Location permission/result:",
+error.message
+);
+
+}
+
+}
+
+
+function getMapsLink(latitude,longitude){
+
+if(
+latitude === null ||
+longitude === null
+){
+
+return null;
+
+}
+
+
+return "https://www.google.com/maps?q=" +
+encodeURIComponent(
+latitude + "," + longitude
+);
+
+}
+
+
+/* ================= CUSTOMER ORDER TRACKING ================= */
+
+let trackedOrderId =
+localStorage.getItem(
+"vedantTrackedOrderId"
+) || "";
+
+
+let trackedCustomerPhone =
+localStorage.getItem(
+"vedantTrackedCustomerPhone"
+) || "";
+
+
+let customerOrderRealtimeChannel =
+null;
+
+
+function saveTrackedOrder(orderId,phone){
+
+trackedOrderId =
+String(orderId || "").trim();
+
+trackedCustomerPhone =
+String(phone || "").trim();
+
+
+if(trackedOrderId){
+
+localStorage.setItem(
+"vedantTrackedOrderId",
+trackedOrderId
+);
+
+}
+
+
+if(trackedCustomerPhone){
+
+localStorage.setItem(
+"vedantTrackedCustomerPhone",
+trackedCustomerPhone
+);
+
+}
+
+}
+
+
+function setTrackingInputs(orderId,phone){
+
+const idBox =
+document.getElementById(
+"track-order-id"
+);
+
+const phoneBox =
+document.getElementById(
+"track-phone"
+);
+
+
+if(idBox)
+idBox.value =
+orderId || "";
+
+
+if(phoneBox)
+phoneBox.value =
+phone || "";
+
+}
+
+
+async function fetchTrackedCustomerOrder(){
+
+if(
+!trackedOrderId ||
+!trackedCustomerPhone
+){
+
+return {
+data:null,
+error:null
+};
+
+}
+
+
+return await supabaseClient
+.from("orders")
+.select("*")
+.eq(
+"order_id",
+trackedOrderId
+)
+.eq(
+"customer_phone",
+trackedCustomerPhone
+)
+.maybeSingle();
+
+}
+
+
+function stopCustomerOrderRealtime(){
+
+if(customerOrderRealtimeChannel){
+
+supabaseClient.removeChannel(
+customerOrderRealtimeChannel
+);
+
+customerOrderRealtimeChannel =
+null;
+
+}
+
+}
+
+
+function startCustomerOrderRealtime(){
+
+stopCustomerOrderRealtime();
+
+
+if(!trackedOrderId){
+
+return;
+
+}
+
+
+customerOrderRealtimeChannel =
+supabaseClient
+.channel(
+"customer-order-" +
+trackedOrderId
+)
+.on(
+"postgres_changes",
+{
+event:"*",
+schema:"public",
+table:"orders",
+filter:
+"order_id=eq." +
+trackedOrderId
+},
+async payload => {
+
+console.log(
+"🔴 Order realtime update:",
+payload
+);
+
+
+const updatedOrder =
+payload.new;
+
+
+if(
+updatedOrder &&
+String(
+updatedOrder.customer_phone || ""
+) ===
+String(
+trackedCustomerPhone || ""
+)
+){
+
+renderCustomerTracking(
+updatedOrder
+);
+
+
+const indicator =
+document.getElementById(
+"tracking-live-indicator"
+);
+
+
+if(indicator){
+
+indicator.innerHTML =
+'<span class="location-success">' +
+"🟢 Live update received just now" +
+"</span>";
+
+}
+
+}
+
+}
+)
+.subscribe(
+status => {
+
+console.log(
+"Customer order realtime:",
+status
+);
+
+
+const indicator =
+document.getElementById(
+"tracking-live-indicator"
+);
+
+
+if(!indicator)
+return;
+
+
+if(status==="SUBSCRIBED"){
+
+indicator.innerHTML =
+'<span class="location-success">' +
+"🟢 Live tracking connected" +
+"</span>";
+
+}
+else if(status==="CHANNEL_ERROR"){
+
+indicator.innerHTML =
+'<span class="error">' +
+"⚠️ Live tracking connection failed. Refresh करके फिर try करो." +
+"</span>";
+
+}
+
+}
+);
+
+}
+
+
+async function trackCustomerOrder(){
+
+const idBox =
+document.getElementById(
+"track-order-id"
+);
+
+const phoneBox =
+document.getElementById(
+"track-phone"
+);
+
+const statusBox =
+document.getElementById(
+"tracking-status"
+);
+
+
+const orderId =
+idBox
+? idBox.value.trim()
+: "";
+
+
+const phone =
+phoneBox
+? phoneBox.value.trim()
+: "";
+
+
+if(!orderId || !phone){
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="error">' +
+"❌ Order ID और mobile number दोनों डालो." +
+"</span>";
+
+}
+
+return;
+
+}
+
+
+if(!/^[0-9]{10}$/.test(phone)){
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="error">' +
+"❌ Mobile number 10 digits का होना चाहिए." +
+"</span>";
+
+}
+
+return;
+
+}
+
+
+if(statusBox){
+
+statusBox.textContent =
+"⏳ Order खोज रहा हूँ...";
+
+}
+
+
+saveTrackedOrder(
+orderId,
+phone
+);
+
+
+const {
+data,
+error
+} =
+await fetchTrackedCustomerOrder();
+
+
+if(error){
+
+console.error(
+"Customer tracking fetch error:",
+error
+);
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="error">' +
+"❌ Order load नहीं हुआ: " +
+escapeHtml(error.message) +
+"</span>";
+
+}
+
+return;
+
+}
+
+
+if(!data){
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="error">' +
+"❌ इस Order ID और mobile number से order नहीं मिला." +
+"</span>";
+
+}
+
+stopCustomerOrderRealtime();
+
+return;
+
+}
+
+
+renderCustomerTracking(data);
+
+startCustomerOrderRealtime();
+
+}
+
+
+/* ================= CUSTOMER LIVE LOCATION ================= */
+
+let customerLocationWatchId =
+null;
+
+let lastLocationUpdateTime =
+0;
+
+
+async function updateCustomerLiveLocation(position){
+
+if(
+!trackedOrderId ||
+!trackedCustomerPhone
+){
+
+console.log(
+"No tracked order."
+);
+
+return;
+
+}
+
+
+const latitude =
+position.coords.latitude;
+
+const longitude =
+position.coords.longitude;
+
+
+customerLatitude =
+latitude;
+
+customerLongitude =
+longitude;
+
+
+const now =
+Date.now();
+
+
+/*
+ * Database को बहुत ज्यादा बार
+ * update नहीं करेंगे.
+ * Minimum 5 seconds gap.
+ */
+
+if(
+now -
+lastLocationUpdateTime <
+5000
+){
+
+return;
+
+}
+
+
+lastLocationUpdateTime =
+now;
+
+
+const statusBox =
+document.getElementById(
+"live-location-status"
+);
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+"⏳ Live location update हो रही है...";
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+.from("orders")
+.update({
+
+latitude:latitude,
+longitude:longitude
+
+})
+.eq(
+"order_id",
+trackedOrderId
+)
+.eq(
+"customer_phone",
+trackedCustomerPhone
+);
+
+
+if(error){
+
+console.error(
+"Live location update error:",
+error
+);
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="error">' +
+"❌ Location update नहीं हुई: " +
+escapeHtml(error.message) +
+"</span>";
+
+}
+
+return;
+
+}
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="location-success">' +
+
+"🟢 Live Location Sharing ON" +
+
+"<br>" +
+
+"Latitude: " +
+latitude.toFixed(6) +
+
+"<br>" +
+
+"Longitude: " +
+longitude.toFixed(6) +
+
+"<br>" +
+
+"<small>Last update: " +
+
+new Date()
+.toLocaleTimeString() +
+
+"</small>" +
+
+"</span>";
+
+}
+
+
+console.log(
+"📍 Customer location updated:",
+latitude,
+longitude
+);
+
+}
+
+
+function startCustomerLiveLocation(){
+
+if(!navigator.geolocation){
+
+alert(
+"❌ इस browser में location support नहीं है."
+);
+
+return;
+
+}
+
+
+if(
+!trackedOrderId ||
+!trackedCustomerPhone
+){
+
+alert(
+"पहले Order ID और mobile number डालकर Track Order करो."
+);
+
+return;
+
+}
+
+
+if(
+customerLocationWatchId !== null
+){
+
+alert(
+"📍 Live location पहले से share हो रही है."
+);
+
+return;
+
+}
+
+
+const statusBox =
+document.getElementById(
+"live-location-status"
+);
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+"⏳ Location permission मांगी जा रही है...";
+
+}
+
+
+customerLocationWatchId =
+navigator.geolocation.watchPosition(
+
+async function(position){
+
+await updateCustomerLiveLocation(
+position
+);
+
+},
+
+function(error){
+
+console.error(
+"Live location error:",
+error
+);
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="error">' +
+"❌ Location नहीं मिल रही। " +
+"Browser में Location Permission Allow करो." +
+"</span>";
+
+}
+
+},
+
+{
+
+enableHighAccuracy:true,
+timeout:15000,
+maximumAge:3000
+
+}
+
+);
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+'<span class="location-success">' +
+"🟢 Live location sharing शुरू हो गई." +
+"<br>" +
+"Location permission Allow करो." +
+"</span>";
+
+}
+
+}
+
+
+function stopCustomerLiveLocation(){
+
+if(
+customerLocationWatchId !== null
+){
+
+navigator.geolocation.clearWatch(
+customerLocationWatchId
+);
+
+customerLocationWatchId =
+null;
+
+}
+
+
+const statusBox =
+document.getElementById(
+"live-location-status"
+);
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+"⛔ Live location sharing बंद कर दी गई है.";
+
+}
+
+
+console.log(
+"Customer live location stopped."
+);
+
+}
+
+
+/* ================= RENDER CUSTOMER TRACKING ================= */
+
+function renderCustomerTracking(order){
+
+const box =
+document.getElementById(
+"tracking-status"
+);
+
+
+if(!box)
+return;
+
+
+const status =
+String(
+order.order_status ||
+"pending"
+).toLowerCase();
+
+
+const delivery =
+order.estimated_delivery_time ||
+order.delivery ||
+"20–25 Minutes";
+
+
+const steps = [
+
+[
+"pending",
+"📝 Order Received"
+],
+
+[
+"confirmed",
+"✅ Order Confirmed"
+],
+
+[
+"preparing",
+"📦 Preparing"
+],
+
+[
+"out_for_delivery",
+"🚚 Out for Delivery"
+],
+
+[
+"delivered",
+"🎉 Delivered"
+]
+
+];
+
+
+const currentIndex =
+steps.findIndex(
+step =>
+step[0] === status
+);
+
+
+let html =
+"<p><strong>Estimated Delivery:</strong> " +
+escapeHtml(delivery) +
+"</p>";
+
+
+steps.forEach(
+(step,index)=>{
+
+const active =
+index <= currentIndex &&
+status !== "cancelled";
+
+
+html +=
+'<div class="tracking-step ' +
+(
+active
+? "tracking-active"
+: ""
+) +
+'">' +
+step[1] +
+"</div>";
+
+});
+
+
+if(status==="cancelled"){
+
+html +=
+'<div class="tracking-step" style="color:var(--danger);">' +
+"❌ Order Cancelled" +
+"</div>";
+
+}
+
+
+if(status==="out_for_delivery"){
+
+html +=
+"<p><strong>🚚 आपका order रास्ते में है।</strong></p>";
+
+}
+
+
+box.innerHTML =
+html;
+
+}
+
+
+/* ================= PLACE ORDER ================= */
+
+async function placeOrder(){
+
+if(cartItems.length===0){
+
+alert(
+"Please add products to your cart first."
+);
+
+return;
+
+}
+
+
+let name =
+document.getElementById(
+"customer-name"
+).value.trim();
+
+
+let phone =
+document.getElementById(
+"customer-phone"
+).value.trim();
+
+
+let address =
+document.getElementById(
+"customer-address"
+).value.trim();
+
+
+let payment =
+document.getElementById(
+"payment-method"
+).value;
+
+
+if(!name || !phone || !address){
+
+alert(
+"Please fill in your name, mobile number and address."
+);
+
+return;
+
+}
+
+
+if(!/^[0-9]{10}$/.test(phone)){
+
+alert(
+"Please enter a valid 10-digit mobile number."
+);
+
+return;
+
+}
+
+
+if(payment==="UPI"){
+  const confirmed=document.getElementById("upi-payment-confirmed");
+  if(!confirmed || !confirmed.checked){
+    alert("Please complete the UPI payment using the QR/UPI ID and tick the payment confirmation checkbox.");
+    return;
+  }
+}
+
+
+await getCustomerLocationForOrder();
+
+// Location is required for delivery-radius validation.
+if(customerLatitude === null || customerLongitude === null){
+
+document.getElementById(
+"order-message"
+).innerHTML =
+'<span class="error">' +
+"❌ आपकी current location नहीं मिल सकी। Location permission Allow करके फिर Try Again करें." +
+"</span>";
+
+return;
+
+}
+
+const radiusCheck = checkDeliveryRadius();
+
+if(!radiusCheck.allowed){
+
+document.getElementById(
+"order-message"
+).innerHTML =
+'<span class="error">' +
+"❌ Sorry! Currently not available.<br>" +
+"📍 आपकी location shop से " + radiusCheck.distance.toFixed(2) + " km दूर है.<br>" +
+"🚚 Delivery radius सिर्फ 5 km है.<br>" +
+"कृपया दूसरी location से Try Again करें." +
+"</span>";
+
+return;
+
+}
+
+let total =
+document.getElementById(
+"cart-total"
+).textContent;
+
+
+let order = {
+
+id:
+"VEDANT-" +
+Date.now(),
+
+name:name,
+
+phone:phone,
+
+address:address,
+
+payment:
+payment === "UPI" ? "UPI" : "Cash on Delivery",
+
+payment_status:
+payment === "UPI" ? "pending_verification" : "pending",
+
+order_status:
+"pending",
+
+total:total,
+
+items:
+JSON.parse(
+JSON.stringify(cartItems)
+),
+
+delivery:
+"20–25 Minutes",
+
+date:
+new Date().toLocaleString()
+
+};
+
+
+try{
+
+const {
+error:supabaseError
+} =
+await supabaseClient
+.from("orders")
+.insert([{
+
+order_id:
+order.id,
+
+customer_name:
+order.name,
+
+customer_phone:
+order.phone,
+
+customer_address:
+order.address,
+
+latitude:
+customerLatitude,
+
+longitude:
+customerLongitude,
+
+payment_method:
+order.payment,
+
+payment_status:
+order.payment_status,
+
+order_status:
+order.order_status,
+
+total:
+Number(order.total),
+
+items:
+order.items,
+
+delivery:
+order.delivery,
+
+order_date:
+new Date().toISOString()
+
+}]);
+
+
+if(supabaseError){
+
+console.error(
+"Supabase order error:",
+supabaseError
+);
+
+
+document.getElementById(
+"order-message"
+).innerHTML =
+
+'<span class="error">' +
+
+"❌ Order could not be saved to the online database. Please try again." +
+
+"</span>";
+
+return;
+
+}
+
+}
+catch(err){
+
+console.error(err);
+
+
+document.getElementById(
+"order-message"
+).innerHTML =
+
+'<span class="error">' +
+
+"❌ Database connection error. Please try again." +
+
+"</span>";
+
+return;
+
+}
+
+
+orderHistory.unshift(
+order
+);
+
+saveData();
+
+
+document.getElementById(
+"order-message"
+).innerHTML =
+
+`
+
+<span class="success">
+
+✅ Order placed successfully!
+
+<br>
+
+🧾 Order ID:
+${escapeHtml(order.id)}
+
+<br>
+
+🚚 Delivery:
+20–25 Minutes
+
+<br>
+
+💵 Payment:
+Cash on Delivery
+
+<br>
+
+📦 Order Status:
+${escapeHtml(order.order_status)}
+
+<br>
+
+💳 Payment Status:
+${escapeHtml(order.payment_status)}
+
+${
+customerLatitude !== null &&
+customerLongitude !== null
+
+?
+
+"<br>📍 Location saved with this order"
+
+:
+
+"<br>📍 Location not available; address saved"
+
+}
+
+</span>
+
+`;
+
+
+cartItems=[];
+
+discountAmount=0;
+
+customerLatitude=null;
+customerLongitude=null;
+
+saveData();
+
+updateCart();
+
+showOrderHistory();
+
+
+saveTrackedOrder(
+order.id,
+order.phone
+);
+
+
+setTrackingInputs(
+order.id,
+order.phone
+);
+
+
+renderCustomerTracking(
+order
+);
+
+startCustomerOrderRealtime();
+
+}
+
+
+/* ================= ORDER HISTORY ================= */
+
+async function showOrderHistory(){
+
+let box =
+document.getElementById(
+"order-history"
+);
+
+const phone =
+document.getElementById(
+"customer-phone"
+).value.trim();
+
+if(!/^[0-9]{10}$/.test(phone)){
+
+box.innerHTML =
+"<p>अपना 10-digit mobile number डालकर अपने orders देखें.</p>";
+
+return;
+
+}
+
+
+box.innerHTML =
+"<p>Loading orders...</p>";
+
+
+try{
+
+const {
+data:orders,
+error
+} =
+await supabaseClient
+.from("orders")
+.select("*")
+.order(
+"order_date",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+console.error(
+"Order fetch error:",
+error
+);
+
+
+box.innerHTML =
+'<p class="error">' +
+"❌ Could not load orders." +
+"</p>";
+
+return;
+
+}
+
+
+if(!orders || orders.length===0){
+
+box.innerHTML =
+"<p>No previous orders.</p>";
+
+return;
+
+}
+
+
+box.innerHTML="";
+
+
+orders.forEach(
+function(order){
+
+let orderStatus =
+order.order_status ||
+"pending";
+
+
+let paymentStatus =
+order.payment_status ||
+"pending";
+
+
+let orderId =
+order.order_id ||
+order.id ||
+"N/A";
+
+
+let total =
+order.total ||
+0;
+
+
+let paymentMethod =
+order.payment_method ||
+"Cash on Delivery";
+
+
+let delivery =
+order.delivery ||
+"20–25 Minutes";
+
+
+let date =
+order.order_date
+? new Date(
+order.order_date
+).toLocaleString()
+: "N/A";
+
+
+box.innerHTML += `
+
+<div class="history-item">
+
+<span class="badge">
+
+📦 Order Status:
+${escapeHtml(orderStatus)}
+
+</span>
+
+<p>
+
+<strong>
+Order ID:
+</strong>
+
+${escapeHtml(orderId)}
+
+</p>
+
+<p>
+
+<strong>
+Total:
+</strong>
+
+₹${total}
+
+</p>
+
+<p>
+
+<strong>
+Payment Method:
+</strong>
+
+${escapeHtml(paymentMethod)}
+
+</p>
+
+<p>
+
+<strong>
+Payment Status:
+</strong>
+
+${escapeHtml(paymentStatus)}
+
+</p>
+
+<p>
+
+<strong>
+Delivery:
+</strong>
+
+${escapeHtml(delivery)}
+
+</p>
+
+<p>
+
+<strong>
+Date:
+</strong>
+
+${escapeHtml(date)}
+
+</p>
+
+
+<div class="payment-box">
+
+<strong>🚚 Tracking</strong>
+
+<div class="tracking-step ${
+orderStatus==="pending"
+? "tracking-active"
+: ""
+}">
+📝 Order Received
+</div>
+
+<div class="tracking-step ${
+[
+"confirmed",
+"preparing",
+"out_for_delivery",
+"delivered"
+].includes(orderStatus)
+? "tracking-active"
+: ""
+}">
+✅ Order Confirmed
+</div>
+
+<div class="tracking-step ${
+[
+"preparing",
+"out_for_delivery",
+"delivered"
+].includes(orderStatus)
+? "tracking-active"
+: ""
+}">
+📦 Preparing
+</div>
+
+<div class="tracking-step ${
+[
+"out_for_delivery",
+"delivered"
+].includes(orderStatus)
+? "tracking-active"
+: ""
+}">
+🚚 Out for Delivery
+</div>
+
+<div class="tracking-step ${
+orderStatus==="delivered"
+? "tracking-active"
+: ""
+}">
+🎉 Delivered
+</div>
+
+<p>
+<strong>Estimated:</strong>
+${escapeHtml(delivery)}
+</p>
+
+${
+orderStatus==="out_for_delivery"
+?
+"<p class='location-success'>🚚 आपका order रास्ते में है।</p>"
+:
+""
+}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+catch(error){
+
+console.error(
+"Order history error:",
+error
+);
+
+
+box.innerHTML =
+'<p class="error">' +
+"❌ Something went wrong while loading orders." +
+"</p>";
+
+}
+
+}
+
+
+/* ================= ADMIN FUNCTIONS ================= */
+
+let adminOrderRefreshTimer=null;
+
+function notifyAdminOfNewOrders(orders){
+  const orderIds=orders.map(order=>String(order.order_id || order.id || "")).filter(Boolean);
+  const savedIds=JSON.parse(localStorage.getItem("vedantAdminSeenOrderIds") || "[]");
+  if(savedIds.length===0){
+    localStorage.setItem("vedantAdminSeenOrderIds",JSON.stringify(orderIds.slice(0,100)));
+    return;
+  }
+  const newOrders=orders.filter(order=>!savedIds.includes(String(order.order_id || order.id || "")));
+  const notification=document.getElementById("admin-order-notification");
+  if(newOrders.length && notification){
+    notification.textContent="🔔 New Order Received! "+newOrders.length+" नया order आया है।";
+    notification.classList.add("show");
+  }
+  localStorage.setItem("vedantAdminSeenOrderIds",JSON.stringify([...new Set([...orderIds,...savedIds])].slice(0,100)));
+}
+
+function startAdminOrderNotifications(){
+  if(adminOrderRefreshTimer) clearInterval(adminOrderRefreshTimer);
+  adminOrderRefreshTimer=setInterval(()=>loadAdminOrders(),15000);
+}
+
+function openAdminPanel(){
+
+const panel =
+document.getElementById(
+"adminPanel"
+);
+
+panel.style.display =
+"block";
+
+panel.scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+async function adminLogin(){
+
+const email =
+document.getElementById(
+"adminUsername"
+).value.trim();
+
+
+const password =
+document.getElementById(
+"adminPassword"
+).value;
+
+
+const message =
+document.getElementById(
+"adminLoginMessage"
+);
+
+
+if(!email || !password){
+
+message.textContent =
+"❌ Email और password दोनों डालो.";
+
+return;
+
+}
+
+
+message.textContent =
+"⏳ Login हो रहा है...";
+
+
+const {
+data,
+error
+} =
+await supabaseClient.auth.signInWithPassword({
+
+email:email,
+password:password
+
+});
+
+
+if(error){
+
+console.error(error);
+
+message.textContent =
+"❌ Login failed: " +
+error.message;
+
+return;
+
+}
+
+
+if(!data.session){
+
+message.textContent =
+"❌ Login session नहीं बनी.";
+
+return;
+
+}
+
+
+document.getElementById(
+"adminLoginBox"
+).style.display =
+"none";
+
+
+document.getElementById(
+"adminContent"
+).style.display =
+"block";
+
+
+message.textContent="";
+
+
+loadAdminOrders();
+startAdminOrderNotifications();
+
+}
+
+
+async function adminLogout(){
+
+await supabaseClient.auth.signOut();
+
+
+document.getElementById(
+"adminLoginBox"
+).style.display =
+"block";
+
+
+document.getElementById(
+"adminContent"
+).style.display =
+"none";
+
+
+document.getElementById(
+"adminPassword"
+).value="";
+
+
+document.getElementById(
+"adminOrders"
+).innerHTML =
+"<p>Admin logged out.</p>";
+
+}
+
+
+function adminStatusClass(status){
+
+const value =
+String(
+status ||
+"pending"
+).toLowerCase();
+
+
+if(
+value==="confirmed" ||
+value==="delivered"
+){
+
+return "status-confirmed";
+
+}
+
+
+if(value==="cancelled"){
+
+return "status-cancelled";
+
+}
+
+
+return "status-pending";
+
+}
+
+
+/* ================= ADMIN ORDERS ================= */
+
+async function loadAdminOrders(){
+
+const ordersBox =
+document.getElementById(
+"adminOrders"
+);
+
+
+const {
+data:sessionData
+} =
+await supabaseClient.auth.getSession();
+
+
+if(!sessionData.session){
+
+ordersBox.innerHTML =
+"<p>पहले admin login करो.</p>";
+
+return;
+
+}
+
+
+ordersBox.innerHTML =
+"<p>⏳ Loading orders...</p>";
+
+
+const filter =
+document.getElementById(
+"adminOrderFilter"
+).value;
+
+
+try{
+
+let query =
+supabaseClient
+.from("orders")
+.select("*")
+.order(
+"order_date",
+{
+ascending:false
+}
+);
+
+
+if(filter!=="all"){
+
+query =
+query.eq(
+"order_status",
+filter
+);
+
+}
+
+
+const {
+data:orders,
+error
+} =
+await query;
+
+
+if(error){
+
+console.error(error);
+
+
+ordersBox.innerHTML =
+'<p class="error">' +
+"❌ Orders load नहीं हुए." +
+"</p>";
+
+return;
+
+}
+
+
+if(!orders || orders.length===0){
+
+ordersBox.innerHTML =
+"<p>इस filter में कोई order नहीं है.</p>";
+
+return;
+
+}
+
+
+notifyAdminOfNewOrders(orders);
+
+
+ordersBox.innerHTML="";
+
+
+orders.forEach(
+function(order){
+
+const orderId =
+order.order_id ||
+order.id ||
+"N/A";
+
+
+const customerName =
+order.customer_name ||
+order.name ||
+"N/A";
+
+
+const phone =
+order.customer_phone ||
+order.phone ||
+"N/A";
+
+
+const address =
+order.customer_address ||
+order.address ||
+"N/A";
+
+
+const total =
+order.total ?? 0;
+
+
+const paymentMethod =
+order.payment_method ||
+order.payment ||
+"N/A";
+
+
+const orderStatus =
+order.order_status ||
+"pending";
+
+
+const paymentStatus =
+order.payment_status ||
+"pending";
+
+
+const date =
+order.order_date
+? new Date(
+order.order_date
+).toLocaleString()
+: "N/A";
+
+
+const hasLocation =
+order.latitude !== null &&
+order.latitude !== undefined &&
+order.longitude !== null &&
+order.longitude !== undefined &&
+Number.isFinite(
+Number(order.latitude)
+) &&
+Number.isFinite(
+Number(order.longitude)
+);
+
+
+ordersBox.innerHTML += `
+
+<div class="admin-order">
+
+<div class="admin-grid">
+
+<div>
+
+<strong>
+🧾 Order ID
+</strong>
+
+<p>
+${escapeHtml(orderId)}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+👤 Customer
+</strong>
+
+<p>
+${escapeHtml(customerName)}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+📱 Mobile
+</strong>
+
+<p>
+${escapeHtml(phone)}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+💰 Total
+</strong>
+
+<p>
+₹${total}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+💳 Payment
+</strong>
+
+<p>
+${escapeHtml(paymentMethod)}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+🕐 Date
+</strong>
+
+<p>
+${escapeHtml(date)}
+</p>
+
+</div>
+
+</div>
+
+
+<p>
+
+<strong>
+📍 Address:
+</strong>
+
+${escapeHtml(address)}
+
+</p>
+
+
+<!-- ================= CUSTOMER LOCATION + NAVIGATION ================= -->
+
+<div class="payment-box">
+
+<strong>
+📍 Customer Location
+</strong>
+
+${
+hasLocation
+
+?
+
+`
+
+<p>
+
+<span class="location-success">
+🟢 Location Available
+</span>
+
+</p>
+
+<p>
+
+Latitude:
+${Number(order.latitude).toFixed(6)}
+
+<br>
+
+Longitude:
+${Number(order.longitude).toFixed(6)}
+
+</p>
+
+
+<button
+class="admin-btn"
+onclick="openOrderLocation(
+${Number(order.latitude)},
+${Number(order.longitude)}
+)">
+
+🗺️ View Customer Location
+
+</button>
+
+
+<button
+class="navigate-btn"
+onclick="navigateToCustomer(
+${Number(order.latitude)},
+${Number(order.longitude)}
+)">
+
+🧭 Navigate to Customer
+
+</button>
+
+`
+
+:
+
+`
+
+<p class="admin-small">
+⚠️ Customer location अभी available नहीं है.
+</p>
+
+`
+
+}
+
+</div>
+
+
+<p>
+
+<span
+class="badge
+${adminStatusClass(orderStatus)}">
+
+Order:
+${escapeHtml(orderStatus)}
+
+</span>
+
+
+<span
+class="badge
+${adminStatusClass(paymentStatus)}">
+
+Payment:
+${escapeHtml(paymentStatus)}
+
+</span>
+
+</p>
+
+
+<div class="admin-actions">
+
+
+<select
+id="order-status-${escapeAttribute(orderId)}">
+
+<option
+value="pending"
+${orderStatus==="pending"
+? "selected"
+: ""}>
+
+Pending
+
+</option>
+
+
+<option
+value="confirmed"
+${orderStatus==="confirmed"
+? "selected"
+: ""}>
+
+Confirmed
+
+</option>
+
+
+<option
+value="preparing"
+${orderStatus==="preparing"
+? "selected"
+: ""}>
+
+Preparing
+
+</option>
+
+
+<option
+value="out_for_delivery"
+${orderStatus==="out_for_delivery"
+? "selected"
+: ""}>
+
+Out for Delivery
+
+</option>
+
+
+<option
+value="delivered"
+${orderStatus==="delivered"
+? "selected"
+: ""}>
+
+Delivered
+
+</option>
+
+
+<option
+value="cancelled"
+${orderStatus==="cancelled"
+? "selected"
+: ""}>
+
+Cancelled
+
+</option>
+
+</select>
+
+
+<button
+class="admin-btn"
+onclick="updateOrderStatus('${escapeAttribute(orderId)}')">
+
+📦 Update Order
+
+</button>
+
+
+<input
+id="delivery-time-${escapeAttribute(orderId)}"
+type="text"
+value="${escapeAttribute(order.delivery || "20–25 Minutes")}"
+placeholder="Delivery time">
+
+
+<button
+class="admin-btn"
+onclick="updateDeliveryTime('${escapeAttribute(orderId)}')">
+
+⏱️ Save Delivery Time
+
+</button>
+
+
+<select
+id="payment-status-${escapeAttribute(orderId)}">
+
+<option
+value="pending"
+${paymentStatus==="pending"
+? "selected"
+: ""}>
+
+Payment Pending
+
+</option>
+
+
+<option
+value="confirmed"
+${paymentStatus==="confirmed"
+? "selected"
+: ""}>
+
+Payment Confirmed
+
+</option>
+
+
+<option
+value="failed"
+${paymentStatus==="failed"
+? "selected"
+: ""}>
+
+Payment Failed
+
+</option>
+
+
+<option
+value="refunded"
+${paymentStatus==="refunded"
+? "selected"
+: ""}>
+
+Refunded
+
+</option>
+
+</select>
+
+
+<button
+class="admin-btn"
+onclick="updatePaymentStatus('${escapeAttribute(orderId)}')">
+
+💳 Update Payment
+
+</button>
+
+<button
+class="order-delete-btn"
+onclick="deleteOrder('${escapeAttribute(orderId)}')">
+
+🗑️ Delete Order
+
+</button>
+
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+catch(error){
+
+console.error(error);
+
+
+ordersBox.innerHTML =
+'<p class="error">' +
+"❌ Something went wrong." +
+"</p>";
+
+}
+
+}
+
+
+/* ================= DELETE ORDER ================= */
+
+async function deleteOrder(orderId){
+
+    const cleanOrderId = String(orderId || "").trim();
+
+    if(!cleanOrderId){
+        alert("❌ Valid Order ID नहीं मिला.");
+        return;
+    }
+
+    const { data: sessionData, error: sessionError } =
+        await supabaseClient.auth.getSession();
+
+    if(sessionError || !sessionData.session){
+        alert("❌ पहले admin login करो.");
+        return;
+    }
+
+    if(!confirm(
+        "⚠️ क्या आप इस order को permanently delete करना चाहते हैं?\n\n" +
+        "Order ID: " + cleanOrderId +
+        "\n\nयह order Supabase से भी delete हो जाएगा."
+    )) return;
+
+    const { error } = await supabaseClient
+        .from("orders")
+        .delete()
+        .eq("order_id", cleanOrderId);
+
+    if(error){
+        console.error("Order delete error:", error);
+        alert("❌ Order delete नहीं हुआ: " + error.message);
+        return;
+    }
+
+    orderHistory = orderHistory.filter(order =>
+        String(order.order_id || order.id || "") !== cleanOrderId
+    );
+    saveData();
+
+    alert("✅ Order permanently deleted.");
+    await loadAdminOrders();
+    await showOrderHistory();
+}
+
+
+/* ================= GOOGLE MAPS ================= */
+
+function openOrderLocation(
+latitude,
+longitude
+){
+
+latitude =
+Number(latitude);
+
+longitude =
+Number(longitude);
+
+
+if(
+!Number.isFinite(latitude) ||
+!Number.isFinite(longitude)
+){
+
+alert(
+"❌ Valid location नहीं मिली."
+);
+
+return;
+
+}
+
+
+const url =
+"https://www.google.com/maps?q=" +
+encodeURIComponent(
+latitude + "," + longitude
+);
+
+
+window.open(
+url,
+"_blank",
+"noopener,noreferrer"
+);
+
+}
+
+
+/*
+ * Admin के लिए customer तक
+ * Google Maps driving navigation.
+ */
+
+function navigateToCustomer(
+latitude,
+longitude
+){
+
+latitude =
+Number(latitude);
+
+longitude =
+Number(longitude);
+
+
+if(
+!Number.isFinite(latitude) ||
+!Number.isFinite(longitude)
+){
+
+alert(
+"❌ Customer की valid location उपलब्ध नहीं है."
+);
+
+return;
+
+}
+
+
+const destination =
+latitude +
+"," +
+longitude;
+
+
+const url =
+"https://www.google.com/maps/dir/?api=1" +
+"&destination=" +
+encodeURIComponent(
+destination
+) +
+"&travelmode=driving";
+
+
+window.open(
+url,
+"_blank",
+"noopener,noreferrer"
+);
+
+}
+
+
+/* ================= UPDATE ORDER STATUS ================= */
+
+async function updateOrderStatus(orderId){
+
+const select =
+document.getElementById(
+"order-status-" +
+orderId
+);
+
+
+if(!select){
+
+alert(
+"❌ Order status selector नहीं मिला."
+);
+
+return;
+
+}
+
+
+const newStatus =
+select.value;
+
+
+const {
+error
+} =
+await supabaseClient
+.from("orders")
+.update({
+
+order_status:
+newStatus
+
+})
+.eq(
+"order_id",
+orderId
+);
+
+
+if(error){
+
+console.error(error);
+
+
+alert(
+"❌ Order status update नहीं हुआ."
+);
+
+return;
+
+}
+
+
+alert(
+"✅ Order status updated."
+);
+
+
+await loadAdminOrders();
+
+await showOrderHistory();
+
+
+const {
+data:updatedOrder
+} =
+await supabaseClient
+.from("orders")
+.select("*")
+.eq(
+"order_id",
+orderId
+)
+.single();
+
+
+if(updatedOrder){
+
+renderCustomerTracking(
+updatedOrder
+);
+
+}
+
+}
+
+
+/* ================= DELIVERY TIME ================= */
+
+async function updateDeliveryTime(orderId){
+
+const input =
+document.getElementById(
+"delivery-time-" +
+orderId
+);
+
+
+if(!input)
+return;
+
+
+const delivery =
+input.value.trim();
+
+
+if(!delivery){
+
+alert(
+"❌ Delivery time डालो."
+);
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+.from("orders")
+.update({
+
+delivery:delivery,
+
+estimated_delivery_time:
+delivery
+
+})
+.eq(
+"order_id",
+orderId
+);
+
+
+if(error){
+
+console.error(error);
+
+
+alert(
+"❌ Delivery time update नहीं हुआ: " +
+error.message
+);
+
+return;
+
+}
+
+
+alert(
+"✅ Delivery time updated."
+);
+
+
+await loadAdminOrders();
+
+await showOrderHistory();
+
+}
+
+
+/* ================= PAYMENT STATUS ================= */
+
+async function updatePaymentStatus(orderId){
+
+const select =
+document.getElementById(
+"payment-status-" +
+orderId
+);
+
+
+if(!select)
+return;
+
+
+const newStatus =
+select.value;
+
+
+const {
+error
+} =
+await supabaseClient
+.from("orders")
+.update({
+
+payment_status:
+newStatus
+
+})
+.eq(
+"order_id",
+orderId
+);
+
+
+if(error){
+
+console.error(error);
+
+
+alert(
+"❌ Payment status update नहीं हुआ."
+);
+
+return;
+
+}
+
+
+alert(
+"✅ Payment status updated."
+);
+
+
+await loadAdminOrders();
+
+await showOrderHistory();
+
+}
+
+
+/* ================= RESTORE ADMIN SESSION ================= */
+
+async function restoreAdminSession(){
+
+const {
+data
+} =
+await supabaseClient.auth.getSession();
+
+
+if(data.session){
+
+document.getElementById(
+"adminLoginBox"
+).style.display =
+"none";
+
+
+document.getElementById(
+"adminContent"
+).style.display =
+"block";
+
+
+loadAdminOrders();
+
+}
+
+}
+
+
+/* ================= PRODUCT MANAGEMENT ================= */
+
+async function loadAdminProducts(){
+
+const box =
+document.getElementById(
+"adminProductsList"
+);
+
+
+if(!box)
+return;
+
+
+box.innerHTML =
+"<p>⏳ Loading products...</p>";
+
+
+const {
+data:sessionData
+} =
+await supabaseClient.auth.getSession();
+
+
+if(!sessionData.session){
+
+box.innerHTML =
+'<p class="error">' +
+"पहले admin login करो." +
+"</p>";
+
+return;
+
+}
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("products")
+.select("*")
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+console.error(error);
+
+
+box.innerHTML =
+'<p class="error">' +
+"❌ Products load नहीं हुए: " +
+escapeHtml(error.message) +
+"</p>";
+
+return;
+
+}
+
+
+if(!data || data.length===0){
+
+box.innerHTML =
+"<p>अभी कोई product नहीं है.</p>";
+
+return;
+
+}
+
+
+box.innerHTML="";
+
+
+data.forEach(
+product=>{
+
+const stock =
+Number(
+product.stock || 0
+);
+
+
+const available =
+product.available !== false &&
+stock > 0;
+
+
+const card =
+document.createElement(
+"div"
+);
+
+
+card.className =
+"product-admin-card";
+
+
+card.innerHTML = `
+
+<div class="product-admin-grid">
+
+<div>
+
+<strong>
+${escapeHtml(product.name || "")}
+</strong>
+
+<div class="admin-small">
+${escapeHtml(product.category || "")}
+</div>
+
+</div>
+
+
+<div>
+
+<strong>
+Price
+</strong>
+
+<div>
+₹${Number(product.price || 0).toFixed(2)}
+/
+${escapeHtml(product.unit || "piece")}
+</div>
+
+</div>
+
+
+<div>
+
+<strong>
+Stock
+</strong>
+
+<div>
+${stock}
+</div>
+
+</div>
+
+
+<div>
+
+<span
+class="stock-badge
+${available
+? "stock-in"
+: "stock-out"}">
+
+${available
+? "IN STOCK"
+: "OUT OF STOCK"}
+
+</span>
+
+</div>
+
+</div>
+
+
+<div class="product-admin-actions">
+
+<button
+class="product-save-btn"
+onclick="editProduct(${Number(product.id)})">
+
+✏️ Edit / Change Price
+
+</button>
+
+
+<button
+class="stock-in-btn"
+onclick="changeProductStock(${Number(product.id)},1)">
+
+➕ Stock In
+
+</button>
+
+
+<button
+class="stock-out-btn"
+onclick="changeProductStock(${Number(product.id)},-1)">
+
+➖ Stock Out
+
+</button>
+
+
+<button
+onclick="toggleProductAvailability(
+${Number(product.id)},
+${available}
+)">
+
+${
+available
+? "🚫 Mark Out of Stock"
+: "✅ Mark In Stock"
+}
+
+</button>
+
+
+<button
+class="product-delete-btn"
+onclick="deleteProduct(${Number(product.id)})">
+
+🗑️ Delete
+
+</button>
+
+</div>
+
+`;
+
+
+box.appendChild(card);
+
+});
+
+}
+
+
+async function saveProduct(event){
+
+event.preventDefault();
+
+
+const id =
+document.getElementById(
+"product-id"
+).value.trim();
+
+
+const payload = {
+
+name:
+document.getElementById(
+"product-name"
+).value.trim(),
+
+category:
+document.getElementById(
+"product-category"
+).value.trim(),
+
+price:
+Number(
+document.getElementById(
+"product-price"
+).value
+),
+
+stock:
+Number(
+document.getElementById(
+"product-stock"
+).value
+),
+
+unit:
+document.getElementById(
+"product-unit"
+).value.trim()
+||
+"piece",
+
+image_url:
+document.getElementById(
+"product-image"
+).value.trim()
+||
+null,
+
+description:
+document.getElementById(
+"product-description"
+).value.trim()
+||
+null,
+
+available:
+document.getElementById(
+"product-available"
+).checked
+
+};
+
+
+if(
+!payload.name ||
+!payload.category
+){
+
+showProductMessage(
+"❌ Name और category जरूरी हैं.",
+true
+);
+
+return;
+
+}
+
+
+if(
+!Number.isFinite(payload.price) ||
+payload.price < 0
+){
+
+showProductMessage(
+"❌ Price सही डालो.",
+true
+);
+
+return;
+
+}
+
+
+if(
+!Number.isInteger(payload.stock) ||
+payload.stock < 0
+){
+
+showProductMessage(
+"❌ Stock 0 या उससे ज्यादा integer होना चाहिए.",
+true
+);
+
+return;
+
+}
+
+
+if(payload.stock===0){
+
+payload.available=false;
+
+}
+
+
+const result =
+id
+
+?
+
+await supabaseClient
+.from("products")
+.update(payload)
+.eq(
+"id",
+Number(id)
+)
+
+:
+
+await supabaseClient
+.from("products")
+.insert([
+payload
+]);
+
+
+if(result.error){
+
+console.error(
+result.error
+);
+
+
+showProductMessage(
+"❌ Save नहीं हुआ: " +
+result.error.message,
+true
+);
+
+return;
+
+}
+
+
+showProductMessage(
+id
+? "✅ Product updated successfully."
+: "✅ Product added successfully.",
+false
+);
+
+
+resetProductForm();
+
+await loadAdminProducts();
+
+await loadCustomerProducts();
+
+}
+
+
+async function editProduct(id){
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("products")
+.select("*")
+.eq(
+"id",
+Number(id)
+)
+.single();
+
+
+if(error){
+
+alert(
+"❌ Product load नहीं हुआ: " +
+error.message
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"product-id"
+).value =
+data.id;
+
+
+document.getElementById(
+"product-name"
+).value =
+data.name || "";
+
+
+document.getElementById(
+"product-category"
+).value =
+data.category || "";
+
+
+document.getElementById(
+"product-price"
+).value =
+data.price ?? 0;
+
+
+document.getElementById(
+"product-stock"
+).value =
+data.stock ?? 0;
+
+
+document.getElementById(
+"product-unit"
+).value =
+data.unit || "piece";
+
+
+document.getElementById(
+"product-image"
+).value =
+data.image_url || "";
+
+
+document.getElementById(
+"product-description"
+).value =
+data.description || "";
+
+
+document.getElementById(
+"product-available"
+).checked =
+data.available !== false &&
+Number(data.stock || 0) > 0;
+
+
+document.getElementById(
+"productForm"
+).scrollIntoView({
+behavior:"smooth",
+block:"center"
+});
+
+
+showProductMessage(
+"✏️ Edit mode: price/stock बदलकर Save करो.",
+false
+);
+
+}
+
+
+function resetProductForm(){
+
+document.getElementById(
+"productForm"
+).reset();
+
+
+document.getElementById(
+"product-id"
+).value="";
+
+
+document.getElementById(
+"product-unit"
+).value="piece";
+
+
+document.getElementById(
+"product-available"
+).checked=true;
+
+}
+
+
+async function changeProductStock(id,amount){
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("products")
+.select("stock")
+.eq(
+"id",
+Number(id)
+)
+.single();
+
+
+if(error){
+
+alert(
+"❌ Stock load नहीं हुआ: " +
+error.message
+);
+
+return;
+
+}
+
+
+const newStock =
+Math.max(
+0,
+Number(data.stock || 0) +
+amount
+);
+
+
+const {
+error:updateError
+} =
+await supabaseClient
+.from("products")
+.update({
+
+stock:newStock,
+
+available:
+newStock > 0
+
+})
+.eq(
+"id",
+Number(id)
+);
+
+
+if(updateError){
+
+alert(
+"❌ Stock update नहीं हुआ: " +
+updateError.message
+);
+
+return;
+
+}
+
+
+await loadAdminProducts();
+
+await loadCustomerProducts();
+
+}
+
+
+async function toggleProductAvailability(
+id,
+current
+){
+
+const {
+error
+} =
+await supabaseClient
+.from("products")
+.update({
+available:!current
+})
+.eq(
+"id",
+Number(id)
+);
+
+
+if(error){
+
+alert(
+"❌ Availability update नहीं हुआ: " +
+error.message
+);
+
+return;
+
+}
+
+
+await loadAdminProducts();
+
+await loadCustomerProducts();
+
+}
+
+
+async function deleteProduct(id){
+
+if(
+!confirm(
+"क्या यह product delete करना है?"
+)
+)
+return;
+
+
+const {
+error
+} =
+await supabaseClient
+.from("products")
+.delete()
+.eq(
+"id",
+Number(id)
+);
+
+
+if(error){
+
+alert(
+"❌ Delete नहीं हुआ: " +
+error.message
+);
+
+return;
+
+}
+
+
+await loadAdminProducts();
+
+await loadCustomerProducts();
+
+}
+
+
+/* ================= CUSTOMER PRODUCTS ================= */
+
+async function loadCustomerProducts(){
+
+const productsBox =
+document.getElementById(
+"products"
+);
+
+
+if(!productsBox)
+return;
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("products")
+.select("*")
+.eq(
+"available",
+true
+)
+.gt(
+"stock",
+0
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+console.error(
+"Customer product load error:",
+error
+);
+
+return;
+
+}
+
+
+if(!data || data.length===0)
+return;
+
+
+productsBox.innerHTML="";
+
+
+data.forEach(
+product=>{
+
+const price =
+Number(
+product.price || 0
+);
+
+
+const stock =
+Number(
+product.stock || 0
+);
+
+
+const category =
+String(
+product.category ||
+"grocery"
+).toLowerCase();
+
+
+const image =
+product.image_url;
+
+
+const card =
+document.createElement(
+"div"
+);
+
+
+card.className =
+"product";
+
+
+card.dataset.category =
+category;
+
+
+card.dataset.name =
+String(
+product.name || ""
+).toLowerCase();
+
+
+card.innerHTML = `
+
+<div class="product-icon">
+
+${
+image
+
+?
+
+`<img
+src="${escapeAttribute(image)}"
+alt="${escapeAttribute(product.name || "Product")}"
+style="max-width:100%;height:120px;object-fit:contain;border-radius:8px;">`
+
+:
+
+"🛒"
+
+}
+
+</div>
+
+
+<h3>
+${escapeHtml(product.name || "")}
+</h3>
+
+
+<p class="price">
+
+₹${price.toFixed(2)}
+per
+${escapeHtml(product.unit || "piece")}
+
+</p>
+
+
+<p class="admin-small">
+
+Stock:
+${stock}
+
+</p>
+
+
+<button
+class="cart-btn"
+onclick='addToCart(
+${JSON.stringify(
+String(product.name || "")
+)},
+${price}
+)'>
+
+Add to Cart
+
+</button>
+
+
+<button
+class="wish-btn"
+onclick='addWishlist(
+${JSON.stringify(
+String(product.name || "")
+)}
+)'>
+
+❤️ Wishlist
+
+</button>
+
+`;
+
+
+productsBox.appendChild(
+card
+);
+
+});
+
+}
+
+
+/* ================= HELPERS ================= */
+
+function showProductMessage(
+message,
+isError
+){
+
+const el =
+document.getElementById(
+"product-message"
+);
+
+
+el.className =
+isError
+? "error"
+: "success";
+
+
+el.textContent =
+message;
+
+}
+
+
+function escapeHtml(value){
+
+return String(value)
+.replaceAll(
+"&",
+"&amp;"
+)
+.replaceAll(
+"<",
+"&lt;"
+)
+.replaceAll(
+">",
+"&gt;"
+)
+.replaceAll(
+'"',
+"&quot;"
+)
+.replaceAll(
+"'",
+"&#039;"
+);
+
+}
+
+
+function escapeAttribute(value){
+
+return escapeHtml(value);
+
+}
+
+
+/* ================= OTHER FUNCTIONS ================= */
+
+function toggleDarkMode(){
+
+document.body.classList.toggle(
+"dark"
+);
+
+
+localStorage.setItem(
+"vedantDarkMode",
+document.body.classList.contains(
+"dark"
+)
+);
+
+}
+
+
+function scrollToProducts(){
+
+document.getElementById(
+"products-heading"
+)
+.scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+function loadSettings(){
+
+if(
+localStorage.getItem(
+"vedantDarkMode"
+) === "true"
+){
+
+document.body.classList.add(
+"dark"
+);
+
+}
+
+}
+
+
+/* ================= STARTUP ================= */
+
+loadSettings();
+
+updateCart();
+
+
+/* ================= MODERN MULTI-PAGE UI ================= */
+function modernUIInit(){
+  const body=document.body;
+  const top=document.querySelector(".top");
+  if(top) top.classList.add("hero");
+  const productsHeading=document.getElementById("products-heading");
+  const search=document.getElementById("searchBox");
+  const cats=document.querySelector(".categories");
+  const products=document.getElementById("products");
+  const cart=document.getElementById("cart");
+  const history=document.getElementById("history");
+  const admin=document.getElementById("adminPanel");
+
+  if(!top || !products || !cart || !history || !admin) return;
+  if(!top.querySelector(".hero-content")){
+    const hc=document.createElement("div"); hc.className="hero-content";
+    while(top.firstChild) hc.appendChild(top.firstChild);
+    top.appendChild(hc);
+  }
+
+  const nav=document.createElement("nav");
+  nav.className="modern-nav";
+  nav.innerHTML=`
+    <div class="brand">
+      <div class="brand-logo">🛒</div>
+      <div>VEDANT<br><small style="font-weight:700;color:var(--muted)">GROCERY SHOP</small></div>
+    </div>
+    <div class="nav-links">
+      <button data-page="home">Home</button>
+      <button data-page="shop">Shop</button>
+      <button data-page="orders">Orders</button>
+      <button data-page="track">Track</button>
+      <button data-page="admin">Admin</button>
+    </div>
+    <button class="nav-cart" data-page="cart">🛒 Cart <span class="cart-dot" id="modern-cart-count">0</span></button>
+  `;
+  body.insertBefore(nav,body.firstChild);
+
+  const bottom=document.createElement("div");
+  bottom.className="modern-bottom-nav";
+  bottom.innerHTML=`
+    <button data-page="home"><span>🏠</span>Home</button>
+    <button data-page="shop"><span>🛍️</span>Shop</button>
+    <button data-page="cart"><span>🛒</span>Cart</button>
+    <button data-page="orders"><span>📦</span>Orders</button>
+    <button data-page="track"><span>🚚</span>Track</button>
+  `;
+  body.appendChild(bottom);
+
+  const home=document.createElement("main");
+  home.id="page-home"; home.className="page active";
+  top.parentNode.insertBefore(home,top);
+  home.appendChild(top);
+
+  const feature=document.createElement("div");
+  feature.className="feature-grid";
+  feature.innerHTML=`
+    <div class="feature-card"><div class="feature-icon">⚡</div><h3>Quick Delivery</h3><p>Fast local delivery within our service area.</p></div>
+    <div class="feature-card"><div class="feature-icon">📍</div><h3>5 KM Delivery</h3><p>Delivery available within 5 km of the shop.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔒</div><h3>Secure Orders</h3><p>Your order and tracking are connected with Supabase.</p></div>
+  `;
+  home.appendChild(feature);
+
+  const shop=document.createElement("main");
+  shop.id="page-shop"; shop.className="page";
+  body.appendChild(shop);
+  const shopHead=document.createElement("div");
+  shopHead.className="section-head";
+  shopHead.innerHTML=`<div><h2>🛍️ Shop Fresh & Fast</h2><p>Choose your essentials and add them to your cart.</p></div>`;
+  shop.appendChild(shopHead);
+  shop.appendChild(productsHeading);
+  shop.appendChild(search);
+  shop.appendChild(cats);
+  shop.appendChild(products);
+
+  const cartPage=document.createElement("main");
+  cartPage.id="page-cart"; cartPage.className="page";
+  body.appendChild(cartPage);
+  const cartHead=document.createElement("div");
+  cartHead.className="section-head";
+  cartHead.innerHTML=`<div><h2>🛒 Your Cart</h2><p>Review items before checkout.</p></div>`;
+  cartPage.appendChild(cartHead);
+  cartPage.appendChild(cart);
+
+  const proceed=document.createElement("button");
+  proceed.id="proceed-checkout-btn";
+  proceed.className="place-order";
+  proceed.type="button";
+  proceed.textContent="Continue to Checkout →";
+  proceed.onclick=()=>showPage("checkout");
+  cart.appendChild(proceed);
+
+  const checkout=document.createElement("main");
+  checkout.id="page-checkout"; checkout.className="page";
+  body.appendChild(checkout);
+  checkout.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('cart')">← Back</button><div><h2 style="margin:0">Checkout</h2><p style="margin:3px 0;color:var(--muted)">Delivery details & payment</p></div></div>`;
+  const checkoutGrid=document.createElement("div");
+  checkoutGrid.className="checkout-grid";
+  const details=document.createElement("div"); details.className="checkout-card";
+  const summary=document.createElement("div"); summary.className="checkout-card";
+  checkoutGrid.append(details,summary); checkout.appendChild(checkoutGrid);
+
+  const children=[...cart.children];
+  const idsToCheckout=new Set(["customer-name","customer-phone","customer-address","delivery","customer-location-box","order-summary","order-message","payment-method"]);
+  const moveNodes=[];
+  children.forEach((el)=>{
+    if(el.id==="customer-tracking-box") return;
+    if(idsToCheckout.has(el.id)) moveNodes.push(el);
+    else if(el.matches("h2") && ["🚚 Delivery Details","💳 Payment","📋 Order Summary"].includes(el.textContent.trim())) moveNodes.push(el);
+    else if(el.id==="" && el.classList.contains("payment-box") && el.querySelector("#payment-method")) moveNodes.push(el);
+    else if(el.matches(".place-order")) moveNodes.push(el);
+  });
+  moveNodes.forEach(el=>details.appendChild(el));
+
+  // Put order summary and place-order into a separate summary column.
+  const os=document.getElementById("order-summary");
+  const om=document.getElementById("order-message");
+  const po=details.querySelector(".place-order");
+  const paymentSelect=document.getElementById("payment-method");
+  const paymentBox=paymentSelect ? paymentSelect.closest(".payment-box") : null;
+  const paymentHeading=[...details.querySelectorAll("h2")].find(h=>h.textContent.trim()==="💳 Payment");
+  if(os){ summary.appendChild(document.createElement("h3")).textContent="📋 Order Summary"; summary.appendChild(os); }
+  if(paymentHeading) summary.appendChild(paymentHeading);
+  if(paymentBox) summary.appendChild(paymentBox);
+  if(paymentSelect) setTimeout(()=>showPaymentInfo(),0);
+  if(po) summary.appendChild(po);
+  if(om) summary.appendChild(om);
+
+  const track=document.createElement("main");
+  track.id="page-track"; track.className="page";
+  body.appendChild(track);
+  const trackHead=document.createElement("div");
+  trackHead.className="section-head";
+  trackHead.innerHTML=`<div><h2>🚚 Track Your Order</h2><p>Enter your Order ID and mobile number.</p></div>`;
+  track.appendChild(trackHead);
+  const trackingBox=document.getElementById("customer-tracking-box");
+  if(trackingBox) track.appendChild(trackingBox);
+
+  const ordersPage=document.createElement("main");
+  ordersPage.id="page-orders"; ordersPage.className="page";
+  body.appendChild(ordersPage);
+  const ordersHead=document.createElement("div");
+  ordersHead.className="section-head";
+  ordersHead.innerHTML=`<div><h2>📦 My Orders</h2><p>See your recent order status and delivery estimate.</p></div>`;
+  ordersPage.appendChild(ordersHead);
+  ordersPage.appendChild(history);
+
+  const adminPage=document.createElement("main");
+  adminPage.id="page-admin"; adminPage.className="page";
+  body.appendChild(adminPage);
+  adminPage.appendChild(admin);
+
+  const homeHero=top.querySelector(".shop-btn");
+  if(homeHero){
+    homeHero.textContent="🛍️ Start Shopping";
+    homeHero.onclick=()=>showPage("shop");
+  }
+
+  const dark=top.querySelector(".dark-btn");
+  if(dark) dark.textContent="🌙 Theme";
+
+  const adminBtn=top.querySelector(".admin-btn");
+  if(adminBtn){
+    adminBtn.textContent="🔐 Admin";
+    adminBtn.onclick=()=>showPage("admin");
+  }
+
+  // Make delivery radius visible on the hero.
+  const radius=document.createElement("div");
+  radius.id="radius-pill";
+  radius.innerHTML="📍 Delivery radius: 5 KM";
+  const heroContent=top.querySelector(".hero-content") || top;
+  heroContent.appendChild(radius);
+
+  // Page switching
+  window.showPage=function(page){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    const target=document.getElementById("page-"+page);
+    if(target) target.classList.add("active");
+    const adminPanel=document.getElementById("adminPanel");
+    if(adminPanel) adminPanel.style.display=(page==="admin" ? "block" : "none");
+    document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.getAttribute("data-page")===page));
+    window.scrollTo({top:0,behavior:"smooth"});
+    if(page==="shop" && typeof loadCustomerProducts==="function") loadCustomerProducts();
+    if(page==="orders" && typeof showOrderHistory==="function") showOrderHistory();
+    if(page==="admin" && typeof loadAdminOrders==="function") loadAdminOrders();
+    if(page==="cart" && typeof updateCart==="function") updateCart();
+  };
+
+  document.querySelectorAll("[data-page]").forEach(btn=>{
+    btn.addEventListener("click",()=>showPage(btn.getAttribute("data-page")));
+  });
+
+  // Keep the cart counter synced with the existing cart state.
+  const oldUpdateCart=window.updateCart;
+  if(typeof oldUpdateCart==="function"){
+    window.updateCart=function(){
+      oldUpdateCart();
+      const el=document.getElementById("modern-cart-count");
+      const stored=JSON.parse(localStorage.getItem("vedantCart")||"[]");
+      if(el) el.textContent=stored.reduce((n,x)=>n+(Number(x.quantity)||0),0);
+    };
+  }
+
+  // Better location status: do not overwrite an out-of-radius error.
+  if(typeof window.requestCustomerLocation==="function"){
+    window.requestCustomerLocation=function(){
+      const status=document.getElementById("location-status");
+      if(!navigator.geolocation){
+        if(status){status.textContent="❌ इस browser में location support नहीं है।";status.className="error";}
+        return;
+      }
+      if(status){status.textContent="⏳ Current location ली जा रही है...";status.className="payment-note";}
+      navigator.geolocation.getCurrentPosition(position=>{
+        window.customerLatitude=position.coords.latitude;
+        window.customerLongitude=position.coords.longitude;
+        const r=typeof checkDeliveryRadius==="function" ? checkDeliveryRadius() : {allowed:true,distance:null};
+        if(!status) return;
+        if(r.allowed){
+          status.innerHTML=`✅ Current location मिल गई।<br>📏 Shop से दूरी: <strong>${r.distance.toFixed(2)} km</strong><br>🟢 Delivery available`;
+          status.className="location-success";
+        }else{
+          status.innerHTML=`❌ Sorry! Currently not available.<br>📏 आपकी location shop से <strong>${r.distance.toFixed(2)} km</strong> दूर है.<br>🚚 Delivery radius सिर्फ 5 km है.`;
+          status.className="error";
+        }
+      },()=>{
+        if(status){status.textContent="⚠️ Location नहीं मिली। Browser में Location Permission Allow करें.";status.className="error";}
+      },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+    };
+  }
+
+  showPage("home");
+  if(typeof updateCart==="function") updateCart();
+}
+
+
+modernUIInit();
+
+showWishlist();
+
+showPaymentInfo();
+
+showOrderHistory();
+
+
+if(
+trackedOrderId &&
+trackedCustomerPhone
+){
+
+setTrackingInputs(
+trackedOrderId,
+trackedCustomerPhone
+);
+
+trackCustomerOrder();
+
+}
+else if(
+orderHistory.length > 0
+){
+
+renderCustomerTracking(
+orderHistory[0]
+);
+
+}
+
+
+loadCustomerProducts();
+
+restoreAdminSession();
+
+</script>
+
+
+<script id="stvn-qty-control-js">
+(function(){
+  // Product-card quantity state is kept in localStorage so refresh does not reset it.
+  const KEY="stvn_product_quantities_v1";
+  let quantities={};
+  try{ quantities=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ quantities={}; }
+
+  function save(){ localStorage.setItem(KEY,JSON.stringify(quantities)); }
+
+  function productKeyFromButton(btn){
+    if(!btn) return null;
+    return btn.dataset.productId || btn.dataset.id ||
+      btn.getAttribute("data-product-id") ||
+      btn.getAttribute("data-id") ||
+      btn.closest("[data-product-id]")?.dataset.productId ||
+      btn.closest("[data-id]")?.dataset.id || null;
+  }
+
+  function findQtyButton(productId){
+    return document.querySelector(
+      '.stvn-add-cart-btn[data-product-id="'+CSS.escape(String(productId))+'"]'
+    );
+  }
+
+  function buildControl(btn, productId){
+    let wrap=btn.parentElement;
+    if(!wrap || !wrap.classList.contains("stvn-cart-wrap")){
+      wrap=document.createElement("span");
+      wrap.className="stvn-cart-wrap";
+      btn.parentNode.insertBefore(wrap,btn);
+      wrap.appendChild(btn);
+    }
+    btn.classList.add("stvn-hidden");
+
+    let control=wrap.querySelector(".stvn-qty-control");
+    if(!control){
+      control=document.createElement("span");
+      control.className="stvn-qty-control";
+      control.dataset.productId=productId;
+      control.innerHTML =
+        '<button type="button" class="stvn-qty-minus" aria-label="Decrease quantity">−</button>'+
+        '<span class="stvn-qty-value">1</span>'+
+        '<button type="button" class="stvn-qty-plus" aria-label="Increase quantity">+</button>';
+      wrap.appendChild(control);
+
+      control.querySelector(".stvn-qty-minus").addEventListener("click",function(){
+        changeQty(productId,-1,btn);
+      });
+      control.querySelector(".stvn-qty-plus").addEventListener("click",function(){
+        changeQty(productId,1,btn);
+      });
+    }
+    control.querySelector(".stvn-qty-value").textContent=String(quantities[productId]||1);
+    return control;
+  }
+
+  function showAdd(btn){
+    const control=btn.parentElement?.querySelector(".stvn-qty-control");
+    if(control) control.remove();
+    btn.classList.remove("stvn-hidden");
+  }
+
+  function changeQty(productId,delta,btn){
+    const old=Number(quantities[productId]||1);
+    const next=Math.max(0,old+delta);
+
+    // If the site's existing cart helpers are available, use them where possible.
+    if(delta>0){
+      if(typeof window.addToCart==="function"){
+        try{ window.addToCart(productId); }catch(e){}
+      }
+    }else if(delta<0){
+      if(typeof window.removeFromCart==="function"){
+        try{ window.removeFromCart(productId); }catch(e){}
+      }
+    }
+
+    if(next===0){
+      delete quantities[productId];
+      save();
+      showAdd(btn);
+    }else{
+      quantities[productId]=next;
+      save();
+      const control=buildControl(btn,productId);
+      control.querySelector(".stvn-qty-value").textContent=String(next);
+    }
+  }
+
+  function enhanceButton(btn){
+    if(!btn || btn.dataset.stvnQtyReady==="1") return;
+    const text=(btn.textContent||"").trim().toLowerCase();
+    if(!/add\s*to\s*cart|add to cart/.test(text)) return;
+
+    let productId=productKeyFromButton(btn);
+    if(!productId){
+      // Stable fallback for cards that don't expose a product id.
+      const card=btn.closest(".product-card,.product,.card,[class*='product']");
+      if(card){
+        productId=card.dataset.productId || card.dataset.id ||
+          card.getAttribute("data-product-id") || card.getAttribute("data-id");
+      }
+    }
+    if(!productId) return;
+
+    btn.dataset.stvnQtyReady="1";
+    btn.dataset.productId=productId;
+    btn.classList.add("stvn-add-cart-btn");
+
+    const qty=Number(quantities[productId]||0);
+    if(qty>0) buildControl(btn,productId);
+
+    // First click keeps the original site's add-to-cart handler, then shows quantity UI.
+    btn.addEventListener("click",function(){
+      setTimeout(function(){
+        const current=Number(quantities[productId]||0);
+        quantities[productId]=current+1;
+        save();
+        buildControl(btn,productId);
+      },50);
+    },{capture:false});
+  }
+
+  function scan(){
+    document.querySelectorAll("button,a").forEach(enhanceButton);
+  }
+
+  // Also support buttons created dynamically by the existing product renderer.
+  new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",scan);
+  }else scan();
+
+  // Public helper for the existing app if it wants to refresh a product quantity.
+  window.stvnRefreshQuantityControls=scan;
+})();
+</script>
+
+
+<script id="stvn-delivery-charge-js">
+(function(){
+  // Delivery charges:
+  // 0–1 km  = ₹30
+  // >1–2 km = ₹35
+  // >2–3 km = ₹40
+  // >3–4 km = ₹40
+  // >4–5 km = ₹45
+  window.stvnGetDeliveryCharge = function(distanceKm){
+    const d=Number(distanceKm);
+    if(!Number.isFinite(d) || d<0) return 0;
+    if(d<=1) return 30;
+    if(d<=2) return 35;
+    if(d<=3) return 40;
+    if(d<=4) return 40;
+    if(d<=5) return 45;
+    return null; // outside the 5 km delivery radius
+  };
+
+  window.stvnFormatDeliveryCharge = function(distanceKm){
+    const charge=window.stvnGetDeliveryCharge(distanceKm);
+    return charge===null ? "Outside 5 km delivery area" : "₹"+charge;
+  };
+
+  // Recalculate any delivery-charge elements whenever distance changes.
+  window.stvnUpdateDeliveryChargeUI = function(distanceKm){
+    const charge=window.stvnGetDeliveryCharge(distanceKm);
+    document.querySelectorAll("[data-stvn-delivery-charge]").forEach(function(el){
+      el.textContent=charge===null ? "Outside 5 km delivery area" : "₹"+charge;
+    });
+    document.querySelectorAll("[data-stvn-delivery-distance]").forEach(function(el){
+      el.textContent=Number(distanceKm).toFixed(2)+" km";
+    });
+    return charge;
+  };
+
+  // Hook into the existing live-tracking distance display when available.
+  const oldDistanceText = window.stvnUpdateDistance;
+  if(typeof oldDistanceText==="function" && !oldDistanceText.__stvnChargeHook){
+    const wrapped=function(){
+      const result=oldDistanceText.apply(this,arguments);
+      try{
+        const distanceEl=document.getElementById("stvn-live-distance");
+        if(distanceEl){
+          const match=(distanceEl.textContent||"").match(/([0-9]+(?:\.[0-9]+)?)\s*km/i);
+          if(match) window.stvnUpdateDeliveryChargeUI(Number(match[1]));
+        }
+      }catch(e){}
+      return result;
+    };
+    wrapped.__stvnChargeHook=true;
+    window.stvnUpdateDistance=wrapped;
+  }
+})();
+</script>
+
+
+<div id="stvn-delivery-charge-info" class="stvn-delivery-charge-line" style="display:none;">
+  <span>🚚 Delivery charge</span>
+  <strong data-stvn-delivery-charge>₹30</strong>
+</div>
+
+
+<script id="stvn-shop-status-js">
+(function(){
+  const LOCAL_KEY="stvn_shop_open_state_v1";
+  let shopOpen=true;
+
+  function supabaseClient(){
+    return window.supabaseClient || window.supabase || null;
+  }
+
+  function setClosedUI(closed){
+    shopOpen=!closed;
+    const banner=document.getElementById("stvn-shop-status-banner");
+    if(banner) banner.classList.toggle("stvn-closed",closed);
+
+    document.querySelectorAll(".stvn-shop-order-control").forEach(el=>{
+      el.disabled=closed;
+      el.style.opacity=closed?".55":"";
+      el.style.pointerEvents=closed?"none":"";
+    });
+
+    document.querySelectorAll("[data-stvn-shop-status]").forEach(el=>{
+      el.textContent=closed?"🔴 Shop Closed":"🟢 Shop Open";
+    });
+
+    document.querySelectorAll("[data-stvn-shop-open-action]").forEach(el=>{
+      el.style.display=closed?"inline-flex":"none";
+    });
+    document.querySelectorAll("[data-stvn-shop-close-action]").forEach(el=>{
+      el.style.display=closed?"none":"inline-flex";
+    });
+  }
+
+  async function saveStatus(open){
+    localStorage.setItem(LOCAL_KEY,open?"open":"closed");
+    const sb=supabaseClient();
+    if(!sb) return;
+
+    // Uses a single-row shop_settings table if it exists.
+    try{
+      const result=await sb.from("shop_settings").upsert({
+        id:1,is_open:open,updated_at:new Date().toISOString()
+      });
+      if(result.error) console.warn("shop_settings save:",result.error);
+    }catch(e){ console.warn("Shop status save skipped:",e); }
+  }
+
+  async function loadStatus(){
+    let state=localStorage.getItem(LOCAL_KEY);
+    const sb=supabaseClient();
+
+    if(sb){
+      try{
+        const result=await sb.from("shop_settings")
+          .select("is_open").eq("id",1).maybeSingle();
+        if(!result.error && result.data && typeof result.data.is_open==="boolean"){
+          state=result.data.is_open?"open":"closed";
+          localStorage.setItem(LOCAL_KEY,state);
+        }
+      }catch(e){}
+    }
+
+    setClosedUI(state!=="closed");
+  }
+
+  window.stvnSetShopOpen=async function(open){
+    setClosedUI(!open);
+    await saveStatus(open);
+  };
+  window.stvnOpenShop=()=>window.stvnSetShopOpen(true);
+  window.stvnCloseShop=()=>window.stvnSetShopOpen(false);
+  window.stvnIsShopOpen=()=>shopOpen;
+
+  function enhanceControls(){
+    // Mark common purchase controls so they are disabled while shop is closed.
+    document.querySelectorAll(
+      'button,a,input[type="submit"],[role="button"]'
+    ).forEach(el=>{
+      const t=(el.textContent||"").trim().toLowerCase();
+      if(/add to cart|buy now|checkout|place order|order now/.test(t)){
+        el.classList.add("stvn-shop-order-control");
+      }
+    });
+  }
+
+  function addAdminBox(){
+    // Try to place the control inside an existing admin page without replacing its layout.
+    if(document.getElementById("stvn-shop-admin-box")) return;
+
+    const adminRoot=document.querySelector(
+      '#admin-page,#admin-panel,.admin-panel,[id*="admin"],[class*="admin"]'
+    );
+    if(!adminRoot) return;
+
+    const box=document.createElement("div");
+    box.id="stvn-shop-admin-box";
+    box.className="stvn-shop-admin-box";
+    box.innerHTML=`
+      <strong>🏪 Shop Status</strong>
+      <div style="margin-top:7px">Current status:
+        <span class="stvn-shop-state" data-stvn-shop-status>🟢 Shop Open</span>
+      </div>
+      <div class="stvn-shop-admin-actions">
+        <button type="button" data-stvn-shop-open-action onclick="stvnOpenShop()">🟢 Open Shop</button>
+        <button type="button" data-stvn-shop-close-action onclick="stvnCloseShop()">🔴 Close Shop</button>
+      </div>
+    `;
+    adminRoot.prepend(box);
+  }
+
+  function boot(){
+    enhanceControls();
+    addAdminBox();
+    loadStatus();
+  }
+
+  new MutationObserver(()=>{
+    enhanceControls();
+    addAdminBox();
+  }).observe(document.documentElement,{childList:true,subtree:true});
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",boot);
+  }else boot();
+})();
+</script>
+
+
+<script>
+(function(){
+  const PAGE_FILES={home:'index.html',shop:'shop.html',cart:'cart.html',checkout:'checkout.html',orders:'orders.html',track:'tracking.html',admin:'admin.html'};
+  const THIS_PAGE='admin';
+  function go(page){
+    const target=PAGE_FILES[page]||PAGE_FILES.home;
+    if(!location.pathname.endsWith('/'+target) && !location.pathname.endsWith('\\'+target)) location.href=target;
+  }
+  if(typeof window.showPage==='function') window.showPage(THIS_PAGE);
+  window.showPage=function(page){ go(page); };
+  document.addEventListener('click',function(e){
+    const btn=e.target.closest && e.target.closest('[data-page]');
+    if(!btn) return;
+    const page=btn.getAttribute('data-page');
+    if(!PAGE_FILES[page]) return;
+    e.preventDefault(); e.stopImmediatePropagation(); go(page);
+  },true);
+  const proceed=document.getElementById('proceed-checkout-btn');
+  if(proceed) proceed.onclick=function(){go('checkout');};
+})();
+</script>
+
+<script id="radius-availability-script">\n(function(){\n  const RADIUS_KM=5;\n  function hav(a,b,c,d){const R=6371,rad=Math.PI/180;const x=(c-a)*rad,y=(d-b)*rad;const q=Math.sin(x/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(q));}\n  function statusEl(){let e=document.getElementById('radius-availability');if(!e){e=document.createElement('div');e.id='radius-availability';e.className='pending';e.textContent='📍 Checking delivery availability…';document.body.prepend(e)}return e}\n  function setState(ok,km){const e=statusEl(); if(ok){e.className='available';e.innerHTML='🟢 Delivery Available — '+km.toFixed(2)+' km away (within 5 KM)';document.body.classList.remove('radius-outside')}else{e.className='unavailable';e.innerHTML='🔴 Sorry! Currently not available — '+km.toFixed(2)+' km away. Delivery is available only within 5 KM.';document.body.classList.add('radius-outside')}}\n  function check(){\n    const e=statusEl();\n    if(!navigator.geolocation){e.className='unavailable';e.textContent='🔴 Currently not available — this browser does not support location.';return}\n    e.className='pending';e.textContent='📍 Checking your current location…';\n    navigator.geolocation.getCurrentPosition(p=>{\n      const shopLat=Number(window.SHOP_LATITUDE ?? 25.369750);\n      const shopLng=Number(window.SHOP_LONGITUDE ?? 78.561300);\n      const km=hav(shopLat,shopLng,p.coords.latitude,p.coords.longitude);\n      window.customerLatitude=p.coords.latitude;window.customerLongitude=p.coords.longitude;\n      window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=km<=RADIUS_KM;\n      setState(km<=RADIUS_KM,km);\n      document.querySelectorAll('[data-radius-locked]').forEach(x=>x.classList.toggle('radius-locked',km>RADIUS_KM));\n    },()=>{e.className='unavailable';e.textContent='⚠️ Location permission is required to check 5 KM delivery availability.'},{enableHighAccuracy:true,timeout:10000,maximumAge:0});\n  }\n  window.check5KmAvailability=check;\n  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',check); else check();\n})();\n</script>\n</body>
+
+<!-- STVN SHOP OPEN/CLOSE — Supabase setup (run once if you want status shared across users)
+create table if not exists public.shop_settings (
+  id bigint primary key,
+  is_open boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+insert into public.shop_settings (id,is_open)
+values (1,true)
+on conflict (id) do nothing;
+-- Enable Realtime/RLS and add the appropriate authenticated read/update policies for your app.
+-->
+
+</html>
