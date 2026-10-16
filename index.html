@@ -20,12 +20,33 @@
 <meta property="og:title" content="Vedant Grocery Shop | वेदांत किराना दुकान">
 <meta property="og:description" content="Aapki apni kirana dukan ab online! Khareedein taaza samaan sabse kam daam par.">
 
+<meta property="og:site_name" content="Vedant Grocery Shop">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Vedant Grocery Shop",
+  "url": "https://vedant252326.github.io/Vedant-Grocery-Shop/"
+}
+</script>
+
 <!-- Canonical Link -->
 <link rel="canonical" href="https://vedant252326.github.io/Vedant-Grocery-Shop/">
 
 <!-- Browser tab, supported search previews, and Apple touch icon -->
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/Vedant-Grocery-Shop/logo.png">
+<link rel="apple-touch-icon" href="/Vedant-Grocery-Shop/logo.png">
+
+<!-- Schema.org (Google Logo Info) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Vedant Grocery Shop",
+  "url": "https://vedant252326.github.io/Vedant-Grocery-Shop/",
+  "logo": "https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png"
+}
+</script>
 
 <!-- WhatsApp share par photo dikhane ke liye -->
 <meta property="og:image" content="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png">
@@ -2322,12 +2343,13 @@ Logout
   <div class="admin-section-heading-row"><h3 id="admin-sound-email-heading">🔔 Order Sound & Gmail Email</h3><button type="button" class="admin-section-save-button" onclick="saveOrderNotificationSettings()">💾 Save Settings</button></div>
   <p class="admin-small">दोनों alerts अलग-अलग ON/OFF कर सकते हैं। Admin sound तभी बजेगा जब Admin Panel वाला पेज खुला हो। Panel बंद होने पर Gmail email के लिए नीचे server setup भी करना होगा।</p>
   <label style="display:block;margin:10px 0"><input type="checkbox" id="admin-order-sound-enabled" checked> 🔊 Admin Panel में नए order की आवाज़ ON</label>
-  <label style="display:block;margin:10px 0"><input type="checkbox" id="admin-order-email-enabled" checked> 📧 नए order का Gmail पर email alert ON</label>
+  <input type="checkbox" id="admin-order-email-enabled" checked hidden aria-hidden="true">
+  
   <label for="admin-order-email-recipient" style="display:block;margin-top:12px">Email कहाँ भेजना है?</label>
   <input id="admin-order-email-recipient" type="email" maxlength="200" placeholder="vedant898989gupta@gmail.com" style="width:100%;max-width:520px">
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="admin-btn" onclick="testAdminOrderSound()">🔊 Test Sound</button><button type="button" class="admin-btn" onclick="loadOrderNotificationSettings()">🔄 Reload</button></div>
   <p id="admin-order-notification-message" class="admin-small" role="status" aria-live="polite"></p>
-  <p class="admin-small"><strong>ध्यान दें:</strong> Gmail में आने वाली email की आवाज़ Gmail/app/device की notification settings से नियंत्रित होती है; वेबसाइट उसे सीधे ON/OFF नहीं कर सकती।</p>
+  
 </section>
 
 <!-- ===== SHOP STATUS (collapsible; existing shop status feature) ===== -->
@@ -5645,7 +5667,7 @@ async function saveOrderNotificationSettings(){
   const sound=document.getElementById("admin-order-sound-enabled");
   const email=document.getElementById("admin-order-email-enabled");
   const recipient=document.getElementById("admin-order-email-recipient");
-  const soundOn=!!sound?.checked, emailOn=!!email?.checked;
+  const soundOn=!!sound?.checked, emailOn=true;
   const emailTo=String(recipient?.value||"").trim();
   if(emailOn && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTo)){setOrderNotifyMessage("❌ सही email address लिखें।");return;}
   try{localStorage.setItem("vedantAdminOrderSoundEnabled",String(soundOn));}catch(_e){}
@@ -10926,7 +10948,8 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
 </script>
 
 <style>
-/* Customer care floating control; keep actions in a clear, responsive order. */
+/* Customer Care remains available in the account section, but the floating overlay is hidden. */
+#stvnCustomerCareLauncher,#stvnCustomerCareCard{display:none!important;}
 #stvnCustomerCareLauncher{position:fixed;right:18px;bottom:94px;z-index:1200;border:0;border-radius:999px;padding:13px 17px;background:#16834a;color:#fff;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.2);cursor:pointer}
 #stvnCustomerCareCard{position:fixed;right:18px;bottom:154px;z-index:1201;width:min(330px,calc(100vw - 28px));padding:17px;border:1px solid var(--border,#dce6df);border-radius:18px;background:var(--surface,#fff);color:var(--text,#1d2a23);box-shadow:0 12px 35px rgba(0,0,0,.22)}
 #stvnCustomerCareCard[hidden]{display:none!important}
@@ -10995,8 +11018,8 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
     const client=getClient();if(!client||typeof client.from!=='function'){setAdminMessage('❌ Supabase client नहीं मिला।');return;}
     const button=document.querySelector('#adminCustomerCareSection .admin-section-save-button');if(button)button.disabled=true;
     const d={id:1,enabled:!!byId('cc-enabled')?.checked,title:String(byId('cc-title')?.value||'Vedant Customer Care').trim().slice(0,80),phone:String(byId('cc-phone')?.value||'').trim().slice(0,25),whatsapp:String(byId('cc-whatsapp')?.value||'').trim().slice(0,25),email:String(byId('cc-email')?.value||'').trim().slice(0,160),message:String(byId('cc-message')?.value||defaults.message).trim().slice(0,600),updated_at:new Date().toISOString()};
-    try{const {error}=await client.from('customer_care_settings').upsert(d,{onConflict:'id'});if(error)throw error;renderCustomerCare(d);setAdminMessage('✅ Customer Care सेव हो गया। ग्राहकों को अपडेट दिखने में थोड़ा समय लग सकता है।');}
-    catch(e){console.error('Save customer care failed:',e);setAdminMessage('❌ सेव नहीं हुआ: '+(e.message||'Supabase customer_care_settings table और policies जाँचें।'));}
+    try{let result=await client.from('customer_care_settings').update(d).eq('id',1).select().maybeSingle();if(result.error)throw result.error;let saved=result.data;if(!saved){result=await client.from('customer_care_settings').insert(d).select().single();if(result.error)throw result.error;saved=result.data||d;}renderCustomerCare(saved);setAdminMessage('✅ Customer Care अपडेट सेव हो गया। दूसरे ग्राहकों की स्क्रीन पर दिखने के लिए Supabase table और RLS policies सही होनी चाहिए।');}
+    catch(e){console.error('Save customer care failed:',e);setAdminMessage('❌ सेव नहीं हुआ: '+(e.message||'Supabase customer_care_settings table/RLS policies जाँचें।')+' — Supabase में customer_care_settings table, id=1 और Admin के लिए INSERT/UPDATE policy जरूरी है।');}
     finally{if(button)button.disabled=false;}
   };
   window.previewCustomerCare=function(){const d={enabled:!!byId('cc-enabled')?.checked,title:byId('cc-title')?.value,phone:byId('cc-phone')?.value,whatsapp:byId('cc-whatsapp')?.value,email:byId('cc-email')?.value,message:byId('cc-message')?.value};renderCustomerCare(d);byId('stvnCustomerCareCard').hidden=false;byId('stvnCustomerCareLauncher').setAttribute('aria-expanded','true');};
@@ -11006,5 +11029,12 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
+
+
+<style id="stvn-hide-floating-customer-care">
+/* Keep Customer Care settings in Admin, but do not show the floating button/card over the storefront. */
+#stvnCustomerCareLauncher,
+#stvnCustomerCareCard { display:none !important; }
+</style>
 
 </body>
