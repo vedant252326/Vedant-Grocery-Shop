@@ -1636,6 +1636,7 @@ body.stvn-customer-login-open{overflow:hidden}
     <button type="button" onclick="stvnOpenProfileSection('profile')">👤 My Profile</button>
     <button type="button" onclick="stvnOpenProfileSection('orders')">📦 My Orders</button>
     <button type="button" onclick="stvnOpenProfileSection('address')">📍 My Address</button>
+    <button type="button" onclick="stvnOpenProfileSection('customerCare')">🧑‍💼 Customer Care</button>
     <button type="button" onclick="stvnCustomerLogout()" class="stvn-logout">↪ Log out</button>
   </div>
 </div>
@@ -1660,6 +1661,10 @@ body.stvn-customer-login-open{overflow:hidden}
   </section>
   <section class="stvn-profile-section" id="stvnProfileSectionOrders">
    <p class="stvn-profile-note">इस browser में उपलब्ध order history</p><div id="stvnProfileOrdersList"></div>
+  </section>
+  <section class="stvn-profile-section" id="stvnProfileSectionCustomerCare">
+   <p class="stvn-profile-note">Order, payment, delivery या शिकायत में सहायता के लिए संपर्क करें।</p>
+   <h3 id="stvnAccountCareTitle">Vedant Customer Care</h3><p id="stvnAccountCareMessage">Order में मदद चाहिए? हमसे संपर्क करें।</p><div id="stvnAccountCareActions" class="stvn-account-care-actions"></div>
   </section>
  </div>
 </div>
@@ -2231,6 +2236,18 @@ onclick="toggleAdminOrdersView()">
 
 </button>
 
+<button
+ id="admin-view-customer-care"
+ class="admin-btn"
+ type="button"
+ aria-expanded="false"
+ aria-controls="adminCustomerCareSection"
+ onclick="toggleAdminPanel('adminCustomerCareSection','admin-view-customer-care','🧑‍💼 Customer Care','✕ Close Customer Care');loadCustomerCareSettings()">
+ 🧑‍💼 Customer Care
+</button>
+
+<button id="admin-sound-email-toggle" class="admin-btn" type="button" aria-expanded="false" aria-controls="adminSoundEmailSection" onclick="toggleAdminPanel('adminSoundEmailSection','admin-sound-email-toggle','🔔 Sound & Email','✕ Close Sound & Email');loadOrderNotificationSettings()">🔔 Sound & Email</button>
+<button id="admin-shop-status-toolbar-toggle" class="admin-btn" type="button" onclick="toggleShopStatusPanel();document.getElementById('adminShopStatusSection')?.scrollIntoView({behavior:'smooth',block:'nearest'})">🏪 Shop Status</button>
 
 <select
 id="adminOrderFilter"
@@ -2276,6 +2293,42 @@ Logout
 </button>
 
 </div>
+
+<!-- ===== CUSTOMER CARE MANAGEMENT ===== -->
+<section id="adminCustomerCareSection" class="section-card" aria-labelledby="admin-customer-care-heading" hidden style="margin:16px 0;padding:16px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+  <div class="admin-section-heading-row">
+    <h3 id="admin-customer-care-heading">🧑‍💼 Customer Care Settings</h3>
+    <button type="button" class="admin-section-save-button" onclick="saveCustomerCareSettings()">💾 Save Customer Care</button>
+  </div>
+  <p class="admin-small">यहाँ से ग्राहक सहायता का फोन, WhatsApp और ईमेल बदलें। Save करने पर ये सेटिंग सभी ग्राहकों की वेबसाइट पर दिखेगी (इसके लिए नीचे दिया गया Supabase SQL एक बार चलाना होगा)।</p>
+  <label><input id="cc-enabled" type="checkbox" checked> Customer Care चालू रखें</label>
+  <div class="admin-grid" style="margin-top:12px">
+    <input id="cc-title" type="text" maxlength="80" placeholder="Customer Care का नाम (जैसे Vedant Support)">
+    <input id="cc-phone" type="tel" maxlength="25" placeholder="Call के लिए फोन नंबर">
+    <input id="cc-whatsapp" type="tel" maxlength="25" placeholder="WhatsApp नंबर (देश कोड सहित, जैसे 91...) ">
+    <input id="cc-email" type="email" maxlength="160" placeholder="Customer Care ईमेल">
+  </div>
+  <label for="cc-message" style="display:block;margin-top:12px;font-weight:800">📝 Customer Care Description / ग्राहकों के लिए विवरण</label>
+  <textarea id="cc-message" rows="4" maxlength="600" placeholder="ग्राहकों को बताएं कि ऑर्डर, पेमेंट, डिलीवरी या शिकायत में कैसे मदद मिलेगी…" style="width:100%;margin-top:6px"></textarea>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button type="button" class="admin-btn" onclick="loadCustomerCareSettings()">🔄 Load Settings</button>
+    <button type="button" class="admin-btn" onclick="previewCustomerCare()">👁️ Preview</button>
+  </div>
+  <p id="cc-admin-message" class="admin-small" role="status" aria-live="polite"></p>
+</section>
+
+<!-- ===== ORDER SOUND & EMAIL SETTINGS ===== -->
+<section id="adminSoundEmailSection" class="section-card" aria-labelledby="admin-sound-email-heading" hidden style="margin:16px 0;padding:16px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+  <div class="admin-section-heading-row"><h3 id="admin-sound-email-heading">🔔 Order Sound & Gmail Email</h3><button type="button" class="admin-section-save-button" onclick="saveOrderNotificationSettings()">💾 Save Settings</button></div>
+  <p class="admin-small">दोनों alerts अलग-अलग ON/OFF कर सकते हैं। Admin sound तभी बजेगा जब Admin Panel वाला पेज खुला हो। Panel बंद होने पर Gmail email के लिए नीचे server setup भी करना होगा।</p>
+  <label style="display:block;margin:10px 0"><input type="checkbox" id="admin-order-sound-enabled" checked> 🔊 Admin Panel में नए order की आवाज़ ON</label>
+  <label style="display:block;margin:10px 0"><input type="checkbox" id="admin-order-email-enabled" checked> 📧 नए order का Gmail पर email alert ON</label>
+  <label for="admin-order-email-recipient" style="display:block;margin-top:12px">Email कहाँ भेजना है?</label>
+  <input id="admin-order-email-recipient" type="email" maxlength="200" placeholder="vedant898989gupta@gmail.com" style="width:100%;max-width:520px">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="admin-btn" onclick="testAdminOrderSound()">🔊 Test Sound</button><button type="button" class="admin-btn" onclick="loadOrderNotificationSettings()">🔄 Reload</button></div>
+  <p id="admin-order-notification-message" class="admin-small" role="status" aria-live="polite"></p>
+  <p class="admin-small"><strong>ध्यान दें:</strong> Gmail में आने वाली email की आवाज़ Gmail/app/device की notification settings से नियंत्रित होती है; वेबसाइट उसे सीधे ON/OFF नहीं कर सकती।</p>
+</section>
 
 <!-- ===== SHOP STATUS (collapsible; existing shop status feature) ===== -->
 <section id="adminShopStatusSection" class="section-card" style="margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
@@ -5548,23 +5601,61 @@ let adminAudioContext=null;
 
 function playNewOrderSound(){
   try{
-    const AudioContext=window.AudioContext || window.webkitAudioContext;
-    if(!AudioContext) return;
-    adminAudioContext=adminAudioContext || new AudioContext();
-    if(adminAudioContext.state==="suspended") adminAudioContext.resume();
-    [0,220,440].forEach((delay,index)=>{
-      const oscillator=adminAudioContext.createOscillator();
-      const gain=adminAudioContext.createGain();
-      oscillator.type="sine";
-      oscillator.frequency.value=740 + index*100;
-      gain.gain.setValueAtTime(0.0001,adminAudioContext.currentTime+delay/1000);
-      gain.gain.exponentialRampToValueAtTime(0.18,adminAudioContext.currentTime+delay/1000+0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001,adminAudioContext.currentTime+delay/1000+0.18);
-      oscillator.connect(gain).connect(adminAudioContext.destination);
-      oscillator.start(adminAudioContext.currentTime+delay/1000);
-      oscillator.stop(adminAudioContext.currentTime+delay/1000+0.2);
-    });
-  }catch(error){ console.warn("Order notification sound:",error); }
+    if(localStorage.getItem("vedantAdminOrderSoundEnabled")==="false") return;
+    // Prefer a feminine English voice to announce each new order; browser voice availability varies.
+    if ("speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined") {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance("New order received");
+      utterance.lang = "en-IN";
+      utterance.rate = 0.92;
+      utterance.pitch = 1.18;
+      const voices = window.speechSynthesis.getVoices();
+      const femaleVoice = voices.find(v => /female|woman|zira|samantha|karen|susan|heera|veena|aria|jenny/i.test(v.name))
+        || voices.find(v => /^en(-|_)/i.test(v.lang));
+      if (femaleVoice) utterance.voice = femaleVoice;
+      window.speechSynthesis.speak(utterance);
+      return;
+    }
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx)return;
+    adminAudioContext=adminAudioContext||new AudioCtx();
+    if(adminAudioContext.state==="suspended")adminAudioContext.resume();
+    [0,220,440].forEach((delay,index)=>{const oscillator=adminAudioContext.createOscillator();const gain=adminAudioContext.createGain();oscillator.type="sine";oscillator.frequency.value=740+index*100;gain.gain.setValueAtTime(0.0001,adminAudioContext.currentTime+delay/1000);gain.gain.exponentialRampToValueAtTime(0.18,adminAudioContext.currentTime+delay/1000+0.02);gain.gain.exponentialRampToValueAtTime(0.0001,adminAudioContext.currentTime+delay/1000+0.18);oscillator.connect(gain).connect(adminAudioContext.destination);oscillator.start(adminAudioContext.currentTime+delay/1000);oscillator.stop(adminAudioContext.currentTime+delay/1000+0.2);});
+  }catch(error){console.warn("Order notification sound:",error);}
+}
+
+const ORDER_NOTIFY_TABLE="order_notification_settings";
+function setOrderNotifyMessage(message){const el=document.getElementById("admin-order-notification-message");if(el)el.textContent=message;}
+function testAdminOrderSound(){playNewOrderSound();setOrderNotifyMessage("🔊 Test sound चलाने की कोशिश की गई। Browser sound permission/volume भी जाँचें।");}
+async function loadOrderNotificationSettings(){
+  const sound=document.getElementById("admin-order-sound-enabled");
+  const email=document.getElementById("admin-order-email-enabled");
+  const recipient=document.getElementById("admin-order-email-recipient");
+  if(sound){sound.checked=localStorage.getItem("vedantAdminOrderSoundEnabled")!=="false";}
+  if(email)email.checked=true;
+  if(recipient && !recipient.value)recipient.value="vedant898989gupta@gmail.com";
+  try{
+    const {data,error}=await supabaseClient.from(ORDER_NOTIFY_TABLE).select("id,email_enabled,recipient_email").eq("id",1).maybeSingle();
+    if(error)throw error;
+    if(data){if(email)email.checked=!!data.email_enabled;if(recipient)recipient.value=data.recipient_email||"vedant898989gupta@gmail.com";}
+    setOrderNotifyMessage("✅ Settings load हो गईं। Save Settings दबाकर बदलाव सेव करें।");
+  }catch(error){setOrderNotifyMessage("⚠️ Email settings table अभी सेट नहीं है या load नहीं हुई। SQL setup चलाने के बाद Reload करें। Admin sound toggle इस browser में काम करेगा।");}
+}
+async function saveOrderNotificationSettings(){
+  const sound=document.getElementById("admin-order-sound-enabled");
+  const email=document.getElementById("admin-order-email-enabled");
+  const recipient=document.getElementById("admin-order-email-recipient");
+  const soundOn=!!sound?.checked, emailOn=!!email?.checked;
+  const emailTo=String(recipient?.value||"").trim();
+  if(emailOn && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTo)){setOrderNotifyMessage("❌ सही email address लिखें।");return;}
+  try{localStorage.setItem("vedantAdminOrderSoundEnabled",String(soundOn));}catch(_e){}
+  try{
+    const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+    if(sessionError)throw sessionError;if(!sessionData?.session)throw new Error("पहले Admin Login करें।");
+    const {error}=await supabaseClient.from(ORDER_NOTIFY_TABLE).upsert({id:1,email_enabled:emailOn,recipient_email:emailTo,updated_at:new Date().toISOString()},{onConflict:"id"});
+    if(error)throw error;
+    setOrderNotifyMessage("✅ Settings सेव हो गईं। Admin sound: "+(soundOn?"ON":"OFF")+"; Email alert: "+(emailOn?"ON":"OFF")+". Email भेजने के लिए Edge Function + Resend webhook setup भी पूरा होना चाहिए।");
+  }catch(error){setOrderNotifyMessage("⚠️ Admin sound setting इस browser में सेव है, लेकिन email setting database में सेव नहीं हुई: "+(error.message||"SQL/RLS setup जाँचें।"));}
 }
 
 function showNewOrderAlert(order){
@@ -8653,10 +8744,11 @@ function stvnOpenProfileSection(section){
   document.querySelectorAll('.stvn-profile-section').forEach(el=>el.classList.remove('active'));
   const target=document.getElementById('stvnProfileSection'+section.charAt(0).toUpperCase()+section.slice(1));
   if(target)target.classList.add('active');
-  const titles={profile:'My Profile',address:'My Address',orders:'My Orders'};
+  const titles={profile:'My Profile',address:'My Address',orders:'My Orders',customerCare:'Customer Care'};
   document.getElementById('stvnProfileTitle').textContent=titles[section]||'My Profile';
   stvnRefreshCustomerProfile();
   if(section==='orders')stvnRenderCustomerOrders();
+  if(section==='customerCare'){const careButton=document.getElementById('stvnCustomerCareLauncher');if(careButton){careButton.hidden=false;careButton.click();}setTimeout(()=>{const card=document.getElementById('stvnCustomerCareCard');if(card)card.hidden=true;const title=document.getElementById('stvnAccountCareTitle');const msg=document.getElementById('stvnAccountCareMessage');const srcTitle=document.getElementById('stvnCustomerCareTitle');const srcMsg=document.getElementById('stvnCustomerCareMessage');if(title&&srcTitle)title.textContent=srcTitle.textContent;if(msg&&srcMsg)msg.textContent=srcMsg.textContent;const dest=document.getElementById('stvnAccountCareActions'),src=document.getElementById('stvnCustomerCareActions');if(dest&&src){dest.replaceChildren();src.querySelectorAll('a').forEach(a=>dest.appendChild(a.cloneNode(true)));if(!dest.children.length)dest.textContent='Contact details अभी उपलब्ध नहीं हैं।';}},100);}
   document.getElementById('stvnProfileModal').classList.add('open');
 }
 function stvnCloseProfile(){document.getElementById('stvnProfileModal').classList.remove('open');}
@@ -10830,6 +10922,88 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
   // Status changes should reflect for visitors already viewing the page.
   window.addEventListener('focus',()=>{fetchRemoteStatus();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)fetchRemoteStatus();});
+})();
+</script>
+
+<style>
+/* Customer care floating control; keep actions in a clear, responsive order. */
+#stvnCustomerCareLauncher{position:fixed;right:18px;bottom:94px;z-index:1200;border:0;border-radius:999px;padding:13px 17px;background:#16834a;color:#fff;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.2);cursor:pointer}
+#stvnCustomerCareCard{position:fixed;right:18px;bottom:154px;z-index:1201;width:min(330px,calc(100vw - 28px));padding:17px;border:1px solid var(--border,#dce6df);border-radius:18px;background:var(--surface,#fff);color:var(--text,#1d2a23);box-shadow:0 12px 35px rgba(0,0,0,.22)}
+#stvnCustomerCareCard[hidden]{display:none!important}
+#stvnCustomerCareCard h3{margin:0 0 7px;font-size:18px}
+#stvnCustomerCareCard p{margin:6px 0 12px;line-height:1.45}
+#stvnCustomerCareActions{display:grid;gap:8px}
+#stvnCustomerCareActions a,#stvnCustomerCareClose{display:block;text-align:center;padding:11px;border-radius:10px;text-decoration:none;font-weight:750;border:0;cursor:pointer}
+#stvnCustomerCareActions a{background:#eaf8ef;color:#126b3b}
+#stvnCustomerCareClose{width:100%;margin-top:8px;background:#edf0ee;color:#24352b}
+@media(max-width:600px){#stvnCustomerCareLauncher{right:12px;bottom:82px;padding:12px 14px}#stvnCustomerCareCard{right:12px;bottom:138px}}
+#adminCustomerCareSection .admin-grid{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.stvn-account-care-actions{display:grid;gap:8px;margin-top:12px}.stvn-account-care-actions a{display:block;padding:12px;border-radius:10px;background:#eaf8ef;color:#126b3b;text-decoration:none;font-weight:800}.stvn-account-care-actions:empty{display:none}
+#adminCustomerCareSection input[type=text],#adminCustomerCareSection input[type=tel],#adminCustomerCareSection input[type=email],#adminCustomerCareSection textarea{width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text)}
+</style>
+<button type="button" id="stvnCustomerCareLauncher" hidden aria-expanded="false" aria-controls="stvnCustomerCareCard">🧑‍💼 Customer Care</button>
+<section id="stvnCustomerCareCard" hidden aria-label="Customer Care">
+  <h3 id="stvnCustomerCareTitle">Vedant Customer Care</h3>
+  <p id="stvnCustomerCareMessage">Order में मदद चाहिए? हमसे संपर्क करें।</p>
+  <div id="stvnCustomerCareActions"></div>
+  <button type="button" id="stvnCustomerCareClose">Close</button>
+</section>
+<script id="stvn-customer-care-feature">
+(function(){
+  const defaults={id:1,enabled:true,title:'Vedant Customer Care',phone:'',whatsapp:'',email:'',message:'Order में मदद चाहिए? हमसे संपर्क करें।'};
+  const byId=id=>document.getElementById(id);
+  function cleanPhone(v){return String(v||'').replace(/[^0-9+]/g,'');}
+  function setAdminMessage(msg){const el=byId('cc-admin-message');if(el)el.textContent=msg;}
+  function getClient(){if(typeof supabaseClient!=='undefined'&&supabaseClient)return supabaseClient;return window.supabaseClient||null;}
+  async function fetchSettings(){
+    const client=getClient();
+    if(!client||typeof client.from!=='function')return defaults;
+    const {data,error}=await client.from('customer_care_settings').select('id,enabled,title,phone,whatsapp,email,message').eq('id',1).maybeSingle();
+    if(error){console.warn('Customer care settings:',error.message);return defaults;}
+    return data?Object.assign({},defaults,data):defaults;
+  }
+  function renderCustomerCare(data){
+    const launcher=byId('stvnCustomerCareLauncher'),card=byId('stvnCustomerCareCard'),actions=byId('stvnCustomerCareActions');
+    if(!launcher||!card||!actions)return;
+    launcher.hidden=!data.enabled;
+    byId('stvnCustomerCareTitle').textContent=data.title||'Vedant Customer Care';
+    byId('stvnCustomerCareMessage').textContent=data.message||defaults.message;
+    actions.replaceChildren();
+    const add=(label,href)=>{if(!href)return;const a=document.createElement('a');a.textContent=label;a.href=href;if(href.startsWith('https://')){a.target='_blank';a.rel='noopener noreferrer';}actions.appendChild(a);};
+    const phone=cleanPhone(data.phone),wa=cleanPhone(data.whatsapp).replace(/^\+/,'');
+    add('📞 Call Customer Care',phone?'tel:'+phone:'');
+    add('💬 WhatsApp',wa?'https://wa.me/'+wa:'');
+    add('✉️ Email',data.email?'mailto:'+String(data.email).trim():'');
+    if(!actions.children.length){const p=document.createElement('p');p.textContent='Contact details अभी उपलब्ध नहीं हैं।';actions.appendChild(p);}
+    const accountTitle=byId('stvnAccountCareTitle'),accountMessage=byId('stvnAccountCareMessage'),accountActions=byId('stvnAccountCareActions');
+    if(accountTitle)accountTitle.textContent=data.title||'Vedant Customer Care';
+    if(accountMessage)accountMessage.textContent=data.message||defaults.message;
+    if(accountActions){accountActions.replaceChildren();actions.querySelectorAll('a').forEach(a=>accountActions.appendChild(a.cloneNode(true)));if(!accountActions.children.length){const p=document.createElement('p');p.textContent='Contact details अभी उपलब्ध नहीं हैं।';accountActions.appendChild(p);}}
+  }
+  window.loadCustomerCareSettings=async function(){
+    setAdminMessage('Settings लोड हो रही हैं…');
+    const d=await fetchSettings();
+    if(byId('cc-enabled'))byId('cc-enabled').checked=!!d.enabled;
+    if(byId('cc-title'))byId('cc-title').value=d.title||'';
+    if(byId('cc-phone'))byId('cc-phone').value=d.phone||'';
+    if(byId('cc-whatsapp'))byId('cc-whatsapp').value=d.whatsapp||'';
+    if(byId('cc-email'))byId('cc-email').value=d.email||'';
+    if(byId('cc-message'))byId('cc-message').value=d.message||'';
+    renderCustomerCare(d);setAdminMessage('Settings लोड हो गईं। Save करने के लिए Supabase table/policies सही होने चाहिए।');
+  };
+  window.saveCustomerCareSettings=async function(){
+    const client=getClient();if(!client||typeof client.from!=='function'){setAdminMessage('❌ Supabase client नहीं मिला।');return;}
+    const button=document.querySelector('#adminCustomerCareSection .admin-section-save-button');if(button)button.disabled=true;
+    const d={id:1,enabled:!!byId('cc-enabled')?.checked,title:String(byId('cc-title')?.value||'Vedant Customer Care').trim().slice(0,80),phone:String(byId('cc-phone')?.value||'').trim().slice(0,25),whatsapp:String(byId('cc-whatsapp')?.value||'').trim().slice(0,25),email:String(byId('cc-email')?.value||'').trim().slice(0,160),message:String(byId('cc-message')?.value||defaults.message).trim().slice(0,600),updated_at:new Date().toISOString()};
+    try{const {error}=await client.from('customer_care_settings').upsert(d,{onConflict:'id'});if(error)throw error;renderCustomerCare(d);setAdminMessage('✅ Customer Care सेव हो गया। ग्राहकों को अपडेट दिखने में थोड़ा समय लग सकता है।');}
+    catch(e){console.error('Save customer care failed:',e);setAdminMessage('❌ सेव नहीं हुआ: '+(e.message||'Supabase customer_care_settings table और policies जाँचें।'));}
+    finally{if(button)button.disabled=false;}
+  };
+  window.previewCustomerCare=function(){const d={enabled:!!byId('cc-enabled')?.checked,title:byId('cc-title')?.value,phone:byId('cc-phone')?.value,whatsapp:byId('cc-whatsapp')?.value,email:byId('cc-email')?.value,message:byId('cc-message')?.value};renderCustomerCare(d);byId('stvnCustomerCareCard').hidden=false;byId('stvnCustomerCareLauncher').setAttribute('aria-expanded','true');};
+  byId('stvnCustomerCareLauncher')?.addEventListener('click',()=>{const card=byId('stvnCustomerCareCard'),open=card.hidden;card.hidden=!open;byId('stvnCustomerCareLauncher').setAttribute('aria-expanded',String(open));});
+  byId('stvnCustomerCareClose')?.addEventListener('click',()=>{byId('stvnCustomerCareCard').hidden=true;byId('stvnCustomerCareLauncher')?.setAttribute('aria-expanded','false');});
+  async function init(){const d=await fetchSettings();renderCustomerCare(d);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 
