@@ -1613,6 +1613,14 @@ body.stvn-customer-login-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#stvnCustomerLoginGate *,#stvnCustomerLoginGate *:before,#stvnCustomerLoginGate *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 </style>
 
+
+<style id="stvn-fast-product-loading-fix">
+/* Never flash misleading zero counts while the product request is still running. */
+#page-shop .stvn-category-list.stvn-category-loading .stvn-category-count{visibility:hidden!important}
+#page-shop .stvn-category-list.stvn-category-loading .stvn-category-empty{display:block;min-height:70px;padding:20px;border-radius:14px;background:linear-gradient(120deg,#dff7ff,#eae2ff,#fff0d9);color:#35446b;font-weight:800}
+#customer-products-status[hidden]{display:none!important}
+#products .product{content-visibility:auto;contain-intrinsic-size:220px}
+</style>
 </head>
 
 <body>
@@ -7851,7 +7859,7 @@ try{
   const cached=JSON.parse(localStorage.getItem(CUSTOMER_PRODUCTS_CACHE_KEY)||"[]");
   if(Array.isArray(cached)){
     cachedProducts=cached;
-    hasCachedProducts=true;
+    hasCachedProducts=cached.length>0;
   }
 }catch(error){
   console.warn("Product cache read failed:",error);
@@ -7885,13 +7893,7 @@ error
 } =
 await supabaseClient
 .from("products")
-.select("id,name,category,price,unit,stock,image_url,available")
-.order(
-"created_at",
-{
-ascending:false
-}
-);
+.select("id,name,category,price,unit,stock,image_url,available");
 
 
 if(error){
@@ -7930,11 +7932,19 @@ window.customerProductsLoadError="";
 productsBox.innerHTML="";
 
 if(!data || data.length===0){
-  try{localStorage.setItem(CUSTOMER_PRODUCTS_CACHE_KEY,"[]");}
-  catch(cacheError){console.warn("Product cache clear failed:",cacheError);}
-  productsBox.innerHTML="";
-  renderCustomerProducts([]);
-  status.textContent="इस समय कोई product नहीं है।";
+  // Empty server response should not erase a previously useful cache or flash "0 items".
+  if(cachedProducts.length){
+    window.customerProductsLoaded=true;
+    renderCustomerProducts(cachedProducts);
+    status.hidden=true;
+  }else{
+    window.customerProductsLoaded=true;
+    productsBox.innerHTML="";
+    renderCustomerProducts([]);
+    status.textContent="अभी कोई product उपलब्ध नहीं है। Admin Panel से products जोड़ें।";
+    status.hidden=false;
+  }
+  if(typeof window.refreshStoreCategories==="function")window.refreshStoreCategories();
   return;
 }
 
@@ -8990,7 +9000,7 @@ document.addEventListener('click',function(e){
       const btn=document.createElement('button');btn.type='button';btn.className='stvn-category-card'+(key===activeCategory?' active':'');btn.setAttribute('aria-expanded',String(key===activeCategory));
       const icon=icons[key]||'✨';
       const image=typeof displays[key]==='string'&&displays[key]?displays[key]:productImage;
-      btn.innerHTML='<span class="stvn-category-side'+(image?' has-image':'')+'" aria-hidden="true">'+(image?'<img class="stvn-category-image" alt="">':icon)+'</span><span class="stvn-category-copy"><span class="stvn-category-name"></span><span class="stvn-category-hint">VEDANT GROCERY SHOP · EXPLORE COLLECTION</span><span class="stvn-category-count">'+count+' '+(count===1?'item':'items')+'</span></span><span class="stvn-category-arrow" aria-hidden="true">'+(key===activeCategory?'−':'+')+'</span>';
+      btn.innerHTML='<span class="stvn-category-side'+(image?' has-image':'')+'" aria-hidden="true">'+(image?'<img class="stvn-category-image" alt="">':icon)+'</span><span class="stvn-category-copy"><span class="stvn-category-name"></span><span class="stvn-category-hint">VEDANT GROCERY SHOP · EXPLORE COLLECTION</span><span class="stvn-category-count">'+(window.customerProductsLoaded===true?count+' '+(count===1?'item':'items'):'Loading…')+'</span></span><span class="stvn-category-arrow" aria-hidden="true">'+(key===activeCategory?'−':'+')+'</span>';
       if(image){
         const categoryImage=btn.querySelector('.stvn-category-image');
         categoryImage.src=image;
@@ -10428,6 +10438,7 @@ document.addEventListener('click',function(e){
   }
   .modern-nav .nav-links #stvnProfileBar{
     position:relative;
+    margin-left:auto !important;
     inset:auto;
     z-index:15000;
     display:flex;
@@ -11037,4 +11048,174 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
 #stvnCustomerCareCard { display:none !important; }
 </style>
 
+
+
+<!-- ===== CUSTOMER LOCATION + DELIVERY ETA SETTINGS (additive patch) ===== -->
+<style id="stvn-delivery-location-card-css">
+.stvn-delivery-location-card{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:16px 0 20px;padding:19px;border:1px solid #cfe9d8;border-radius:22px;background:linear-gradient(125deg,#d9fbe8 0%,#dceeff 52%,#f4e4ff 100%);box-shadow:0 12px 28px rgba(18,66,89,.16);color:#103c58}
+.stvn-delivery-location-icon{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:17px;background:linear-gradient(135deg,#23a85d,#08783d);color:#fff;font-size:27px}
+.stvn-delivery-location-copy{flex:1;min-width:180px}.stvn-delivery-location-copy h3{margin:0 0 5px;font-size:18px;color:#124f82}.stvn-delivery-location-copy p{margin:4px 0;color:#34566c;font-size:13px;line-height:1.45}.stvn-delivery-location-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}.stvn-delivery-location-stats span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid #b8d9f3;color:#164e79;font-size:12px;font-weight:800}.stvn-delivery-location-card button{margin:0;border-radius:12px;background:#198754;color:#fff;padding:12px 15px;font-weight:800}.stvn-delivery-settings{margin:18px 0;padding:18px;border:1px solid var(--border,#ddd);border-radius:18px;background:var(--surface,#fff)}.stvn-delivery-settings .stvn-eta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}.stvn-delivery-settings label{display:block;font-size:12px;font-weight:800;color:var(--muted,#666);margin:8px 0}.stvn-delivery-settings input{width:100%;max-width:none}.stvn-delivery-settings button{background:#198754;color:#fff;border-radius:10px}@media(max-width:600px){.stvn-delivery-location-card{padding:14px;border-radius:17px}.stvn-delivery-location-card button{width:100%}}
+</style>
+<script id="stvn-delivery-location-card-script">
+(function(){
+  'use strict';
+  const STORE_KEY='vedantDeliveryEtaSettingsV1';
+  const LOCATION_KEY='vedantCustomerDeliveryLocationV1';
+  const DEFAULTS={1:10,2:14,3:18,4:25,5:32};
+  const SHOP_LAT=Number(window.SHOP_LATITUDE ?? 25.3698055556);
+  const SHOP_LNG=Number(window.SHOP_LONGITUDE ?? 78.5613);
+  const $=id=>document.getElementById(id);
+  function readSettings(){try{return {...DEFAULTS,...JSON.parse(localStorage.getItem(STORE_KEY)||'{}')}}catch(e){return {...DEFAULTS}}}
+  function distanceKm(a,b,c,d){const r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,q=Math.sin(x/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)**2;return 6371*2*Math.asin(Math.sqrt(q));}
+  function etaFor(km){const s=readSettings();if(km<=1)return Number(s[1]);if(km<=2)return Number(s[2]);if(km<=3)return Number(s[3]);if(km<=4)return Number(s[4]);return Number(s[5]);}
+  function getSaved(){try{return JSON.parse(localStorage.getItem(LOCATION_KEY)||'null')}catch(e){return null}}
+  function setSaved(o){try{localStorage.setItem(LOCATION_KEY,JSON.stringify(o))}catch(e){}}
+  function ensureCard(pageId){const page=$(pageId);if(!page||page.querySelector('.stvn-delivery-location-card'))return;const card=document.createElement('section');card.className='stvn-delivery-location-card';card.innerHTML='<div class="stvn-delivery-location-icon">📍</div><div class="stvn-delivery-location-copy"><h3>आपकी डिलीवरी लोकेशन</h3><p class="stvn-delivery-location-name">अपनी वर्तमान लोकेशन चुनें, ताकि दूरी और अनुमानित डिलीवरी समय दिख सके।</p><div class="stvn-delivery-location-stats"><span class="stvn-delivery-distance">दूरी: अभी पता नहीं</span><span class="stvn-delivery-eta">अनुमानित समय: —</span></div><p class="stvn-delivery-location-note">डिलीवरी अधिकतम 5 km के दायरे में उपलब्ध है।</p></div><button type="button" class="stvn-delivery-location-action">📍 लोकेशन चुनें</button>';card.querySelector('button').addEventListener('click',requestLocation);const anchor=pageId==='page-home'?(page.querySelector('.feature-grid')||page.firstElementChild):page.querySelector('.section-head');if(anchor&&anchor.parentNode===page)anchor.insertAdjacentElement('afterend',card);else page.prepend(card);renderSaved(card);}
+  function renderSaved(card){const loc=getSaved();if(!loc)return;const name=card.querySelector('.stvn-delivery-location-name'),dist=card.querySelector('.stvn-delivery-distance'),eta=card.querySelector('.stvn-delivery-eta'),note=card.querySelector('.stvn-delivery-location-note'),btn=card.querySelector('button');if(name)name.textContent=loc.name||'आपकी वर्तमान लोकेशन सेव है';if(dist)dist.textContent='दूरी: '+Number(loc.km).toFixed(2)+' km';if(eta)eta.textContent=Number(loc.km)>5?'डिलीवरी उपलब्ध नहीं':'अनुमानित समय: '+etaFor(Number(loc.km))+' मिनट';if(note)note.textContent=Number(loc.km)>5?'माफ़ कीजिए, आपकी लोकेशन 5 km डिलीवरी क्षेत्र से बाहर है।':'आपकी लोकेशन 5 km डिलीवरी क्षेत्र के अंदर है।';if(btn)btn.textContent='🔄 लोकेशन अपडेट करें';}
+  async function reverseName(lat,lng){try{const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lng);const res=await fetch(url,{headers:{'Accept-Language':'hi,en'}});if(!res.ok)throw new Error('reverse geocode');const d=await res.json();const a=d.address||{};return [a.suburb||a.neighbourhood||a.village||a.town||a.city_district||a.city,a.city||a.town||a.village||a.state_district].filter((v,i,x)=>v&&x.indexOf(v)===i).join(', ')||'वर्तमान लोकेशन';}catch(e){return 'वर्तमान लोकेशन';}}
+  function requestLocation(){if(!navigator.geolocation){alert('इस ब्राउज़र में लोकेशन उपलब्ध नहीं है।');return;}document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='आपकी लोकेशन प्राप्त की जा रही है…');navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lng=pos.coords.longitude,km=distanceKm(SHOP_LAT,SHOP_LNG,lat,lng),name=await reverseName(lat,lng);const loc={lat,lng,km,name,updatedAt:Date.now()};setSaved(loc);window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=km<=5;document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);if(typeof window.check5KmAvailability==='function'){/* location is already checked here; avoid a second permission prompt */} },err=>{document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='लोकेशन नहीं मिल पाई। कृपया browser location permission Allow करें और फिर कोशिश करें।');},{enableHighAccuracy:false,timeout:15000,maximumAge:120000});}
+  function ensureAdminSettings(){const page=$('page-admin'),panel=$('adminPanel');if(!page||!panel||page.querySelector('#stvnDeliveryEtaAdmin'))return;const box=document.createElement('section');box.id='stvnDeliveryEtaAdmin';box.className='stvn-delivery-settings';box.innerHTML='<h3>🚚 Delivery ETA Settings</h3><p class="admin-small">हर दूरी के लिए अनुमानित डिलीवरी मिनट सेट करें। ये सेटिंग इस ब्राउज़र में सेव होगी; सभी ग्राहकों/डिवाइस पर लागू करने के लिए Supabase में सेव करना आवश्यक है।</p><div class="stvn-eta-grid">'+[1,2,3,4,5].map(k=>'<div><label for="stvnEta'+k+'">'+(k-1)+'–'+k+' km ('+k+' km तक)</label><input id="stvnEta'+k+'" type="number" min="1" max="240" step="1" value="'+DEFAULTS[k]+'"></div>').join('')+'</div><button type="button" id="stvnSaveEtaSettings">💾 Save Delivery Time</button><p class="admin-small" id="stvnEtaSaveMessage" role="status"></p>';panel.appendChild(box);const s=readSettings();[1,2,3,4,5].forEach(k=>{const input=$('stvnEta'+k);if(input)input.value=s[k]});$('stvnSaveEtaSettings').addEventListener('click',()=>{const values={};for(let k=1;k<=5;k++){const n=Number($('stvnEta'+k).value);if(!Number.isFinite(n)||n<1||n>240){$('stvnEtaSaveMessage').textContent='हर समय 1 से 240 मिनट के बीच होना चाहिए।';return;}values[k]=Math.round(n)}try{localStorage.setItem(STORE_KEY,JSON.stringify(values));$('stvnEtaSaveMessage').textContent='✅ डिलीवरी समय इस ब्राउज़र में सेव हो गया।';document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);}catch(e){$('stvnEtaSaveMessage').textContent='सेव नहीं हो सका। Browser storage जाँचें।'}});}
+  function init(){ensureCard('page-home');ensureCard('page-shop');ensureAdminSettings();const email=(()=>{try{return localStorage.getItem('vedantCustomerEmail')||''}catch(e){return ''}})();if(email&&!getSaved()&&!window.__stvnDeliveryLocationPrompted){window.__stvnDeliveryLocationPrompted=true;setTimeout(()=>{if(confirm('डिलीवरी दूरी और समय देखने के लिए अपनी वर्तमान लोकेशन शेयर करना चाहेंगे?'))requestLocation()},1200)}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  const observer=new MutationObserver(()=>{ensureCard('page-home');ensureCard('page-shop');ensureAdminSettings()});observer.observe(document.documentElement,{childList:true,subtree:true});
+  window.stvnRequestDeliveryLocation=requestLocation;
+})();
+</script>
+<!-- ===== END CUSTOMER LOCATION + DELIVERY ETA SETTINGS ===== -->
+
+
+<!-- ===== LOCATION-FIRST CUSTOMER FLOW + DELIVERY CARDS + CATEGORY LOADING POLISH ===== -->
+<style id="stvn-location-first-polish">
+#stvnLocationFirstGate{position:fixed;inset:0;z-index:250000;display:none;align-items:center;justify-content:center;padding:16px;background:radial-gradient(circle at 10% 10%,#d9ffe5 0,transparent 36%),radial-gradient(circle at 90% 90%,#ffe9b8 0,transparent 35%),linear-gradient(135deg,#06351f,#0b7040 60%,#104d31);overflow:auto}
+#stvnLocationFirstGate .stvn-loc-onboard{width:min(100%,480px);padding:clamp(22px,5vw,36px);border-radius:25px;background:linear-gradient(145deg,#fff,#f0fff5);border:1px solid #d8f0df;box-shadow:0 28px 80px #001b0d66;text-align:center;color:#173b26}
+#stvnLocationFirstGate .stvn-loc-pin{width:72px;height:72px;margin:0 auto 15px;display:grid;place-items:center;border-radius:22px;background:linear-gradient(135deg,#27c76f,#08763b);color:white;font-size:34px;box-shadow:0 10px 26px #15934e44}
+#stvnLocationFirstGate h2{margin:8px 0;font-size:clamp(25px,5vw,32px);font-weight:900;letter-spacing:-.04em}
+#stvnLocationFirstGate p{color:#607468;line-height:1.55}
+#stvnLocationFirstGate .stvn-loc-result{display:flex;align-items:center;gap:10px;text-align:left;margin:18px 0;padding:15px;border:1px solid #cfe9d8;border-radius:14px;background:linear-gradient(120deg,#e8fff0,#fffaf0);min-height:60px;color:#176b3c;font-weight:800;overflow-wrap:anywhere}
+#stvnLocationFirstGate .stvn-loc-onboard button{width:100%;margin:7px 0 0;padding:14px 16px;border-radius:13px;background:linear-gradient(135deg,#23a85d,#08783d);color:white;font-weight:900}
+#stvnLocationFirstGate .stvn-loc-onboard button.stvn-loc-later{background:#edf5ef;color:#28563a;border:1px solid #d7e9dc}
+.stvn-delivery-location-card{display:grid!important;grid-template-columns:60px minmax(0,1fr) auto;align-items:center;gap:16px!important;margin:18px 0 22px!important;padding:22px!important;min-height:130px;border-radius:18px!important;border:1px solid #bfe5cb!important;background:linear-gradient(125deg,#e2ffeb 0%,#f8fff9 48%,#fff4d9 100%)!important;box-shadow:0 12px 30px #174b2b13!important}
+.stvn-delivery-location-icon{width:60px!important;height:60px!important;border-radius:15px!important;font-size:29px!important}
+.stvn-delivery-location-copy h3{font-size:19px!important;font-weight:900!important}
+.stvn-delivery-location-name{font-size:15px!important;font-weight:750!important;color:#28563a!important;overflow-wrap:anywhere}
+.stvn-delivery-location-stats{gap:9px!important}.stvn-delivery-location-stats span{padding:9px 12px!important;border-radius:10px!important;background:#fff!important;border-color:#cce8d4!important;font-size:13px!important}
+.stvn-delivery-location-card button{white-space:nowrap;padding:13px 15px!important;border-radius:11px!important;background:linear-gradient(135deg,#159451,#08783d)!important;box-shadow:0 5px 14px #15945126}
+#page-home .stvn-delivery-location-card{margin:18px 0 22px!important}
+#page-shop .stvn-delivery-location-card{background:linear-gradient(125deg,#e8f3ff 0%,#f7fbff 50%,#f4edff 100%)!important;border-color:#c9d9f1!important}
+#page-shop .stvn-delivery-location-icon{background:linear-gradient(135deg,#397bd8,#6848c8)!important}
+#page-shop .stvn-delivery-location-copy h3,#page-shop .stvn-delivery-location-name{color:#274f89!important}
+#page-shop .stvn-delivery-location-stats span{border-color:#d5e0f4!important;color:#315a9b!important}
+#page-shop .stvn-delivery-location-card button{background:linear-gradient(135deg,#397bd8,#6848c8)!important}
+#page-shop .stvn-category-count{visibility:hidden}
+#page-shop .stvn-category-list:not(.stvn-category-loading) .stvn-category-count{visibility:visible}
+#page-shop .stvn-category-list.stvn-category-loading .stvn-category-empty{min-height:60px;padding:18px;border-radius:14px;background:#f2fff6;color:#267148;font-weight:800}
+@media(max-width:600px){.stvn-delivery-location-card{grid-template-columns:46px minmax(0,1fr)!important;gap:11px!important;padding:15px!important;min-height:0!important;border-radius:15px!important}.stvn-delivery-location-icon{width:46px!important;height:46px!important;font-size:23px!important;border-radius:12px!important}.stvn-delivery-location-copy{min-width:0}.stvn-delivery-location-copy h3{font-size:16px!important}.stvn-delivery-location-name{font-size:13px!important}.stvn-delivery-location-stats span{font-size:11px!important;padding:7px 8px!important}.stvn-delivery-location-card button{grid-column:1/-1;width:100%;white-space:normal}}
+</style>
+<script id="stvn-location-first-flow">
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), KEY='vedantCustomerDeliveryLocationV1';
+function saved(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+function setLocation(loc){try{localStorage.setItem(KEY,JSON.stringify(loc))}catch(e){};window.customerLatitude=loc.lat;window.customerLongitude=loc.lng;window.currentDeliveryDistanceKm=loc.km;window.currentDeliveryAvailable=loc.km<=5;document.querySelectorAll('.stvn-delivery-location-card').forEach(card=>{const n=card.querySelector('.stvn-delivery-location-name'),d=card.querySelector('.stvn-delivery-distance'),t=card.querySelector('.stvn-delivery-eta'),note=card.querySelector('.stvn-delivery-location-note'),b=card.querySelector('button');if(n)n.textContent=loc.name||'वर्तमान लोकेशन सेव है';if(d)d.textContent='दूरी: '+Number(loc.km).toFixed(2)+' km';let mins=loc.km<=1?10:loc.km<=2?14:loc.km<=3?18:loc.km<=4?25:32;try{const cfg=JSON.parse(localStorage.getItem('vedantDeliveryEtaSettingsV1')||'{}');mins=Number(cfg[Math.max(1,Math.min(5,Math.ceil(loc.km)))])||mins}catch(e){}if(t)t.textContent=loc.km>5?'डिलीवरी उपलब्ध नहीं':'डिलीवरी समय: '+mins+' मिनट';if(note)note.textContent=loc.km>5?'आपकी लोकेशन 5 km डिलीवरी क्षेत्र से बाहर है।':'डिलीवरी समय अनुमानित है और ट्रैफिक के अनुसार बदल सकता है।';if(b)b.textContent='↻ लोकेशन अपडेट करें';});}
+function distance(a,b,c,d){const r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,q=Math.sin(x/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)**2;return 6371*2*Math.asin(Math.sqrt(q))}
+async function nameAt(lat,lng){try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lng,{headers:{'Accept-Language':'hi,en'}});if(r.ok){const a=(await r.json()).address||{};return [a.suburb||a.neighbourhood||a.village||a.town||a.city_district||a.city,a.city||a.town||a.village||a.state_district].filter((x,i,z)=>x&&z.indexOf(x)===i).join(', ')||'वर्तमान लोकेशन'}}catch(e){}return 'वर्तमान लोकेशन'}
+function locate(resultEl,btn){if(!navigator.geolocation){resultEl.textContent='इस browser में location उपलब्ध नहीं है।';return}resultEl.textContent='📍 आपकी वर्तमान लोकेशन प्राप्त की जा रही है…';if(btn)btn.disabled=true;navigator.geolocation.getCurrentPosition(async p=>{const lat=p.coords.latitude,lng=p.coords.longitude,shopLat=Number(window.SHOP_LATITUDE??25.3698055556),shopLng=Number(window.SHOP_LONGITUDE??78.5613),km=distance(shopLat,shopLng,lat,lng),name=await nameAt(lat,lng),loc={lat,lng,km,name,updatedAt:Date.now()};setLocation(loc);resultEl.textContent='📍 '+name+' · '+km.toFixed(2)+' km · '+(km>5?'डिलीवरी उपलब्ध नहीं':(km<=1?10:km<=2?14:km<=3?18:km<=4?25:32)+' मिनट अनुमानित');if(btn){btn.disabled=false;btn.textContent='✅ लोकेशन मिल गई';}},err=>{resultEl.textContent=err.code===1?'लोकेशन की अनुमति नहीं मिली। Browser settings में Location Allow करें।':'वर्तमान लोकेशन नहीं मिल पाई। दोबारा कोशिश करें।';if(btn)btn.disabled=false;},{enableHighAccuracy:true,timeout:18000,maximumAge:0})}
+function ensureOnboard(){if($('stvnLocationFirstGate'))return;const gate=document.createElement('div');gate.id='stvnLocationFirstGate';gate.innerHTML='<div class="stvn-loc-onboard"><div class="stvn-loc-pin">📍</div><h2>अपनी लोकेशन चुनें</h2><p>Vedant Grocery Shop आपकी वर्तमान लोकेशन दिखाएगा और अनुमानित डिलीवरी समय बताएगा।</p><div class="stvn-loc-result" id="stvnLocationFirstResult">📍 Current Location पर क्लिक करें — आपकी लोकेशन यहीं दिखाई देगी।</div><button type="button" id="stvnLocationFirstButton">📍 Current Location</button><button type="button" class="stvn-loc-later" id="stvnLocationFirstContinue">OK · Home Page खोलें</button></div>';document.body.appendChild(gate);$('stvnLocationFirstButton').addEventListener('click',()=>locate($('stvnLocationFirstResult'),$('stvnLocationFirstButton')));$('stvnLocationFirstContinue').addEventListener('click',()=>{gate.style.display='none';document.body.classList.remove('stvn-location-onboard-open');if(typeof window.showPage==='function')window.showPage('home');});}
+function showOnboard(){ensureOnboard();const gate=$('stvnLocationFirstGate');if(gate){gate.style.display='flex';document.body.classList.add('stvn-location-onboard-open');const loc=saved();if(loc){$('stvnLocationFirstResult').textContent='📍 '+(loc.name||'वर्तमान लोकेशन')+' · '+Number(loc.km).toFixed(2)+' km';$('stvnLocationFirstButton').textContent='🔄 Current Location अपडेट करें';}}}
+function relocateCards(){for(const id of ['page-home','page-shop']){const page=$(id);if(!page)continue;const card=page.querySelector('.stvn-delivery-location-card');if(!card)continue;if(id==='page-home'){const hero=page.querySelector('.top.hero')||page.querySelector('.hero');if(hero&&card.previousElementSibling!==hero)hero.insertAdjacentElement('afterend',card);}else{const heading=page.querySelector('.section-head');if(heading&&card.previousElementSibling!==heading)heading.insertAdjacentElement('afterend',card);}}}
+function init(){ensureOnboard();relocateCards();document.addEventListener('click',e=>{const b=e.target.closest('.stvn-delivery-location-action');if(b){e.preventDefault();const card=b.closest('.stvn-delivery-location-card'),name=card&&card.querySelector('.stvn-delivery-location-name');if(name)name.textContent='वर्तमान लोकेशन प्राप्त की जा रही है…';locate({set textContent(v){if(name)name.textContent=v},get textContent(){return name?name.textContent:''}},b)}});const loc=saved();if(loc)setLocation(loc);if(window.supabaseClient?.auth){window.supabaseClient.auth.getSession().then(({data})=>{if(data?.session?.user){const email=String(data.session.user.email||'').toLowerCase();if(email)try{localStorage.setItem('vedantCustomerEmail',email)}catch(e){};showOnboard()}}).catch(()=>{});window.supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session?.user){setTimeout(showOnboard,80)}})}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+const obs=new MutationObserver(()=>{relocateCards();});obs.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+<!-- ===== END LOCATION-FIRST CUSTOMER FLOW ===== -->
+
+
+<!-- Vedant Grocery Shop: Admin-managed storefront offers -->
+<style id="stvn-offers-style">
+#stvnOffersAdmin{margin:18px 0;padding:20px;border:1px solid #d7b5ff;border-radius:20px;background:linear-gradient(135deg,#f0e7ff 0%,#e5f7ff 55%,#fff0d9 100%);box-shadow:0 12px 30px rgba(77,50,125,.14);color:#25204b}
+ #stvnOffersAdmin h3{margin:0 0 6px;color:#5b21b6;font-size:21px}#stvnOffersAdmin .stvn-offer-admin-sub{margin:0 0 14px;color:#514b70;font-size:13px}
+#stvnOffersAdmin .stvn-offer-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+#stvnOffersAdmin label{display:block;font-size:12px;font-weight:800;margin-bottom:5px;color:#4c3688}
+#stvnOffersAdmin input,#stvnOffersAdmin textarea{box-sizing:border-box;width:100%;max-width:none;padding:11px 12px;border:1px solid #c7b8ef;border-radius:11px;background:#f8f6ff;color:#25204b}
+#stvnOffersAdmin textarea{min-height:74px;resize:vertical}#stvnOffersAdmin .stvn-offer-full{grid-column:1/-1}
+#stvnOffersAdmin .stvn-offer-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+#stvnOffersAdmin button{border:0;border-radius:11px;padding:11px 15px;font-weight:850;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff}
+#stvnOffersAdmin button.stvn-offer-secondary{background:#f8f6ff;color:#4c3688;border:1px solid #c7b8ef}
+#stvnOffersAdmin .stvn-offer-admin-list{display:grid;gap:8px;margin-top:16px}#stvnOffersAdmin .stvn-offer-admin-row{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.76);border:1px solid #d7c8f2}
+#stvnOffersAdmin .stvn-offer-admin-row small{display:block;color:#5f5879;margin-top:3px}#stvnOffersAdmin .stvn-offer-admin-row button{padding:7px 10px;font-size:12px}
+.stvn-customer-offers{margin:12px 0 22px;padding:14px;border-radius:17px;border:1px solid #f6c95d;background:linear-gradient(115deg,#dff7ff 0%,#eae2ff 48%,#ffe6d6 100%);box-shadow:0 10px 26px rgba(67,56,140,.16);color:#27224d;overflow:hidden}
+.stvn-customer-offers-head{display:flex;align-items:center;gap:9px;margin:0 0 10px}.stvn-customer-offers-icon{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#e11d48);color:#fff;font-size:20px}
+.stvn-customer-offers-head h3{margin:0;font-size:16px;font-weight:950;color:#9a3412}.stvn-customer-offers-head p{margin:2px 0 0;font-size:11px;color:#855f39}
+.stvn-customer-offers-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px}.stvn-customer-offer{position:relative;padding:12px 13px;border-radius:13px;background:linear-gradient(145deg,rgba(248,247,255,.94),rgba(232,247,255,.94));border:1px solid #c7c4f6;box-shadow:0 4px 12px rgba(74,64,130,.08)}
+.stvn-customer-offer-badge{display:inline-flex;padding:4px 8px;margin-bottom:6px;border-radius:999px;background:#ddd6fe;color:#5b21b6;font-size:10px;font-weight:950;letter-spacing:.3px;text-transform:uppercase}
+.stvn-customer-offer h4{margin:0 0 4px;font-size:15px;line-height:1.3;color:#312e81}.stvn-customer-offer p{margin:0;color:#4b5563;font-size:12px;line-height:1.45;overflow-wrap:anywhere}.stvn-customer-offer-code{display:inline-block;margin-top:8px;padding:5px 8px;border:1px dashed #8b5cf6;border-radius:7px;color:#4c1d95;background:#f5f3ff;font-size:11px;font-weight:900}
+@media(max-width:600px){#stvnOffersAdmin{padding:14px}#stvnOffersAdmin .stvn-offer-form-grid{grid-template-columns:1fr}#stvnOffersAdmin .stvn-offer-full{grid-column:auto}.stvn-customer-offers{padding:12px}.stvn-customer-offers-list{grid-template-columns:1fr}}
+</style>
+<script id="stvn-offers-script">
+(function(){
+'use strict';
+const TABLE='store_offers';
+const OWNER_EMAIL='vedant898989gupta@gmail.com';
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function client(){return window.supabaseClient|| (typeof supabaseClient!=='undefined'?supabaseClient:null)}
+function isOwner(){try{const e=String(localStorage.getItem('vedantCustomerEmail')||'').toLowerCase();return e===OWNER_EMAIL}catch(e){return false}}
+function addCustomerBox(pageId){const page=$(pageId);if(!page||page.querySelector('.stvn-customer-offers'))return;const box=document.createElement('section');box.className='stvn-customer-offers';box.setAttribute('aria-label','Latest offers');box.innerHTML='<div class="stvn-customer-offers-head"><div class="stvn-customer-offers-icon">🎁</div><div><h3>आज के खास Offers</h3><p>Vedant Grocery Shop की ताज़ा बचत आपके लिए</p></div></div><div class="stvn-customer-offers-list"><div class="stvn-customer-offer"><p>ऑफर लोड हो रहे हैं…</p></div></div>';const location=page.querySelector('.stvn-delivery-location-card');if(location)location.insertAdjacentElement('afterend',box);else{const anchor=pageId==='page-home'?(page.querySelector('.top.hero')||page.querySelector('.hero')):page.querySelector('.section-head');if(anchor)anchor.insertAdjacentElement('afterend',box);else page.prepend(box)}}
+function renderOffers(offers){document.querySelectorAll('.stvn-customer-offers').forEach(box=>{const list=box.querySelector('.stvn-customer-offers-list');if(!list)return;if(!offers.length){box.style.display='none';return}box.style.display='';list.innerHTML=offers.map(o=>'<article class="stvn-customer-offer"><span class="stvn-customer-offer-badge">'+esc(o.badge||'Special Offer')+'</span><h4>'+esc(o.title)+'</h4><p>'+esc(o.description||'')+'</p>'+(o.code?'<span class="stvn-customer-offer-code">Code: '+esc(o.code)+'</span>':'')+'</article>').join('')})}
+async function loadOffers(){const c=client();if(!c||typeof c.from!=='function'){renderOffers([]);return}try{const {data,error}=await c.from(TABLE).select('id,title,description,badge,code,is_active,created_at').eq('is_active',true).order('created_at',{ascending:false}).limit(12);if(error)throw error;renderOffers(data||[])}catch(e){console.warn('Offers could not be loaded:',e.message);renderOffers([])}}
+function adminMarkup(){const panel=$('adminContent');if(!panel||$('stvnOffersAdmin'))return;const box=document.createElement('section');box.id='stvnOffersAdmin';box.innerHTML='<h3>🎁 Offers Update</h3><p class="stvn-offer-admin-sub">यहाँ offer जोड़ें या बंद करें। Active offer Home और Shop पेज पर delivery location/time box के ठीक नीचे दिखेगा।</p><div class="stvn-offer-form-grid"><div><label for="stvnOfferTitle">Offer का नाम / Headline *</label><input id="stvnOfferTitle" maxlength="90" placeholder="जैसे: आज की खास बचत" required></div><div><label for="stvnOfferBadge">छोटा Badge</label><input id="stvnOfferBadge" maxlength="28" placeholder="जैसे: TODAY DEAL"></div><div class="stvn-offer-full"><label for="stvnOfferDescription">Offer की जानकारी *</label><textarea id="stvnOfferDescription" maxlength="260" placeholder="जैसे: चुनिंदा grocery products पर खास कीमतें" required></textarea></div><div><label for="stvnOfferCode">Coupon Code (optional)</label><input id="stvnOfferCode" maxlength="40" placeholder="जैसे: VEDANT10"></div><div><label for="stvnOfferActive">स्थिति</label><select id="stvnOfferActive"><option value="true">🟢 ग्राहकों को दिखाएँ</option><option value="false">⚪ अभी छिपाएँ</option></select></div></div><div class="stvn-offer-actions"><button type="button" id="stvnOfferSave">＋ Offer जोड़ें</button><button type="button" id="stvnOfferCancel" class="stvn-offer-secondary" style="display:none">Cancel Edit</button><button type="button" id="stvnOfferRefresh" class="stvn-offer-secondary">↻ Refresh</button></div><p id="stvnOfferAdminMessage" role="status" aria-live="polite" class="admin-small"></p><div id="stvnOfferAdminList" class="stvn-offer-admin-list"></div>';const anchor=panel.querySelector('.admin-toolbar');if(anchor)anchor.insertAdjacentElement('afterend',box);else panel.prepend(box);$('stvnOfferSave').addEventListener('click',saveOffer);$('stvnOfferCancel').addEventListener('click',resetForm);$('stvnOfferRefresh').addEventListener('click',loadAdminOffers);loadAdminOffers()}
+let editingId=null;
+function msg(t){const e=$('stvnOfferAdminMessage');if(e)e.textContent=t}
+function resetForm(){editingId=null;['stvnOfferTitle','stvnOfferBadge','stvnOfferDescription','stvnOfferCode'].forEach(id=>{if($(id))$(id).value=''});if($('stvnOfferActive'))$('stvnOfferActive').value='true';if($('stvnOfferSave'))$('stvnOfferSave').textContent='＋ Offer जोड़ें';if($('stvnOfferCancel'))$('stvnOfferCancel').style.display='none';msg('')}
+async function saveOffer(){const c=client();if(!c){msg('❌ Supabase client नहीं मिला।');return}const title=$('stvnOfferTitle')?.value.trim(),description=$('stvnOfferDescription')?.value.trim();if(!title||!description){msg('कृपया Offer का नाम और जानकारी भरें।');return}const btn=$('stvnOfferSave');btn.disabled=true;msg('Offer सेव हो रहा है…');try{const {data:sd}=await c.auth.getSession();const email=String(sd?.session?.user?.email||'').toLowerCase();if(email!==OWNER_EMAIL)throw new Error('केवल store owner admin offer update कर सकता है। कृपया सही Admin Login करें।');const payload={title,description,badge:$('stvnOfferBadge').value.trim()||'Special Offer',code:$('stvnOfferCode').value.trim()||null,is_active:$('stvnOfferActive').value==='true',updated_at:new Date().toISOString()};let result;if(editingId)result=await c.from(TABLE).update(payload).eq('id',editingId).select().single();else result=await c.from(TABLE).insert(payload).select().single();if(result.error)throw result.error;msg('✅ Offer सेव हो गया। Customer page पर दिखने के लिए Refresh करें या page reload करें।');resetForm();await loadAdminOffers();await loadOffers()}catch(e){console.error('Offer save failed',e);msg('❌ सेव नहीं हुआ: '+(e.message||'Supabase table/RLS policies जाँचें।'))}finally{btn.disabled=false}}
+async function loadAdminOffers(){const c=client(),list=$('stvnOfferAdminList');if(!list)return;if(!c){list.textContent='Supabase client उपलब्ध नहीं है।';return}list.textContent='Offers लोड हो रहे हैं…';try{const {data:sd}=await c.auth.getSession();if(String(sd?.session?.user?.email||'').toLowerCase()!==OWNER_EMAIL){list.textContent='Offers edit करने के लिए owner Admin Login करें।';return}const {data,error}=await c.from(TABLE).select('id,title,description,badge,code,is_active,created_at').order('created_at',{ascending:false}).limit(30);if(error)throw error;if(!data?.length){list.textContent='अभी कोई offer नहीं है। ऊपर से पहला offer जोड़ें।';return}list.innerHTML=data.map(o=>'<div class="stvn-offer-admin-row"><div><strong>'+esc(o.title)+'</strong><small>'+(o.is_active?'🟢 Active · Customer को दिखेगा':'⚪ Hidden · Customer को नहीं दिखेगा')+(o.code?' · Code: '+esc(o.code):'')+'</small></div><div class="stvn-offer-actions" style="margin:0"><button type="button" data-offer-edit="'+esc(o.id)+'" class="stvn-offer-secondary">✎ Edit</button><button type="button" data-offer-toggle="'+esc(o.id)+'" data-active="'+String(!!o.is_active)+'">'+(o.is_active?'Hide':'Show')+'</button><button type="button" data-offer-delete="'+esc(o.id)+'" class="stvn-offer-secondary">Delete</button></div></div>').join('');list.querySelectorAll('[data-offer-edit]').forEach(b=>b.addEventListener('click',()=>editOffer(data.find(o=>String(o.id)===b.dataset.offerEdit))));list.querySelectorAll('[data-offer-toggle]').forEach(b=>b.addEventListener('click',()=>toggleOffer(b.dataset.offerToggle,b.dataset.active==='true')));list.querySelectorAll('[data-offer-delete]').forEach(b=>b.addEventListener('click',()=>deleteOffer(b.dataset.offerDelete)))}catch(e){console.error(e);list.textContent='Offers लोड नहीं हुए: '+(e.message||'Supabase table/RLS जाँचें।')}}
+function editOffer(o){if(!o)return;editingId=o.id;$('stvnOfferTitle').value=o.title||'';$('stvnOfferBadge').value=o.badge||'';$('stvnOfferDescription').value=o.description||'';$('stvnOfferCode').value=o.code||'';$('stvnOfferActive').value=String(!!o.is_active);$('stvnOfferSave').textContent='💾 Changes सेव करें';$('stvnOfferCancel').style.display='';msg('आप offer edit कर रहे हैं।');$('stvnOffersAdmin').scrollIntoView({behavior:'smooth',block:'start'})}
+async function toggleOffer(id,active){const c=client();try{const {error}=await c.from(TABLE).update({is_active:!active,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;msg('✅ Offer status अपडेट हो गया।');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Status update नहीं हुआ: '+e.message)}}
+async function deleteOffer(id){if(!confirm('क्या आप यह offer हमेशा के लिए delete करना चाहते हैं?'))return;const c=client();try{const {error}=await c.from(TABLE).delete().eq('id',id);if(error)throw error;msg('✅ Offer delete हो गया।');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Delete नहीं हुआ: '+e.message)}}
+function init(){addCustomerBox('page-home');addCustomerBox('page-shop');adminMarkup();loadOffers()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+window.addEventListener('focus',()=>{addCustomerBox('page-home');addCustomerBox('page-shop');adminMarkup();loadOffers()});
+setInterval(loadOffers,60000);
+})();
+</script>
+
 </body>
+<style id="stvn-final-design-status-overrides">
+.stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
+.stvn-delivery-location-card h2,.stvn-delivery-location-card h3,.stvn-delivery-location-name{color:#123e70!important}
+.stvn-delivery-location-card p,.stvn-delivery-location-note{color:#365c77!important}
+.stvn-delivery-location-card .stvn-delivery-location-action{background:linear-gradient(135deg,#2479d8,#7047cf)!important;color:#fff!important;border:0!important;box-shadow:0 8px 20px #2e65a844!important}
+.stvn-customer-offers{background:linear-gradient(120deg,#c9f3ff 0%,#e0d8ff 50%,#ffdfc9 100%)!important;border:1px solid #9a9ce8!important;color:#242052!important}
+.stvn-customer-offer{background:linear-gradient(145deg,#f1efff,#dff5ff)!important;border:1px solid #b4b8ef!important}
+.stvn-customer-offer h4{color:#38237b!important}.stvn-customer-offer p{color:#3e4b69!important}
+#stvnOffersAdmin{padding:0!important;overflow:hidden}
+#stvnOffersAdmin .stvn-offer-collapse-button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:17px 20px;border:0;border-radius:0;text-align:left;font-size:17px;background:linear-gradient(110deg,#5b21b6,#2563eb,#0e7490);color:#fff}
+#stvnOffersAdmin .stvn-offer-collapse-content{padding:18px}
+#stvnOffersAdmin .stvn-offer-collapse-content[hidden]{display:none!important}
+#stvnHomeStatusBanner{display:none;margin:12px 0 18px;padding:clamp(18px,4vw,28px);border-radius:22px;text-align:center;box-shadow:0 12px 32px #0002;border:2px solid #d6a24b;background:linear-gradient(135deg,#fff0cc,#ffe0e7);color:#502e24}
+#stvnHomeStatusBanner h2{margin:5px 0 12px;font-size:clamp(24px,5vw,38px);font-weight:950}
+#stvnHomeStatusBanner p{margin:8px auto;max-width:700px;line-height:1.65}
+#stvnHomeStatusBanner .stvn-home-status-stamp{display:inline-block;padding:8px 16px;border:3px double currentColor;border-radius:8px;font-weight:950;letter-spacing:.08em}
+html[data-shop-status="closed"] #stvnHomeStatusBanner,html[data-shop-status="maintenance"] #stvnHomeStatusBanner{display:block}
+html[data-shop-status="closed"] #page-home .stvn-delivery-location-card,html[data-shop-status="maintenance"] #page-home .stvn-delivery-location-card,
+html[data-shop-status="closed"] #page-home .stvn-customer-offers,html[data-shop-status="maintenance"] #page-home .stvn-customer-offers,
+html[data-shop-status="closed"] #page-home .top.hero,html[data-shop-status="maintenance"] #page-home .top.hero,
+html[data-shop-status="closed"] #page-home .hero,html[data-shop-status="maintenance"] #page-home .hero,
+html[data-shop-status="closed"] #page-home .section-head,html[data-shop-status="maintenance"] #page-home .section-head,
+html[data-shop-status="closed"] #page-home #products,html[data-shop-status="maintenance"] #page-home #products,
+html[data-shop-status="closed"] #page-home .categories,html[data-shop-status="maintenance"] #page-home .categories,
+html[data-shop-status="closed"] #page-home #searchBox,html[data-shop-status="maintenance"] #page-home #searchBox{display:none!important}
+html[data-shop-status="closed"] #page-home .stvn-home-hide-when-closed,html[data-shop-status="maintenance"] #page-home .stvn-home-hide-when-closed{display:none!important}
+@media(max-width:600px){#stvnOffersAdmin .stvn-offer-collapse-button{padding:15px;font-size:15px}#stvnOffersAdmin .stvn-offer-collapse-content{padding:12px}}
+</style>
+<script id="stvn-final-home-status-and-offer-collapse">
+(function(){
+'use strict';
+function addHomeBanner(){const home=document.getElementById('page-home');if(!home||document.getElementById('stvnHomeStatusBanner'))return;const b=document.createElement('section');b.id='stvnHomeStatusBanner';b.setAttribute('role','status');b.setAttribute('aria-live','polite');b.innerHTML='<div style="font-size:38px">🏪</div><h2 id="stvnHomeStatusTitle">दुकान अभी बंद है</h2><div class="stvn-home-status-stamp" id="stvnHomeStatusStamp">SHOP CLOSED</div><p id="stvnHomeStatusText">कृपया थोड़ी देर बाद फिर आएँ।</p><p id="stvnHomeStatusReason" style="font-weight:800"></p>';const anchor=home.querySelector('.stvn-delivery-location-card')||home.querySelector('.top.hero')||home.querySelector('.hero');if(anchor)anchor.insertAdjacentElement('afterend',b);else home.prepend(b)}
+function syncBanner(){addHomeBanner();const status=document.documentElement.dataset.shopStatus||'open';const b=document.getElementById('stvnHomeStatusBanner');if(!b)return;const title=b.querySelector('#stvnHomeStatusTitle'),stamp=b.querySelector('#stvnHomeStatusStamp'),txt=b.querySelector('#stvnHomeStatusText'),reason=b.querySelector('#stvnHomeStatusReason');if(status==='maintenance'){title.textContent='दुकान Under Maintenance में है';stamp.textContent='UNDER MAINTENANCE';txt.textContent='हमारी दुकान में जरूरी सुधार का काम चल रहा है। फिलहाल ऑर्डर उपलब्ध नहीं हैं। कृपया थोड़ी देर बाद दोबारा आएँ।';}else{title.textContent='अभी दुकान बंद है';stamp.textContent='SHOP CLOSED';txt.textContent='हमारी दुकान इस समय बंद है। दुकान खुलते ही आप फिर से सामान ऑर्डर कर सकेंगे।'}const r=document.getElementById('adminShopStatusReason');reason.textContent=(status!=='open'&&r&&r.value.trim())?r.value.trim():'';}
+function collapseOffers(){const box=document.getElementById('stvnOffersAdmin');if(!box||box.dataset.collapsible==='yes')return;const content=document.createElement('div');content.className='stvn-offer-collapse-content';while(box.firstChild)content.appendChild(box.firstChild);const btn=document.createElement('button');btn.type='button';btn.className='stvn-offer-collapse-button';btn.innerHTML='<span>🎁 Offers Update <small style="display:block;font-size:12px;font-weight:500;opacity:.9">ऑफर जोड़ने, बदलने या छिपाने के लिए क्लिक करें</small></span><span class="stvn-offer-collapse-icon">＋</span>';content.hidden=true;btn.setAttribute('aria-expanded','false');btn.addEventListener('click',()=>{content.hidden=!content.hidden;btn.setAttribute('aria-expanded',String(!content.hidden));btn.querySelector('.stvn-offer-collapse-icon').textContent=content.hidden?'＋':'－'});box.append(btn,content);box.dataset.collapsible='yes'}
+function init(){addHomeBanner();collapseOffers();syncBanner();const target=document.documentElement;new MutationObserver(()=>syncBanner()).observe(target,{attributes:true,attributeFilter:['data-shop-status']});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
