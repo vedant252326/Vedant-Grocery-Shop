@@ -1621,6 +1621,108 @@ body.stvn-customer-login-open{overflow:hidden}
 #customer-products-status[hidden]{display:none!important}
 #products .product{content-visibility:auto;contain-intrinsic-size:220px}
 </style>
+
+<style id="stvn-payment-accordion-design">
+/* Payment-only presentation update. Existing cart/order/payment processing is retained. */
+.stvn-payment-method-native{
+  position:absolute!important;
+  width:1px!important;height:1px!important;
+  padding:0!important;margin:-1px!important;overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  border:0!important;
+}
+.stvn-payment-accordion{display:grid;gap:11px;margin:14px 0 4px}
+.stvn-payment-accordion-item{
+  overflow:hidden;border:1px solid var(--border);
+  border-radius:17px;background:var(--surface);
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.stvn-payment-accordion-item.is-selected{
+  border:1.5px solid var(--primary);
+  background:linear-gradient(135deg,var(--surface),var(--surface-2));
+  box-shadow:0 7px 18px rgba(25,135,84,.10);
+}
+.stvn-payment-accordion-trigger{
+  display:flex;align-items:center;gap:13px;width:100%;
+  min-height:76px;margin:0;padding:12px 15px;
+  border:0;border-radius:0;background:transparent;color:var(--text);
+  text-align:left;cursor:pointer;
+}
+.stvn-payment-icon{
+  flex:0 0 48px;width:48px;height:48px;
+  display:grid;place-items:center;border-radius:14px;
+  font-size:25px;background:var(--surface-2);
+  border:1px solid var(--border);
+}
+.stvn-online-icon{color:#1469bd;background:#edf5ff}
+.stvn-razorpay-icon{
+  color:#fff;background:linear-gradient(145deg,#2b7de9,#1746a2);
+  box-shadow:0 5px 12px rgba(37,99,235,.2);
+}
+.stvn-razorpay-icon span{font-size:27px;font-weight:950;font-family:Arial,sans-serif;font-style:italic}
+.stvn-payment-card-copy{display:grid;gap:4px;min-width:0;flex:1}
+.stvn-payment-card-copy strong{font-size:15px;font-weight:900;line-height:1.25}
+.stvn-payment-card-copy small{font-size:12px;color:var(--muted);font-weight:600;line-height:1.35}
+.stvn-payment-chevron{
+  flex:0 0 30px;width:30px;height:30px;display:grid;place-items:center;
+  border-radius:50%;background:var(--surface-2);color:var(--muted);
+  font-size:22px;line-height:1;transition:transform .18s ease,background .18s ease,color .18s ease;
+}
+.stvn-payment-accordion-item.is-open .stvn-payment-chevron{
+  transform:rotate(180deg);background:var(--primary);color:#fff;
+}
+.stvn-payment-accordion-detail{
+  display:none;padding:0 16px 15px 76px;color:var(--muted);
+  font-size:13px;line-height:1.55;
+}
+.stvn-payment-accordion-item.is-open .stvn-payment-accordion-detail{display:block}
+.stvn-payment-accordion-detail p{margin:0 0 8px}
+.stvn-payment-selected-label{display:inline-block;color:var(--primary);font-size:11px;font-weight:900}
+body.dark .stvn-payment-accordion-item.is-selected{background:linear-gradient(135deg,var(--surface),var(--surface-2))}
+@media(max-width:480px){
+  .stvn-payment-accordion{gap:9px}
+  .stvn-payment-accordion-trigger{min-height:70px;padding:10px 11px;gap:10px}
+  .stvn-payment-icon{width:43px;height:43px;flex-basis:43px;border-radius:13px;font-size:22px}
+  .stvn-payment-card-copy strong{font-size:14px}
+  .stvn-payment-card-copy small{font-size:11px}
+  .stvn-payment-accordion-detail{padding:0 12px 13px 64px;font-size:12px}
+}
+</style>
+
+<style id="stvn-payment-method-logos">
+/* Presentation only: these are labels for the existing secure online checkout. */
+.stvn-allpay-icon{color:#fff;background:linear-gradient(145deg,#087f8c,#2457c5);box-shadow:0 5px 14px rgba(22,92,160,.2)}
+.stvn-payment-options-grid{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 10px}
+.stvn-payment-option-chip{display:inline-flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);color:var(--text);font-size:12px;font-weight:800;line-height:1.2}
+.stvn-option-symbol{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 3px;border-radius:6px;background:var(--surface);color:var(--primary);font-size:15px;font-weight:950}
+.stvn-payment-options-note{margin:0 0 8px!important}
+@media(max-width:480px){.stvn-payment-option-chip{font-size:11px;padding:7px 8px;gap:5px}}
+</style>
+
+<style id="stvn-online-method-selector">
+.stvn-online-method-group{display:grid;gap:9px;margin:14px 0 4px}
+.stvn-online-method-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 2px 5px;color:var(--text);font-size:14px;font-weight:900}
+.stvn-online-method-heading small{color:var(--muted);font-size:11px;font-weight:700}
+.stvn-online-method{display:flex;align-items:center;gap:13px;width:100%;min-height:76px;padding:11px 14px;border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--text);text-align:left;cursor:pointer;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,transform .18s ease}
+.stvn-online-method:hover{border-color:var(--primary);transform:translateY(-1px)}
+.stvn-online-method.is-selected{border:1.5px solid var(--primary);background:linear-gradient(135deg,var(--surface),var(--surface-2));box-shadow:0 6px 17px rgba(25,135,84,.11)}
+.stvn-online-method-logo{flex:0 0 49px;width:49px;height:45px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);font-size:23px}
+.stvn-card-brand-logo{gap:2px;flex-direction:column;background:#f7f9ff;color:#183c8c;font-family:Arial,sans-serif}
+.stvn-card-brand-logo b{font-size:13px;font-style:italic;font-weight:1000;letter-spacing:-.5px}
+.stvn-card-brand-logo i{font-size:12px;letter-spacing:-5px;padding-right:5px;color:#df6b39;font-style:normal}
+.stvn-bank-brand-logo{background:#eef5ff;color:#2456a6}
+.stvn-emi-brand-logo{background:#f4efff;color:#6a3eb5;font-size:14px;font-weight:1000;letter-spacing:-.5px}
+.stvn-wallet-brand-logo{background:#fff5e8;color:#a45a16}
+.stvn-online-method-copy{display:grid;gap:4px;flex:1;min-width:0}
+.stvn-online-method-copy strong{font-size:14px;font-weight:900;line-height:1.2}
+.stvn-online-method-copy small{font-size:11px;color:var(--muted);font-weight:600;line-height:1.35}
+.stvn-online-method-radio{flex:0 0 21px;width:21px;height:21px;border:2px solid #aab5c0;border-radius:50%;display:grid;place-items:center}
+.stvn-online-method.is-selected .stvn-online-method-radio{border-color:var(--primary)}
+.stvn-online-method.is-selected .stvn-online-method-radio:after{content:"";width:10px;height:10px;border-radius:50%;background:var(--primary)}
+.stvn-online-method-footnote{margin:3px 2px 0;color:var(--muted);font-size:11px;line-height:1.5}
+@media(max-width:480px){.stvn-online-method{min-height:69px;padding:9px 10px;gap:10px}.stvn-online-method-logo{flex-basis:44px;width:44px;height:42px}.stvn-online-method-copy strong{font-size:13px}}
+</style>
+
 </head>
 
 <body>
@@ -1976,11 +2078,63 @@ Grand Total: ₹<span id="cart-total">0</span>
       Pay cash when your order is delivered.
     </p>
 
-    <label for="payment-method">Select Payment Mode</label>
-    <select id="payment-method" onchange="showPaymentInfo()">
+    <!-- Keep the original payment selector for the existing checkout logic. -->
+    <select id="payment-method" onchange="showPaymentInfo()" aria-label="Selected payment method" class="stvn-payment-method-native">
       <option value="COD">Cash on Delivery</option>
-      <option value="UPI">UPI Payment</option>
+      <option value="UPI">Online Payment (UPI)</option>
+      <option value="RAZORPAY">Razorpay</option>
     </select>
+
+    <div class="stvn-payment-accordion" aria-label="Choose a payment method">
+      <div class="stvn-payment-accordion-item" data-payment-card="COD">
+        <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-cod" onclick="toggleVedantPayment('COD')">
+          <span class="stvn-payment-icon stvn-cod-icon" aria-hidden="true">🫴💵</span>
+          <span class="stvn-payment-card-copy"><strong>Cash on Delivery</strong><small>Pay when your order arrives</small></span>
+          <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-cod">
+          <p>Cash payment करें जब आपका grocery order deliver हो जाए।</p>
+          <span class="stvn-payment-selected-label">✓ Selected payment method</span>
+        </div>
+      </div>
+
+      <div class="stvn-payment-accordion-item" data-payment-card="UPI">
+        <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-upi" onclick="toggleVedantPayment('UPI')">
+          <span class="stvn-payment-icon stvn-online-icon" aria-hidden="true">📱</span>
+          <span class="stvn-payment-card-copy"><strong>Online Payment</strong><small>UPI QR / UPI ID payment</small></span>
+          <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-upi">
+          <p>UPI app से QR scan करके या UPI ID के जरिए payment करें। अगली screen पर QR और payment details मिलेंगी।</p>
+          <span class="stvn-payment-selected-label">✓ Selected payment method</span>
+        </div>
+      </div>
+
+      <div class="stvn-online-method-group" aria-label="Choose an online payment method">
+        <div class="stvn-online-method-heading">Online Payment Methods <small>एक विकल्प चुनें</small></div>
+        <button type="button" class="stvn-online-method" data-online-method="card" onclick="selectVedantOnlineMethod('card',this)" aria-pressed="false">
+          <span class="stvn-online-method-logo stvn-card-brand-logo" aria-hidden="true"><b>VISA</b><i>●●</i></span>
+          <span class="stvn-online-method-copy"><strong>Cards</strong><small>Credit Card / Debit Card</small></span>
+          <span class="stvn-online-method-radio" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="stvn-online-method" data-online-method="netbanking" onclick="selectVedantOnlineMethod('netbanking',this)" aria-pressed="false">
+          <span class="stvn-online-method-logo stvn-bank-brand-logo" aria-hidden="true">🏦</span>
+          <span class="stvn-online-method-copy"><strong>Net Banking</strong><small>Pay directly through your bank</small></span>
+          <span class="stvn-online-method-radio" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="stvn-online-method" data-online-method="emi" onclick="selectVedantOnlineMethod('emi',this)" aria-pressed="false">
+          <span class="stvn-online-method-logo stvn-emi-brand-logo" aria-hidden="true">EMI</span>
+          <span class="stvn-online-method-copy"><strong>EMI</strong><small>Available bank / card EMI options</small></span>
+          <span class="stvn-online-method-radio" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="stvn-online-method" data-online-method="wallet" onclick="selectVedantOnlineMethod('wallet',this)" aria-pressed="false">
+          <span class="stvn-online-method-logo stvn-wallet-brand-logo" aria-hidden="true">👛</span>
+          <span class="stvn-online-method-copy"><strong>Wallets</strong><small>Choose an available digital wallet</small></span>
+          <span class="stvn-online-method-radio" aria-hidden="true"></span>
+        </button>
+        <p class="stvn-online-method-footnote">विकल्प चुनकर Continue to Payment दबाएँ। आगे सुरक्षित पेमेंट स्क्रीन पर जरूरी details भरें। उपलब्धता आपके payment account पर निर्भर करेगी।</p>
+      </div>
+    </div>
 
     <div id="payment-info" class="payment-note"></div>
   </div>
@@ -2605,6 +2759,7 @@ Login करके orders load करो.
 </div>
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
@@ -3289,9 +3444,18 @@ function continueToPayment(){
     showPage("cart");
     return;
   }
+  const selectedPayment=document.getElementById("payment-method")?.value;
+  if(selectedPayment==="RAZORPAY" && !window.vedantSelectedRazorpayMethod){
+    alert("कृपया Cards, Net Banking, EMI या Wallets में से एक विकल्प चुनें.");
+    return;
+  }
   updateCart();
   showPaymentInfo();
   showPage("payment");
+  if(selectedPayment==="RAZORPAY"){
+    // Continue to Payment opens the secure checkout directly for the selected method.
+    placeOrder();
+  }
 }
 
 
@@ -3595,6 +3759,8 @@ box.innerHTML=html;
 /* ================= PAYMENT ================= */
 
 const VEDANT_UPI_ID = "q573765706@ybl";
+// Public Razorpay Key ID only. NEVER put the Key Secret in this HTML.
+const RAZORPAY_KEY_ID = "rzp_live_TzEEK3DNHzxMIg";
 
 function showPaymentInfo(){
 
@@ -3616,6 +3782,14 @@ if(method==="COD"){
       <strong>💵 Cash on Delivery</strong>
       <div class="payment-note">Order receive करते समय cash payment करें.</div>
     </div>`;
+  return;
+}
+
+if(method==="RAZORPAY"){
+  const amount = Number((document.getElementById("cart-total")?.textContent || "0").replace(/[^0-9.]/g,"")) || 0;
+  const chosen = window.vedantSelectedRazorpayMethod || "";
+  const chosenLabel = ({card:"Cards",netbanking:"Net Banking",emi:"EMI",wallet:"Wallets"})[chosen] || "Online Payment";
+  info.innerHTML = `<div class="stvn-payment-choice"><strong>🔒 ${chosenLabel} से सुरक्षित भुगतान</strong><div class="payment-note">₹${amount.toFixed(2)} का भुगतान करने के लिए Continue to Payment दबाएँ। अगली screen पर ${chosenLabel} की जरूरी details भरें.</div></div>`;
   return;
 }
 
@@ -4834,396 +5008,127 @@ function isMissingOrderColumn(error,column){
 }
 
 async function placeOrder(){
+  if(cartItems.length===0){ alert("Please add products to your cart first."); return; }
+  const message=document.getElementById("order-message");
+  const button=document.querySelector("#page-payment .place-order") || document.querySelector(".place-order");
+  if(button){button.disabled=true;button.textContent="Please wait...";}
+  try{
+    const {data:authData,error:authError}=await supabaseClient.auth.getUser();
+    if(authError || !authData.user?.email) throw new Error("Order करने के लिए कृपया अपने account में फिर से login करें.");
+    const customerEmail=String(authData.user.email).trim().toLowerCase();
+    const name=document.getElementById("customer-name").value.trim();
+    const phone=document.getElementById("customer-phone").value.trim();
+    const address=document.getElementById("customer-address").value.trim();
+    const payment=document.getElementById("payment-method").value;
+    if(!name || !phone || !address) throw new Error("Please fill in your name, mobile number and address.");
+    if(!/^[0-9]{10}$/.test(phone)) throw new Error("Please enter a valid 10-digit mobile number.");
+    if(payment==="UPI"){
+      const confirmed=document.getElementById("upi-payment-confirmed");
+      if(!confirmed || !confirmed.checked) throw new Error("Please complete the UPI payment and tick the confirmation checkbox.");
+    }
+    await getCustomerLocationForOrder();
+    if(customerLatitude===null || customerLongitude===null) throw new Error("❌ आपकी current location नहीं मिल सकी। Location permission Allow करके फिर Try Again करें.");
+    const radiusCheck=checkDeliveryRadius();
+    if(!radiusCheck.allowed) throw new Error("❌ Sorry! Currently not available. आपकी location shop से "+radiusCheck.distance.toFixed(2)+" km दूर है. Delivery radius सिर्फ 5 km है.");
 
-if(cartItems.length===0){
+    const totalText=document.getElementById("cart-total").textContent;
+    const totalAmount=Number(String(totalText).replace(/[^0-9.]/g,""))||0;
+    if(totalAmount<=0) throw new Error("Cart total is not valid. Please refresh your cart and try again.");
+    const order={
+      id:"VEDANT-"+Date.now(), name, phone, address, customer_email:customerEmail,
+      payment:payment==="RAZORPAY"?"Razorpay":(payment==="UPI"?"UPI":"Cash on Delivery"),
+      payment_status:payment==="RAZORPAY"?"paid":(payment==="UPI"?"pending_verification":"pending"),
+      order_status:"pending", total:totalText,
+      delivery_charge:Number(document.getElementById("delivery-charge")?.textContent||0),
+      latitude:customerLatitude, longitude:customerLongitude,
+      items:JSON.parse(JSON.stringify(cartItems)), delivery:"20–25 Minutes", date:new Date().toLocaleString()
+    };
 
-alert(
-"Please add products to your cart first."
-);
-
-return;
-
+    if(payment==="RAZORPAY"){
+      if(!window.vedantSelectedRazorpayMethod) throw new Error("कृपया Cards, Net Banking, EMI या Wallets में से एक payment option चुनें.");
+      if(!window.Razorpay) throw new Error("Secure payment checkout load नहीं हुआ। Internet connection check करके फिर कोशिश करें.");
+      const amountPaise=Math.round(totalAmount*100);
+      const {data:createData,error:createError}=await supabaseClient.functions.invoke("razorpay-payment",{
+        body:{action:"create_order",amount_paise:amountPaise,receipt:order.id}
+      });
+      if(createError) throw new Error(createError.message||"Razorpay order create नहीं हो सका. Supabase Edge Function setup check करें.");
+      if(!createData?.order?.id) throw new Error(createData?.error||"Razorpay order ID नहीं मिला.");
+      const razorpayOrder=createData.order;
+      const checkout=new Razorpay({
+        key:RAZORPAY_KEY_ID, amount:razorpayOrder.amount, currency:razorpayOrder.currency||"INR",
+        name:"Vedant Grocery Shop", description:"Grocery Order "+order.id, order_id:razorpayOrder.id,
+        prefill:{name,contact:phone,email:customerEmail},
+        config:{display:{blocks:{selected_method:{name:( {card:"Cards",netbanking:"Net Banking",emi:"EMI",wallet:"Wallets"}[window.vedantSelectedRazorpayMethod] || "Selected Payment Method"),instruments:[{method:window.vedantSelectedRazorpayMethod || "card"}]}},sequence:["block.selected_method"],preferences:{show_default_blocks:false}}},
+        notes:{shop_order_id:order.id}, theme:{color:"#16a34a"},
+        handler:async function(response){
+          try{
+            if(button){button.disabled=true;button.textContent="Verifying Payment...";}
+            const {data:verifyData,error:verifyError}=await supabaseClient.functions.invoke("razorpay-payment",{
+              body:{action:"verify_payment",razorpay_order_id:response.razorpay_order_id,razorpay_payment_id:response.razorpay_payment_id,razorpay_signature:response.razorpay_signature,expected_amount_paise:amountPaise}
+            });
+            if(verifyError || !verifyData?.verified) throw new Error(verifyData?.error||verifyError?.message||"Payment verification failed. Please contact the shop before retrying.");
+            order.razorpay_order_id=response.razorpay_order_id;
+            order.razorpay_payment_id=response.razorpay_payment_id;
+            await saveVedantOrder(order,customerEmail);
+          }catch(err){
+            console.error("Razorpay verification/order save error:",err);
+            message.innerHTML='<span class="error">❌ Payment हो गया हो सकता है, लेकिन verification/order save में समस्या आई: '+escapeHtml(err.message||"Unknown error")+'. कृपया दोबारा payment न करें; shop से संपर्क करें.</span>';
+          }finally{if(button){button.disabled=false;button.textContent="🛒 Place Order";}}
+        },
+        modal:{ondismiss:function(){if(button){button.disabled=false;button.textContent="🛒 Place Order";} message.innerHTML='<span class="payment-note">Payment checkout बंद हुआ। आपका order अभी place नहीं हुआ है.</span>';}}
+      });
+      checkout.on("payment.failed",function(response){
+        message.innerHTML='<span class="error">❌ Payment failed: '+escapeHtml(response?.error?.description||"Please try again.")+'</span>';
+        if(button){button.disabled=false;button.textContent="🛒 Place Order";}
+      });
+      checkout.open();
+      return;
+    }
+    await saveVedantOrder(order,customerEmail);
+  }catch(err){
+    console.error("Place order error:",err);
+    message.innerHTML='<span class="error">❌ '+escapeHtml(err.message||"कृपया कुछ देर बाद फिर कोशिश करें.")+'</span>';
+  }finally{
+    if(button && button.textContent!=="Verifying Payment..."){button.disabled=false;button.textContent="🛒 Place Order";}
+  }
 }
 
-let authData;
-let authError;
-try{
-  ({
-    data:authData,
-    error:authError
-  } = await supabaseClient.auth.getUser());
-}catch(error){
-  console.error("Could not verify customer account for order:",error);
-  document.getElementById("order-message").innerHTML =
-    '<span class="error">❌ Account verify नहीं हो सका। कृपया फिर से login करके order करें.</span>';
-  return;
-}
-
-if(authError || !authData.user?.email){
-  console.error("Could not verify customer account for order:",authError);
-  document.getElementById("order-message").innerHTML =
-    '<span class="error">❌ Order करने के लिए कृपया अपने account में फिर से login करें.</span>';
-  return;
-}
-
-const customerEmail=String(authData.user.email).trim().toLowerCase();
-
-
-let name =
-document.getElementById(
-"customer-name"
-).value.trim();
-
-
-let phone =
-document.getElementById(
-"customer-phone"
-).value.trim();
-
-
-let address =
-document.getElementById(
-"customer-address"
-).value.trim();
-
-
-let payment =
-document.getElementById(
-"payment-method"
-).value;
-
-
-if(!name || !phone || !address){
-
-alert(
-"Please fill in your name, mobile number and address."
-);
-
-return;
-
-}
-
-
-if(!/^[0-9]{10}$/.test(phone)){
-
-alert(
-"Please enter a valid 10-digit mobile number."
-);
-
-return;
-
-}
-
-
-if(payment==="UPI"){
-  const confirmed=document.getElementById("upi-payment-confirmed");
-  if(!confirmed || !confirmed.checked){
-    alert("Please complete the UPI payment using the QR/UPI ID and tick the payment confirmation checkbox.");
+async function saveVedantOrder(order,customerEmail){
+  const message=document.getElementById("order-message");
+  let savedWithoutCustomerEmail=false;
+  const orderRecord={
+    order_id:order.id, customer_name:order.name, customer_phone:order.phone,
+    customer_address:order.address, customer_email:customerEmail,
+    latitude:order.latitude, longitude:order.longitude,
+    delivery_charge:order.delivery_charge, payment_method:order.payment,
+    payment_status:order.payment_status, order_status:order.order_status,
+    total:Number(String(order.total).replace(/[^0-9.]/g,"")), items:order.items,
+    delivery:order.delivery, order_date:new Date().toISOString(),
+    razorpay_order_id:order.razorpay_order_id||null,
+    razorpay_payment_id:order.razorpay_payment_id||null
+  };
+  let recordToSave={...orderRecord};
+  let supabaseError;
+  while(true){
+    ({error:supabaseError}=await supabaseClient.from("orders").insert([recordToSave]));
+    if(!supabaseError)break;
+    if(Object.prototype.hasOwnProperty.call(recordToSave,"customer_email")&&isMissingCustomerEmailColumn(supabaseError)){delete recordToSave.customer_email;savedWithoutCustomerEmail=true;continue;}
+    if(Object.prototype.hasOwnProperty.call(recordToSave,"delivery_charge")&&isMissingOrderColumn(supabaseError,"delivery_charge")){delete recordToSave.delivery_charge;continue;}
+    if(Object.prototype.hasOwnProperty.call(recordToSave,"razorpay_order_id")&&/razorpay_order_id/i.test(String(supabaseError.message||""))){delete recordToSave.razorpay_order_id;delete recordToSave.razorpay_payment_id;continue;}
+    break;
+  }
+  if(supabaseError){
+    console.error("Supabase order error:",supabaseError);
+    message.innerHTML='<span class="error">❌ Payment verification सफल है, लेकिन order database में save नहीं हुआ: '+escapeHtml(supabaseError.message||"Please contact the shop.")+'. कृपया दोबारा payment न करें.</span>';
     return;
   }
+  orderHistory.unshift(order); saveData();
+  message.innerHTML=`<span class="success">✅ Order placed successfully!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: ${escapeHtml(order.payment)}<br>📦 Order Status: ${escapeHtml(order.order_status)}<br>💳 Payment Status: ${escapeHtml(order.payment_status)}${order.razorpay_payment_id?"<br>Razorpay Payment ID: "+escapeHtml(order.razorpay_payment_id):""}${order.latitude!==null&&order.longitude!==null?"<br>📍 Location saved with this order":"<br>📍 Location not available; address saved"}${savedWithoutCustomerEmail?"<br>⚠️ Database में customer_email column जोड़ने की जरूरत है.":""}</span>`;
+  cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
+  saveData(); updateCart(); showOrderHistory();
+  saveTrackedOrder(order.id,order.phone); setTrackingInputs(order.id,order.phone);
+  renderCustomerTracking(order); startCustomerOrderRealtime(); showOrderConfirmation(order);
 }
-
-
-await getCustomerLocationForOrder();
-
-// Location is required for delivery-radius validation.
-if(customerLatitude === null || customerLongitude === null){
-
-document.getElementById(
-"order-message"
-).innerHTML =
-'<span class="error">' +
-"❌ आपकी current location नहीं मिल सकी। Location permission Allow करके फिर Try Again करें." +
-"</span>";
-
-return;
-
-}
-
-const radiusCheck = checkDeliveryRadius();
-
-if(!radiusCheck.allowed){
-
-document.getElementById(
-"order-message"
-).innerHTML =
-'<span class="error">' +
-"❌ Sorry! Currently not available.<br>" +
-"📍 आपकी location shop से " + radiusCheck.distance.toFixed(2) + " km दूर है.<br>" +
-"🚚 Delivery radius सिर्फ 5 km है.<br>" +
-"कृपया दूसरी location से Try Again करें." +
-"</span>";
-
-return;
-
-}
-
-let total =
-document.getElementById(
-"cart-total"
-).textContent;
-
-
-let order = {
-
-id:
-"VEDANT-" +
-Date.now(),
-
-name:name,
-
-phone:phone,
-
-address:address,
-
-customer_email:customerEmail,
-
-payment:
-payment === "UPI" ? "UPI" : "Cash on Delivery",
-
-payment_status:
-payment === "UPI" ? "pending_verification" : "pending",
-
-order_status:
-"pending",
-
-total:total,
-
-delivery_charge:Number(
-document.getElementById("delivery-charge")?.textContent || 0
-),
-
-latitude:customerLatitude,
-
-longitude:customerLongitude,
-
-items:
-JSON.parse(
-JSON.stringify(cartItems)
-),
-
-delivery:
-"20–25 Minutes",
-
-date:
-new Date().toLocaleString()
-
-};
-
-let savedWithoutCustomerEmail=false;
-
-
-try{
-
-const orderRecord={
-
-order_id:
-order.id,
-
-customer_name:
-order.name,
-
-customer_phone:
-order.phone,
-
-customer_address:
-order.address,
-
-customer_email:customerEmail,
-
-latitude:
-customerLatitude,
-
-longitude:
-customerLongitude,
-
-delivery_charge:
-order.delivery_charge,
-
-payment_method:
-order.payment,
-
-payment_status:
-order.payment_status,
-
-order_status:
-order.order_status,
-
-total:
-Number(order.total),
-
-items:
-order.items,
-
-delivery:
-order.delivery,
-
-order_date:
-new Date().toISOString()
-
-};
-
-let recordToSave={...orderRecord};
-let supabaseError;
-while(true){
-  ({error:supabaseError}=await supabaseClient.from("orders").insert([recordToSave]));
-  if(!supabaseError)break;
-  if(Object.prototype.hasOwnProperty.call(recordToSave,"customer_email")&&
-     isMissingCustomerEmailColumn(supabaseError)){
-    delete recordToSave.customer_email;
-    savedWithoutCustomerEmail=true;
-    continue;
-  }
-  if(Object.prototype.hasOwnProperty.call(recordToSave,"delivery_charge")&&
-     isMissingOrderColumn(supabaseError,"delivery_charge")){
-    delete recordToSave.delivery_charge;
-    continue;
-  }
-  break;
-}
-
-
-if(supabaseError){
-
-console.error(
-"Supabase order error:",
-supabaseError
-);
-
-
-document.getElementById(
-"order-message"
-).innerHTML =
-
-'<span class="error">' +
-
-"❌ Order save नहीं हुआ: " + escapeHtml(supabaseError.message || "कृपया कुछ देर बाद फिर कोशिश करें.") +
-
-"</span>";
-
-return;
-
-}
-
-}
-catch(err){
-
-console.error(err);
-
-
-document.getElementById(
-"order-message"
-).innerHTML =
-
-'<span class="error">' +
-
-"❌ Database connection error: " + escapeHtml(err.message || "कृपया कुछ देर बाद फिर कोशिश करें.") +
-
-"</span>";
-
-return;
-
-}
-
-
-orderHistory.unshift(
-order
-);
-
-saveData();
-
-
-document.getElementById(
-"order-message"
-).innerHTML =
-
-`
-
-<span class="success">
-
-✅ Order placed successfully!
-
-<br>
-
-🧾 Order ID:
-${escapeHtml(order.id)}
-
-<br>
-
-💳 Payment:
-${escapeHtml(order.payment)}
-
-<br>
-
-📦 Order Status:
-${escapeHtml(order.order_status)}
-
-<br>
-
-💳 Payment Status:
-${escapeHtml(order.payment_status)}
-
-${
-customerLatitude !== null &&
-customerLongitude !== null
-
-?
-
-"<br>📍 Location saved with this order"
-
-:
-
-"<br>📍 Location not available; address saved"
-
-}
-
-${
-savedWithoutCustomerEmail
-? "<br>⚠️ Order online save हो गया है, लेकिन My Orders में account से जोड़ने के लिए database में customer_email column चाहिए."
-: ""
-}
-
-</span>
-
-`;
-
-
-cartItems=[];
-
-discountAmount=0;
-
-customerLatitude=null;
-customerLongitude=null;
-
-saveData();
-
-updateCart();
-
-showOrderHistory();
-
-
-saveTrackedOrder(
-order.id,
-order.phone
-);
-
-
-setTrackingInputs(
-order.id,
-order.phone
-);
-
-
-renderCustomerTracking(
-order
-);
-
-startCustomerOrderRealtime();
-
-showOrderConfirmation(order);
-
-}
-
 
 function showOrderConfirmation(order){
   const modal=document.getElementById("order-confirmation-modal");
@@ -11178,6 +11083,71 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 window.addEventListener('focus',()=>{addCustomerBox('page-home');addCustomerBox('page-shop');adminMarkup();loadOffers()});
 setInterval(loadOffers,60000);
 })();
+</script>
+
+
+<script id="stvn-payment-accordion-behavior">
+/* Presentation adapter: keep the original payment selector and checkout values intact. */
+function selectVedantOnlineMethod(method,button){
+  const allowed=["card","netbanking","emi","wallet"];
+  if(!allowed.includes(method)) return;
+  const select=document.getElementById("payment-method");
+  if(!select) return;
+  select.value="RAZORPAY";
+  window.vedantSelectedRazorpayMethod=method;
+  document.querySelectorAll(".stvn-online-method").forEach(item=>{
+    const active=item===button;
+    item.classList.toggle("is-selected",active);
+    item.setAttribute("aria-pressed",active?"true":"false");
+  });
+  document.querySelectorAll(".stvn-payment-accordion-item").forEach(card=>{
+    card.classList.remove("is-open","is-selected");
+    const trigger=card.querySelector(".stvn-payment-accordion-trigger");
+    if(trigger) trigger.setAttribute("aria-expanded","false");
+  });
+  if(typeof showPaymentInfo==="function") showPaymentInfo();
+}
+
+function toggleVedantPayment(method){
+  const select=document.getElementById("payment-method");
+  if(!select) return;
+  const item=document.querySelector('.stvn-payment-accordion-item[data-payment-card="'+method+'"]');
+  if(!item) return;
+  const wasOpen=item.classList.contains("is-open");
+  document.querySelectorAll(".stvn-payment-accordion-item").forEach(card=>{
+    card.classList.remove("is-open","is-selected");
+    const trigger=card.querySelector(".stvn-payment-accordion-trigger");
+    if(trigger) trigger.setAttribute("aria-expanded","false");
+  });
+  document.querySelectorAll(".stvn-online-method").forEach(card=>{
+    card.classList.remove("is-selected");
+    card.setAttribute("aria-pressed","false");
+  });
+  if(method!=="RAZORPAY") window.vedantSelectedRazorpayMethod=null;
+  if(wasOpen){
+    const current=document.querySelector('.stvn-payment-accordion-item[data-payment-card="'+select.value+'"]');
+    if(current) current.classList.add("is-selected");
+    return;
+  }
+  select.value=method;
+  item.classList.add("is-open","is-selected");
+  const trigger=item.querySelector(".stvn-payment-accordion-trigger");
+  if(trigger) trigger.setAttribute("aria-expanded","true");
+  if(typeof showPaymentInfo==="function") showPaymentInfo();
+}
+
+function syncVedantPaymentAccordion(){
+  const select=document.getElementById("payment-method");
+  if(!select) return;
+  document.querySelectorAll(".stvn-payment-accordion-item").forEach(card=>{
+    const active=card.getAttribute("data-payment-card")===select.value;
+    card.classList.toggle("is-selected",active);
+    card.classList.toggle("is-open",active);
+    const trigger=card.querySelector(".stvn-payment-accordion-trigger");
+    if(trigger) trigger.setAttribute("aria-expanded",active?"true":"false");
+  });
+}
+document.addEventListener("DOMContentLoaded",syncVedantPaymentAccordion);
 </script>
 
 </body>
