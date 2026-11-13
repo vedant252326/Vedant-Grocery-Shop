@@ -431,7 +431,7 @@ textarea{
     overflow-wrap:anywhere;
 }
 
-@media(max-width:900px){
+.vg-home-featured-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}\n.vg-home-featured-grid .product{border:1px solid #e6ebe4!important;border-radius:18px!important;background:#fff!important;padding:12px!important;box-shadow:0 5px 18px rgba(24,67,31,.09)!important;min-width:0;overflow:hidden}\n.vg-home-featured-grid .product-icon{min-height:130px;display:grid;place-items:center;background:linear-gradient(145deg,#f7fbf1,#fff);border-radius:13px;font-size:clamp(54px,6vw,86px)!important;padding:12px!important}\n.vg-home-featured-grid .cart-btn{width:100%;border-radius:25px!important;background:linear-gradient(135deg,#14932c,#087226)!important}\n@media(max-width:900px){.vg-home-featured-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.vg-home-featured-grid .product-icon{min-height:100px;font-size:56px!important}}\n@media(max-width:520px){.vg-home-featured-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vg-home-featured-grid .product{padding:8px!important}.vg-home-featured-grid .product-icon{min-height:90px;font-size:49px!important}}\n@media(max-width:900px){
     #adminContent{
         grid-template-columns:minmax(0,1fr);
     }
@@ -1723,13 +1723,278 @@ body.dark .stvn-payment-accordion-item.is-selected{background:linear-gradient(13
 @media(max-width:480px){.stvn-online-method{min-height:69px;padding:9px 10px;gap:10px}.stvn-online-method-logo{flex-basis:44px;width:44px;height:42px}.stvn-online-method-copy strong{font-size:13px}}
 </style>
 
+
+<style id="stvn-vedant-wallet-payment-style">
+.stvn-vedant-wallet-logo{background:#f0fff5!important;padding:4px!important;overflow:hidden}
+.stvn-vedant-wallet-logo img{width:100%;height:100%;object-fit:contain;border-radius:9px}
+.stvn-payment-choice.stvn-wallet-payment-summary>strong{display:flex;align-items:center;gap:10px;font-size:16px}
+.stvn-wallet-payment-summary>strong img{width:42px;height:42px;object-fit:contain;border-radius:11px;border:1px solid var(--border);background:#fff;padding:3px}
+.stvn-checkout-wallet-balance,.stvn-wallet-payment-after{margin:10px 0;padding:11px 13px;border:1px solid #bfe8ce;border-radius:12px;background:#f0fff5;color:#14532d;font-weight:850}
+#page-wallet .wallet-logo{width:58px;height:58px;object-fit:contain;padding:5px;border-radius:15px;background:#fff}
+#page-wallet .wallet-history-list{display:grid;gap:8px;margin-top:12px}
+#page-wallet .wallet-history-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+#page-wallet .wallet-history-row small{display:block;color:var(--muted)}
+@media(max-width:480px){.stvn-wallet-payment-summary>strong{font-size:14px}.stvn-checkout-wallet-balance,.stvn-wallet-payment-after{font-size:13px}}
+</style>
+
+
+<style id="stvn-wallet-three-actions-css">
+#page-wallet .wallet-main-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+#page-wallet .wallet-main-actions button{margin:0;min-height:62px;border-radius:15px;background:linear-gradient(135deg,#159b55,#08783d);color:#fff;font-size:14px;font-weight:900;box-shadow:0 8px 18px #16834a22}
+#page-wallet .wallet-main-actions button[data-wallet-action="withdraw"]{background:linear-gradient(135deg,#326da8,#204b80)}
+#page-wallet .wallet-main-actions button[data-wallet-action="status"]{background:linear-gradient(135deg,#7552b7,#54358f)}
+#page-wallet .wallet-main-actions button.active{outline:3px solid #f2c86b;outline-offset:2px}
+#page-wallet .wallet-panel{margin:12px 0;padding:20px}
+#page-wallet .wallet-panel[hidden]{display:none!important}
+#page-wallet .wallet-panel p{line-height:1.5;color:var(--muted)}
+#page-wallet .wallet-panel button{background:var(--primary);color:white;border-radius:12px;padding:12px 16px}
+#page-wallet .wallet-inline-message{font-weight:800;overflow-wrap:anywhere}
+#page-wallet .wallet-note{margin-top:14px}
+@media(max-width:520px){#page-wallet .wallet-main-actions{grid-template-columns:1fr;gap:8px}#page-wallet .wallet-main-actions button{min-height:50px}}
+</style>
+
+
+<style id="vedant-compact-category-carousel-final">
+/* Final responsive category-only layout: keeps the existing category data and click handlers. */
+#page-shop .categories.stvn-category-list:not(.stvn-category-open){
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:stretch;
+  gap:12px !important;
+  width:100%;
+  max-width:100% !important;
+  margin:0 0 16px !important;
+  padding:10px 12px 13px !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  overscroll-behavior-x:contain;
+  scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(46,107,80,.35) transparent;
+  border-radius:16px !important;
+}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{
+  flex:0 0 clamp(138px,15vw,184px) !important;
+  width:clamp(138px,15vw,184px) !important;
+  min-width:0 !important;
+  min-height:174px !important;
+  height:174px;
+  padding:8px !important;
+  gap:6px !important;
+  border-radius:15px !important;
+  scroll-snap-align:start;
+  box-shadow:0 5px 13px rgba(20,55,35,.08) !important;
+}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image{
+  display:block !important;
+  width:100% !important;
+  height:112px !important;
+  min-height:112px;
+  overflow:hidden;
+  border-radius:10px !important;
+  background:#edf2ed;
+}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-image{
+  display:block;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  border-radius:inherit;
+}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side:not(.has-image){
+  width:54px !important;
+  height:54px !important;
+  margin:8px auto 2px;
+}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-copy{width:100%;min-width:0}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-name{
+  font-size:clamp(12px,1.2vw,15px) !important;
+  line-height:1.15 !important;
+  letter-spacing:0 !important;
+  overflow-wrap:anywhere;
+}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-hint{display:none !important}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-count{font-size:10px !important;margin-top:3px !important}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-arrow{width:23px;height:23px;top:6px;right:6px;font-size:14px}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card:before{font-size:32px;opacity:.5}
+#page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card:after{display:none}
+@media(max-width:700px){
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open){
+    gap:8px !important;
+    padding:7px 8px 10px !important;
+    margin-bottom:12px !important;
+    border-radius:13px !important;
+  }
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{
+    flex-basis:clamp(108px,28vw,136px) !important;
+    width:clamp(108px,28vw,136px) !important;
+    height:142px !important;
+    min-height:142px !important;
+    padding:6px !important;
+    gap:5px !important;
+    border-radius:12px !important;
+  }
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image{
+    height:91px !important;
+    min-height:91px !important;
+    border-radius:8px !important;
+  }
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-name{font-size:11px !important;line-height:1.15 !important}
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-count{font-size:9px !important}
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-arrow{width:20px;height:20px;font-size:12px;top:5px;right:5px}
+}
+@media(max-width:360px){
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{
+    flex-basis:104px !important;width:104px !important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open){scroll-behavior:auto}
+}
+</style>
+
+
+<style id="stvn-premium-leaf-branding">
+.brand-logo.stvn-leaf-brand{display:grid;place-items:center;overflow:hidden;background:linear-gradient(145deg,#f5fff7,#dff7e5)!important}
+.stvn-brand-wordmark{font-weight:950;letter-spacing:-.55px;text-shadow:0 1px 0 #fff}
+.stvn-brand-wordmark span{display:block;font-size:12px;font-weight:800;letter-spacing:.15px;color:#356b47}
+#stvnCustomerLoginGate .stvn-login-leaf-logo{display:grid;place-items:center;background:linear-gradient(145deg,#f4fff6,#dff7e5)!important;border:1px solid #ccebd4;box-shadow:0 8px 22px rgba(18,80,48,.12)}
+#stvnCustomerLoginGate .stvn-login-leaf-logo svg{display:block}
+@media(max-width:520px){.brand{gap:7px!important}.brand-logo.stvn-leaf-brand{flex-basis:40px!important;width:40px!important;height:40px!important;border-radius:12px!important}.brand-logo.stvn-leaf-brand svg{width:35px;height:35px}.stvn-brand-wordmark{font-size:15px!important}.stvn-brand-wordmark span{font-size:10px}}
+</style>
+
+
+<style id="vedant-reference-premium-shop-theme">
+:root{--vg-green:#16852f;--vg-deep:#075b25;--vg-lime:#7dbb24;--vg-cream:#fffdf5;--vg-line:#e5ecdf}
+body{background:linear-gradient(180deg,#fbfff6 0%,#f4f8ef 48%,#fff 100%)!important;color:#14251a}
+#page-home,#page-shop{max-width:1600px!important;width:100%;padding:10px clamp(10px,1.4vw,24px) 28px!important}
+.vg-store-header{position:sticky;top:0;z-index:1200;display:grid;grid-template-columns:auto auto minmax(180px,1fr) auto auto auto auto;align-items:center;gap:clamp(8px,1.2vw,20px);padding:10px clamp(12px,2vw,28px);margin:0 0 12px;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border:1px solid rgba(16,105,42,.12);border-radius:0 0 20px 20px;box-shadow:0 8px 26px rgba(20,70,32,.09)}
+.vg-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#08752d;text-decoration:none}
+.vg-brand-mark{width:54px;height:54px;flex:0 0 54px;border-radius:16px;background:linear-gradient(145deg,#e7f8d9,#fff);display:grid;place-items:center;box-shadow:inset 0 0 0 1px #d7ebc9}
+.vg-brand-mark svg{width:46px;height:46px}
+.vg-brand-name{font-size:clamp(17px,2vw,29px);font-weight:1000;line-height:.95;letter-spacing:-1px}
+.vg-brand-name small{display:block;color:#152d1d;font-size:.57em;letter-spacing:-.3px;margin-top:5px}
+.vg-location{display:flex;align-items:center;gap:8px;padding:8px 12px;border-left:1px solid #dbe4d8;color:#24372a;white-space:nowrap}
+.vg-location .pin{font-size:26px}
+.vg-location small{display:block;color:#647568;font-size:11px}
+.vg-location b{font-size:14px;color:#155d2b}
+.vg-search{height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;border:1px solid #d9dfdf;border-radius:28px;background:#f9fafb;box-shadow:inset 0 1px 3px #00000008;min-width:0}
+.vg-search span{font-size:22px;color:#334155}
+.vg-search input{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;font-size:14px!important}
+.vg-action{height:46px;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 15px;border:1.5px solid #167a32;border-radius:28px;background:#fff;color:#123e20;font-weight:850;white-space:nowrap;cursor:pointer;box-shadow:0 3px 9px #0a5b2410}
+.vg-action:hover{background:#f0faed;transform:translateY(-1px)}
+.vg-action .vg-ico{font-size:21px}
+.vg-action small{display:block;font-size:10px;color:#4c7657;font-weight:700}
+.vg-cart-action{border:0;background:transparent;font-size:28px;position:relative;padding:5px 10px}
+.vg-cart-count{position:absolute;right:0;top:-2px;background:#f20f18;color:#fff;border-radius:50%;min-width:21px;height:21px;display:grid;place-items:center;font-size:11px;font-weight:900;border:2px solid #fff}
+.vg-account-action{width:48px;height:48px;border-radius:50%;padding:0;background:#f7faf7;border:1px solid #dce5dd;font-size:23px}
+.vg-hero{min-height:clamp(190px,21vw,300px);margin:10px 0 14px;border-radius:22px;overflow:hidden;position:relative;display:flex;align-items:center;padding:clamp(22px,5vw,68px);background:linear-gradient(90deg,rgba(248,255,224,.97) 0%,rgba(246,255,225,.88) 34%,rgba(245,255,225,.05) 72%),url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1800&q=85') center/cover;box-shadow:0 10px 28px rgba(35,80,28,.13)}
+.vg-hero-copy{max-width:610px;position:relative;z-index:1}
+.vg-hero h2{font-size:clamp(30px,4.2vw,66px)!important;line-height:.99!important;letter-spacing:-2px;color:#123d1c!important;margin:0 0 12px!important;font-weight:1000}
+.vg-hero h2 em{font-style:normal;color:#29952e}
+.vg-hero p{font-weight:800;color:#183b20;font-size:clamp(12px,1.25vw,17px);margin:12px 0 18px}
+.vg-shop-now{border:0;border-radius:30px;padding:12px 24px;background:linear-gradient(135deg,#168b27,#0c6e25);color:white;font-weight:900;font-size:15px;box-shadow:0 8px 18px #0a6a2a30;cursor:pointer}
+.vg-fresh-stamp{position:absolute;right:4%;top:20%;width:110px;height:110px;border-radius:50%;display:grid;place-items:center;text-align:center;color:#fff;background:#16872d;border:5px double #e5ffd5;font-size:20px;font-weight:1000;transform:rotate(9deg);box-shadow:0 7px 20px #0002}
+.vg-category-panel{margin:12px 0 18px;padding:14px 16px 18px;border:1px solid #e6ece4;border-radius:20px;background:rgba(255,255,255,.94);box-shadow:0 7px 20px rgba(30,70,35,.08)}
+.vg-section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.vg-section-title h2{font-size:clamp(20px,2vw,27px)!important;margin:0!important;color:#132b20!important;display:flex;align-items:center;gap:10px}
+.vg-section-title h2:before{content:"▦";color:#188b32;font-size:28px}
+.vg-section-title button{border:0;background:transparent;color:#16752d;font-weight:900;cursor:pointer}
+.vg-category-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(130px,1fr);gap:12px;overflow-x:auto;padding:2px 2px 7px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.vg-category-tile{position:relative;min-height:122px;border:0;border-radius:15px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding:9px;background:linear-gradient(145deg,#e9f4d9,#fff);box-shadow:0 4px 12px #1d5a2515;scroll-snap-align:start;cursor:pointer}
+.vg-category-tile:before{content:attr(data-emoji);position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(42px,5vw,66px);background:radial-gradient(circle at 50% 42%,#ffffff 0%,#f1f8e8 65%,#e5f1d8 100%)}
+.vg-category-tile span{position:relative;z-index:1;width:100%;padding:5px 7px;border-radius:20px;background:#f7fff0;color:#143b1c;font-weight:900;text-align:center;box-shadow:0 2px 6px #0002;font-size:13px}
+.vg-shop-products-head{display:flex;align-items:center;justify-content:space-between;margin:16px 4px 10px}
+.vg-shop-products-head h2{margin:0!important;font-size:clamp(21px,2.2vw,29px)!important;color:#152d22!important}
+#page-shop .section-head{display:none}
+#page-shop #products-heading{display:none}
+#page-shop #searchBox{display:none}
+#page-shop .categories{display:none}
+#page-shop #products,#page-home #products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+#page-shop .product,#page-home .product{border:1px solid #e6ebe4!important;border-radius:18px!important;background:#fff!important;padding:12px!important;box-shadow:0 5px 18px rgba(24,67,31,.09)!important;min-width:0;overflow:hidden}
+#page-shop .product-icon,#page-home .product-icon{min-height:130px;display:grid;place-items:center;background:linear-gradient(145deg,#f7fbf1,#fff);border-radius:13px;font-size:clamp(54px,6vw,86px)!important;padding:12px!important}
+#page-shop .product h3,#page-home .product h3{font-size:16px;margin:10px 0 3px;color:#172b1d}
+#page-shop .price,#page-home .price{font-size:18px;font-weight:950;color:#102e19}
+#page-shop .cart-btn,#page-home .cart-btn{width:100%;border-radius:25px!important;background:linear-gradient(135deg,#14932c,#087226)!important;box-shadow:0 5px 12px #0b7a2c25!important}
+#page-shop .wish-btn,#page-home .wish-btn{border-radius:22px!important}
+#page-shop .stvn-product-qty,#page-shop .stvn-product-note{margin-top:7px}
+.vg-promo-row{display:grid;grid-template-columns:1fr minmax(220px,28%);gap:16px;align-items:stretch;margin-top:16px}
+.vg-promo-card{border-radius:20px;padding:20px;background:linear-gradient(135deg,#fff4bd,#fffdf1 55%,#e5f4d2);border:1px solid #f0e4b9;display:flex;flex-direction:column;justify-content:center;min-height:190px}
+.vg-promo-card strong{display:inline-flex;align-self:flex-start;padding:7px 15px;background:#f11d24;color:#fff;border-radius:22px}
+.vg-promo-card h3{font-size:clamp(24px,3vw,38px);line-height:1.05;color:#153b1c;margin:12px 0}
+.vg-promo-card p{font-weight:800;color:#3b5d36}
+.vg-promo-card button{align-self:flex-start;border:0;border-radius:24px;background:#13862b;color:#fff;padding:11px 20px;font-weight:900}
+#page-shop .stvn-category-intro{display:none}
+#page-shop .stvn-category-list{display:none}
+#page-shop .page{max-width:1600px}
+@media(max-width:900px){
+ .vg-store-header{grid-template-columns:auto auto 1fr auto auto;gap:7px;padding:8px 10px}
+ .vg-location{display:none}
+ .vg-search{grid-column:1/-1;grid-row:2;height:42px;order:8}
+ .vg-brand-mark{width:42px;height:42px;flex-basis:42px}
+ .vg-brand-mark svg{width:37px;height:37px}
+ .vg-brand-name{font-size:19px}
+ .vg-action{height:40px;padding:0 10px;font-size:12px}
+ .vg-action small{display:none}
+ .vg-cart-action{font-size:24px}
+ .vg-account-action{width:40px;height:40px}
+ .vg-hero{min-height:190px;background-position:58% center;padding:22px}
+ .vg-hero h2{max-width:58%;font-size:clamp(27px,5vw,42px)!important}
+ .vg-hero p{max-width:55%;font-size:11px}
+ .vg-fresh-stamp{width:72px;height:72px;font-size:13px;border-width:3px;right:4%;top:12%}
+ .vg-category-row{grid-auto-columns:minmax(112px,1fr);gap:9px}
+ .vg-category-tile{min-height:105px}
+ #page-shop #products,#page-home #products{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+ #page-shop .product,#page-home .product{padding:9px!important}
+ #page-shop .product-icon,#page-home .product-icon{min-height:100px;font-size:56px!important}
+}
+@media(max-width:520px){
+ #page-home,#page-shop{padding:7px 8px 24px!important}
+ .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto;gap:6px;border-radius:0 0 15px 15px;margin:0 -8px 8px}
+ .vg-brand{gap:6px}
+ .vg-brand-mark{width:35px;height:35px;flex-basis:35px;border-radius:10px}
+ .vg-brand-mark svg{width:31px;height:31px}
+ .vg-brand-name{font-size:15px;letter-spacing:-.5px}
+ .vg-brand-name small{font-size:9px;margin-top:3px}
+ .vg-location{display:none}
+ .vg-search{grid-column:1/-1;grid-row:2;height:38px}
+ .vg-action{height:36px;padding:0 8px;gap:4px;font-size:10px}
+ .vg-action .vg-ico{font-size:16px}
+ .vg-action small{display:none}
+ .vg-cart-action{font-size:22px;padding:2px 5px}
+ .vg-cart-count{min-width:18px;height:18px;font-size:10px}
+ .vg-account-action{width:35px;height:35px;font-size:18px}
+ .vg-hero{min-height:165px;padding:16px;border-radius:15px;background-position:60% center}
+ .vg-hero h2{font-size:27px!important;max-width:65%;letter-spacing:-1px}
+ .vg-hero p{font-size:10px;max-width:63%;margin:8px 0 12px}
+ .vg-shop-now{padding:9px 16px;font-size:12px}
+ .vg-fresh-stamp{width:57px;height:57px;font-size:10px;right:3%;top:10%;border-width:2px}
+ .vg-category-panel{padding:10px;border-radius:15px}
+ .vg-section-title h2{font-size:18px!important}
+ .vg-category-row{grid-auto-columns:106px;gap:8px}
+ .vg-category-tile{min-height:92px;border-radius:12px}
+ .vg-category-tile:before{font-size:44px}
+ .vg-category-tile span{font-size:11px}
+ .vg-shop-products-head h2{font-size:19px!important}
+ #page-shop #products,#page-home #products{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #page-shop .product,#page-home .product{padding:8px!important;border-radius:14px!important}
+ #page-shop .product-icon,#page-home .product-icon{min-height:90px;font-size:49px!important}
+ #page-shop .product h3,#page-home .product h3{font-size:13px}
+ #page-shop .price,#page-home .price{font-size:15px}
+ #page-shop .cart-btn,#page-home .cart-btn{font-size:11px;padding:9px 5px}
+ .vg-promo-row{grid-template-columns:1fr}
+ .vg-promo-card{min-height:145px}
+}
+</style>
+
 </head>
 
 <body>
 
 <div id="stvnCustomerLoginGate" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
   <div class="stvn-customer-login-card">
-    <div class="stvn-login-logo" aria-hidden="true">🛒</div>
+    <div class="stvn-login-logo stvn-login-leaf-logo" role="img" aria-label="Vedant Grocery Shop"><svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true"><path d="M31 29C17 28 11 17 12 7c12 0 22 6 23 18C40 13 49 9 57 9c-1 14-9 24-23 25" fill="#26a653"/><path d="M31 30C25 20 20 15 14 12M35 30C40 20 47 15 54 13" fill="none" stroke="#eaffed" stroke-width="2.5" stroke-linecap="round"/><path d="M13 34h38l-4 20H17z" fill="#08783d"/><path d="M9 34h46M20 39v10m12-10v10m12-10v10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
     <div style="font-size:12px;font-weight:900;letter-spacing:2.5px;color:#17854b">WELCOME TO VEDANT</div>
     <h2 id="stvnCustomerLoginTitle">Login to continue</h2>
     <p class="stvn-login-subtitle">अपनी grocery shopping शुरू करने के लिए पहले login करें। आपके email पर verification code आएगा।</p>
@@ -1766,7 +2031,6 @@ body.dark .stvn-payment-accordion-item.is-selected{background:linear-gradient(13
     <div class="stvn-profile-email" id="stvnProfileMenuEmail">Customer account</div>
     <button type="button" onclick="stvnOpenProfileSection('profile')">👤 My Profile</button>
     <button type="button" onclick="stvnOpenProfileSection('orders')">📦 My Orders</button>
-    <button type="button" onclick="stvnOpenProfileSection('address')">📍 My Address</button>
     <button type="button" onclick="stvnOpenProfileSection('customerCare')">🧑‍💼 Customer Care</button>
     <button type="button" onclick="stvnCustomerLogout()" class="stvn-logout">↪ Log out</button>
   </div>
@@ -1804,10 +2068,9 @@ body.dark .stvn-payment-accordion-item.is-selected{background:linear-gradient(13
 
 <div class="top">
 
-<h1>🛒 VEDANT GROCERY SHOP<br><span class="hero-hindi-title">वेदांत किराना दुकान</span></h1>
+<h1>VEDANT GROCERY SHOP</h1>
 
-<p>Fresh Fruits, Vegetables And Daily Essentials</p>
-<span class="front-hindi">ताजे फल, सब्जियां और रोज़मर्रा का सामान</span>
+<p>Fresh Fruits, Vegetables &amp; Daily Essentials</p>
 
 <button class="shop-btn" onclick="scrollToProducts()">
 <span>Shop Now</span><small>अभी खरीदें</small>
@@ -2031,30 +2294,32 @@ Grand Total: ₹<span id="cart-total">0</span>
 
   <h3>📦 Delivery Details</h3>
 
-  <label for="customer-name">Full Name</label>
-  <input
-    type="text"
-    id="customer-name"
-    placeholder="Enter your name"
-    autocomplete="name"
-  >
+  <div id="stvnDeliveryEntryFields">
+    <label for="customer-name">Full Name</label>
+    <input type="text" id="customer-name" placeholder="Enter your name" autocomplete="name">
+    <label for="customer-phone">Mobile Number</label>
+    <input type="tel" id="customer-phone" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric" autocomplete="tel">
+    <label for="customer-address">Delivery Address / Address Line 1</label>
+    <textarea id="customer-address" placeholder="Enter your complete delivery address" autocomplete="street-address"></textarea>
+  </div>
 
-  <label for="customer-phone">Mobile Number</label>
-  <input
-    type="tel"
-    id="customer-phone"
-    placeholder="10-digit mobile number"
-    maxlength="10"
-    inputmode="numeric"
-    autocomplete="tel"
-  >
-
-  <label for="customer-address">Delivery Address</label>
-  <textarea
-    id="customer-address"
-    placeholder="Enter your complete delivery address"
-    autocomplete="street-address"
-  ></textarea>
+  <div class="payment-box stvn-saved-address-card" id="stvnSavedAddressBox" style="margin-top:10px">
+    <div id="stvnSavedAddressCompact" hidden>
+      <div class="stvn-saved-address-summary"><div><strong>📍 आपका सेव्ड डिलीवरी पता</strong><div id="stvnSavedAddressSummaryText" class="payment-note">Address Line 1</div></div><button type="button" class="dark-btn" id="stvnSavedAddressToggle" onclick="stvnToggleAddressEditor()">＋ Add New Address</button></div>
+    </div>
+    <div id="stvnSavedAddressEditor">
+      <strong>📍 सेव्ड एड्रेस चुनें या नया पता जोड़ें</strong>
+      <p class="payment-note">एक बार सेव करने के बाद अगली बार पता अपने-आप भर जाएगा।</p>
+      <select id="stvnSavedAddressSelect" aria-label="Choose saved delivery address" onchange="stvnChooseSavedAddress(this.value)" style="width:100%;margin:8px 0;padding:12px;border-radius:10px">
+        <option value="">＋ नया पता जोड़ें</option>
+      </select>
+      <input id="stvnSavedAddressLabel" type="text" placeholder="पते का नाम (घर / काम)" style="width:100%;margin:6px 0;padding:12px;border-radius:10px">
+      <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input id="stvnSaveAddressOnOrder" type="checkbox" checked> इस पते को मेरे अकाउंट में सेव करें</label>
+      <button type="button" class="shop-btn" onclick="stvnSaveCheckoutAddress()">💾 पता सेव करें</button>
+      <button type="button" class="dark-btn" onclick="stvnToggleAddressEditor(false)">बंद करें</button>
+      <p id="stvnSavedAddressMessage" class="payment-note" role="status"></p>
+    </div>
+  </div>
 
   <div id="customer-location-box" class="payment-box">
     <strong>📍 Delivery Location</strong>
@@ -2081,6 +2346,7 @@ Grand Total: ₹<span id="cart-total">0</span>
     <!-- Keep the original payment selector for the existing checkout logic. -->
     <select id="payment-method" onchange="showPaymentInfo()" aria-label="Selected payment method" class="stvn-payment-method-native">
       <option value="COD">Cash on Delivery</option>
+      <option value="VEDANT_WALLET">Vedant Wallet</option>
       <option value="UPI">Online Payment (UPI)</option>
       <option value="RAZORPAY">Razorpay</option>
     </select>
@@ -2098,14 +2364,27 @@ Grand Total: ₹<span id="cart-total">0</span>
         </div>
       </div>
 
+      <div class="stvn-payment-accordion-item stvn-vedant-wallet-choice" data-payment-card="VEDANT_WALLET">
+        <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-vedant-wallet" onclick="toggleVedantPayment('VEDANT_WALLET')">
+          <span class="stvn-payment-icon stvn-vedant-wallet-logo"><img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo"></span>
+          <span class="stvn-payment-card-copy"><strong>Vedant Wallet</strong><small>अपने wallet balance से तुरंत payment करें</small></span>
+          <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-vedant-wallet">
+          <p>आपका Vedant Wallet balance नीचे दिखेगा। Wallet चुनने पर payment server से verify होकर balance से कटेगा और order उसी transaction में place होगा।</p>
+          <div class="stvn-checkout-wallet-balance" aria-live="polite">Wallet balance: लोड हो रहा है…</div>
+          <span class="stvn-payment-selected-label">✓ Selected payment method</span>
+        </div>
+      </div>
+
       <div class="stvn-payment-accordion-item" data-payment-card="UPI">
         <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-upi" onclick="toggleVedantPayment('UPI')">
           <span class="stvn-payment-icon stvn-online-icon" aria-hidden="true">📱</span>
-          <span class="stvn-payment-card-copy"><strong>Online Payment</strong><small>UPI QR / UPI ID payment</small></span>
+          <span class="stvn-payment-card-copy"><strong>Online Payment</strong><small>Secure UPI QR / UPI ID payment with auto verification</small></span>
           <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
         </button>
         <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-upi">
-          <p>UPI app से QR scan करके या UPI ID के जरिए payment करें। अगली screen पर QR और payment details मिलेंगी।</p>
+          <p>Place Order दबाने पर Razorpay का dynamic UPI QR खुलेगा। भुगतान होते ही server verification के बाद order अपने-आप Paid और Confirm होगा।</p>
           <span class="stvn-payment-selected-label">✓ Selected payment method</span>
         </div>
       </div>
@@ -2431,6 +2710,7 @@ onclick="toggleAdminOrdersView()">
 
 <button id="admin-sound-email-toggle" class="admin-btn" type="button" aria-expanded="false" aria-controls="adminSoundEmailSection" onclick="toggleAdminPanel('adminSoundEmailSection','admin-sound-email-toggle','🔔 Sound & Email','✕ Close Sound & Email');loadOrderNotificationSettings()">🔔 Sound & Email</button>
 <button id="admin-shop-status-toolbar-toggle" class="admin-btn" type="button" onclick="toggleShopStatusPanel();document.getElementById('adminShopStatusSection')?.scrollIntoView({behavior:'smooth',block:'nearest'})">🏪 Shop Status</button>
+<button id="admin-view-withdrawal-status" class="admin-btn" type="button" aria-expanded="false" aria-controls="stvnWithdrawalAdmin" onclick="window.toggleWithdrawalStatusPanel()">💸 Withdrawal Status</button>
 
 <select
 id="adminOrderFilter"
@@ -2910,6 +3190,7 @@ async function stvnRestoreCustomerSession(){
       document.body.style.overflow="";
       if(typeof updateCart==="function") updateCart();
       if(typeof stvnRefreshCustomerProfile==="function") stvnRefreshCustomerProfile();
+      if(typeof stvnLoadSavedAddresses==="function") stvnLoadSavedAddresses();
       return;
     }
   }catch(error){console.warn("Customer session restore:",error);}
@@ -2948,6 +3229,7 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
     const gate=document.getElementById("stvnCustomerLoginGate");
     if(gate) gate.style.display="none";
     document.body.classList.remove("stvn-customer-login-open");
+    setTimeout(()=>{if(typeof stvnLoadSavedAddresses==="function")stvnLoadSavedAddresses();},100);
   }
 });
 supabaseClient.auth.getSession().then(({data})=>stvnApplyAdminAccess(data&&data.session)).catch(()=>stvnApplyAdminAccess(null));
@@ -3424,6 +3706,10 @@ async function continueToOrderReview(){
     alert("कृपया सही 10-digit mobile number डालें.");
     return;
   }
+  const saveBox=document.getElementById('stvnSaveAddressOnOrder');
+  if(saveBox?.checked && !document.getElementById('stvnSavedAddressSelect')?.value){
+    try{await stvnSaveCheckoutAddress();}catch(e){console.warn('Auto-save address skipped:',e);}
+  }
   await getCustomerLocationForOrder();
   if(customerLatitude===null||customerLongitude===null){
     alert("Order total और delivery charge दिखाने के लिए current location की permission दें.");
@@ -3776,6 +4062,25 @@ document.getElementById(
 );
 
 
+if(method==="VEDANT_WALLET"){
+  const total = Number((document.getElementById("cart-total")?.textContent || "0").replace(/[^0-9.]/g,"")) || 0;
+  info.innerHTML = `<div class="stvn-payment-choice stvn-wallet-payment-summary"><strong>
+    <img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo"> Vedant Wallet Payment</strong>
+    <div class="stvn-checkout-wallet-balance" id="stvnWalletCheckoutBalance">Wallet balance लोड हो रहा है…</div>
+    <div class="payment-note">इस order के लिए ₹${total.toFixed(2)} कटेंगे। Balance पर्याप्त होने पर payment और order एक साथ confirm होंगे।</div>
+    <div class="stvn-wallet-payment-after" id="stvnWalletCheckoutAfter">Payment के बाद बचा balance calculate हो रहा है…</div>
+  </div>`;
+  if(typeof window.refreshVedantWalletBalance === "function"){
+    window.refreshVedantWalletBalance().then(balance=>{
+      const balanceEl=document.getElementById("stvnWalletCheckoutBalance");
+      const afterEl=document.getElementById("stvnWalletCheckoutAfter");
+      if(balanceEl) balanceEl.textContent="Available balance: ₹"+Number(balance).toFixed(2);
+      if(afterEl) afterEl.textContent=balance>=total?"Payment के बाद बचा balance: ₹"+(balance-total).toFixed(2):"कम balance: ₹"+(total-balance).toFixed(2)+" और add करने होंगे।";
+    }).catch(err=>{const el=document.getElementById("stvnWalletCheckoutBalance");if(el)el.textContent="Wallet backend अभी setup नहीं है: "+(err.message||"कृपया admin से संपर्क करें।");});
+  }
+  return;
+}
+
 if(method==="COD"){
   info.innerHTML = `
     <div class="stvn-payment-choice cod-choice">
@@ -3794,29 +4099,13 @@ if(method==="RAZORPAY"){
 }
 
 const total = Number((document.getElementById("cart-total")?.textContent || "0").replace(/[^0-9.]/g,"")) || 0;
-const upiId = VEDANT_UPI_ID;
-const upiLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Vedant Grocery Shop")}&am=${total.toFixed(2)}&cu=INR&tn=${encodeURIComponent("Vedant Grocery Order")}`;
-const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&data=${encodeURIComponent(upiLink)}`;
-
+window.vedantSelectedRazorpayMethod="upi";
 info.innerHTML = `
-  <div class="stvn-upi-payment">
-    <strong>📱 Pay using UPI</strong>
-    <p class="payment-note">नीचे QR scan करें या UPI ID से payment करें.</p>
-    <div class="stvn-qr-wrap">
-      <img class="stvn-upi-qr" src="${qrUrl}" alt="UPI QR Code" loading="lazy" onerror="this.style.display='none';document.getElementById('stvn-qr-fallback').style.display='block';">
-      <div id="stvn-qr-fallback" class="payment-note" style="display:none">QR load नहीं हुआ। नीचे UPI ID से payment करें.</div>
-    </div>
-    <div class="stvn-upi-id-row">
-      <code id="stvn-upi-id">${upiId}</code>
-      <a class="stvn-copy-upi" href="${upiLink}">Pay Now</a>
-      <button type="button" class="stvn-copy-upi" onclick="copyVedantUpiId()">Copy UPI ID</button>
-    </div>
-    <div class="stvn-upi-amount">Amount to pay: <strong>₹${total.toFixed(2)}</strong></div>
-    <label class="stvn-upi-confirm">
-      <input type="checkbox" id="upi-payment-confirmed">
-      मैंने UPI payment कर दिया है
-    </label>
-    <p class="payment-note">Payment करने के बाद ही यह checkbox tick करके Place Order दबाएँ. Payment manual verification के लिए pending रहेगा.</p>
+  <div class="stvn-upi-payment stvn-payment-choice">
+    <strong>📱 UPI QR से सुरक्षित भुगतान</strong>
+    <p class="payment-note">Place Order दबाने पर Razorpay की सुरक्षित payment screen खुलेगी। वहाँ dynamic QR दिखने पर scan करके भुगतान करें। भुगतान सफल होने पर server payment verify करके order को अपने-आप Confirm करेगा।</p>
+    <div class="stvn-upi-amount">भुगतान राशि: <strong>₹${total.toFixed(2)}</strong></div>
+    <p class="payment-note">अब ग्राहक को payment checkbox tick नहीं करना होगा। Razorpay verification के बिना order Paid नहीं होगा।</p>
   </div>`;
 }
 
@@ -5022,10 +5311,6 @@ async function placeOrder(){
     const payment=document.getElementById("payment-method").value;
     if(!name || !phone || !address) throw new Error("Please fill in your name, mobile number and address.");
     if(!/^[0-9]{10}$/.test(phone)) throw new Error("Please enter a valid 10-digit mobile number.");
-    if(payment==="UPI"){
-      const confirmed=document.getElementById("upi-payment-confirmed");
-      if(!confirmed || !confirmed.checked) throw new Error("Please complete the UPI payment and tick the confirmation checkbox.");
-    }
     await getCustomerLocationForOrder();
     if(customerLatitude===null || customerLongitude===null) throw new Error("❌ आपकी current location नहीं मिल सकी। Location permission Allow करके फिर Try Again करें.");
     const radiusCheck=checkDeliveryRadius();
@@ -5037,16 +5322,46 @@ async function placeOrder(){
     const order={
       id:"VEDANT-"+Date.now(), name, phone, address, customer_email:customerEmail,
       payment:payment==="RAZORPAY"?"Razorpay":(payment==="UPI"?"UPI":"Cash on Delivery"),
-      payment_status:payment==="RAZORPAY"?"paid":(payment==="UPI"?"pending_verification":"pending"),
+      payment_status:(payment==="RAZORPAY"||payment==="UPI")?"pending_verification":"pending",
       order_status:"pending", total:totalText,
       delivery_charge:Number(document.getElementById("delivery-charge")?.textContent||0),
       latitude:customerLatitude, longitude:customerLongitude,
       items:JSON.parse(JSON.stringify(cartItems)), delivery:"20–25 Minutes", date:new Date().toLocaleString()
     };
 
-    if(payment==="RAZORPAY"){
-      if(!window.vedantSelectedRazorpayMethod) throw new Error("कृपया Cards, Net Banking, EMI या Wallets में से एक payment option चुनें.");
+    if(payment==="VEDANT_WALLET"){
+      if(Number(discountAmount||0)>0) throw new Error("अभी Vedant Wallet checkout में coupon/discount लागू नहीं है। कृपया coupon हटाकर फिर कोशिश करें, ताकि सही verified amount ही debit हो।");
+      order.payment="Vedant Wallet";
+      order.payment_status="paid";
+      const walletPayload={
+        order_id:order.id, name:order.name, phone:order.phone, address:order.address,
+        latitude:order.latitude, longitude:order.longitude,
+        total:Number(String(order.total).replace(/[^0-9.]/g,""))||0,
+        delivery_charge:order.delivery_charge, items:order.items,
+        delivery:order.delivery, order_date:new Date().toISOString(), discount_amount:0
+      };
+      const {data:walletData,error:walletError}=await supabaseClient.rpc("vedant_place_wallet_order",{p_order:walletPayload});
+      if(walletError) throw new Error(walletError.message||"Wallet payment process नहीं हो सका।");
+      if(!walletData||walletData.success!==true) throw new Error(walletData?.error||"Wallet payment verify नहीं हुआ।");
+      order.id=walletData.order_id||order.id;
+      order.wallet_balance_after=Number(walletData.balance);
+      order.payment="Vedant Wallet";
+      order.payment_status="paid";
+      orderHistory.unshift(order); saveData();
+      message.innerHTML=`<span class="success">✅ Vedant Wallet payment successful!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: Vedant Wallet<br>💸 ₹${Number(walletData.amount||totalAmount).toFixed(2)} wallet से कटे<br>👛 बचा हुआ balance: ₹${Number(walletData.balance).toFixed(2)}<br>📦 Order successfully placed.</span>`;
+      cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
+      saveData(); updateCart(); showOrderHistory();
+      saveTrackedOrder(order.id,order.phone); setTrackingInputs(order.id,order.phone);
+      renderCustomerTracking(order); startCustomerOrderRealtime(); showOrderConfirmation(order);
+      if(typeof window.refreshVedantWalletBalance==="function"){try{await window.refreshVedantWalletBalance();}catch(refreshError){console.warn("Wallet balance refresh after successful payment failed:",refreshError);}}
+      return;
+    }
+
+    if(payment==="RAZORPAY" || payment==="UPI"){
+      const gatewayMethod=payment==="UPI"?"upi":window.vedantSelectedRazorpayMethod;
+      if(payment==="RAZORPAY" && !gatewayMethod) throw new Error("कृपया Cards, Net Banking, EMI या Wallets में से एक payment option चुनें.");
       if(!window.Razorpay) throw new Error("Secure payment checkout load नहीं हुआ। Internet connection check करके फिर कोशिश करें.");
+      const gatewayLabels={card:"Cards",netbanking:"Net Banking",emi:"EMI",wallet:"Wallets",upi:"UPI / QR"};
       const amountPaise=Math.round(totalAmount*100);
       const {data:createData,error:createError}=await supabaseClient.functions.invoke("razorpay-payment",{
         body:{action:"create_order",amount_paise:amountPaise,receipt:order.id}
@@ -5058,7 +5373,7 @@ async function placeOrder(){
         key:RAZORPAY_KEY_ID, amount:razorpayOrder.amount, currency:razorpayOrder.currency||"INR",
         name:"Vedant Grocery Shop", description:"Grocery Order "+order.id, order_id:razorpayOrder.id,
         prefill:{name,contact:phone,email:customerEmail},
-        config:{display:{blocks:{selected_method:{name:( {card:"Cards",netbanking:"Net Banking",emi:"EMI",wallet:"Wallets"}[window.vedantSelectedRazorpayMethod] || "Selected Payment Method"),instruments:[{method:window.vedantSelectedRazorpayMethod || "card"}]}},sequence:["block.selected_method"],preferences:{show_default_blocks:false}}},
+        config:{display:{blocks:{selected_method:{name:gatewayLabels[gatewayMethod]||"Selected Payment Method",instruments:[{method:gatewayMethod||"card"}]}},sequence:["block.selected_method"],preferences:{show_default_blocks:false}}},
         notes:{shop_order_id:order.id}, theme:{color:"#16a34a"},
         handler:async function(response){
           try{
@@ -5069,6 +5384,8 @@ async function placeOrder(){
             if(verifyError || !verifyData?.verified) throw new Error(verifyData?.error||verifyError?.message||"Payment verification failed. Please contact the shop before retrying.");
             order.razorpay_order_id=response.razorpay_order_id;
             order.razorpay_payment_id=response.razorpay_payment_id;
+            order.payment=payment==="UPI"?"UPI (Razorpay)":"Razorpay";
+            order.payment_status="paid";
             await saveVedantOrder(order,customerEmail);
           }catch(err){
             console.error("Razorpay verification/order save error:",err);
@@ -5797,6 +6114,7 @@ async function adminVerifyOtp(){
     document.getElementById("adminOtpEmail").readOnly = false;
     document.getElementById("adminLoginBox").style.display = "none";
     document.getElementById("adminContent").style.display = "grid";
+    window.dispatchEvent(new Event("vedant-owner-admin-ready"));
     if (typeof window.setAdminButtonVisibility === "function") {
       window.setAdminButtonVisibility(true);
     }
@@ -7999,8 +8317,10 @@ function modernUIInit(){
   nav.className="modern-nav";
   nav.innerHTML=`
     <div class="brand" style="display:flex;align-items:center;gap:12px;">
-      <div class="brand-logo" role="img" aria-label="Vedant Grocery Shop Logo" title="Vedant Grocery Shop Logo" style="flex:0 0 50px;width:50px;height:50px;border-radius:15px;font-size:27px;background:linear-gradient(135deg,#23a85d,#0b5030);box-shadow:0 8px 18px rgba(18,80,48,.22);">🛒</div>
-      <h1 style="margin:0;font-size:18px;line-height:1.2;">Vedant Grocery Shop</h1>
+      <div class="brand-logo stvn-leaf-brand" role="img" aria-label="Vedant Grocery Shop leaf and basket logo" title="Vedant Grocery Shop" style="flex:0 0 50px;width:50px;height:50px;border-radius:15px;font-size:27px;background:linear-gradient(145deg,#f4fff6,#dff7e5);box-shadow:0 7px 18px rgba(18,80,48,.14);border:1px solid #ccebd4;color:#08783d;">
+        <svg viewBox="0 0 64 64" width="42" height="42" aria-hidden="true"><path d="M31 29C17 28 11 17 12 7c12 0 22 6 23 18C40 13 49 9 57 9c-1 14-9 24-23 25" fill="#26a653"/><path d="M31 30C25 20 20 15 14 12M35 30C40 20 47 15 54 13" fill="none" stroke="#eaffed" stroke-width="2.5" stroke-linecap="round"/><path d="M13 34h38l-4 20H17z" fill="#08783d"/><path d="M9 34h46M20 39v10m12-10v10m12-10v10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M24 34l-4-7m20 7 4-7" stroke="#08783d" stroke-width="3" stroke-linecap="round"/></svg>
+      </div>
+      <h1 class="stvn-brand-wordmark" style="margin:0;font-size:18px;line-height:1.12;color:#145b32;">Vedant <span>Grocery Shop</span></h1>
     </div>
     <div class="nav-links">
       <button data-page="home">Home<small>होम</small></button>
@@ -8038,10 +8358,7 @@ function modernUIInit(){
   const feature=document.createElement("div");
   feature.className="feature-grid";
   feature.innerHTML=`
-    <div class="feature-card"><div class="feature-icon">⚡</div><h3>Quick Delivery</h3><span class="front-hindi">तेज़ डिलीवरी</span><p>Fast local delivery within our service area.</p><span class="front-hindi">हमारे डिलीवरी क्षेत्र में तेज़ सेवा</span></div>
-    <div class="feature-card"><div class="feature-icon">📍</div><h3>5 KM Delivery</h3><span class="front-hindi">5 किलोमीटर तक डिलीवरी</span><p>Delivery available within 5 km of the shop.</p><span class="front-hindi">दुकान से 5 किलोमीटर के अंदर डिलीवरी</span></div>
-    <div class="feature-card"><div class="feature-icon">🔒</div><h3>Secure Orders</h3><span class="front-hindi">सुरक्षित ऑर्डर</span><p>Your order and tracking are connected with Supabase.</p><span class="front-hindi">आपका ऑर्डर सुरक्षित रूप से ट्रैक करें</span></div>
-    <button type="button" class="feature-card feature-store-card" onclick="showPage('shop')"><div class="feature-icon">🛒</div><h3>Add to Cart Store</h3><span class="feature-store-hindi">सामान चुनें और Cart में जोड़ें</span><p>Browse products and add your daily essentials to cart.</p><span class="front-hindi">सामान देखें और रोज़मर्रा की चीज़ें कार्ट में जोड़ें</span><span class="feature-store-action">Open Store →</span></button>
+    <button type="button" class="feature-card feature-store-card" onclick="showPage('shop')"><div class="feature-icon">🛒</div><h3>Shop Vedant Grocery</h3><p>Browse fresh groceries and add your daily essentials to cart.</p><span class="feature-store-action">Start Shopping →</span></button>
   `;
   home.appendChild(feature);
 
@@ -8050,7 +8367,7 @@ function modernUIInit(){
   body.appendChild(shop);
   const shopHead=document.createElement("div");
   shopHead.className="section-head";
-  shopHead.innerHTML=`<div><h2>🛍️ Shop Fresh & Fast</h2><p>Choose your essentials and add them to your cart.</p></div>`;
+  shopHead.innerHTML=`<div><h2>🛍️ Shop</h2><p>Choose your groceries and add them to your cart.</p></div>`;
   shop.appendChild(shopHead);
   shop.appendChild(productsHeading);
   shop.appendChild(search);
@@ -8116,7 +8433,7 @@ function modernUIInit(){
   const confirmationModal=document.getElementById("order-confirmation-modal");
 
   if(primaryCheckout)deliveryCard.appendChild(primaryCheckout);
-  if(locationBox)deliveryCard.appendChild(locationBox);
+  if(locationBox && !document.getElementById("stvnSavedAddressEditor")?.contains(locationBox))deliveryCard.appendChild(locationBox);
   if(orderSummaryHeading)reviewCard.appendChild(orderSummaryHeading);
   if(orderSummary)reviewCard.appendChild(orderSummary);
   if(paymentBox){
@@ -8495,8 +8812,22 @@ restoreAdminSession();
     document.querySelectorAll("button,a").forEach(enhanceButton);
   }
 
-  // Also support buttons created dynamically by the existing product renderer.
-  new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
+  // Also support dynamically added product cards without rescanning the entire page on every mutation.
+  let scanQueued=false;
+  const pendingRoots=new Set();
+  function scanAddedNodes(){
+    scanQueued=false;
+    const roots=[...pendingRoots];pendingRoots.clear();
+    for(const root of roots){
+      if(!root||root.nodeType!==Node.ELEMENT_NODE)continue;
+      if(root.matches('button,a'))enhanceButton(root);
+      root.querySelectorAll?.('button,a').forEach(enhanceButton);
+    }
+  }
+  new MutationObserver(records=>{
+    for(const record of records)for(const node of record.addedNodes||[])if(node.nodeType===Node.ELEMENT_NODE)pendingRoots.add(node);
+    if(pendingRoots.size&&!scanQueued){scanQueued=true;requestAnimationFrame(scanAddedNodes);}
+  }).observe(document.body,{childList:true,subtree:true});
   if(document.readyState==="loading"){
     document.addEventListener("DOMContentLoaded",scan);
   }else scan();
@@ -8642,6 +8973,16 @@ function stvnPlaceProfileBar(){
   const wishlistButton=navLinks.querySelector('[data-page="wishlist"]');
   const ordersButton=navLinks.querySelector('[data-page="orders"]');
   navLinks.insertBefore(bar,wishlistButton||ordersButton||navLinks.firstChild);
+  // Vedant Wallet sits immediately after My Account and before Wishlist.
+  let walletButton=navLinks.querySelector('[data-page="wallet"]');
+  if(!walletButton){
+    walletButton=document.createElement('button');
+    walletButton.type='button';
+    walletButton.setAttribute('data-page','wallet');
+    walletButton.innerHTML='👛 Wallet<small>वॉलेट</small>';
+    walletButton.addEventListener('click',()=>{if(typeof showPage==='function')showPage('wallet');});
+  }
+  bar.insertAdjacentElement('afterend',walletButton);
 }
 document.addEventListener("DOMContentLoaded",stvnPlaceProfileBar);
 
@@ -8704,6 +9045,85 @@ function stvnSaveCustomerAddress(){
   try{localStorage.setItem(stvnCustomerStorageKey('address'),JSON.stringify({line,city,pincode,landmark}));alert('आपका address save हो गया।');}
   catch(e){alert('Address save नहीं हो पाया। Browser storage check करें।');}
 }
+/* ===== ACCOUNT-SYNCED SAVED DELIVERY ADDRESSES ===== */
+let stvnSavedAddressCache=[];
+function stvnAddressMessage(msg,isError=false){const el=document.getElementById('stvnSavedAddressMessage');if(el){el.textContent=msg||'';el.style.color=isError?'#d33':'#16834a';}}
+function stvnToggleAddressEditor(forceOpen){
+  const editor=document.getElementById('stvnSavedAddressEditor'),compact=document.getElementById('stvnSavedAddressCompact'),entry=document.getElementById('stvnDeliveryEntryFields');
+  if(!editor)return;
+  const box=document.getElementById('customer-location-box');
+  if(box&&!editor.contains(box))editor.appendChild(box);
+  const open=typeof forceOpen==='boolean'?forceOpen:editor.hidden;
+  editor.hidden=!open;
+  if(compact)compact.hidden=open;
+  if(entry)entry.hidden=!open;
+}
+function stvnShowCompactSavedAddress(addressText){
+  const summary=document.getElementById('stvnSavedAddressSummaryText');
+  if(summary)summary.textContent='Address Line 1: '+(addressText||document.getElementById('customer-address')?.value||'');
+  stvnToggleAddressEditor(false);
+}
+
+async function stvnAddressUser(){
+  const {data,error}=await supabaseClient.auth.getUser();
+  if(error) throw error;
+  if(!data?.user) throw new Error('Please log in to your customer account first.');
+  return data.user;
+}
+async function stvnLoadSavedAddresses(){
+  const select=document.getElementById('stvnSavedAddressSelect');if(!select)return;
+  try{
+    const user=await stvnAddressUser();
+    const {data,error}=await supabaseClient.from('customer_saved_addresses').select('id,label,full_name,phone,address_line,latitude,longitude,is_default,created_at').eq('user_id',user.id).order('is_default',{ascending:false});
+    if(error) throw error;
+    stvnSavedAddressCache=data||[];
+    select.innerHTML='<option value="">Add New Address</option>';
+    stvnSavedAddressCache.forEach(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=(a.label||'Saved Address')+' — '+(a.address_line||'').slice(0,65);select.appendChild(o);});
+    const preferred=stvnSavedAddressCache.find(a=>a.is_default)||stvnSavedAddressCache[0];
+    if(preferred){select.value=preferred.id;stvnChooseSavedAddress(preferred.id);}
+    if(stvnSavedAddressCache.length){stvnAddressMessage('आपका सेव्ड पता लोड हो गया है।');}else{stvnToggleAddressEditor(true);stvnAddressMessage('पहले अपना डिलीवरी पता भरकर सेव करें।');}
+  }catch(e){
+    console.warn('Saved address load:',e);
+    stvnAddressMessage('Saved Address database तैयार नहीं है। पहले नीचे दिया SQL चलाएँ।',true);
+    try{const cached=JSON.parse(localStorage.getItem(stvnCustomerStorageKey('addresses'))||'[]');stvnSavedAddressCache=Array.isArray(cached)?cached:[];}catch(_){stvnSavedAddressCache=[];}
+  }
+}
+function stvnChooseSavedAddress(id){
+  if(!id){stvnStartNewAddress();return;}
+  const a=stvnSavedAddressCache.find(x=>String(x.id)===String(id));if(!a)return;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v??'';};
+  set('customer-name',a.full_name);set('customer-phone',a.phone);set('customer-address',a.address_line);set('stvnSavedAddressLabel',a.label||'');
+  if(a.latitude!=null&&a.longitude!=null){customerLatitude=Number(a.latitude);customerLongitude=Number(a.longitude);const status=document.getElementById('location-status');if(status){status.textContent='✅ Saved delivery location selected.';status.className='location-success';}}else{customerLatitude=null;customerLongitude=null;}
+  stvnAddressMessage('सेव्ड पता चुन लिया गया है।');
+  stvnShowCompactSavedAddress(a.address_line||'');
+}
+function stvnStartNewAddress(){
+  const select=document.getElementById('stvnSavedAddressSelect');if(select)select.value='';
+  ['customer-name','customer-phone','customer-address','stvnSavedAddressLabel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  customerLatitude=null;customerLongitude=null;
+  stvnToggleAddressEditor(true);
+  stvnAddressMessage('नया पता भरें, current location चुनें और पता सेव करें।');
+}
+async function stvnSaveCheckoutAddress(){
+  try{
+    const user=await stvnAddressUser();
+    const full_name=document.getElementById('customer-name').value.trim();
+    const phone=document.getElementById('customer-phone').value.trim();
+    const address_line=document.getElementById('customer-address').value.trim();
+    const label=document.getElementById('stvnSavedAddressLabel').value.trim()||'Home';
+    if(!full_name||!/^\d{10}$/.test(phone)||!address_line){throw new Error('Please enter your name, a valid 10-digit mobile number, and your full address.');}
+    const payload={user_id:user.id,label,full_name,phone,address_line,latitude:customerLatitude,longitude:customerLongitude,is_default:stvnSavedAddressCache.length===0};
+    const {data,error}=await supabaseClient.from('customer_saved_addresses').insert(payload).select('id,label,full_name,phone,address_line,latitude,longitude,is_default,created_at').single();
+    if(error) throw error;
+    stvnSavedAddressCache.unshift(data);
+    const select=document.getElementById('stvnSavedAddressSelect');
+    const option=document.createElement('option');option.value=data.id;option.textContent=label+' — '+address_line.slice(0,65);select.appendChild(option);select.value=data.id;
+    try{localStorage.setItem(stvnCustomerStorageKey('addresses'),JSON.stringify(stvnSavedAddressCache));}catch(_){}
+    stvnChooseSavedAddress(data.id);
+    stvnAddressMessage('✅ पता आपके अकाउंट में सेव हो गया।');
+  }catch(e){console.error('Save address:',e);stvnAddressMessage(e.message||'Address could not be saved.',true);alert(e.message||'Address could not be saved.');}
+}
+
 function stvnRenderCustomerOrders(){
   const box=document.getElementById('stvnProfileOrdersList'); if(!box)return;
   let orders=[];try{orders=JSON.parse(localStorage.getItem('vedantOrders')||'[]')||[];}catch(e){}
@@ -10980,9 +11400,17 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
   async function reverseName(lat,lng){try{const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lng);const res=await fetch(url,{headers:{'Accept-Language':'hi,en'}});if(!res.ok)throw new Error('reverse geocode');const d=await res.json();const a=d.address||{};return [a.suburb||a.neighbourhood||a.village||a.town||a.city_district||a.city,a.city||a.town||a.village||a.state_district].filter((v,i,x)=>v&&x.indexOf(v)===i).join(', ')||'वर्तमान लोकेशन';}catch(e){return 'वर्तमान लोकेशन';}}
   function requestLocation(){if(!navigator.geolocation){alert('इस ब्राउज़र में लोकेशन उपलब्ध नहीं है।');return;}document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='आपकी लोकेशन प्राप्त की जा रही है…');navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lng=pos.coords.longitude,km=distanceKm(SHOP_LAT,SHOP_LNG,lat,lng),name=await reverseName(lat,lng);const loc={lat,lng,km,name,updatedAt:Date.now()};setSaved(loc);window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=km<=5;document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);if(typeof window.check5KmAvailability==='function'){/* location is already checked here; avoid a second permission prompt */} },err=>{document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='लोकेशन नहीं मिल पाई। कृपया browser location permission Allow करें और फिर कोशिश करें।');},{enableHighAccuracy:false,timeout:15000,maximumAge:120000});}
   function ensureAdminSettings(){const page=$('page-admin'),panel=$('adminPanel');if(!page||!panel||page.querySelector('#stvnDeliveryEtaAdmin'))return;const box=document.createElement('section');box.id='stvnDeliveryEtaAdmin';box.className='stvn-delivery-settings';box.innerHTML='<h3>🚚 Delivery ETA Settings</h3><p class="admin-small">हर दूरी के लिए अनुमानित डिलीवरी मिनट सेट करें। ये सेटिंग इस ब्राउज़र में सेव होगी; सभी ग्राहकों/डिवाइस पर लागू करने के लिए Supabase में सेव करना आवश्यक है।</p><div class="stvn-eta-grid">'+[1,2,3,4,5].map(k=>'<div><label for="stvnEta'+k+'">'+(k-1)+'–'+k+' km ('+k+' km तक)</label><input id="stvnEta'+k+'" type="number" min="1" max="240" step="1" value="'+DEFAULTS[k]+'"></div>').join('')+'</div><button type="button" id="stvnSaveEtaSettings">💾 Save Delivery Time</button><p class="admin-small" id="stvnEtaSaveMessage" role="status"></p>';panel.appendChild(box);const s=readSettings();[1,2,3,4,5].forEach(k=>{const input=$('stvnEta'+k);if(input)input.value=s[k]});$('stvnSaveEtaSettings').addEventListener('click',()=>{const values={};for(let k=1;k<=5;k++){const n=Number($('stvnEta'+k).value);if(!Number.isFinite(n)||n<1||n>240){$('stvnEtaSaveMessage').textContent='हर समय 1 से 240 मिनट के बीच होना चाहिए।';return;}values[k]=Math.round(n)}try{localStorage.setItem(STORE_KEY,JSON.stringify(values));$('stvnEtaSaveMessage').textContent='✅ डिलीवरी समय इस ब्राउज़र में सेव हो गया।';document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);}catch(e){$('stvnEtaSaveMessage').textContent='सेव नहीं हो सका। Browser storage जाँचें।'}});}
-  function init(){ensureCard('page-home');ensureCard('page-shop');ensureAdminSettings();const email=(()=>{try{return localStorage.getItem('vedantCustomerEmail')||''}catch(e){return ''}})();if(email&&!getSaved()&&!window.__stvnDeliveryLocationPrompted){window.__stvnDeliveryLocationPrompted=true;setTimeout(()=>{if(confirm('डिलीवरी दूरी और समय देखने के लिए अपनी वर्तमान लोकेशन शेयर करना चाहेंगे?'))requestLocation()},1200)}}
+  function init(){/* Storefront location cards/prompt are hidden by request; checkout keeps its own location step. */ensureAdminSettings();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-  const observer=new MutationObserver(()=>{ensureCard('page-home');ensureCard('page-shop');ensureAdminSettings()});observer.observe(document.documentElement,{childList:true,subtree:true});
+  const observer=new MutationObserver(records=>{
+    for(const record of records){
+      for(const node of record.addedNodes||[]){
+        if(node.nodeType!==Node.ELEMENT_NODE)continue;
+        if(node.matches?.('#page-admin,#adminPanel')||node.querySelector?.('#page-admin #adminPanel,#adminPanel')){ensureAdminSettings();return;}
+      }
+    }
+  });
+  observer.observe(document.body,{childList:true,subtree:true});
   window.stvnRequestDeliveryLocation=requestLocation;
 })();
 </script>
@@ -11026,11 +11454,11 @@ function distance(a,b,c,d){const r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,q=Math.sin(x/
 async function nameAt(lat,lng){try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lng,{headers:{'Accept-Language':'hi,en'}});if(r.ok){const a=(await r.json()).address||{};return [a.suburb||a.neighbourhood||a.village||a.town||a.city_district||a.city,a.city||a.town||a.village||a.state_district].filter((x,i,z)=>x&&z.indexOf(x)===i).join(', ')||'वर्तमान लोकेशन'}}catch(e){}return 'वर्तमान लोकेशन'}
 function locate(resultEl,btn){if(!navigator.geolocation){resultEl.textContent='इस browser में location उपलब्ध नहीं है।';return}resultEl.textContent='📍 आपकी वर्तमान लोकेशन प्राप्त की जा रही है…';if(btn)btn.disabled=true;navigator.geolocation.getCurrentPosition(async p=>{const lat=p.coords.latitude,lng=p.coords.longitude,shopLat=Number(window.SHOP_LATITUDE??25.3698055556),shopLng=Number(window.SHOP_LONGITUDE??78.5613),km=distance(shopLat,shopLng,lat,lng),name=await nameAt(lat,lng),loc={lat,lng,km,name,updatedAt:Date.now()};setLocation(loc);resultEl.textContent='📍 '+name+' · '+km.toFixed(2)+' km · '+(km>5?'डिलीवरी उपलब्ध नहीं':(km<=1?10:km<=2?14:km<=3?18:km<=4?25:32)+' मिनट अनुमानित');if(btn){btn.disabled=false;btn.textContent='✅ लोकेशन मिल गई';}},err=>{resultEl.textContent=err.code===1?'लोकेशन की अनुमति नहीं मिली। Browser settings में Location Allow करें।':'वर्तमान लोकेशन नहीं मिल पाई। दोबारा कोशिश करें।';if(btn)btn.disabled=false;},{enableHighAccuracy:true,timeout:18000,maximumAge:0})}
 function ensureOnboard(){if($('stvnLocationFirstGate'))return;const gate=document.createElement('div');gate.id='stvnLocationFirstGate';gate.innerHTML='<div class="stvn-loc-onboard"><div class="stvn-loc-pin">📍</div><h2>अपनी लोकेशन चुनें</h2><p>Vedant Grocery Shop आपकी वर्तमान लोकेशन दिखाएगा और अनुमानित डिलीवरी समय बताएगा।</p><div class="stvn-loc-result" id="stvnLocationFirstResult">📍 Current Location पर क्लिक करें — आपकी लोकेशन यहीं दिखाई देगी।</div><button type="button" id="stvnLocationFirstButton">📍 Current Location</button><button type="button" class="stvn-loc-later" id="stvnLocationFirstContinue">OK · Home Page खोलें</button></div>';document.body.appendChild(gate);$('stvnLocationFirstButton').addEventListener('click',()=>locate($('stvnLocationFirstResult'),$('stvnLocationFirstButton')));$('stvnLocationFirstContinue').addEventListener('click',()=>{gate.style.display='none';document.body.classList.remove('stvn-location-onboard-open');if(typeof window.showPage==='function')window.showPage('home');});}
-function showOnboard(){ensureOnboard();const gate=$('stvnLocationFirstGate');if(gate){gate.style.display='flex';document.body.classList.add('stvn-location-onboard-open');const loc=saved();if(loc){$('stvnLocationFirstResult').textContent='📍 '+(loc.name||'वर्तमान लोकेशन')+' · '+Number(loc.km).toFixed(2)+' km';$('stvnLocationFirstButton').textContent='🔄 Current Location अपडेट करें';}}}
-function relocateCards(){for(const id of ['page-home','page-shop']){const page=$(id);if(!page)continue;const card=page.querySelector('.stvn-delivery-location-card');if(!card)continue;if(id==='page-home'){const hero=page.querySelector('.top.hero')||page.querySelector('.hero');if(hero&&card.previousElementSibling!==hero)hero.insertAdjacentElement('afterend',card);}else{const heading=page.querySelector('.section-head');if(heading&&card.previousElementSibling!==heading)heading.insertAdjacentElement('afterend',card);}}}
+function showOnboard(){const gate=$('stvnLocationFirstGate');if(gate)gate.style.display='none';document.body.classList.remove('stvn-location-onboard-open');}
+function relocateCards(){for(const id of ['page-home','page-shop']){const page=$(id);if(!page)continue;const card=page.querySelector('.stvn-delivery-location-card');if(!card)continue;card.hidden=true;card.style.display='none';if(id==='page-home'){const hero=page.querySelector('.top.hero')||page.querySelector('.hero');if(hero&&card.previousElementSibling!==hero)hero.insertAdjacentElement('afterend',card);}else{const heading=page.querySelector('.section-head');if(heading&&card.previousElementSibling!==heading)heading.insertAdjacentElement('afterend',card);}}}
 function init(){ensureOnboard();relocateCards();document.addEventListener('click',e=>{const b=e.target.closest('.stvn-delivery-location-action');if(b){e.preventDefault();const card=b.closest('.stvn-delivery-location-card'),name=card&&card.querySelector('.stvn-delivery-location-name');if(name)name.textContent='वर्तमान लोकेशन प्राप्त की जा रही है…';locate({set textContent(v){if(name)name.textContent=v},get textContent(){return name?name.textContent:''}},b)}});const loc=saved();if(loc)setLocation(loc);if(window.supabaseClient?.auth){window.supabaseClient.auth.getSession().then(({data})=>{if(data?.session?.user){const email=String(data.session.user.email||'').toLowerCase();if(email)try{localStorage.setItem('vedantCustomerEmail',email)}catch(e){};showOnboard()}}).catch(()=>{});window.supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session?.user){setTimeout(showOnboard,80)}})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-const obs=new MutationObserver(()=>{relocateCards();});obs.observe(document.documentElement,{childList:true,subtree:true});
+// Location panels are hidden by the request-specific CSS; no document-wide relocation observer is needed.
 })();
 </script>
 <!-- ===== END LOCATION-FIRST CUSTOMER FLOW ===== -->
@@ -11150,6 +11578,253 @@ function syncVedantPaymentAccordion(){
 document.addEventListener("DOMContentLoaded",syncVedantPaymentAccordion);
 </script>
 
+
+<style id="vedant-header-account-layout-v2">
+/* One clean grocery header: keep existing application actions, only restyle/reposition. */
+.vg-store-header{display:grid!important;grid-template-columns:auto auto minmax(170px,1fr) auto auto auto!important;align-items:center;gap:clamp(7px,1vw,16px)!important;padding:10px clamp(12px,2vw,28px)!important;background:rgba(255,255,255,.97)!important;border:1px solid #e3eee3!important;border-radius:18px!important;box-shadow:0 8px 24px rgba(19,75,36,.09)!important;}
+.vg-location-button{cursor:pointer;text-align:left;border:0!important;background:#f1f9ed!important;border-radius:14px!important;min-height:54px}.vg-location-button:hover{background:#e6f5df!important}.vg-location-button .vg-update-location{display:block;color:#16813b;font-weight:800;font-size:10px;margin-top:2px;text-decoration:underline}.vg-search{min-width:0}.vg-search input{min-width:0;width:100%;font-size:15px}.vg-action,.vg-cart-action,.vg-account-action{min-height:48px;border:1px solid #cfe2cf!important;border-radius:999px!important;background:#fff!important;color:#164b29!important;box-shadow:0 4px 12px #174a2810!important;font-weight:900!important;white-space:nowrap}.vg-action{padding:0 15px!important}.vg-cart-action{position:relative;min-width:54px;font-size:23px!important}.vg-cart-count{position:absolute;right:-3px;top:-5px;background:#ed1c24;color:white;border-radius:50%;min-width:19px;height:19px;font-size:11px;display:grid;place-items:center}.vg-account-action{padding:0 14px!important;font-size:13px!important;display:flex;align-items:center;gap:6px}
+/* The legacy profile control now lives in the header account area; no second floating account bar. */
+#stvnProfileBar{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;z-index:15001!important;margin:0!important}
+#stvnProfileToggle{min-height:48px!important;padding:8px 13px!important;border:1px solid #cfe2cf!important;background:#fff!important;box-shadow:0 4px 12px #174a2810!important}
+#stvnProfileMenu{top:56px!important;right:0!important;left:auto!important;z-index:200000!important;width:250px!important;max-height:min(75vh,560px);overflow:auto}
+#stvnProfileMenu button{cursor:pointer!important}
+/* Match the reference grocery palette across the shopping surface. */
+#page-home,#page-shop{background:linear-gradient(180deg,#f7fbf2,#fff 48%,#f5f9f1)!important;color:#173622!important}
+.vg-hero{border-radius:22px!important;box-shadow:0 10px 28px #386c2a20!important}
+.vg-category-panel,.vg-home-featured-grid,.vg-promo-card{border-radius:20px!important;box-shadow:0 8px 22px #234d2512!important}
+.vg-category-tile{border-radius:15px!important;box-shadow:0 5px 14px #193d2418!important}
+.vg-shop-products-head h2,.vg-section-title h2{color:#143b24!important}
+#page-shop .stvn-category-intro{display:block!important;background:#fff;border:1px solid #e4eee1;border-radius:16px;padding:12px 16px;margin:12px 0!important}
+#page-shop .stvn-category-list{display:flex!important;flex-wrap:wrap;gap:9px!important}
+#page-shop .stvn-category-card{border-radius:13px!important}
+@media(max-width:900px){.vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto!important;gap:7px!important;padding:8px!important}.vg-location-button{grid-column:1/3;grid-row:2;min-height:42px;padding:4px 8px!important}.vg-search{grid-column:1/-1;grid-row:3;height:42px!important;order:unset!important}.vg-action{grid-row:2;padding:0 10px!important;font-size:12px!important}.vg-cart-action{grid-row:1;grid-column:3}.vg-account-action{grid-row:1;grid-column:4;padding:0 9px!important}.vg-brand{grid-row:1;grid-column:1/3}.vg-location-button .pin{font-size:20px}.vg-location-button b{font-size:12px}.vg-location-button small{font-size:9px}}
+@media(max-width:520px){.vg-store-header{margin:0 0 9px!important;border-radius:0 0 16px 16px!important;grid-template-columns:minmax(0,1fr) auto auto!important}.vg-brand{grid-column:1/2!important}.vg-brand-name{font-size:18px!important}.vg-cart-action{grid-column:2!important;grid-row:1!important}.vg-account-action{grid-column:3!important;grid-row:1!important;font-size:11px!important}.vg-location-button{grid-column:1/2!important;grid-row:2!important}.vg-action{grid-column:2/4!important;grid-row:2!important;justify-content:center}.vg-search{grid-column:1/-1!important;grid-row:3!important}.vg-action .vg-ico{font-size:17px}.vg-location-button .vg-update-location{font-size:9px}}
+</style>
+<script id="vedant-account-menu-actions-v2">
+(function(){
+ function addMenuAction(id,label,handler,beforeLogout=true){const menu=document.getElementById('stvnProfileMenu');if(!menu||document.getElementById(id))return;const b=document.createElement('button');b.type='button';b.id=id;b.textContent=label;b.addEventListener('click',handler);const logout=menu.querySelector('.stvn-logout');if(beforeLogout&&logout)menu.insertBefore(b,logout);else menu.appendChild(b);}
+ function clickPage(name){const b=document.querySelector('[data-page="'+name+'"]');if(b)b.click();else if(typeof window.showPage==='function')window.showPage(name);}
+ function init(){
+  const menu=document.getElementById('stvnProfileMenu');
+  if(menu){
+   addMenuAction('vgMenuWallet','👛 Wallet',()=>clickPage('wallet'));
+   addMenuAction('vgMenuOrders','📦 My Orders',()=>clickPage('orders'));
+   addMenuAction('vgMenuWishlist','❤️ Wishlist',()=>{const w=document.getElementById('wishlist');if(w){w.scrollIntoView({behavior:'smooth',block:'start'});if(typeof window.showPage==='function')window.showPage('cart');}});
+   addMenuAction('vgMenuTrack','🚚 Track Order',()=>{if(typeof window.goToTracking==='function')window.goToTracking();});
+   addMenuAction('vgMenuAdmin','⚙️ Admin Panel',()=>clickPage('admin'));
+  }
+  // Relocate the pre-existing account menu control into the visible account slot, retaining its original handlers.
+  document.querySelectorAll('.vg-store-header').forEach(header=>{const slot=header.querySelector('.vg-account-action');const bar=document.getElementById('stvnProfileBar');if(slot&&!slot.dataset.vgBound){slot.dataset.vgBound='1';slot.addEventListener('click',()=>{if(bar&&bar.parentElement!==header){header.appendChild(bar);bar.classList.add('vg-account-host');}if(typeof window.stvnToggleProfileMenu==='function')window.stvnToggleProfileMenu();});}});
+  // Keep location label in sync with the existing saved-location component.
+  const update=()=>{const saved=document.querySelector('.stvn-delivery-location-name');const label=document.querySelector('.vg-location-label');if(saved&&label&&saved.textContent.trim()&&!/अपनी वर्तमान|choose|select/i.test(saved.textContent))label.textContent=saved.textContent.trim().slice(0,34);};
+  update();const target=document.querySelector('.stvn-delivery-location-card');if(target)new MutationObserver(update).observe(target,{subtree:true,childList:true,characterData:true});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,250));else setTimeout(init,250);
+ document.addEventListener('click',()=>setTimeout(init,250));
+})();
+</script>
+
+
+<style id="vedant-final-clean-header-fix">
+/* Remove the duplicate legacy top navigation; all customer actions are in the new store header. */
+body > .modern-nav, .modern-nav{display:none!important}
+#stvnProfileBar{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;margin:0!important;z-index:200010!important;display:block!important;flex:0 0 auto!important}
+#stvnProfileToggle{min-height:48px!important;padding:7px 11px!important;border:1px solid #d4e7d5!important;border-radius:15px!important;background:#fff!important;color:#164b29!important;box-shadow:0 4px 12px #174a2810!important;white-space:nowrap!important}
+#stvnProfileMenu{top:54px!important;right:0!important;left:auto!important;z-index:200020!important}
+.vg-store-header{display:grid!important;grid-template-columns:auto auto minmax(150px,1fr) auto auto auto auto!important;align-items:center!important;gap:clamp(6px,1vw,14px)!important;overflow:visible!important}
+.vg-store-header .vg-account-action{display:none!important}
+.vg-store-header .vg-wallet-action,.vg-store-header .vg-orders-action{min-height:46px;border:1px solid #cfe2cf!important;border-radius:999px!important;background:#fff!important;color:#164b29!important;padding:0 12px!important;font-weight:900!important;white-space:nowrap!important;box-shadow:0 4px 12px #174a2810!important;cursor:pointer!important}
+.vg-store-header .vg-wallet-action small{display:block;font-size:10px;color:#16813b;font-weight:800}
+.vg-store-header .vg-search input{font-size:14px!important;padding-left:12px!important}
+.vg-store-header .vg-brand-name{font-size:20px!important}
+/* Do not create a second empty category panel. Use the real category list populated by the store. */
+.vg-category-panel,.vg-shop-products-head{display:none!important}
+#page-home .vg-hero,#page-shop .vg-hero{margin-top:10px!important}
+#page-shop .section-head{margin-top:14px!important}
+#page-shop .stvn-category-intro{display:block!important;margin:10px 0 8px!important}
+#page-shop .stvn-category-list{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important;gap:10px!important}
+#page-shop .stvn-category-card{min-width:0!important}
+#page-shop #products-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important}
+#page-shop #products{scroll-margin-top:16px}
+@media(max-width:900px){
+ .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto!important;gap:7px!important}
+ .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important}
+ .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:3!important}
+ .vg-store-header .vg-action{grid-column:3/5!important;grid-row:2!important}
+ .vg-store-header .vg-cart-action{grid-column:3!important;grid-row:1!important}
+ #stvnProfileBar{grid-column:4!important;grid-row:1!important}
+ #stvnProfileToggle{padding:6px 8px!important;font-size:11px!important}
+ .vg-store-header .vg-wallet-action{grid-column:1/3!important;grid-row:4!important;min-height:40px!important}
+ .vg-store-header .vg-orders-action{grid-column:3/5!important;grid-row:4!important;min-height:40px!important}
+}
+@media(max-width:520px){
+ .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto!important;padding:9px!important}
+ .vg-store-header .vg-brand{grid-column:1!important;grid-row:1!important}
+ .vg-store-header .vg-cart-action{grid-column:2!important;grid-row:1!important}
+ #stvnProfileBar{grid-column:3!important;grid-row:1!important}
+ .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important}
+ .vg-store-header .vg-action{grid-column:3!important;grid-row:2!important;padding:0 8px!important;font-size:11px!important}
+ .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:3!important}
+ .vg-store-header .vg-wallet-action{grid-column:1/2!important;grid-row:4!important;padding:0 8px!important;font-size:11px!important}
+ .vg-store-header .vg-orders-action{grid-column:2/4!important;grid-row:4!important;padding:0 8px!important;font-size:11px!important}
+ #stvnProfileToggle .stvn-avatar{width:25px!important;height:25px!important}
+ #stvnProfileToggle span:last-child{font-size:10px!important}
+ #page-shop .stvn-category-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
+<script id="vedant-final-header-actions-fix">
+(function(){
+ 'use strict';
+ function pageClick(name){const b=document.querySelector('[data-page="'+name+'"]');if(b)b.click();else if(typeof window.showPage==='function')window.showPage(name);}
+ function mount(){
+  document.querySelectorAll('.vg-store-header').forEach(header=>{
+   if(header.dataset.finalHeaderMounted==='1')return;
+   header.dataset.finalHeaderMounted='1';
+   const fakeAccount=header.querySelector('.vg-account-action');if(fakeAccount)fakeAccount.remove();
+   const track=header.querySelector('.vg-action');
+   const cart=header.querySelector('.vg-cart-action');
+   const wallet=document.createElement('button');wallet.type='button';wallet.className='vg-wallet-action';wallet.innerHTML='👛 Wallet <small id="vgWalletAmount">Open wallet</small>';wallet.addEventListener('click',()=>pageClick('wallet'));
+   const orders=document.createElement('button');orders.type='button';orders.className='vg-orders-action';orders.textContent='📦 My Orders';orders.addEventListener('click',()=>pageClick('orders'));
+   if(track)track.insertAdjacentElement('afterend',wallet);
+   if(wallet)wallet.insertAdjacentElement('afterend',orders);
+   const profile=document.getElementById('stvnProfileBar');
+   if(profile){header.appendChild(profile);profile.classList.add('vg-account-host');}
+   // Header search forwards to the existing working product search control.
+   const search=header.querySelector('.vg-live-search');
+   if(search&&!search.dataset.finalSearchBound){search.dataset.finalSearchBound='1';search.addEventListener('keydown',e=>{if(e.key==='Enter'){const original=document.getElementById('searchBox');if(original){original.value=search.value;if(typeof window.searchProducts==='function')window.searchProducts();pageClick('shop');}}});}
+  });
+  // Wallet amount mirrors the actual wallet balance shown by the existing wallet page.
+  const walletPage=document.getElementById('page-wallet');const amount=document.getElementById('vgWalletAmount');
+  if(walletPage&&amount){const txt=walletPage.innerText.match(/₹\s*[\d,]+(?:\.\d{1,2})?/);if(txt)amount.textContent=txt[0];}
+  // Remove generated duplicate headings/cards, keeping the original live categories and products.
+  document.querySelectorAll('.vg-category-panel,.vg-shop-products-head').forEach(n=>n.remove());
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,350));else setTimeout(mount,350);
+ document.addEventListener('click',()=>setTimeout(mount,180));
+})();
+</script>
+
+
+<style id="vedant-user-final-tweaks-20261113">
+/* Requested small finishing touches only */
+.vg-store-header .vg-wallet-action{min-width:104px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:1px!important}
+.vg-store-header .vg-wallet-action .vg-wallet-balance-value{display:block!important;font-size:15px!important;font-weight:950!important;line-height:1.15!important;color:#08783d!important}
+.vg-store-header .vg-wallet-action .vg-wallet-balance-caption{display:block!important;font-size:9px!important;font-weight:800!important;color:#56745e!important;line-height:1.1!important}
+.vg-store-header #stvnProfileBar{display:block!important;grid-column:auto!important;grid-row:auto!important;margin:0!important}
+.vg-store-header #stvnProfileToggle{min-height:46px!important;display:flex!important;align-items:center!important;gap:7px!important;padding:6px 11px!important;border-radius:999px!important}
+.vg-store-header .vg-orders-action{order:0}
+#page-shop .vg-hero{margin:8px 0 14px!important}
+#page-home .top h1,#page-home .top.hero h1,#page-home .hero h1{color:#fff!important;text-shadow:0 3px 14px rgba(0,0,0,.38)!important}
+#page-home .top .hero-hindi-title,#page-home .top.hero .hero-hindi-title,#page-home .hero .hero-hindi-title{color:#fff!important;text-shadow:0 2px 9px rgba(0,0,0,.35)!important}
+@media(max-width:900px){
+ .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto!important}
+ .vg-store-header .vg-wallet-action{grid-column:auto!important;grid-row:auto!important;min-height:44px!important}
+ .vg-store-header #stvnProfileBar{grid-column:auto!important;grid-row:auto!important}
+ .vg-store-header .vg-orders-action{grid-column:auto!important;grid-row:auto!important}
+}
+@media(max-width:520px){
+ .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto!important}
+ .vg-store-header .vg-wallet-action{grid-column:1/2!important;grid-row:4!important;min-height:42px!important}
+ .vg-store-header #stvnProfileBar{grid-column:2/4!important;grid-row:4!important;justify-self:stretch!important}
+ .vg-store-header #stvnProfileToggle{width:100%!important;justify-content:center!important}
+ .vg-store-header .vg-orders-action{grid-column:1/3!important;grid-row:5!important}
+}
+</style>
+<script id="vedant-wallet-account-location-banner-final">
+(function(){
+ 'use strict';
+ const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+ function moveShopBanner(){
+  const page=document.getElementById('page-shop');if(!page)return;
+  const banner=page.querySelector('.vg-hero');
+  const categoryHeading=page.querySelector('.section-head');
+  const categoryIntro=page.querySelector('.stvn-category-intro');
+  const anchor=categoryHeading||categoryIntro||page.querySelector('.stvn-category-list');
+  if(banner&&anchor&&banner!==anchor.previousElementSibling)anchor.insertAdjacentElement('beforebegin',banner);
+ }
+ function updateLocationLabel(){
+  const labels=document.querySelectorAll('.vg-location-label');
+  let loc=null;try{loc=JSON.parse(localStorage.getItem('vedantCustomerDeliveryLocationV1')||'null')}catch(e){}
+  if(!loc){try{loc=JSON.parse(localStorage.getItem('vedantCustomerLocationV1')||'null')}catch(e){}}
+  const name=loc&&loc.name?String(loc.name).trim():'';
+  labels.forEach(el=>{const value=name||'5 km area';const title=name?name+' · '+Number(loc.km||0).toFixed(2)+' km from store':'Tap to update your delivery location';if(el.textContent!==value)el.textContent=value;if(el.title!==title)el.title=title;});
+ }
+ function wireLocation(){
+  document.querySelectorAll('.vg-location-button').forEach(btn=>{
+   if(btn.dataset.locationFinalBound)return;btn.dataset.locationFinalBound='1';
+   btn.addEventListener('click',()=>{
+    const card=document.querySelector('.stvn-delivery-location-card');
+    const action=card&&card.querySelector('button');
+    if(action){action.click();return;}
+    const current=document.querySelector('#use-current-location');if(current){current.click();return;}
+    if(typeof window.requestCustomerLocation==='function'){window.requestCustomerLocation();return;}
+    if(navigator.geolocation){navigator.geolocation.getCurrentPosition(async p=>{
+      const lat=p.coords.latitude,lng=p.coords.longitude;
+      let name='Current location';try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lng);if(r.ok){const a=(await r.json()).address||{};name=[a.suburb||a.neighbourhood||a.village||a.town||a.city,a.city||a.state_district].filter(Boolean).join(', ')||name;}}catch(e){}
+      labelsUpdate(name);
+    },()=>alert('Please allow location access in your browser settings.'),{enableHighAccuracy:true,timeout:15000});
+    }
+   });
+  });
+ }
+ function labelsUpdate(name){document.querySelectorAll('.vg-location-label').forEach(el=>{el.textContent=name;el.title=name;});}
+ function moveAccountNextToWallet(){
+  document.querySelectorAll('.vg-store-header').forEach(header=>{
+   const wallet=header.querySelector('.vg-wallet-action');
+   const account=header.querySelector('#stvnProfileBar');
+   if(wallet&&account&&wallet.nextElementSibling!==account)wallet.insertAdjacentElement('afterend',account);
+  });
+ }
+ function updateWalletBalance(){
+  const buttons=document.querySelectorAll('.vg-wallet-action');if(!buttons.length)return;
+  const set=value=>buttons.forEach(btn=>{btn.innerHTML='<span class="vg-wallet-balance-value">'+money(value)+'</span><small class="vg-wallet-balance-caption">Available balance</small>';});
+  const refresh=window.refreshVedantWalletBalance;
+  if(typeof refresh==='function'){
+   Promise.resolve().then(()=>refresh()).then(value=>{if(Number.isFinite(Number(value)))set(value);}).catch(()=>{
+    const el=document.querySelector('#page-wallet .wallet-balance');const m=el&&el.textContent.match(/[\d,]+(?:\.\d{1,2})?/);if(m)set(Number(m[0].replace(/,/g,'')));
+   });
+  }else{
+   const el=document.querySelector('#page-wallet .wallet-balance');const m=el&&el.textContent.match(/[\d,]+(?:\.\d{1,2})?/);if(m)set(Number(m[0].replace(/,/g,'')));
+  }
+ }
+ function init(){moveShopBanner();moveAccountNextToWallet();wireLocation();updateLocationLabel();updateWalletBalance();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,450),{once:true});else setTimeout(init,450);
+ const observer=new MutationObserver(()=>{moveShopBanner();moveAccountNextToWallet();updateLocationLabel();});
+ observer.observe(document.body,{childList:true,subtree:true});
+ document.addEventListener('click',e=>{if(e.target.closest('.vg-location-button'))setTimeout(updateLocationLabel,700);if(e.target.closest('.vg-wallet-action'))setTimeout(updateWalletBalance,350);});
+ window.addEventListener('focus',updateWalletBalance);
+ if(window.supabaseClient?.auth)window.supabaseClient.auth.onAuthStateChange(()=>setTimeout(updateWalletBalance,500));
+})();
+</script>
+
+
+<style id="vedant-english-clean-theme-20261113">
+/* Clean English storefront finish: preserve all existing actions and data flows. */
+#page-home .top.hero h1{font-size:clamp(34px,5.2vw,66px)!important;font-weight:950!important;letter-spacing:-.045em!important;color:#fff!important;text-transform:uppercase!important}
+#page-home .top.hero .hero-content>p{font-weight:650!important;color:rgba(255,255,255,.94)!important}
+#page-home .feature-grid{display:grid!important;grid-template-columns:minmax(240px,390px)!important;justify-content:start!important;gap:14px!important;margin:18px 0 24px!important}
+#page-home .feature-store-card{min-height:130px!important;padding:20px 24px!important;border:1px solid #cfe6d4!important;border-radius:20px!important;background:linear-gradient(135deg,#fff 0%,#f0fff4 100%)!important;color:#16452b!important;box-shadow:0 12px 30px rgba(18,72,39,.10)!important}
+#page-home .feature-store-card h3{font-size:21px!important;font-weight:950!important;color:#126b38!important;margin:4px 0 7px!important}
+#page-home .feature-store-card p{color:#52675a!important;line-height:1.5!important}
+#page-home .feature-store-card .feature-icon{font-size:30px!important}
+#page-home .feature-store-action{color:#08783d!important;font-weight:950!important}
+#page-shop .stvn-category-intro h2{font-weight:1000!important;color:#08783d!important;text-shadow:0 1px 0 rgba(255,255,255,.7);letter-spacing:-.025em!important}
+#page-shop .section-head h2{font-weight:950!important;color:#123f28!important}
+/* Match checkout, payment and address surfaces to the fresh green/white storefront. */
+.payment-box,.stvn-payment-choice,.stvn-upi-payment,.checkout-card,.checkout-step-card,
+#delivery-details,.delivery-details,.address-card,.stvn-profile-section,
+#page-checkout .section-card{background:linear-gradient(145deg,#fff 0%,#f2fbf4 100%)!important;border:1px solid #d4e9d9!important;border-radius:18px!important;box-shadow:0 9px 24px rgba(21,76,43,.07)!important}
+.payment-note,.location-success{color:#276341!important}
+/* English-only storefront labels; hidden translation helpers remain in place for compatibility. */
+#page-home .front-hindi,#page-home .hero-hindi-title,#page-home .feature-store-hindi,
+#page-shop .product-hindi-name,#page-shop .front-hindi{display:none!important}
+@media(max-width:700px){
+ #page-home .feature-grid{grid-template-columns:minmax(0,1fr)!important}
+ #page-home .feature-store-card{min-height:112px!important;padding:16px!important}
+ #page-home .top.hero h1{font-size:clamp(30px,9vw,46px)!important}
+}
+</style>
+
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
@@ -11189,3 +11864,778 @@ function init(){addHomeBanner();collapseOffers();syncBanner();const target=docum
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
+
+<!-- ===== VEDANT WALLET PAGE + MOBILE HOME FEATURE CARDS ===== -->
+<style id="stvn-wallet-and-mobile-feature-style">
+  /* Wallet navigation pill matches the existing account/wishlist navigation. */
+  .modern-nav .nav-links>button[data-page="wallet"]{
+    min-height:42px;padding:8px 13px;border:1px solid rgba(255,255,255,.18);
+    border-radius:999px;background:rgba(255,255,255,.1);color:#f5fbf5;white-space:nowrap;
+  }
+  .modern-nav .nav-links>button[data-page="wallet"] small{color:inherit}
+  .modern-nav .nav-links>button[data-page="wallet"].active{
+    border-color:rgba(242,211,125,.34);
+    background:linear-gradient(135deg,rgba(242,211,125,.2),rgba(255,255,255,.12));color:#fff4ce;
+  }
+  #page-wallet .wallet-hero{
+    padding:25px;border-radius:22px;color:#fff;
+    background:linear-gradient(135deg,#0b6638,#159b55 58%,#2ebd75);
+    box-shadow:0 14px 30px rgba(11,83,47,.16);
+  }
+  #page-wallet .wallet-hero p{margin:5px 0;opacity:.9}
+  #page-wallet .wallet-balance{font-size:clamp(34px,7vw,48px);font-weight:950;margin:14px 0 4px}
+  #page-wallet .wallet-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+  #page-wallet .wallet-action-card{padding:18px;border:1px solid var(--border);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
+  #page-wallet .wallet-action-card h3{margin:0 0 8px}
+  #page-wallet .wallet-action-card button{width:100%;margin:8px 0 0;background:var(--primary);color:#fff}
+  #page-wallet .wallet-action-card.withdraw button{background:#245d9c}
+  #page-wallet .wallet-note{padding:13px;border:1px solid #e6c978;border-radius:13px;background:#fff8df;color:#654b12;font-size:13px;line-height:1.5}
+  #page-wallet .wallet-history{margin-top:16px;padding:18px;border:1px solid var(--border);border-radius:18px;background:var(--surface)}
+  #page-wallet input{width:100%;max-width:none}
+  @media(max-width:600px){
+    /* Four homepage highlights display as compact visual blocks on phones. */
+    #page-home .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+    #page-home .feature-grid>.feature-card{min-width:0;min-height:164px;padding:14px 11px!important;border-radius:17px!important;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}
+    #page-home .feature-grid>.feature-card h3{font-size:15px;line-height:1.2;margin:8px 0 4px}
+    #page-home .feature-grid>.feature-card p{font-size:12px;line-height:1.35;margin:3px 0}
+    #page-home .feature-grid>.feature-card .front-hindi{font-size:11px;line-height:1.3}
+    #page-home .feature-grid>.feature-card .feature-icon{width:38px;height:38px;min-height:38px;display:grid;place-items:center;font-size:21px;border-radius:12px;padding:0}
+    #page-home .feature-grid>.feature-store-card{min-height:164px}
+  }
+  @media(max-width:360px){#page-home .feature-grid>.feature-card{padding:11px 8px!important}#page-home .feature-grid>.feature-card h3{font-size:13px}}
+</style>
+<style id="stvn-wallet-withdrawal-ui-style">
+#stvnWithdrawSuccessOverlay{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,15,9,.94);backdrop-filter:blur(8px)}#stvnWithdrawSuccessOverlay.show{display:flex!important}#stvnWithdrawSuccessOverlay .stvn-withdraw-success-card{width:min(680px,100%);min-height:360px;padding:clamp(28px,6vw,56px) 24px;border-radius:28px;background:linear-gradient(145deg,#fff,#eafff1);color:#103b25;text-align:center;box-shadow:0 28px 100px #0008;display:flex;flex-direction:column;align-items:center;justify-content:center}#stvnWithdrawSuccessOverlay .stvn-withdraw-success-card h2{font-size:clamp(29px,6vw,44px);line-height:1.12;margin:15px 0;color:#08783d}#stvnWithdrawSuccessOverlay .stvn-withdraw-success-card p{font-size:clamp(16px,3vw,20px);line-height:1.65;margin:12px 0 24px}#stvnWithdrawSuccessOverlay .stvn-withdraw-success-icon{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;background:#d8fbe5;color:#07833d;font-size:54px;font-weight:900}#stvnWithdrawSuccessOverlay button{min-width:190px;padding:16px 28px;border:0;border-radius:14px;background:#138447;color:#fff;font-size:18px;font-weight:900;cursor:pointer}
+#stvnWithdrawalAdmin{display:block;width:100%;grid-column:1/-1;margin:16px 0;padding:18px;border:1px solid var(--border);border-radius:18px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}#stvnWithdrawalAdmin[hidden]{display:none!important}#stvnWithdrawalAdmin .stvn-withdraw-admin-title,#stvnWithdrawalAdmin .stvn-withdraw-admin-tools,#stvnWithdrawalAdmin .stvn-withdraw-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}#stvnWithdrawalAdmin .stvn-withdraw-status{padding:5px 10px;border-radius:999px;background:#eee;color:#333;font-weight:800;font-size:12px}#stvnWithdrawalAdmin .stvn-status-paid{background:#d8fbe5;color:#08783d}#stvnWithdrawalAdmin .stvn-status-rejected{background:#ffe1e1;color:#9b2020}#stvnWithdrawalAdmin .stvn-status-approved{background:#dcecff;color:#15539a}#stvnWithdrawalAdmin .stvn-withdraw-empty,#stvnWithdrawalAdmin .stvn-withdraw-error{padding:16px;border-radius:12px;background:var(--surface-2)}#stvnWithdrawalAdmin .stvn-withdraw-error{color:#a22}#stvnWithdrawalAdmin .stvn-withdraw-admin-row code{overflow-wrap:anywhere;white-space:pre-wrap}#stvnWithdrawalAdmin .stvn-withdraw-admin-row{padding:14px 0;border-bottom:1px solid var(--border);display:grid;gap:7px}#stvnWithdrawalAdmin .stvn-withdraw-admin-actions{display:flex;gap:9px;flex-wrap:wrap}#stvnWithdrawalAdmin button{padding:10px 14px;border:0;border-radius:10px;background:#148447;color:#fff;font-weight:800}#stvnWithdrawalAdmin button.reject{background:#a33}
+</style>
+<style id="stvn-wallet-cleanup-style">
+#page-wallet .wallet-note{display:none!important}
+#page-wallet .wallet-verify-note{line-height:1.45}
+/* Keep the delivery-location chooser and map; hide only the redundant status ribbon if present. */
+#page-home .stvn-shop-location-updated,#page-shop .stvn-shop-location-updated,
+#page-home [data-shop-location-status="updated"],#page-shop [data-shop-location-status="updated"]{display:none!important}
+#page-home .stvn-delivery-location-card,#page-shop .stvn-delivery-location-card,
+#page-home .stvn-delivery-location-action,#page-shop .stvn-delivery-location-action,
+#page-home .stvn-delivery-location-copy,#page-shop .stvn-delivery-location-copy,
+#stvnLocationFirstGate{display:none!important}
+</style>
+
+<style id="stvn-wallet-address-collapse-update">
+#page-wallet .stvn-wallet-saved-accounts{margin:12px 0;padding:13px;border:1px solid var(--border);border-radius:14px;background:var(--surface-2,#f7fbf8)}
+#page-wallet .stvn-wallet-saved-account-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+#page-wallet .stvn-wallet-saved-account-button{width:auto!important;max-width:100%;margin:0!important;padding:10px 12px!important;border:1px solid #b8dec6!important;background:#f1fff5!important;color:#14532d!important;border-radius:999px!important;font-size:12px!important;font-weight:800;overflow-wrap:anywhere}
+#page-wallet .stvn-wallet-saved-account-button.active{outline:3px solid #1d9b58;outline-offset:1px;background:#d9fbe5!important}
+#page-wallet .stvn-wallet-new-account-actions{display:flex;gap:8px;flex-wrap:wrap}
+#page-wallet .stvn-wallet-new-account-actions button{width:auto!important;margin:0!important;padding:10px 12px!important}
+#page-wallet .stvn-wallet-new-entry-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}
+#page-wallet .stvn-wallet-new-entry-title button{width:auto!important;margin:0!important;background:#6b7280!important;padding:8px 12px!important}
+#page-wallet #stvnWalletPayoutEntryFields[hidden]{display:none!important}
+#stvnWithdrawSuccessOverlay #stvnWithdrawSaveFuture{background:#1c65a6;margin-bottom:8px}
+#stvnWithdrawSuccessOverlay #stvnWithdrawSuccessQuick{background:#148447}
+#stvnWithdrawSaveFutureMessage{font-weight:800;color:#0c713a;min-height:20px}
+.stvn-saved-address-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.stvn-saved-address-summary>div{min-width:0;flex:1}
+.stvn-saved-address-summary button{width:auto;flex:0 0 auto;margin:0!important}
+#stvnSavedAddressEditor[hidden],#stvnSavedAddressCompact[hidden],#stvnDeliveryEntryFields[hidden]{display:none!important}
+#stvnSavedAddressBox{border:1px solid var(--border);border-radius:14px;padding:12px;background:var(--surface)}
+#customer-location-box{margin-top:10px}
+@media(max-width:520px){.stvn-saved-address-summary{align-items:stretch;flex-direction:column}.stvn-saved-address-summary button{width:100%}}
+</style>
+<script id="stvn-wallet-page-init">
+(function(){
+  'use strict';
+  const money=v=>'₹'+Number(v||0).toFixed(2);
+  function getClient(){return window.supabaseClient||(typeof supabaseClient!=='undefined'?supabaseClient:null)}
+  async function requireUser(){
+    const c=getClient(); if(!c) throw new Error('Supabase connection not found.');
+    const {data,error}=await c.auth.getSession(); if(error) throw error;
+    if(!data?.session?.user) throw new Error('Please log in to your customer account first.');
+    return {client:c,user:data.session.user};
+  }
+  async function loadTransactions(client){
+    const list=document.querySelector('#page-wallet .wallet-history-list'); if(!list)return;
+    const {data,error}=await client.from('wallet_transactions').select('transaction_type,amount,description,created_at').order('created_at',{ascending:false}).limit(30);
+    if(error){list.textContent='Could not load transactions: '+error.message;return;}
+    if(!data?.length){list.textContent='No verified transactions yet.';return;}
+    list.innerHTML=data.map(t=>{
+      const credit=t.transaction_type==='credit', date=new Date(t.created_at).toLocaleString('en-IN');
+      const desc=String(t.description||'Wallet transaction').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      return '<div class="wallet-history-row"><div><strong>'+(credit?'Money Added':'Money Debited')+'</strong><small>'+desc+' · '+date+'</small></div><strong style="color:'+(credit?'#16834a':'#c43d3d')+'">'+(credit?'+':'−')+money(t.amount)+'</strong></div>';
+    }).join('');
+  }
+  async function loadRequests(client){
+    const box=document.querySelector('#page-wallet .wallet-request-list'); if(!box)return;
+    const [top,withdraw]=await Promise.all([
+      client.from('wallet_topup_requests').select('amount,status,created_at').order('created_at',{ascending:false}).limit(15),
+      client.from('wallet_withdrawal_requests').select('amount,status,created_at').order('created_at',{ascending:false}).limit(15)
+    ]);
+    if(top.error||withdraw.error){box.textContent='Request status will appear after SQL setup.';return;}
+    const rows=[...(top.data||[]).map(x=>({...x,kind:'Add Money'})),...(withdraw.data||[]).map(x=>({...x,kind:'Withdraw'}))].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    box.innerHTML=rows.length?rows.map(x=>'<div class="wallet-history-row"><div><strong>'+x.kind+' · '+String(x.status).toUpperCase()+'</strong><small>'+new Date(x.created_at).toLocaleString('en-IN')+'</small></div><strong>'+money(x.amount)+'</strong></div>').join(''):'No Add Money or Withdraw requests yet.';
+  }
+  async function loadBalance(){
+    const {client}=await requireUser();
+    const {data,error}=await client.rpc('vedant_wallet_balance'); if(error)throw error;
+    const balance=Number(data||0);
+    document.querySelectorAll('#page-wallet .wallet-balance').forEach(el=>el.textContent=money(balance));
+    document.querySelectorAll('.stvn-checkout-wallet-balance').forEach(el=>{if(el.id!=='stvnWalletCheckoutBalance')el.textContent='Available balance: '+money(balance)});
+    const status=document.querySelector('#page-wallet .wallet-hero p');if(status)status.textContent='Your verified wallet balance';
+    await Promise.all([loadTransactions(client),loadRequests(client)]); return balance;
+  }
+  window.refreshVedantWalletBalance=loadBalance;
+  function showPanel(which){
+    const page=document.getElementById('page-wallet'); if(!page)return;
+    page.querySelectorAll('[data-wallet-panel]').forEach(p=>p.hidden=p.dataset.walletPanel!==which);
+    page.querySelectorAll('[data-wallet-action]').forEach(b=>b.classList.toggle('active',b.dataset.walletAction===which));
+  }
+  function initVedantWallet(){
+    if(document.getElementById('page-wallet'))return;
+    const page=document.createElement('main');page.id='page-wallet';page.className='page';
+    page.innerHTML=`
+      <div class="section-head"><div><h2>Vedant Wallet</h2><p>A secure wallet for your grocery orders</p></div><img class="wallet-logo" src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo"></div>
+      <section class="wallet-hero"><div style="font-weight:800;opacity:.92">Available Wallet Balance</div><div class="wallet-balance">Loading…</div><p>Your verified balance will appear here</p></section>
+      <div class="wallet-actions wallet-main-actions">
+        <button type="button" data-wallet-action="add">➕ Add Money</button>
+        <button type="button" data-wallet-action="withdraw">↗ Withdraw Money</button>
+        <button type="button" data-wallet-action="status">📊 Wallet Status</button>
+      </div>
+      <section class="wallet-action-card wallet-panel" data-wallet-panel="add" hidden><h3>➕ Add Money</h3><p>Enter an amount to create a top-up request. Funds will be added only after the Razorpay payment is verified by the server.</p><label for="stvnWalletAddAmount">Amount (₹)</label><input id="stvnWalletAddAmount" type="number" min="1" max="50000" step="1" placeholder="Example: 500"><button type="button" id="stvnWalletAddButton">Continue</button><p class="wallet-inline-message" id="stvnWalletAddMessage"></p></section>
+      <section class="wallet-action-card wallet-panel" data-wallet-panel="withdraw" hidden>
+        <h3>↗ Withdraw Money</h3>
+        <p>Enter an amount and select a saved UPI or bank account below. To add a new account, use the buttons. After your request is received, the shop admin will process the payment and mark it as Paid.</p>
+        <label for="stvnWalletWithdrawAmount">Amount (₹)</label>
+        <input id="stvnWalletWithdrawAmount" type="number" min="1" step="0.01" placeholder="Example: 200">
+        <label for="stvnWalletPayoutMethod">Payment Method</label>
+        <select id="stvnWalletPayoutMethod"><option value="upi">UPI ID</option><option value="bank">Bank Account</option></select>
+        <div class="stvn-wallet-saved-accounts">
+          <strong>Saved Payment Accounts</strong>
+          <div id="stvnWalletSavedAccountButtons" class="stvn-wallet-saved-account-buttons"><span class="wallet-inline-message">Loading saved accounts…</span></div>
+          <div class="stvn-wallet-new-account-actions"><button type="button" id="stvnWalletNewUpiButton">＋ Add New UPI</button><button type="button" id="stvnWalletNewBankButton">＋ Add New Bank</button></div>
+        </div>
+        <div id="stvnWalletPayoutEntryFields" hidden>
+          <div class="stvn-wallet-new-entry-title"><strong id="stvnWalletNewEntryTitle">Add a New UPI Account</strong><button type="button" id="stvnWalletCancelNewAccount">Cancel</button></div>
+          <label for="stvnWalletBeneficiary">Account Holder Name</label><input id="stvnWalletBeneficiary" type="text" maxlength="100" autocomplete="name" placeholder="Enter account holder name">
+          <label for="stvnWalletPhone">Mobile Number</label><input id="stvnWalletPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10-digit mobile number">
+          <div id="stvnWalletUpiFields"><label for="stvnWalletUpi">UPI ID</label><input id="stvnWalletUpi" type="text" maxlength="100" placeholder="name@upi"></div>
+          <div id="stvnWalletBankFields" hidden><label for="stvnWalletAccount">Bank Account Number</label><input id="stvnWalletAccount" type="text" maxlength="24" inputmode="numeric" placeholder="Enter bank account number"><label for="stvnWalletIfsc">IFSC Code</label><input id="stvnWalletIfsc" type="text" maxlength="11" placeholder="ABCD0123456"><label for="stvnWalletBankName">Bank Name</label><input id="stvnWalletBankName" type="text" maxlength="100" placeholder="Enter bank name"></div>
+          <p class="wallet-verify-note" style="font-size:12px;color:var(--muted)">Automatic account-holder name verification is not available. Please verify the details in your UPI or banking app.</p>
+        </div>
+        <button type="button" id="stvnWalletWithdrawButton">Submit Withdrawal Request</button>
+        <p class="wallet-inline-message" id="stvnWalletWithdrawMessage" role="status" aria-live="polite"></p>
+        <p class="wallet-inline-message" id="stvnWalletSavedAccountMessage" role="status" aria-live="polite"></p>
+      </section>
+      <section class="wallet-action-card wallet-panel" data-wallet-panel="status" hidden><h3>📊 Wallet Status</h3><p>Your balance, verified transactions, and requests.</p><div class="wallet-request-list">Loading…</div><h4>Transaction History</h4><div class="wallet-history-list">Loading…</div><button type="button" id="stvnWalletRefresh">Refresh Status</button></section>
+`;
+    document.body.appendChild(page);
+    page.querySelectorAll('[data-wallet-action]').forEach(b=>b.addEventListener('click',()=>{showPanel(b.dataset.walletAction);if(b.dataset.walletAction==='status')loadBalance().catch(showWalletError)}));
+    page.querySelector('#stvnWalletAddButton').addEventListener('click',async()=>{
+      const msg=page.querySelector('#stvnWalletAddMessage');
+      const button=page.querySelector('#stvnWalletAddButton');
+      msg.textContent='';
+      try{
+        const amount=Number(page.querySelector('#stvnWalletAddAmount').value);
+        if(!Number.isFinite(amount)||amount<1||amount>50000||Math.round(amount*100)!==amount*100){
+          throw new Error('Enter a valid amount from ₹1 to ₹50,000 (up to 2 decimals).');
+        }
+        const {client,user}=await requireUser();
+        if(!window.Razorpay) throw new Error('Razorpay Checkout did not load. Please refresh and try again.');
+
+        button.disabled=true;
+        button.textContent='Creating secure payment...';
+        const {data:createData,error:createError}=await client.functions.invoke('razorpay-payment',{
+          body:{action:'create_wallet_topup',amount}
+        });
+        if(createError) throw new Error(createData?.error||createError.message||'Could not create Razorpay order.');
+        if(!createData?.request_id||!createData?.order?.id||!createData?.key_id){
+          throw new Error(createData?.error||'Secure payment order details were not returned.');
+        }
+
+        const requestId=createData.request_id;
+        const razorpayOrder=createData.order;
+        msg.textContent='Opening secure Razorpay checkout...';
+        const checkout=new Razorpay({
+          key:createData.key_id,
+          amount:razorpayOrder.amount,
+          currency:razorpayOrder.currency||'INR',
+          order_id:razorpayOrder.id,
+          name:'Vedant Grocery Shop',
+          description:'Wallet top-up',
+          prefill:{name:user.user_metadata?.full_name||user.user_metadata?.name||'',email:user.email||''},
+          notes:{wallet_topup_request_id:requestId},
+          theme:{color:'#16a34a'},
+          handler:async function(response){
+            try{
+              button.disabled=true;
+              button.textContent='Verifying payment...';
+              msg.textContent='Payment received. Verifying securely with Razorpay...';
+              const {data:verifyData,error:verifyError}=await client.functions.invoke('razorpay-payment',{
+                body:{
+                  action:'verify_wallet_topup',
+                  request_id:requestId,
+                  razorpay_order_id:response.razorpay_order_id,
+                  razorpay_payment_id:response.razorpay_payment_id,
+                  razorpay_signature:response.razorpay_signature
+                }
+              });
+              if(verifyError||!verifyData?.verified){
+                throw new Error(verifyData?.error||verifyError?.message||'Payment verification is pending. Do not pay again; contact the shop.');
+              }
+              msg.textContent=verifyData.already_credited
+                ?'This payment was already verified. Your wallet balance is up to date.'
+                :'Payment successful! '+money(verifyData.amount)+' has been added to your wallet.';
+              page.querySelector('#stvnWalletAddAmount').value='';
+              await loadBalance();
+              showPanel('status');
+            }catch(verifyError){
+              console.error('Wallet payment verification error:',verifyError);
+              msg.textContent=verifyError.message||'Payment verification is pending. Do not pay again; contact the shop.';
+            }finally{
+              button.disabled=false;
+              button.textContent='Pay with Razorpay';
+            }
+          },
+          modal:{ondismiss:function(){
+            msg.textContent='Checkout closed. If you completed payment, refresh Wallet Status before trying again.';
+            button.disabled=false;
+            button.textContent='Pay with Razorpay';
+          }}
+        });
+        checkout.on('payment.failed',function(response){
+          msg.textContent='Payment failed: '+(response?.error?.description||'Please try again.');
+          button.disabled=false;
+          button.textContent='Pay with Razorpay';
+        });
+        button.textContent='Pay with Razorpay';
+        checkout.open();
+      }catch(e){
+        console.error('Wallet top-up error:',e);
+        msg.textContent=e.message||'Could not start wallet payment.';
+        button.disabled=false;
+        button.textContent='Continue';
+      }
+    });
+    const payoutMethod=page.querySelector('#stvnWalletPayoutMethod');
+    const savedButtons=page.querySelector('#stvnWalletSavedAccountButtons');
+    const entryFields=page.querySelector('#stvnWalletPayoutEntryFields');
+    let savedPayoutAccounts=[];
+    let selectedPayoutAccount=null;
+    let lastWithdrawalToSave=null;
+    const savedAccountMessage=page.querySelector('#stvnWalletSavedAccountMessage');
+    function togglePayoutFields(){
+      const isUpi=payoutMethod.value==='upi';
+      page.querySelector('#stvnWalletUpiFields').hidden=!isUpi;
+      page.querySelector('#stvnWalletBankFields').hidden=isUpi;
+      page.querySelector('#stvnWalletNewEntryTitle').textContent=isUpi?'Add a New UPI Account':'Add a New Bank Account';
+    }
+    function selectSavedPayoutAccount(account,button){
+      selectedPayoutAccount=account;
+      payoutMethod.value=String(account.payout_method||'UPI').toLowerCase()==='bank'?'bank':'upi';
+      togglePayoutFields();
+      page.querySelector('#stvnWalletBeneficiary').value=account.beneficiary_name||'';
+      page.querySelector('#stvnWalletPhone').value=account.mobile_number||'';
+      page.querySelector('#stvnWalletUpi').value=account.upi_id||'';
+      page.querySelector('#stvnWalletAccount').value=account.account_number||'';
+      page.querySelector('#stvnWalletIfsc').value=account.ifsc_code||'';
+      page.querySelector('#stvnWalletBankName').value=account.bank_name||'';
+      entryFields.hidden=true;
+      savedButtons.querySelectorAll('button[data-saved-payout]').forEach(b=>b.classList.toggle('active',b===button));
+      if(savedAccountMessage)savedAccountMessage.textContent='✅ Saved account selected.';
+    }
+    function openNewPayoutAccount(method){
+      selectedPayoutAccount=null;
+      payoutMethod.value=method;
+      togglePayoutFields();
+      entryFields.hidden=false;
+      savedButtons?.querySelectorAll('button[data-saved-payout]').forEach(b=>b.classList.remove('active'));
+      ['stvnWalletBeneficiary','stvnWalletPhone','stvnWalletUpi','stvnWalletAccount','stvnWalletIfsc','stvnWalletBankName'].forEach(id=>{const el=page.querySelector('#'+id);if(el)el.value='';});
+      if(savedAccountMessage)savedAccountMessage.textContent='Enter the new account details. After submitting a withdrawal request, select Save for Future in the confirmation window.';
+    }
+    async function loadSavedPayoutAccounts(){
+      if(!savedButtons)return;
+      try{
+        const {client,user}=await requireUser();
+        const {data,error}=await client.from('wallet_saved_accounts')
+          .select('id,payout_method,beneficiary_name,mobile_number,upi_id,account_number,ifsc_code,bank_name,is_default')
+          .eq('user_id',user.id).order('is_default',{ascending:false}).order('created_at',{ascending:false});
+        if(error)throw error;
+        savedPayoutAccounts=data||[];
+        savedButtons.replaceChildren();
+        if(!savedPayoutAccounts.length){
+          const note=document.createElement('span');note.className='wallet-inline-message';note.textContent='No saved accounts yet. Select Add New UPI or Add New Bank.';savedButtons.appendChild(note);
+          entryFields.hidden=true;
+          if(savedAccountMessage)savedAccountMessage.textContent='';
+          return;
+        }
+        savedPayoutAccounts.forEach(account=>{
+          const isBank=String(account.payout_method||'').toUpperCase()==='BANK';
+          const tail=isBank?(account.account_number?String(account.account_number).slice(-4):''):(account.upi_id||'');
+          const b=document.createElement('button');b.type='button';b.dataset.savedPayout=account.id;b.className='stvn-wallet-saved-account-button';
+          b.textContent=(isBank?'🏦 Bank':'📱 UPI')+' · '+(account.beneficiary_name||'Account')+' · '+(isBank?'•••• '+tail:tail);
+          b.addEventListener('click',()=>selectSavedPayoutAccount(account,b));savedButtons.appendChild(b);
+        });
+        const preferred=savedPayoutAccounts.find(a=>a.is_default)||savedPayoutAccounts[0];
+        const preferredButton=savedButtons.querySelector('[data-saved-payout="'+preferred.id+'"]');
+        selectSavedPayoutAccount(preferred,preferredButton);
+      }catch(e){
+        console.warn('Saved payout account load:',e);
+        savedPayoutAccounts=[];
+        savedButtons.textContent='Could not load saved accounts: '+(e.message||'Check the wallet_saved_accounts table and customer access policies.');
+        entryFields.hidden=false;
+        togglePayoutFields();
+      }
+    }
+    async function savePayoutForFuture(){
+      if(!lastWithdrawalToSave)throw new Error('No account details are available to save.');
+      const {client,user}=await requireUser();
+      const row={
+        user_id:user.id,
+        payout_method:lastWithdrawalToSave.method.toUpperCase(),
+        beneficiary_name:lastWithdrawalToSave.holder,
+        mobile_number:lastWithdrawalToSave.phone,
+        upi_id:lastWithdrawalToSave.method==='upi'?lastWithdrawalToSave.upi:null,
+        account_number:lastWithdrawalToSave.method==='bank'?lastWithdrawalToSave.account:null,
+        ifsc_code:lastWithdrawalToSave.method==='bank'?lastWithdrawalToSave.ifsc:null,
+        bank_name:lastWithdrawalToSave.method==='bank'?(lastWithdrawalToSave.bankName||null):null,
+        is_default:false
+      };
+      const {data,error}=await client.from('wallet_saved_accounts').insert(row).select('id,payout_method,beneficiary_name,mobile_number,upi_id,account_number,ifsc_code,bank_name,is_default').single();
+      if(error)throw error;
+      const {error:clearError}=await client.from('wallet_saved_accounts').update({is_default:false}).eq('user_id',user.id).neq('id',data.id);
+      if(clearError)throw clearError;
+      const {error:defaultError}=await client.from('wallet_saved_accounts').update({is_default:true}).eq('user_id',user.id).eq('id',data.id);
+      if(defaultError)throw defaultError;
+      if(savedAccountMessage)savedAccountMessage.textContent='✅ Account saved for future use.';
+      await loadSavedPayoutAccounts();
+      return true;
+    }
+    // Expose only this closure's save action to the success dialog; payout data stays in memory.
+    window.__stvnWalletGetLastWithdrawalToSave=()=>lastWithdrawalToSave;
+    window.__stvnWalletSaveWithdrawalAccount=savePayoutForFuture;
+    payoutMethod.addEventListener('change',()=>{
+      if(selectedPayoutAccount && String(selectedPayoutAccount.payout_method||'').toLowerCase()!==payoutMethod.value)selectedPayoutAccount=null;
+      togglePayoutFields();
+      if(!entryFields.hidden) return;
+      entryFields.hidden=false;
+    });
+    page.querySelector('#stvnWalletNewUpiButton').addEventListener('click',()=>openNewPayoutAccount('upi'));
+    page.querySelector('#stvnWalletNewBankButton').addEventListener('click',()=>openNewPayoutAccount('bank'));
+    page.querySelector('#stvnWalletCancelNewAccount').addEventListener('click',()=>{
+      if(selectedPayoutAccount){entryFields.hidden=true;return;}
+      if(savedPayoutAccounts.length){const a=savedPayoutAccounts.find(x=>x.is_default)||savedPayoutAccounts[0];selectSavedPayoutAccount(a,savedButtons.querySelector('[data-saved-payout="'+a.id+'"]'));}
+      else entryFields.hidden=true;
+    });
+    togglePayoutFields();
+    page.querySelector('#stvnWalletWithdrawButton').addEventListener('click',async()=>{
+      const msg=page.querySelector('#stvnWalletWithdrawMessage'),button=page.querySelector('#stvnWalletWithdrawButton');msg.textContent='';
+      try{
+        const amount=Number(page.querySelector('#stvnWalletWithdrawAmount').value),method=payoutMethod.value;
+        const holder=(selectedPayoutAccount?.beneficiary_name||page.querySelector('#stvnWalletBeneficiary').value).trim();
+        const phone=String(selectedPayoutAccount?.mobile_number||page.querySelector('#stvnWalletPhone').value).replace(/\D/g,'');
+        const upi=String(selectedPayoutAccount?.upi_id||page.querySelector('#stvnWalletUpi').value).trim();
+        const account=String(selectedPayoutAccount?.account_number||page.querySelector('#stvnWalletAccount').value).trim();
+        const ifsc=String(selectedPayoutAccount?.ifsc_code||page.querySelector('#stvnWalletIfsc').value).trim().toUpperCase();
+        const bankName=String(selectedPayoutAccount?.bank_name||page.querySelector('#stvnWalletBankName').value).trim();
+        if(!Number.isFinite(amount)||amount<1||Math.round(amount*100)!==amount*100)throw new Error('Enter a valid amount of at least ₹1.');
+        if(holder.length<2)throw new Error('Enter the account holder name.');
+        if(phone.length!==10)throw new Error('Enter a valid 10-digit mobile number.');
+        if(method==='upi'&&!/^[A-Za-z0-9._-]{2,}@[A-Za-z0-9.-]{2,}$/.test(upi))throw new Error('Enter a valid UPI ID.');
+        if(method==='bank'&&(account.length<6||!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)))throw new Error('Enter a valid bank account number and IFSC code.');
+        const details=method==='upi'?'UPI: '+upi:'Bank A/C: '+account+' | IFSC: '+ifsc+(bankName?' | Bank: '+bankName:'');
+        const {client}=await requireUser();button.disabled=true;button.textContent='Submitting request…';
+        const {data,error}=await client.rpc('vedant_request_wallet_withdrawal',{p_amount:amount,p_payout_details:details,p_payout_method:method,p_beneficiary_name:holder,p_phone:phone});if(error)throw error;
+        lastWithdrawalToSave={method,holder,phone,upi,account,ifsc,bankName,alreadySaved:!!selectedPayoutAccount};
+        page.querySelector('#stvnWalletWithdrawAmount').value='';
+        showWithdrawSuccess();await loadBalance();
+      }catch(e){msg.textContent=e.message||'Could not submit the withdrawal request.';}finally{button.disabled=false;button.textContent='Submit Withdrawal Request';}
+    });
+    loadSavedPayoutAccounts();
+    page.querySelector('#stvnWalletRefresh').addEventListener('click',()=>loadBalance().catch(showWalletError));
+    loadBalance().catch(showWalletError);
+  }
+  function showWithdrawSuccess(){
+    let overlay=document.getElementById('stvnWithdrawSuccessOverlay');
+    if(!overlay){
+      overlay=document.createElement('div');
+      overlay.id='stvnWithdrawSuccessOverlay';
+      overlay.innerHTML='<div class="stvn-withdraw-success-card" role="dialog" aria-modal="true" aria-labelledby="stvnWithdrawSuccessTitle"><div class="stvn-withdraw-success-icon" aria-hidden="true">✓</div><h2 id="stvnWithdrawSuccessTitle">Withdrawal Request Received!</h2><p><strong>Your withdrawal request has been submitted successfully.</strong><br>Your withdrawal request will be reviewed and processed within 2–5 working days. After it is marked as Paid, bank or UPI processing may take additional time.</p><button type="button" id="stvnWithdrawSaveFuture">Save for Future</button><button type="button" id="stvnWithdrawSuccessQuick">Quick · OK</button><p id="stvnWithdrawSaveFutureMessage" role="status" aria-live="polite"></p></div>';
+      document.body.appendChild(overlay);
+      overlay.querySelector('#stvnWithdrawSuccessQuick').addEventListener('click',()=>{
+        overlay.classList.remove('show');document.body.style.overflow='';
+        const refresh=document.querySelector('#page-wallet #stvnWalletRefresh');if(refresh)refresh.click();
+        const history=document.querySelector('#page-wallet .wallet-request-list');if(history)history.scrollIntoView({behavior:'smooth',block:'center'});
+      });
+      overlay.querySelector('#stvnWithdrawSaveFuture').addEventListener('click',async()=>{
+        const b=overlay.querySelector('#stvnWithdrawSaveFuture'),m=overlay.querySelector('#stvnWithdrawSaveFutureMessage');
+        const pending=window.__stvnWalletGetLastWithdrawalToSave?.();if(!pending||pending.alreadySaved){m.textContent='This account is already saved.';return;}
+        b.disabled=true;b.textContent='Saving…';
+        try{await window.__stvnWalletSaveWithdrawalAccount();m.textContent='✅ Account saved for future use.';b.textContent='Saved ✓';}
+        catch(e){m.textContent='Could not save: '+(e.message||'Please try again.');b.disabled=false;b.textContent='Save for Future';}
+      });
+      overlay.addEventListener('click',e=>{if(e.target===overlay){overlay.classList.remove('show');document.body.style.overflow='';}});
+    }
+    const saveButton=overlay.querySelector('#stvnWithdrawSaveFuture');
+    const saveMessage=overlay.querySelector('#stvnWithdrawSaveFutureMessage');
+    const pending=window.__stvnWalletGetLastWithdrawalToSave?.();
+    if(saveButton){saveButton.hidden=!pending||pending.alreadySaved;saveButton.disabled=false;saveButton.textContent='Save for Future';}
+    if(saveMessage)saveMessage.textContent=pending?.alreadySaved?'This account is already saved.':'';
+    overlay.classList.add('show');document.body.style.overflow='hidden';
+  }
+
+  async function loadAdminWithdrawals(){
+    const root=document.getElementById('stvnWithdrawalAdminList');if(!root)return;
+    root.innerHTML='<p>⏳ Loading withdrawal requests...</p>';
+    try{
+      const {client}=await requireUser();
+      let query=client.from('wallet_withdrawal_requests').select('id,user_id,amount,status,payout_details,payout_method,beneficiary_name,phone,created_at,admin_note,processed_at').order('created_at',{ascending:false}).limit(300);
+      const filter=document.getElementById('stvnWithdrawalFilter')?.value||'all';
+      if(filter!=='all')query=query.eq('status',filter);
+      const {data,error}=await query;if(error)throw error;
+      if(!data?.length){root.innerHTML='<div class="stvn-withdraw-empty">There are no withdrawal requests in this category.</div>';return;}
+      const esc=v=>String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      root.innerHTML=data.map(r=>{
+        const status=String(r.status||'pending').toLowerCase();
+        let actions='';
+        if(status==='pending') actions='<div class="stvn-withdraw-admin-actions"><button type="button" data-approve="'+esc(r.id)+'">✓ Approve</button><button type="button" data-paid="'+esc(r.id)+'">₹ Mark as Paid</button><button type="button" class="reject" data-cancel="'+esc(r.id)+'">✕ Cancel & Refund</button></div>';
+        else if(status==='approved') actions='<div class="stvn-withdraw-admin-actions"><button type="button" data-paid="'+esc(r.id)+'">₹ Mark as Paid</button><button type="button" class="reject" data-cancel="'+esc(r.id)+'">✕ Cancel & Refund</button></div>';
+        const bank=String(r.payout_details||'—');
+        return '<article class="stvn-withdraw-admin-row"><div class="stvn-withdraw-card-head"><strong>₹'+Number(r.amount||0).toFixed(2)+'</strong><span class="stvn-withdraw-status stvn-status-'+esc(status)+'">'+esc(status.toUpperCase())+'</span></div><span><b>Customer / Account Holder:</b> '+esc(r.beneficiary_name||'Name not provided')+'</span><span><b>Mobile:</b> '+esc(r.phone)+'</span><span><b>Payment Method:</b> '+esc(String(r.payout_method||'—').toUpperCase())+'</span><span><b>UPI ID / Bank Details:</b> <code>'+esc(bank)+'</code></span><small><b>Request time:</b> '+(r.created_at?new Date(r.created_at).toLocaleString('en-IN'):'—')+'</small><small><b>Customer UID:</b> '+esc(r.user_id)+'</small><small><b>Request ID:</b> '+esc(r.id)+'</small>'+(r.admin_note?'<small><b>Admin note:</b> '+esc(r.admin_note)+'</small>':'')+actions+'</article>';
+      }).join('');
+      root.querySelectorAll('[data-approve]').forEach(b=>b.addEventListener('click',async()=>{
+        if(!confirm('Approve this withdrawal request? No money will be transferred to the customer at this stage.'))return;
+        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_approve_withdrawal',{p_request_id:b.dataset.approve,p_admin_note:'Approved by shop admin'});if(error)throw error;await loadAdminWithdrawals();}catch(e){alert('Approval failed: '+(e.message||'Database/RLS error'));b.disabled=false;}
+      }));
+      root.querySelectorAll('[data-paid]').forEach(b=>b.addEventListener('click',async()=>{
+        const req=data.find(x=>x.id===b.dataset.paid);
+        if(!confirm('Have you actually transferred ₹'+Number(req?.amount||0).toFixed(2)+' to the customer by UPI or bank? Confirm only after the transfer is complete.'))return;
+        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_mark_withdrawal_paid',{p_request_id:b.dataset.paid,p_admin_note:'Manual bank/UPI transfer completed by shop admin'});if(error)throw error;alert('Withdrawal marked as Paid.');await loadAdminWithdrawals();}catch(e){alert('Could not update Paid status: '+(e.message||'RPC/RLS error'));b.disabled=false;}
+      }));
+      root.querySelectorAll('[data-cancel]').forEach(b=>b.addEventListener('click',async()=>{
+        const note=prompt('Enter a reason for cancellation. The request amount will be refunded to the customer wallet:','Cancelled by shop admin');if(note===null)return;
+        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_cancel_withdrawal',{p_request_id:b.dataset.cancel,p_admin_note:note});if(error)throw error;alert('Request cancelled and refund processed.');await loadAdminWithdrawals();}catch(e){alert('Could not cancel/refund: '+(e.message||'RPC/RLS error'));b.disabled=false;}
+      }));
+    }catch(e){root.innerHTML='<div class="stvn-withdraw-error">Could not load withdrawal requests: '+String(e.message||'Unknown error').replace(/[<>]/g,'')+'<br><small>Check the Supabase table columns, wallet_admins membership, and admin RLS policies.</small></div>';}
+  }
+  function initWithdrawalAdmin(){
+    const panel=document.getElementById('adminContent');if(!panel)return;
+    let box=document.getElementById('stvnWithdrawalAdmin');
+    if(!box){
+      box=document.createElement('section');box.id='stvnWithdrawalAdmin';box.hidden=true;
+      box.innerHTML='<div class="stvn-withdraw-admin-title"><div><h3>💸 Withdrawal Status</h3><p>Customer requests will appear here. Transfer the funds manually by UPI or bank, then mark the request as Paid. Approving a request does not transfer money.</p></div><button type="button" id="stvnWithdrawalClose">✕ Close</button></div><div class="stvn-withdraw-admin-tools"><label for="stvnWithdrawalFilter">Requests: </label><select id="stvnWithdrawalFilter"><option value="all">All Requests</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="paid">Paid</option><option value="rejected">Rejected</option></select><button type="button" id="stvnWithdrawalRefresh">↻ Refresh</button></div><div id="stvnWithdrawalAdminList" style="margin-top:12px">Select Refresh to view requests.</div>';
+      const toolbar=panel.querySelector('.admin-toolbar');if(toolbar)toolbar.insertAdjacentElement('afterend',box);else panel.prepend(box);
+      box.querySelector('#stvnWithdrawalRefresh').addEventListener('click',loadAdminWithdrawals);
+      box.querySelector('#stvnWithdrawalFilter').addEventListener('change',loadAdminWithdrawals);
+      box.querySelector('#stvnWithdrawalClose').addEventListener('click',()=>{box.hidden=true;const b=document.getElementById('admin-view-withdrawal-status');if(b){b.setAttribute('aria-expanded','false');b.textContent='💸 Withdrawal Status';}});
+    }
+  }
+  window.toggleWithdrawalStatusPanel=function(){
+    initWithdrawalAdmin();
+    const box=document.getElementById('stvnWithdrawalAdmin');const button=document.getElementById('admin-view-withdrawal-status');if(!box)return;
+    const opening=box.hidden;box.hidden=!opening;
+    if(button){button.setAttribute('aria-expanded',String(opening));button.textContent=opening?'✕ Close Withdrawal Status':'💸 Withdrawal Status';}
+    if(opening){loadAdminWithdrawals();box.scrollIntoView({behavior:'smooth',block:'start'});}
+  };
+  window.addEventListener('vedant-owner-admin-ready',initWithdrawalAdmin);
+  function showWalletError(e){const p=document.querySelector('#page-wallet .wallet-hero p');if(p)p.textContent='Check wallet setup/login: '+(e.message||'Error');}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initVedantWallet,{once:true});else initVedantWallet();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadBalance().catch(()=>{});});
+})();
+</script>
+
+
+<!-- Vedant language preference gate -->
+<style>
+#vLangGate{position:fixed;inset:0;z-index:300000;display:none;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 15% 15%,#b8f5ce 0,transparent 32%),linear-gradient(145deg,#07351f,#071b12 75%);font-family:Arial,sans-serif}
+#vLangGate .vlang-card{width:min(100%,520px);padding:clamp(25px,5vw,42px);border-radius:28px;background:#fff;color:#183624;text-align:center;box-shadow:0 28px 90px #0006}
+#vLangGate h1{font-size:clamp(27px,5vw,36px);margin:8px 0}#vLangGate p{color:#607367;line-height:1.55}
+.vlang-choice{display:flex;align-items:center;gap:14px;padding:17px;margin:12px 0;border:2px solid #e2eee5;border-radius:17px;text-align:left;cursor:pointer;background:#fbfefc}
+.vlang-choice.selected{border-color:#15934e;background:#effbf3}.vlang-choice input{accent-color:#15934e;width:19px;height:19px}.vlang-choice strong{display:block;font-size:19px}.vlang-choice small{color:#718075}
+#vLangContinue{width:100%;padding:15px;border:0;border-radius:14px;background:linear-gradient(135deg,#20b75f,#08783d);color:white;font-size:16px;font-weight:900;cursor:pointer;margin-top:12px}
+</style>
+<div id="vLangGate" role="dialog" aria-modal="true" aria-labelledby="vLangTitle"><div class="vlang-card"><div style="font-size:42px">🌐</div><div style="font-size:12px;letter-spacing:2px;font-weight:900;color:#16864a">VEDANT GROCERY SHOP</div><h1 id="vLangTitle">Choose your language</h1><p>Prefer your language. You can change it anytime from My Account.</p>
+<label class="vlang-choice selected" data-lang-choice="en"><input type="radio" name="vlang" value="en" checked><span>🇬🇧 <strong>English</strong><small>Continue shopping in English</small></span></label>
+<label class="vlang-choice" data-lang-choice="hi"><input type="radio" name="vlang" value="hi"><span>🇮🇳 <strong>हिन्दी</strong><small>हिंदी में खरीदारी जारी रखें</small></span></label>
+<button id="vLangContinue" type="button">Continue →</button></div></div>
+<script>
+(function(){
+ const gate=document.getElementById('vLangGate');let chosen='en';
+ const dict={
+ 'My Account':'मेरा अकाउंट','My Profile':'मेरी प्रोफ़ाइल','My Orders':'मेरे ऑर्डर','My Address':'मेरा पता','Customer Care':'ग्राहक सहायता','Log out':'लॉग आउट','Shop':'दुकान','Home':'होम','Cart':'कार्ट','Wishlist':'पसंदीदा','Search':'खोजें','Add to Cart':'कार्ट में जोड़ें','Buy Now':'अभी खरीदें','Checkout':'चेकआउट','Delivery Details':'डिलीवरी विवरण','Review Your Order':'अपने ऑर्डर की समीक्षा करें','Place Order':'ऑर्डर करें','Order History':'ऑर्डर इतिहास','Payment Method':'भुगतान का तरीका','Cash on Delivery':'डिलीवरी पर नकद','UPI Payment':'UPI भुगतान','Saved Addresses':'सेव किए गए पते','Add New Address':'नया पता जोड़ें','Save This Address':'यह पता सेव करें','Save this address to my account':'यह पता मेरे अकाउंट में सेव करें','Select Address':'पता चुनें','Continue':'जारी रखें','Continue Shopping':'खरीदारी जारी रखें','Apply':'लागू करें','Remove':'हटाएँ','Total':'कुल','Subtotal':'उप-कुल','Delivery Charge':'डिलीवरी शुल्क','My Wallet':'मेरा वॉलेट','Withdrawal Status':'निकासी की स्थिति','Available Balance':'उपलब्ध बैलेंस','Your Name':'आपका नाम','Mobile Number':'मोबाइल नंबर','Full Address':'पूरा पता','Pincode':'पिन कोड','Landmark':'नज़दीकी पहचान','Current Location':'वर्तमान लोकेशन','Use Current Location':'वर्तमान लोकेशन इस्तेमाल करें','Save':'सेव करें','Cancel':'रद्द करें','Close':'बंद करें','Refresh':'रीफ्रेश करें','All Products':'सभी उत्पाद','Categories':'श्रेणियाँ','Offers':'ऑफर','Terms & Conditions':'नियम और शर्तें','Privacy Policy':'गोपनीयता नीति','Under 10 Minutes':'10 मिनट के अंदर','Order Placed':'ऑर्डर हो गया','Track Order':'ऑर्डर ट्रैक करें'
+ };
+ function keyForUser(){let e='guest';try{e=localStorage.getItem('vedantCustomerEmail')||'guest'}catch(_){}return 'vedantLanguage:'+e.toLowerCase()}
+ function lang(){try{return localStorage.getItem(keyForUser())||'en'}catch(_){return 'en'}}
+ const originals=new WeakMap();
+ const walletDict={
+ 'Vedant Wallet':'वेदांत वॉलेट','A secure wallet for your grocery orders':'आपके किराना ऑर्डर के लिए सुरक्षित वॉलेट',
+ 'Available Wallet Balance':'उपलब्ध वॉलेट बैलेंस','Your verified balance will appear here':'आपका सत्यापित बैलेंस यहाँ दिखेगा',
+ 'Add Money':'पैसे जोड़ें','Withdraw Money':'पैसे निकालें','Wallet Status':'वॉलेट स्थिति', 'Save for Future':'भविष्य के लिए सेव करें','Add New UPI':'नया UPI जोड़ें','Add New Bank':'नया बैंक खाता जोड़ें','Saved Payment Accounts':'सेव किए गए भुगतान अकाउंट','Account Holder Name':'खाताधारक का नाम',
+ 'Enter an amount to create a top-up request. Funds will be added only after the Razorpay payment is verified by the server.':'पैसे जोड़ने के लिए राशि भरें। Razorpay भुगतान सत्यापित होने के बाद ही पैसे वॉलेट में जुड़ेंगे।',
+ 'Amount (₹)':'राशि (₹)','Continue':'जारी रखें','Enter your payment details. The shop admin will process the payment and mark the request as Paid.':'अपनी भुगतान जानकारी भरें। शॉप एडमिन भुगतान करके अनुरोध को Paid करेगा।',
+ 'Payment Method':'भुगतान का तरीका','UPI ID':'UPI ID','Bank Account':'बैंक खाता','Account Holder Name':'खाताधारक का नाम','Mobile Number':'मोबाइल नंबर',
+ 'Bank Account Number':'बैंक खाता नंबर','IFSC Code':'IFSC कोड','Submit Withdrawal Request':'निकासी अनुरोध भेजें',
+ 'Automatic bank holder verification is not available. Please verify the name and details in your bank or UPI app.':'बैंक खाताधारक के नाम की ऑटोमैटिक जाँच उपलब्ध नहीं है। कृपया बैंक या UPI ऐप में जानकारी जाँच लें।',
+ 'Your balance, verified transactions, and requests.':'आपका बैलेंस, सत्यापित लेन-देन और अनुरोध।','Transaction History':'लेन-देन का इतिहास','Refresh Status':'स्थिति रीफ्रेश करें',
+ 'No verified transactions yet.':'अभी कोई सत्यापित लेन-देन नहीं है।','Money Added':'पैसे जोड़े गए','Money Debited':'पैसे कटे','No Add Money or Withdraw requests yet.':'अभी पैसे जोड़ने या निकालने का कोई अनुरोध नहीं है।',
+ 'Saved Addresses':'सेव किए गए पते','Add New Address':'नया पता जोड़ें','Delivery Details':'डिलीवरी विवरण','Use Current Location':'वर्तमान लोकेशन इस्तेमाल करें'
+ };
+ Object.assign(dict,walletDict);
+ function translateNode(node,l){
+  if(!node||node.nodeType!==Node.TEXT_NODE)return;
+  const el=node.parentElement;
+  if(!node.nodeValue.trim()||el?.closest('script,style,textarea,input,select,option,[contenteditable="true"],#vLangGate'))return;
+  if(!originals.has(node))originals.set(node,node.nodeValue);
+  const original=originals.get(node);
+  // Wallet and withdrawal administration always stay in English, regardless of the shop language.
+  if(el?.closest('#page-wallet,#stvnWithdrawSuccessOverlay,#stvnWithdrawalAdmin')){
+    if(node.nodeValue!==original)node.nodeValue=original;
+    return;
+  }
+  if(l==='en'){
+    if(node.nodeValue!==original)node.nodeValue=original;
+    return;
+  }
+  let value=original;
+  for(const [en,hi] of Object.entries(dict)){
+    const re=new RegExp(en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+    value=value.replace(re,hi);
+  }
+  // Avoid emitting a characterData mutation when the text is already translated.
+  if(node.nodeValue!==value)node.nodeValue=value;
+ }
+
+ function apply(){const l=lang();document.documentElement.lang=l;document.documentElement.dataset.language=l;
+  const walk=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while(n=walk.nextNode())translateNode(n,l);
+  document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{
+    if(!el.dataset.vlangOriginal)el.dataset.vlangOriginal=el.getAttribute('placeholder')||'';
+    const original=el.dataset.vlangOriginal;
+    const walletField=el.closest('#page-wallet,#stvnWithdrawSuccessOverlay,#stvnWithdrawalAdmin');
+    const value=(l==='en'||walletField)?original:(dict[original]||original);
+    if(el.getAttribute('placeholder')!==value)el.setAttribute('placeholder',value);
+  });
+ }
+ let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE)translateNode(node,l);else if(node.nodeType===Node.ELEMENT_NODE){const w=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let t;while(t=w.nextNode())translateNode(t,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
+ function open(force){if(!gate)return;gate.style.display='flex';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
+ function close(){if(gate)gate.style.display='none';document.body.style.overflow='';apply();}
+ function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
+ gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=x.value;updateChoices()}));
+ gate?.querySelector('#vLangContinue').addEventListener('click',()=>{try{localStorage.setItem(keyForUser(),chosen);localStorage.setItem('vedantLanguagePreference',chosen)}catch(_){}close();});
+ window.vedantChangeLanguage=open;window.vedantApplyLanguage=apply;observeLanguage();
+ // Add language option in account menu without replacing existing actions.
+ const menu=document.getElementById('stvnProfileMenu');if(menu&&!document.getElementById('vLangMenuButton')){const b=document.createElement('button');b.id='vLangMenuButton';b.type='button';b.textContent='🌐 Change Language';b.onclick=()=>open(true);menu.insertBefore(b,menu.querySelector('.stvn-logout')||null);}
+ function afterLogin(){setTimeout(()=>{const email=localStorage.getItem('vedantCustomerEmail')||'guest';if(!localStorage.getItem('vedantLanguage:'+email.toLowerCase()))open(true);else apply();},180)}
+ if(window.supabaseClient?.auth){supabaseClient.auth.getSession().then(({data})=>{if(data?.session?.user)afterLogin()}).catch(()=>{});supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session?.user)afterLogin()});}
+})();
+</script>
+
+
+<script id="vedant-reference-shop-header">
+(function(){
+  const brandMark='<span class="vg-brand-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M31 29C17 28 11 17 12 7c12 0 22 6 23 18C40 13 49 9 57 9c-1 14-9 24-23 25" fill="#269c36"/><path d="M31 30C25 20 20 15 14 12M35 30C40 20 47 15 54 13" fill="none" stroke="#eaffed" stroke-width="2.5" stroke-linecap="round"/><path d="M13 34h38l-4 20H17z" fill="#08783d"/><path d="M9 34h46M20 39v10m12-10v10m12-10v10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></span>';
+  function makeHeader(){
+    const header=document.createElement('div');
+    header.className='vg-store-header';
+    header.innerHTML=`
+      <a class="vg-brand" href="#" aria-label="Vedant Grocery Shop Home" onclick="showPage('home');return false">${brandMark}<span class="vg-brand-name">Vedant<small>Grocery Shop</small></span></a>
+      <button class="vg-location vg-location-button" type="button" onclick="(document.querySelector('.stvn-delivery-location-card button')||document.querySelector('#use-current-location, [onclick*=requestCustomerLocation]'))?.click()" aria-label="Capture delivery location"><span class="pin">📍</span><span><small>Delivering to</small><b class="vg-location-label">5 km area</b><small class="vg-update-location">Update location</small></span></button>
+      <label class="vg-search"><span>⌕</span><input type="search" class="vg-live-search" placeholder="Search for products..." aria-label="Search products"></label>
+      <button class="vg-action" type="button" onclick="goToTracking()"><span class="vg-ico">🚚</span><span>Track Order</span></button>
+      <button class="vg-cart-action" type="button" aria-label="Open cart" onclick="showPage('cart')">🛒<span class="vg-cart-count" id="vgCartCount">0</span></button>
+      <button class="vg-account-action" type="button" aria-label="My account" onclick="stvnToggleProfileMenu()">👤 <span>My Account</span></button>`;
+    header.querySelector('.vg-live-search').addEventListener('input',e=>{
+      const original=document.getElementById('searchBox');
+      if(original){original.value=e.target.value; if(typeof searchProducts==='function')searchProducts();}
+    });
+    return header;
+  }
+  function makeHero(){
+    const hero=document.createElement('section');
+    hero.className='vg-hero';
+    hero.innerHTML=`<div class="vg-hero-copy"><h2>Fresh Groceries<br><em>at Your Doorstep</em></h2><p>🌿 Quality Products　│　🛡️ Best Prices　│　🛵 Local Delivery</p><button class="vg-shop-now" type="button" onclick="showPage('shop')">Shop Now　➜</button></div><div class="vg-fresh-stamp">100%<br>Fresh</div>`;
+    return hero;
+  }
+  function makeCategories(){
+    const source=document.querySelector('.categories');
+    const tiles=document.createElement('section');
+    tiles.className='vg-category-panel';
+    const row=document.createElement('div'); row.className='vg-category-row';
+    const emojis=['🛍️','🌾','🥨','🥤','🧴'];
+    const buttons=source?[...source.querySelectorAll('button')]:[];
+    buttons.forEach((b,i)=>{
+      const tile=document.createElement('button');tile.type='button';tile.className='vg-category-tile';
+      tile.dataset.emoji=emojis[i]||'🛒';
+      const label=(b.textContent||'').trim();tile.innerHTML='<span>'+label+'</span>';
+      tile.addEventListener('click',()=>b.click());row.appendChild(tile);
+    });
+    tiles.innerHTML='<div class="vg-section-title"><h2>Shop by Category</h2><button type="button" onclick="showPage(&quot;shop&quot;)">View All　➜</button></div>';
+    tiles.appendChild(row);return tiles;
+  }
+  function makeProductsHeading(){
+    const h=document.createElement('div');h.className='vg-shop-products-head';
+    h.innerHTML='<h2>⭐ Top Selling Products</h2><button type="button" class="vg-shop-now" onclick="showPage(&quot;shop&quot;)">View All Products　➜</button>';return h;
+  }
+  function addPromo(){
+    const promo=document.createElement('div');promo.className='vg-promo-row';
+    promo.innerHTML='<div class="vg-promo-card"><strong>Special Offer</strong><h3>Premium Quality<br>at Best Price</h3><p>Fresh essentials for your family, delivered locally.</p><button type="button" onclick="showPage(&quot;shop&quot;)">Shop Now　➜</button></div><div class="vg-promo-card"><strong>Local Delivery</strong><h3>Freshness at<br>Your Doorstep</h3><p>Delivery available within 5 km area.</p><button type="button" onclick="goToTracking()">Track Order　➜</button></div>';return promo;
+  }
+  function setupPage(id,home){
+    const page=document.getElementById(id);if(!page||page.dataset.vgThemeReady)return;
+    page.dataset.vgThemeReady='1';
+    page.insertBefore(makeHeader(),page.firstChild);
+    page.appendChild(makeHero());
+    page.appendChild(makeCategories());
+    page.appendChild(makeProductsHeading());
+    const products=page.querySelector('#products');
+    if(products)page.appendChild(products);
+    if(home){
+      const sourceProducts=document.querySelector('#page-shop #products');
+      if(sourceProducts){
+        const featured=document.createElement('div');
+        featured.className='vg-home-featured-grid';
+        [...sourceProducts.querySelectorAll('.product')].slice(0,4).forEach(card=>featured.appendChild(card.cloneNode(true)));
+        page.appendChild(featured);
+      }
+      page.appendChild(addPromo());
+    }
+  }
+  function refresh(){
+    setupPage('page-home',true);setupPage('page-shop',false);
+    const count=document.getElementById('cart-count');
+    const modern=document.getElementById('modern-cart-count');
+    const badge=document.getElementById('vgCartCount');
+    if(badge)badge.textContent=(modern?.textContent||count?.textContent||'0').trim()||'0';
+    const wallet=document.querySelector('[data-page="wallet"]');
+    const amount=document.getElementById('vgWalletAmount');
+    if(wallet&&amount){const t=wallet.innerText.match(/₹\\s*[\\d,.]+/);if(t)amount.textContent=t[0];}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+  document.addEventListener('click',()=>setTimeout(refresh,120));
+})();
+</script>
+
+
+<style id="vedant-header-account-layout-v2">
+/* One clean grocery header: keep existing application actions, only restyle/reposition. */
+.vg-store-header{display:grid!important;grid-template-columns:auto auto minmax(170px,1fr) auto auto auto!important;align-items:center;gap:clamp(7px,1vw,16px)!important;padding:10px clamp(12px,2vw,28px)!important;background:rgba(255,255,255,.97)!important;border:1px solid #e3eee3!important;border-radius:18px!important;box-shadow:0 8px 24px rgba(19,75,36,.09)!important;}
+.vg-location-button{cursor:pointer;text-align:left;border:0!important;background:#f1f9ed!important;border-radius:14px!important;min-height:54px}.vg-location-button:hover{background:#e6f5df!important}.vg-location-button .vg-update-location{display:block;color:#16813b;font-weight:800;font-size:10px;margin-top:2px;text-decoration:underline}.vg-search{min-width:0}.vg-search input{min-width:0;width:100%;font-size:15px}.vg-action,.vg-cart-action,.vg-account-action{min-height:48px;border:1px solid #cfe2cf!important;border-radius:999px!important;background:#fff!important;color:#164b29!important;box-shadow:0 4px 12px #174a2810!important;font-weight:900!important;white-space:nowrap}.vg-action{padding:0 15px!important}.vg-cart-action{position:relative;min-width:54px;font-size:23px!important}.vg-cart-count{position:absolute;right:-3px;top:-5px;background:#ed1c24;color:white;border-radius:50%;min-width:19px;height:19px;font-size:11px;display:grid;place-items:center}.vg-account-action{padding:0 14px!important;font-size:13px!important;display:flex;align-items:center;gap:6px}
+/* The legacy profile control now lives in the header account area; no second floating account bar. */
+#stvnProfileBar{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;z-index:15001!important;margin:0!important}
+#stvnProfileToggle{min-height:48px!important;padding:8px 13px!important;border:1px solid #cfe2cf!important;background:#fff!important;box-shadow:0 4px 12px #174a2810!important}
+#stvnProfileMenu{top:56px!important;right:0!important;left:auto!important;z-index:200000!important;width:250px!important;max-height:min(75vh,560px);overflow:auto}
+#stvnProfileMenu button{cursor:pointer!important}
+/* Match the reference grocery palette across the shopping surface. */
+#page-home,#page-shop{background:linear-gradient(180deg,#f7fbf2,#fff 48%,#f5f9f1)!important;color:#173622!important}
+.vg-hero{border-radius:22px!important;box-shadow:0 10px 28px #386c2a20!important}
+.vg-category-panel,.vg-home-featured-grid,.vg-promo-card{border-radius:20px!important;box-shadow:0 8px 22px #234d2512!important}
+.vg-category-tile{border-radius:15px!important;box-shadow:0 5px 14px #193d2418!important}
+.vg-shop-products-head h2,.vg-section-title h2{color:#143b24!important}
+#page-shop .stvn-category-intro{display:block!important;background:#fff;border:1px solid #e4eee1;border-radius:16px;padding:12px 16px;margin:12px 0!important}
+#page-shop .stvn-category-list{display:flex!important;flex-wrap:wrap;gap:9px!important}
+#page-shop .stvn-category-card{border-radius:13px!important}
+@media(max-width:900px){.vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto!important;gap:7px!important;padding:8px!important}.vg-location-button{grid-column:1/3;grid-row:2;min-height:42px;padding:4px 8px!important}.vg-search{grid-column:1/-1;grid-row:3;height:42px!important;order:unset!important}.vg-action{grid-row:2;padding:0 10px!important;font-size:12px!important}.vg-cart-action{grid-row:1;grid-column:3}.vg-account-action{grid-row:1;grid-column:4;padding:0 9px!important}.vg-brand{grid-row:1;grid-column:1/3}.vg-location-button .pin{font-size:20px}.vg-location-button b{font-size:12px}.vg-location-button small{font-size:9px}}
+@media(max-width:520px){.vg-store-header{margin:0 0 9px!important;border-radius:0 0 16px 16px!important;grid-template-columns:minmax(0,1fr) auto auto!important}.vg-brand{grid-column:1/2!important}.vg-brand-name{font-size:18px!important}.vg-cart-action{grid-column:2!important;grid-row:1!important}.vg-account-action{grid-column:3!important;grid-row:1!important;font-size:11px!important}.vg-location-button{grid-column:1/2!important;grid-row:2!important}.vg-action{grid-column:2/4!important;grid-row:2!important;justify-content:center}.vg-search{grid-column:1/-1!important;grid-row:3!important}.vg-action .vg-ico{font-size:17px}.vg-location-button .vg-update-location{font-size:9px}}
+</style>
+<script id="vedant-account-menu-actions-v2">
+(function(){
+ function addMenuAction(id,label,handler,beforeLogout=true){const menu=document.getElementById('stvnProfileMenu');if(!menu||document.getElementById(id))return;const b=document.createElement('button');b.type='button';b.id=id;b.textContent=label;b.addEventListener('click',handler);const logout=menu.querySelector('.stvn-logout');if(beforeLogout&&logout)menu.insertBefore(b,logout);else menu.appendChild(b);}
+ function clickPage(name){const b=document.querySelector('[data-page="'+name+'"]');if(b)b.click();else if(typeof window.showPage==='function')window.showPage(name);}
+ function init(){
+  const menu=document.getElementById('stvnProfileMenu');
+  if(menu){
+   addMenuAction('vgMenuWallet','👛 Wallet',()=>clickPage('wallet'));
+   addMenuAction('vgMenuOrders','📦 My Orders',()=>clickPage('orders'));
+   addMenuAction('vgMenuWishlist','❤️ Wishlist',()=>{const w=document.getElementById('wishlist');if(w){w.scrollIntoView({behavior:'smooth',block:'start'});if(typeof window.showPage==='function')window.showPage('cart');}});
+   addMenuAction('vgMenuTrack','🚚 Track Order',()=>{if(typeof window.goToTracking==='function')window.goToTracking();});
+   addMenuAction('vgMenuAdmin','⚙️ Admin Panel',()=>clickPage('admin'));
+  }
+  // Relocate the pre-existing account menu control into the visible account slot, retaining its original handlers.
+  document.querySelectorAll('.vg-store-header').forEach(header=>{const slot=header.querySelector('.vg-account-action');const bar=document.getElementById('stvnProfileBar');if(slot&&!slot.dataset.vgBound){slot.dataset.vgBound='1';slot.addEventListener('click',()=>{if(bar&&bar.parentElement!==header){header.appendChild(bar);bar.classList.add('vg-account-host');}if(typeof window.stvnToggleProfileMenu==='function')window.stvnToggleProfileMenu();});}});
+  // Keep location label in sync with the existing saved-location component.
+  const update=()=>{const saved=document.querySelector('.stvn-delivery-location-name');const label=document.querySelector('.vg-location-label');if(saved&&label&&saved.textContent.trim()&&!/अपनी वर्तमान|choose|select/i.test(saved.textContent))label.textContent=saved.textContent.trim().slice(0,34);};
+  update();const target=document.querySelector('.stvn-delivery-location-card');if(target)new MutationObserver(update).observe(target,{subtree:true,childList:true,characterData:true});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,250));else setTimeout(init,250);
+ document.addEventListener('click',()=>setTimeout(init,250));
+})();
+</script>
+
+
+<style id="vedant-final-clean-header-fix">
+/* Remove the duplicate legacy top navigation; all customer actions are in the new store header. */
+body > .modern-nav, .modern-nav{display:none!important}
+#stvnProfileBar{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;margin:0!important;z-index:200010!important;display:block!important;flex:0 0 auto!important}
+#stvnProfileToggle{min-height:48px!important;padding:7px 11px!important;border:1px solid #d4e7d5!important;border-radius:15px!important;background:#fff!important;color:#164b29!important;box-shadow:0 4px 12px #174a2810!important;white-space:nowrap!important}
+#stvnProfileMenu{top:54px!important;right:0!important;left:auto!important;z-index:200020!important}
+.vg-store-header{display:grid!important;grid-template-columns:auto auto minmax(150px,1fr) auto auto auto auto!important;align-items:center!important;gap:clamp(6px,1vw,14px)!important;overflow:visible!important}
+.vg-store-header .vg-account-action{display:none!important}
+.vg-store-header .vg-wallet-action,.vg-store-header .vg-orders-action{min-height:46px;border:1px solid #cfe2cf!important;border-radius:999px!important;background:#fff!important;color:#164b29!important;padding:0 12px!important;font-weight:900!important;white-space:nowrap!important;box-shadow:0 4px 12px #174a2810!important;cursor:pointer!important}
+.vg-store-header .vg-wallet-action small{display:block;font-size:10px;color:#16813b;font-weight:800}
+.vg-store-header .vg-search input{font-size:14px!important;padding-left:12px!important}
+.vg-store-header .vg-brand-name{font-size:20px!important}
+/* Do not create a second empty category panel. Use the real category list populated by the store. */
+.vg-category-panel,.vg-shop-products-head{display:none!important}
+#page-home .vg-hero,#page-shop .vg-hero{margin-top:10px!important}
+#page-shop .section-head{margin-top:14px!important}
+#page-shop .stvn-category-intro{display:block!important;margin:10px 0 8px!important}
+#page-shop .stvn-category-list{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important;gap:10px!important}
+#page-shop .stvn-category-card{min-width:0!important}
+#page-shop #products-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important}
+#page-shop #products{scroll-margin-top:16px}
+@media(max-width:900px){
+ .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto!important;gap:7px!important}
+ .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important}
+ .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:3!important}
+ .vg-store-header .vg-action{grid-column:3/5!important;grid-row:2!important}
+ .vg-store-header .vg-cart-action{grid-column:3!important;grid-row:1!important}
+ #stvnProfileBar{grid-column:4!important;grid-row:1!important}
+ #stvnProfileToggle{padding:6px 8px!important;font-size:11px!important}
+ .vg-store-header .vg-wallet-action{grid-column:1/3!important;grid-row:4!important;min-height:40px!important}
+ .vg-store-header .vg-orders-action{grid-column:3/5!important;grid-row:4!important;min-height:40px!important}
+}
+@media(max-width:520px){
+ .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto!important;padding:9px!important}
+ .vg-store-header .vg-brand{grid-column:1!important;grid-row:1!important}
+ .vg-store-header .vg-cart-action{grid-column:2!important;grid-row:1!important}
+ #stvnProfileBar{grid-column:3!important;grid-row:1!important}
+ .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important}
+ .vg-store-header .vg-action{grid-column:3!important;grid-row:2!important;padding:0 8px!important;font-size:11px!important}
+ .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:3!important}
+ .vg-store-header .vg-wallet-action{grid-column:1/2!important;grid-row:4!important;padding:0 8px!important;font-size:11px!important}
+ .vg-store-header .vg-orders-action{grid-column:2/4!important;grid-row:4!important;padding:0 8px!important;font-size:11px!important}
+ #stvnProfileToggle .stvn-avatar{width:25px!important;height:25px!important}
+ #stvnProfileToggle span:last-child{font-size:10px!important}
+ #page-shop .stvn-category-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
+<script id="vedant-final-header-actions-fix">
+(function(){
+ 'use strict';
+ function pageClick(name){const b=document.querySelector('[data-page="'+name+'"]');if(b)b.click();else if(typeof window.showPage==='function')window.showPage(name);}
+ function mount(){
+  document.querySelectorAll('.vg-store-header').forEach(header=>{
+   if(header.dataset.finalHeaderMounted==='1')return;
+   header.dataset.finalHeaderMounted='1';
+   const fakeAccount=header.querySelector('.vg-account-action');if(fakeAccount)fakeAccount.remove();
+   const track=header.querySelector('.vg-action');
+   const cart=header.querySelector('.vg-cart-action');
+   const wallet=document.createElement('button');wallet.type='button';wallet.className='vg-wallet-action';wallet.innerHTML='👛 Wallet <small id="vgWalletAmount">Open wallet</small>';wallet.addEventListener('click',()=>pageClick('wallet'));
+   const orders=document.createElement('button');orders.type='button';orders.className='vg-orders-action';orders.textContent='📦 My Orders';orders.addEventListener('click',()=>pageClick('orders'));
+   if(track)track.insertAdjacentElement('afterend',wallet);
+   if(wallet)wallet.insertAdjacentElement('afterend',orders);
+   const profile=document.getElementById('stvnProfileBar');
+   if(profile){header.appendChild(profile);profile.classList.add('vg-account-host');}
+   // Header search forwards to the existing working product search control.
+   const search=header.querySelector('.vg-live-search');
+   if(search&&!search.dataset.finalSearchBound){search.dataset.finalSearchBound='1';search.addEventListener('keydown',e=>{if(e.key==='Enter'){const original=document.getElementById('searchBox');if(original){original.value=search.value;if(typeof window.searchProducts==='function')window.searchProducts();pageClick('shop');}}});}
+  });
+  // Wallet amount mirrors the actual wallet balance shown by the existing wallet page.
+  const walletPage=document.getElementById('page-wallet');const amount=document.getElementById('vgWalletAmount');
+  if(walletPage&&amount){const txt=walletPage.innerText.match(/₹\s*[\d,]+(?:\.\d{1,2})?/);if(txt)amount.textContent=txt[0];}
+  // Remove generated duplicate headings/cards, keeping the original live categories and products.
+  document.querySelectorAll('.vg-category-panel,.vg-shop-products-head').forEach(n=>n.remove());
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,350));else setTimeout(mount,350);
+ document.addEventListener('click',()=>setTimeout(mount,180));
+})();
+</script>
+
+</body>
+</html>
