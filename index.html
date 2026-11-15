@@ -8496,7 +8496,7 @@ status.textContent=productsBox.querySelector(".product")
   ? "⏳ Products और categories update हो रहे हैं…"
   : "⏳ Products लोड हो रहे हैं…";
 status.classList.remove("stvn-product-status-message");
-status.hidden=false;
+status.hidden=hasCachedProducts;
 if(hasCachedProducts){
   renderCustomerProducts(cachedProducts);
   status.textContent="⏳ Products और categories update हो रहे हैं…";
@@ -13391,8 +13391,14 @@ Object.assign(enDict,{
   if(translatedLanguages.get(node)===l&&node.nodeValue===translatedValues.get(node))return;
   if(!originals.has(node)||node.nodeValue!==translatedValues.get(node))originals.set(node,node.nodeValue);
   const original=originals.get(node);
-  const value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
-  // Avoid emitting a characterData mutation when the text is already translated.
+  // Text already written in the selected Indic script does not need to be
+  // re-processed through the large phrase dictionary on every page update.
+  const hasLatin=/[A-Za-z]/.test(original);
+  const alreadyTargetScript=(l==='hi' && /[\u0900-\u097F]/.test(original) && !hasLatin) ||
+                            (l==='bn' && /[\u0980-\u09FF]/.test(original) && !hasLatin);
+  const value=(l==='en'&&!indicText.test(original))||alreadyTargetScript
+    ? original
+    : translatedText(original,l);
   if(node.nodeValue!==value)node.nodeValue=value;
   translatedValues.set(node,value);
   translatedLanguages.set(node,l);
@@ -13446,8 +13452,8 @@ Object.assign(enDict,{
   let processed=0;
   // Mobile-safe incremental translation: short slices and incremental attribute walking.
   // Never run a full-page querySelectorAll/spread in one frame on slower phones.
-  const deadline=performance.now()+4;
-  while(translationJobs.length&&processed<48&&performance.now()<deadline){
+  const deadline=performance.now()+6;
+  while(translationJobs.length&&processed<80&&performance.now()<deadline){
    const job=translationJobs[0];
    if(job.run!==translationRun){
     translationJobs.shift();pendingTranslationRoots.delete(job.root);continue;
@@ -13477,7 +13483,7 @@ Object.assign(enDict,{
   const header=document.querySelector('.vg-store-header,header,.modern-nav');
   if(header)enqueueTranslation(header,l);
  }
- let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE){const parent=node.parentElement;if(parent&&!parent.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))translateNode(node,l);}else if(node.nodeType===Node.ELEMENT_NODE){if(!node.matches('script,style,noscript,template,[hidden],[aria-hidden="true"]')&&!node.closest('[id^="page-"]:not(.active)'))enqueueTranslation(node,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
+ let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData'){const node=rec.target;if(translatedLanguages.get(node)===l&&node.nodeValue===translatedValues.get(node))continue;translateNode(node,l);continue;}for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE){const parent=node.parentElement;if(parent&&!parent.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))translateNode(node,l);}else if(node.nodeType===Node.ELEMENT_NODE){if(!node.matches('script,style,noscript,template,[hidden],[aria-hidden="true"]')&&!node.closest('[id^="page-"]:not(.active)'))enqueueTranslation(node,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});
   // When navigation activates another page, translate that page in small batches.
   document.addEventListener('click',()=>window.setTimeout(()=>{const l=lang();document.querySelectorAll('[id^="page-"].active').forEach(page=>enqueueTranslation(page,l));},80),true);}
  function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
@@ -15624,3 +15630,22 @@ body > .modern-nav, .modern-nav{display:none!important}
  #page-shop #customer-products-status:not([hidden]){position:relative!important;overflow:hidden!important}
 }
 </style>
+
+<style id="vedant-shop-loader-hide-after-initial-load-20261115">
+/* Keep the delivery-truck runway only during the first uncached product/category load.
+   Once the status element is hidden, force it out of layout even if older CSS says display:block. */
+#page-shop #customer-products-status[hidden]{
+  display:none!important;
+  visibility:hidden!important;
+  height:0!important;
+  min-height:0!important;
+  max-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+</style>
+
