@@ -12668,44 +12668,7 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 }
 </style>
 <script id="vedant-truck-real-element-final-script">
-(function(){
-  function syncTruck(){
-    var shop=document.getElementById('page-shop');
-    var road=document.getElementById('customer-products-status');
-    if(!shop || !road) return;
-    var visible=!!(shop.classList.contains('active') || shop.offsetParent!==null);
-    var isHidden=road.hidden || getComputedStyle(road).display==='none';
-    if(!visible || isHidden){
-      var stale=road.querySelector('.vedant-truck-real-element');
-      if(stale) stale.remove();
-      return;
-    }
-    if(!road.querySelector('.vedant-truck-real-element')){
-      var truck=document.createElement('span');
-      truck.className='vedant-truck-real-element';
-      truck.setAttribute('aria-hidden','true');
-      truck.textContent='🚚';
-      road.appendChild(truck);
-    }
-  }
-  function start(){
-    syncTruck();
-    var road=document.getElementById('customer-products-status');
-    var shop=document.getElementById('page-shop');
-    if(road && !road.__vedantTruckFinalObserver){
-      new MutationObserver(syncTruck).observe(road,{attributes:true,childList:true,subtree:true});
-      road.__vedantTruckFinalObserver=true;
-    }
-    if(shop && !shop.__vedantTruckFinalObserver){
-      new MutationObserver(syncTruck).observe(shop,{attributes:true,childList:true,subtree:true});
-      shop.__vedantTruckFinalObserver=true;
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
-  document.addEventListener('visibilitychange',syncTruck);
-  window.addEventListener('resize',syncTruck,{passive:true});
-  setInterval(syncTruck,900);
-})();
+/* Replaced by the unified responsive truck controller at end of file. */
 </script>
 
 
@@ -12725,67 +12688,21 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 }
 </style>
 <script id="vedant-truck-position-motion-final-script">
-(function(){
-  var raf=0, startAt=0, lastRoad=null;
-  function ensure(){
-    var shop=document.getElementById('page-shop');
-    var road=document.getElementById('customer-products-status');
-    if(!shop||!road) return;
-    var loading=!road.hidden && getComputedStyle(road).display!=='none' &&
-      (road.offsetWidth>0 && road.offsetHeight>0);
-    if(!loading || !(shop.classList.contains('active') || shop.offsetParent!==null)){
-      var old=road.querySelector('.vedant-truck-real-element');
-      if(old) old.remove();
-      if(raf){cancelAnimationFrame(raf);raf=0;}
-      lastRoad=null; startAt=0;
-      return;
-    }
-    var truck=road.querySelector('.vedant-truck-real-element');
-    if(!truck){
-      truck=document.createElement('span');
-      truck.className='vedant-truck-real-element';
-      truck.setAttribute('aria-hidden','true');
-      truck.textContent='🚚';
-      road.appendChild(truck);
-    }
-    if(lastRoad!==road || !raf){lastRoad=road;startAt=0; if(!raf) raf=requestAnimationFrame(tick);}
-  }
-  function tick(now){
-    var road=document.getElementById('customer-products-status');
-    var truck=road&&road.querySelector('.vedant-truck-real-element');
-    if(!road||!truck||road.hidden||getComputedStyle(road).display==='none'){
-      raf=0;lastRoad=null;return;
-    }
-    if(!startAt) startAt=now;
-    var max=Math.max(0,road.clientWidth-truck.offsetWidth-8);
-    var duration=3200, phase=((now-startAt)%(duration*2))/(duration);
-    var progress=phase<=1?phase:2-phase;
-    var x=4+max*progress;
-    truck.style.setProperty('left',x+'px','important');
-    truck.style.setProperty('right','auto','important');
-    truck.style.setProperty('transform',progress<=1?'scaleX(1)':'scaleX(-1)','important');
-    raf=requestAnimationFrame(tick);
-  }
-  function start(){
-    ensure();
-    var road=document.getElementById('customer-products-status');
-    var shop=document.getElementById('page-shop');
-    if(road && !road.__vedantMotionObserver){
-      new MutationObserver(ensure).observe(road,{attributes:true,childList:true,subtree:true});
-      road.__vedantMotionObserver=true;
-    }
-    if(shop && !shop.__vedantMotionObserver){
-      new MutationObserver(ensure).observe(shop,{attributes:true,childList:true,subtree:true});
-      shop.__vedantMotionObserver=true;
-    }
-    window.addEventListener('resize',ensure,{passive:true});
-    document.addEventListener('visibilitychange',function(){if(!document.hidden)ensure();});
-    setInterval(ensure,700);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
-})();
+/* Replaced by the unified responsive truck controller at end of file. */
 </script>
+
+
+<style id="vedant-mobile-shop-status-focus-fix">
+@media(max-width:700px){
+ html[data-shop-status="closed"] #page-shop .categories,html[data-shop-status="maintenance"] #page-shop .categories,
+ html[data-shop-status="closed"] #page-shop #products,html[data-shop-status="maintenance"] #page-shop #products,
+ html[data-shop-status="closed"] #page-shop .vg-search,html[data-shop-status="maintenance"] #page-shop .vg-search,
+ html[data-shop-status="closed"] #page-shop .vg-hero-brand,html[data-shop-status="maintenance"] #page-shop .vg-hero-brand{display:none!important}
+ #stvnHomeStatusBanner{color:#241b12!important;background:linear-gradient(135deg,#fff0c7,#ffe2dc)!important;border:2px solid #9b6a24!important}
+ #stvnHomeStatusBanner h2,#stvnHomeStatusBanner p,#stvnHomeStatusBanner .stvn-home-status-stamp{color:#241b12!important;font-weight:900!important;line-height:1.55!important}
+ #stvnHomeStatusBanner p{font-size:15px!important;letter-spacing:.01em!important}
+}
+</style>
 
 </body>
 <style id="stvn-final-design-status-overrides">
@@ -13518,7 +13435,10 @@ Object.assign(enDict,{
    }
   }
   pendingTranslationRoots.add(root);
-  translationJobs.push({root,walker:document.createTreeWalker(root,NodeFilter.SHOW_TEXT),elementWalker:document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT),language:l,run,attributesDone:false});
+  const skipNode=(node)=>{const el=node.nodeType===Node.ELEMENT_NODE?node:node.parentElement;if(!el)return NodeFilter.FILTER_ACCEPT;if(el.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))return NodeFilter.FILTER_REJECT;const page=el.closest('[id^="page-"]');if(page&&!page.classList.contains('active'))return NodeFilter.FILTER_REJECT;return NodeFilter.FILTER_ACCEPT;};
+  const textWalker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:node=>skipNode(node)});
+  const elementWalker=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT,{acceptNode:node=>skipNode(node)});
+  translationJobs.push({root,walker:textWalker,elementWalker,language:l,run,attributesDone:false});
   scheduleTranslationBatch();
  }
  function processTranslationBatch(){
@@ -13526,8 +13446,8 @@ Object.assign(enDict,{
   let processed=0;
   // Mobile-safe incremental translation: short slices and incremental attribute walking.
   // Never run a full-page querySelectorAll/spread in one frame on slower phones.
-  const deadline=performance.now()+2.5;
-  while(translationJobs.length&&processed<18&&performance.now()<deadline){
+  const deadline=performance.now()+4;
+  while(translationJobs.length&&processed<48&&performance.now()<deadline){
    const job=translationJobs[0];
    if(job.run!==translationRun){
     translationJobs.shift();pendingTranslationRoots.delete(job.root);continue;
@@ -13552,7 +13472,7 @@ Object.assign(enDict,{
   };
   enqueueTranslation(document.body,l);
  }
- let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE)translateNode(node,l);else if(node.nodeType===Node.ELEMENT_NODE)enqueueTranslation(node,l);}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
+ let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE){const parent=node.parentElement;if(parent&&!parent.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))translateNode(node,l);}else if(node.nodeType===Node.ELEMENT_NODE){if(!node.matches('script,style,noscript,template,[hidden],[aria-hidden="true"]')&&!node.closest('[id^="page-"]:not(.active)'))enqueueTranslation(node,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
  function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
  function close(){if(gate){gate.style.display='none';gate.style.visibility='hidden';gate.style.pointerEvents='none';}document.body.style.overflow='';document.documentElement.style.visibility='visible';window.setTimeout(()=>apply(),0);}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
@@ -14208,47 +14128,7 @@ body > .modern-nav, .modern-nav{display:none!important}
 }
 </style>
 <script id="vedant-real-truck-loader-dom-script">
-(function(){
-  function installTruck(){
-    var status=document.getElementById('customer-products-status');
-    if(!status)return;
-    var txt=(status.textContent||'').toLowerCase();
-    var loading=/लोड हो रहे|लोड हो रही|update हो रहे|loading|updating|fetching|please wait/.test(txt);
-    if(status.hidden || !loading){
-      var old=status.querySelector('.vedant-real-truck');
-      if(old)old.remove();
-      if(status.dataset.vedantTruckActive==='1')status.hidden=true;
-      return;
-    }
-    status.hidden=false;
-    status.dataset.vedantTruckActive='1';
-    if(!status.querySelector('.vedant-real-truck')){
-      var truck=document.createElement('span');
-      truck.className='vedant-real-truck';
-      truck.setAttribute('aria-hidden','true');
-      truck.textContent='🚚';
-      status.appendChild(truck);
-    }
-  }
-  function start(){
-    installTruck();
-    var status=document.getElementById('customer-products-status');
-    if(status && !status.__vedantTruckObserver){
-      var observer=new MutationObserver(installTruck);
-      observer.observe(status,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['hidden']});
-      status.__vedantTruckObserver=observer;
-    }
-    var shop=document.getElementById('page-shop');
-    if(shop && !shop.__vedantTruckFinder){
-      var finder=new MutationObserver(function(){installTruck()});
-      finder.observe(shop,{childList:true,subtree:true});
-      shop.__vedantTruckFinder=finder;
-    }
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
-  window.addEventListener('load',start,{once:true});
-})();
+/* Replaced by the unified responsive truck controller at end of file. */
 </script>
 
 
@@ -14296,44 +14176,7 @@ body > .modern-nav, .modern-nav{display:none!important}
 }
 </style>
 <script id="vedant-truck-real-element-final-script">
-(function(){
-  function syncTruck(){
-    var shop=document.getElementById('page-shop');
-    var road=document.getElementById('customer-products-status');
-    if(!shop || !road) return;
-    var visible=!!(shop.classList.contains('active') || shop.offsetParent!==null);
-    var isHidden=road.hidden || getComputedStyle(road).display==='none';
-    if(!visible || isHidden){
-      var stale=road.querySelector('.vedant-truck-real-element');
-      if(stale) stale.remove();
-      return;
-    }
-    if(!road.querySelector('.vedant-truck-real-element')){
-      var truck=document.createElement('span');
-      truck.className='vedant-truck-real-element';
-      truck.setAttribute('aria-hidden','true');
-      truck.textContent='🚚';
-      road.appendChild(truck);
-    }
-  }
-  function start(){
-    syncTruck();
-    var road=document.getElementById('customer-products-status');
-    var shop=document.getElementById('page-shop');
-    if(road && !road.__vedantTruckFinalObserver){
-      new MutationObserver(syncTruck).observe(road,{attributes:true,childList:true,subtree:true});
-      road.__vedantTruckFinalObserver=true;
-    }
-    if(shop && !shop.__vedantTruckFinalObserver){
-      new MutationObserver(syncTruck).observe(shop,{attributes:true,childList:true,subtree:true});
-      shop.__vedantTruckFinalObserver=true;
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
-  document.addEventListener('visibilitychange',syncTruck);
-  window.addEventListener('resize',syncTruck,{passive:true});
-  setInterval(syncTruck,900);
-})();
+/* Replaced by the unified responsive truck controller at end of file. */
 </script>
 
 
@@ -14353,66 +14196,7 @@ body > .modern-nav, .modern-nav{display:none!important}
 }
 </style>
 <script id="vedant-truck-position-motion-final-script">
-(function(){
-  var raf=0, startAt=0, lastRoad=null;
-  function ensure(){
-    var shop=document.getElementById('page-shop');
-    var road=document.getElementById('customer-products-status');
-    if(!shop||!road) return;
-    var loading=!road.hidden && getComputedStyle(road).display!=='none' &&
-      (road.offsetWidth>0 && road.offsetHeight>0);
-    if(!loading || !(shop.classList.contains('active') || shop.offsetParent!==null)){
-      var old=road.querySelector('.vedant-truck-real-element');
-      if(old) old.remove();
-      if(raf){cancelAnimationFrame(raf);raf=0;}
-      lastRoad=null; startAt=0;
-      return;
-    }
-    var truck=road.querySelector('.vedant-truck-real-element');
-    if(!truck){
-      truck=document.createElement('span');
-      truck.className='vedant-truck-real-element';
-      truck.setAttribute('aria-hidden','true');
-      truck.textContent='🚚';
-      road.appendChild(truck);
-    }
-    if(lastRoad!==road || !raf){lastRoad=road;startAt=0; if(!raf) raf=requestAnimationFrame(tick);}
-  }
-  function tick(now){
-    var road=document.getElementById('customer-products-status');
-    var truck=road&&road.querySelector('.vedant-truck-real-element');
-    if(!road||!truck||road.hidden||getComputedStyle(road).display==='none'){
-      raf=0;lastRoad=null;return;
-    }
-    if(!startAt) startAt=now;
-    var max=Math.max(0,road.clientWidth-truck.offsetWidth-8);
-    var duration=3200, phase=((now-startAt)%(duration*2))/(duration);
-    var progress=phase<=1?phase:2-phase;
-    var x=4+max*progress;
-    truck.style.setProperty('left',x+'px','important');
-    truck.style.setProperty('right','auto','important');
-    truck.style.setProperty('transform',progress<=1?'scaleX(1)':'scaleX(-1)','important');
-    raf=requestAnimationFrame(tick);
-  }
-  function start(){
-    ensure();
-    var road=document.getElementById('customer-products-status');
-    var shop=document.getElementById('page-shop');
-    if(road && !road.__vedantMotionObserver){
-      new MutationObserver(ensure).observe(road,{attributes:true,childList:true,subtree:true});
-      road.__vedantMotionObserver=true;
-    }
-    if(shop && !shop.__vedantMotionObserver){
-      new MutationObserver(ensure).observe(shop,{attributes:true,childList:true,subtree:true});
-      shop.__vedantMotionObserver=true;
-    }
-    window.addEventListener('resize',ensure,{passive:true});
-    document.addEventListener('visibilitychange',function(){if(!document.hidden)ensure();});
-    setInterval(ensure,700);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
-})();
+/* Replaced by the unified responsive truck controller at end of file. */
 </script>
 
 
@@ -14493,6 +14277,19 @@ body > .modern-nav, .modern-nav{display:none!important}
   new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
+
+
+<style id="vedant-mobile-shop-status-focus-fix">
+@media(max-width:700px){
+ html[data-shop-status="closed"] #page-shop .categories,html[data-shop-status="maintenance"] #page-shop .categories,
+ html[data-shop-status="closed"] #page-shop #products,html[data-shop-status="maintenance"] #page-shop #products,
+ html[data-shop-status="closed"] #page-shop .vg-search,html[data-shop-status="maintenance"] #page-shop .vg-search,
+ html[data-shop-status="closed"] #page-shop .vg-hero-brand,html[data-shop-status="maintenance"] #page-shop .vg-hero-brand{display:none!important}
+ #stvnHomeStatusBanner{color:#241b12!important;background:linear-gradient(135deg,#fff0c7,#ffe2dc)!important;border:2px solid #9b6a24!important}
+ #stvnHomeStatusBanner h2,#stvnHomeStatusBanner p,#stvnHomeStatusBanner .stvn-home-status-stamp{color:#241b12!important;font-weight:900!important;line-height:1.55!important}
+ #stvnHomeStatusBanner p{font-size:15px!important;letter-spacing:.01em!important}
+}
+</style>
 
 </body>
 </html>
@@ -15673,3 +15470,102 @@ body > .modern-nav, .modern-nav{display:none!important}
   refresh();
 })();
 </script>
+
+<style id="vedant-mobile-truck-final-20261115">
+/* One visible runway and one real truck element on desktop and mobile. */
+#page-shop #customer-products-status:not([hidden]){
+  position:relative!important; overflow:hidden!important; isolation:isolate!important;
+  min-height:154px!important; height:154px!important; width:100%!important;
+  box-sizing:border-box!important;
+}
+#page-shop #customer-products-status .vedant-truck-real-element{
+  position:absolute!important; display:block!important; visibility:visible!important;
+  opacity:1!important; z-index:50!important; top:24px!important; left:0!important;
+  right:auto!important; width:76px!important; height:78px!important;
+  font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif!important;
+  font-size:64px!important; line-height:1!important; text-align:center!important;
+  pointer-events:none!important; margin:0!important; padding:0!important;
+  transform:none!important; animation:none!important; will-change:left!important;
+}
+#page-shop #customer-products-status::before{content:none!important;display:none!important}
+#page-shop #customer-products-status::after{
+  content:""!important;display:block!important;position:absolute!important;
+  left:0!important;right:0!important;bottom:22px!important;height:7px!important;
+  background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px)!important;
+  z-index:2!important;pointer-events:none!important;
+}
+@media(max-width:700px){
+  #page-shop #customer-products-status:not([hidden]){height:150px!important;min-height:150px!important}
+  #page-shop #customer-products-status .vedant-truck-real-element{
+    top:22px!important;width:70px!important;height:74px!important;font-size:60px!important;
+  }
+}
+</style>
+<script id="vedant-mobile-truck-single-controller">
+(function(){
+  'use strict';
+  var rafId=0, startTime=0, activeRoad=null, lastCheck=0, checkTimer=0;
+  function visible(el){
+    if(!el || el.hidden) return false;
+    var cs=window.getComputedStyle(el);
+    if(cs.display==='none' || cs.visibility==='hidden' || Number(cs.opacity)===0) return false;
+    var r=el.getBoundingClientRect();
+    return r.width>40 && r.height>40 && r.bottom>0 && r.top<window.innerHeight;
+  }
+  function stop(){
+    if(rafId){cancelAnimationFrame(rafId);rafId=0;}
+    if(activeRoad){var t=activeRoad.querySelector('.vedant-truck-real-element');if(t)t.remove();}
+    activeRoad=null;startTime=0;
+  }
+  function frame(now){
+    rafId=0;
+    var road=activeRoad;
+    if(!visible(road)){stop();return;}
+    var truck=road.querySelector('.vedant-truck-real-element');
+    if(!truck){ensure();return;}
+    if(!startTime)startTime=now;
+    var available=Math.max(0,road.clientWidth-truck.offsetWidth-12);
+    var duration=2600;
+    var phase=((now-startTime)%(duration*2))/duration;
+    var progress=phase<=1?phase:2-phase;
+    var x=6+available*progress;
+    truck.style.setProperty('left',x+'px','important');
+    truck.style.setProperty('right','auto','important');
+    truck.style.setProperty('transform',phase<=1?'scaleX(1)':'scaleX(-1)','important');
+    rafId=requestAnimationFrame(frame);
+  }
+  function ensure(){
+    var road=document.getElementById('customer-products-status');
+    var shop=document.getElementById('page-shop');
+    if(!road || !shop || !shop.contains(road) || !visible(road)){
+      if(activeRoad)stop();
+      return;
+    }
+    var truck=road.querySelector('.vedant-truck-real-element');
+    if(!truck){
+      truck=document.createElement('span');
+      truck.className='vedant-truck-real-element';
+      truck.setAttribute('aria-hidden','true');
+      truck.textContent='🚚';
+      road.appendChild(truck);
+    }
+    if(activeRoad!==road){
+      if(rafId)cancelAnimationFrame(rafId);
+      activeRoad=road;startTime=0;rafId=requestAnimationFrame(frame);
+    }else if(!rafId){rafId=requestAnimationFrame(frame);}
+  }
+  function start(){
+    ensure();
+    if(checkTimer)return;
+    checkTimer=window.setInterval(ensure,350);
+    var observer=new MutationObserver(function(){ensure();});
+    observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
+    window.addEventListener('resize',ensure,{passive:true});
+    window.addEventListener('orientationchange',function(){setTimeout(ensure,150);},{passive:true});
+    document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else ensure();});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
+</script>
+
