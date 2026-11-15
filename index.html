@@ -14953,3 +14953,64 @@ body > .modern-nav, .modern-nav{display:none!important}
 }
 </style>
 
+
+
+<style id="vedant-category-truck-single-runway-final-20261115">
+/* FINAL: one loading runway only. Hide the upper category placeholder card. */
+#page-shop .categories.stvn-category-list.stvn-category-loading,
+#page-shop .categories.stvn-category-list.stvn-category-loading .stvn-category-empty{
+  display:none!important;visibility:hidden!important;opacity:0!important;
+  height:0!important;min-height:0!important;max-height:0!important;
+  margin:0!important;padding:0!important;border:0!important;
+  background:transparent!important;box-shadow:none!important;overflow:hidden!important;
+}
+#page-shop .categories.stvn-category-list.stvn-category-loading::before,
+#page-shop .categories.stvn-category-list.stvn-category-loading::after{
+  display:none!important;content:none!important;
+}
+/* The lower striped status card is the only loader and carries the truck. */
+#page-shop #customer-products-status:not([hidden]){
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  width:100%!important;height:154px!important;min-height:154px!important;
+  box-sizing:border-box!important;margin:14px 0 20px!important;padding:0!important;
+  border:1px solid #c8e4ce!important;border-radius:22px!important;
+  background:linear-gradient(115deg,#f2fff5 0%,#e3f5e8 48%,#fff5df 100%)!important;
+  box-shadow:0 10px 24px rgba(28,91,48,.10)!important;
+  font-size:0!important;line-height:0!important;
+}
+/* Override older rules that hid this pseudo-element for status-message states. */
+#page-shop #customer-products-status:not([hidden])::before,
+#page-shop #customer-products-status.stvn-product-status-message:not([hidden])::before{
+  content:'🚚'!important;display:block!important;visibility:visible!important;opacity:1!important;
+  position:absolute!important;left:-86px!important;right:auto!important;
+  top:30px!important;bottom:auto!important;width:auto!important;height:auto!important;
+  margin:0!important;padding:0!important;border:0!important;background:none!important;
+  font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif!important;
+  font-size:72px!important;line-height:1!important;z-index:5!important;
+  filter:drop-shadow(0 7px 5px rgba(20,70,35,.20))!important;
+  animation:vgCategoryTruckRunFinal 3.1s linear infinite!important;
+  will-change:left,transform!important;
+}
+#page-shop #customer-products-status:not([hidden])::after{
+  content:''!important;display:block!important;visibility:visible!important;
+  position:absolute!important;left:0!important;right:0!important;top:auto!important;bottom:22px!important;
+  width:auto!important;height:7px!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:10px!important;
+  background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px)!important;
+  opacity:.78!important;z-index:2!important;animation:none!important;
+}
+@keyframes vgCategoryTruckRunFinal{
+  0%{left:-86px;transform:scaleX(1)}
+  49%{left:calc(100% - 72px);transform:scaleX(1)}
+  50%{left:calc(100% - 72px);transform:scaleX(-1)}
+  99%{left:-86px;transform:scaleX(-1)}
+  100%{left:-86px;transform:scaleX(1)}
+}
+@media(max-width:700px){
+  #page-shop #customer-products-status:not([hidden]){height:154px!important;min-height:154px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-shop #customer-products-status:not([hidden])::before{animation-duration:6s!important}
+}
+</style>
