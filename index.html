@@ -2206,7 +2206,8 @@ Items in Cart:
 
 <p>Subtotal: ₹<span id="subtotal">0</span></p>
 <p>Discount: ₹<span id="discount">0</span></p>
-<p>Delivery Charge: ₹<span id="delivery-charge">0</span></p>
+<p class="cart-delivery-charge-row">Delivery Charge: ₹<span id="delivery-charge">0</span></p>
+<p class="cart-delivery-distance-row">Delivery Distance: <span id="delivery-distance">Not selected</span></p>
 
 <p class="total">
 Grand Total: ₹<span id="cart-total">0</span>
@@ -3013,33 +3014,45 @@ function stvnShowCustomerLogin(message){
   if(!gate)return;
   const active=document.activeElement;
   if(active&&active!==document.body&&!gate.contains(active))window.__stvnCustomerLoginReturnFocus=active;
-  if(typeof window.stvnPushHistoryOverlay==="function")window.stvnPushHistoryOverlay("customer-login");
+  const alreadyOpen=gate.style.display==="flex";
   window.__stvnCustomerLoginRequested=true;
   gate.style.display="flex";
   document.body.classList.add("stvn-customer-login-open");
   document.body.style.overflow="hidden";
   stvnCustomerLoginMessage(message||"Login required to continue.");
+  if(!alreadyOpen&&typeof window.stvnPushHistoryOverlay==="function")window.stvnPushHistoryOverlay("customer-login");
 }
 window.stvnRequireCustomerLogin=async function(options){
   const settings=options||{};
+  const requestId=(window.__stvnCustomerLoginCheckId||0)+1;
+  window.__stvnCustomerLoginCheckId=requestId;
+  if(settings.action)stvnSetPendingCustomerLoginAction(settings.action);
+  stvnShowCustomerLogin("Checking sign-in status…");
   let session=null;
   try{
     const {data,error}=await supabaseClient.auth.getSession();
     if(error)throw error;
     session=data?.session||null;
   }catch(error){
+    if(requestId!==window.__stvnCustomerLoginCheckId||!window.__stvnCustomerLoginRequested)return false;
     console.error("Could not verify customer login:",error);
-    if(settings.action)stvnSetPendingCustomerLoginAction(settings.action);
     stvnShowCustomerLogin("Could not verify sign-in status. Please sign in to continue.");
     return false;
   }
+  if(requestId!==window.__stvnCustomerLoginCheckId||!window.__stvnCustomerLoginRequested)return false;
   if(session?.user){
     window.__stvnCustomerAuthenticated=true;
+    window.__stvnCustomerLoginRequested=false;
+    stvnClearPendingCustomerLoginAction();
+    const gate=document.getElementById("stvnCustomerLoginGate");
+    if(gate)gate.style.display="none";
+    document.body.classList.remove("stvn-customer-login-open");
+    document.body.style.overflow="";
+    if(typeof window.stvnClearHistoryOverlay==="function")window.stvnClearHistoryOverlay("customer-login");
     if(typeof settings.onAuthorized==="function")settings.onAuthorized();
     return true;
   }
   window.__stvnCustomerAuthenticated=false;
-  if(settings.action)stvnSetPendingCustomerLoginAction(settings.action);
   stvnShowCustomerLogin(settings.message||"Login required to continue.");
   return false;
 };
@@ -3058,6 +3071,7 @@ window.stvnResumeCustomerLoginAction=function(){
   },0);
 };
 window.stvnContinueAsGuest=function(){
+  window.__stvnCustomerLoginCheckId=(window.__stvnCustomerLoginCheckId||0)+1;
   const isHistoryOverlay=window.history.state?.__vedantGroceryOverlay==="customer-login";
   stvnClearPendingCustomerLoginAction();
   window.__stvnCustomerLoginRequested=false;
@@ -3152,6 +3166,7 @@ async function stvnCustomerVerifyOtp(){
     // Store only the visible customer email for convenience; authentication remains with Supabase.
     try{localStorage.setItem("vedantCustomerEmail",email);}catch(_e){}
     window.__stvnCustomerAuthenticated=true;
+    window.__stvnCustomerLoginCheckId=(window.__stvnCustomerLoginCheckId||0)+1;
     window.__stvnCustomerLoginRequested=false;
     if(typeof window.stvnClearHistoryOverlay==="function")window.stvnClearHistoryOverlay("customer-login");
     window.stvnResumeCustomerLoginAction();
@@ -3565,10 +3580,25 @@ item.quantity,
 }
 
 
+const DELIVERY_FREE_MINIMUM=199;
+
+function syncCustomerLocationFromWindow(){
+  if(customerLatitude!==null&&customerLongitude!==null)return;
+  const rawLatitude=window.customerLatitude;
+  const rawLongitude=window.customerLongitude;
+  if(rawLatitude===null||rawLatitude===undefined||rawLongitude===null||rawLongitude===undefined)return;
+  const latitude=Number(rawLatitude);
+  const longitude=Number(rawLongitude);
+  if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||latitude < -90||latitude > 90||longitude < -180||longitude > 180)return;
+  customerLatitude=latitude;
+  customerLongitude=longitude;
+}
+
 function updateCart(){
 
 stvnRepairCartPrices();
 syncProductQuantityControls();
+syncCustomerLocationFromWindow();
 
 let box =
 document.getElementById(
@@ -3677,8 +3707,10 @@ if(customerLatitude !== null && customerLongitude !== null){
 let deliveryCharge = 0;
 if(subtotal > 0 && deliveryDistance !== null &&
    typeof window.stvnGetDeliveryCharge === "function"){
-  deliveryCharge = window.stvnGetDeliveryCharge(deliveryDistance) || 0;
+  const distanceCharge=window.stvnGetDeliveryCharge(deliveryDistance);
+  deliveryCharge=Number.isFinite(distanceCharge)?distanceCharge:0;
 }
+if(subtotal>=DELIVERY_FREE_MINIMUM)deliveryCharge=0;
 
 
 let grandTotal =
@@ -3705,6 +3737,11 @@ document.getElementById(
 document.getElementById(
 "delivery-charge"
 ).textContent=deliveryCharge;
+
+const deliveryDistanceElement=document.getElementById("delivery-distance");
+if(deliveryDistanceElement){
+  deliveryDistanceElement.textContent=deliveryDistance===null?"Not selected":deliveryDistance.toFixed(2)+" km";
+}
 
 document.getElementById(
 "cart-total"
@@ -4056,6 +4093,11 @@ Delivery Charge:
 </p>
 
 <p>
+Delivery Distance:
+${document.getElementById("delivery-distance")?.textContent||"Not selected"}
+</p>
+
+<p>
 
 <strong>
 
@@ -4303,6 +4345,8 @@ maximumAge:60000
 }
 
 async function getCustomerLocationForOrder(){
+
+syncCustomerLocationFromWindow();
 
 if(
 customerLatitude !== null &&
@@ -5352,6 +5396,7 @@ async function placeOrder(){
     const radiusCheck=checkDeliveryRadius();
     if(!radiusCheck.allowed) throw new Error("❌ Sorry! Currently not available. आपकी location shop से "+radiusCheck.distance.toFixed(2)+" km दूर है. Delivery radius सिर्फ 5 km है.");
 
+    updateCart();
     const totalText=document.getElementById("cart-total").textContent;
     const totalAmount=Number(String(totalText).replace(/[^0-9.]/g,""))||0;
     if(totalAmount<=0) throw new Error("Cart total is not valid. Please refresh your cart and try again.");
@@ -5361,6 +5406,7 @@ async function placeOrder(){
       payment_status:(payment==="RAZORPAY"||payment==="UPI")?"pending_verification":"pending",
       order_status:"pending", total:totalText,
       delivery_charge:Number(document.getElementById("delivery-charge")?.textContent||0),
+      delivery_distance_km:Number(radiusCheck.distance.toFixed(2)),
       latitude:customerLatitude, longitude:customerLongitude,
       items:JSON.parse(JSON.stringify(cartItems)), delivery:"20–25 Minutes", date:new Date().toLocaleString()
     };
@@ -5373,7 +5419,7 @@ async function placeOrder(){
         order_id:order.id, name:order.name, phone:order.phone, address:order.address,
         latitude:order.latitude, longitude:order.longitude,
         total:Number(String(order.total).replace(/[^0-9.]/g,""))||0,
-        delivery_charge:order.delivery_charge, items:order.items,
+        delivery_charge:order.delivery_charge, delivery_distance_km:order.delivery_distance_km, items:order.items,
         delivery:order.delivery, order_date:new Date().toISOString(), discount_amount:0
       };
       const {data:walletData,error:walletError}=await supabaseClient.rpc("vedant_place_wallet_order",{p_order:walletPayload});
@@ -5384,7 +5430,7 @@ async function placeOrder(){
       order.payment="Vedant Wallet";
       order.payment_status="paid";
       orderHistory.unshift(order); saveData();
-      message.innerHTML=`<span class="success">✅ Vedant Wallet payment successful!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: Vedant Wallet<br>💸 ₹${Number(walletData.amount||totalAmount).toFixed(2)} wallet से कटे<br>👛 बचा हुआ balance: ₹${Number(walletData.balance).toFixed(2)}<br>📦 Order successfully placed.</span>`;
+      message.innerHTML=`<span class="success">✅ Vedant Wallet payment successful!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: Vedant Wallet<br>💸 ₹${Number(walletData.amount||totalAmount).toFixed(2)} wallet से कटे<br>👛 बचा हुआ balance: ₹${Number(walletData.balance).toFixed(2)}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}<br>📦 Order successfully placed.</span>`;
       cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
       saveData(); updateCart(); showOrderHistory();
       saveTrackedOrder(order.id,order.phone); setTrackingInputs(order.id,order.phone);
@@ -5453,7 +5499,7 @@ async function saveVedantOrder(order,customerEmail){
     order_id:order.id, customer_name:order.name, customer_phone:order.phone,
     customer_address:order.address, customer_email:customerEmail,
     latitude:order.latitude, longitude:order.longitude,
-    delivery_charge:order.delivery_charge, payment_method:order.payment,
+    delivery_charge:order.delivery_charge, delivery_distance_km:order.delivery_distance_km, payment_method:order.payment,
     payment_status:order.payment_status, order_status:order.order_status,
     total:Number(String(order.total).replace(/[^0-9.]/g,"")), items:order.items,
     delivery:order.delivery, order_date:new Date().toISOString(),
@@ -5467,6 +5513,7 @@ async function saveVedantOrder(order,customerEmail){
     if(!supabaseError)break;
     if(Object.prototype.hasOwnProperty.call(recordToSave,"customer_email")&&isMissingCustomerEmailColumn(supabaseError)){delete recordToSave.customer_email;savedWithoutCustomerEmail=true;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"delivery_charge")&&isMissingOrderColumn(supabaseError,"delivery_charge")){delete recordToSave.delivery_charge;continue;}
+    if(Object.prototype.hasOwnProperty.call(recordToSave,"delivery_distance_km")&&isMissingOrderColumn(supabaseError,"delivery_distance_km")){delete recordToSave.delivery_distance_km;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"razorpay_order_id")&&/razorpay_order_id/i.test(String(supabaseError.message||""))){delete recordToSave.razorpay_order_id;delete recordToSave.razorpay_payment_id;continue;}
     break;
   }
@@ -5476,7 +5523,7 @@ async function saveVedantOrder(order,customerEmail){
     return;
   }
   orderHistory.unshift(order); saveData();
-  message.innerHTML=`<span class="success">✅ Order placed successfully!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: ${escapeHtml(order.payment)}<br>📦 Order Status: ${escapeHtml(order.order_status)}<br>💳 Payment Status: ${escapeHtml(order.payment_status)}${order.razorpay_payment_id?"<br>Razorpay Payment ID: "+escapeHtml(order.razorpay_payment_id):""}${order.latitude!==null&&order.longitude!==null?"<br>📍 Location saved with this order":"<br>📍 Location not available; address saved"}${savedWithoutCustomerEmail?"<br>⚠️ Database में customer_email column जोड़ने की जरूरत है.":""}</span>`;
+  message.innerHTML=`<span class="success">✅ Order placed successfully!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: ${escapeHtml(order.payment)}<br>📦 Order Status: ${escapeHtml(order.order_status)}<br>💳 Payment Status: ${escapeHtml(order.payment_status)}${order.razorpay_payment_id?"<br>Razorpay Payment ID: "+escapeHtml(order.razorpay_payment_id):""}${order.latitude!==null&&order.longitude!==null?"<br>📍 Location saved with this order":"<br>📍 Location not available; address saved"}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}${savedWithoutCustomerEmail?"<br>⚠️ Database में customer_email column जोड़ने की जरूरत है.":""}</span>`;
   cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
   saveData(); updateCart(); showOrderHistory();
   saveTrackedOrder(order.id,order.phone); setTrackingInputs(order.id,order.phone);
@@ -8635,7 +8682,7 @@ function modernUIInit(){
 
   const promo=document.createElement("div");
   promo.className="promo-strip";
-  promo.innerHTML="⚡ <strong>Free delivery</strong> on orders above ₹399 • 10–20 min";
+  promo.innerHTML=`⚡ <strong>Free delivery</strong> on orders above ₹${DELIVERY_FREE_MINIMUM} • 10–20 min`;
   body.insertBefore(promo, nav.nextSibling);
 
   const bottom=document.createElement("div");
@@ -8779,7 +8826,7 @@ function modernUIInit(){
   });
 
   const cartSummary=cart.querySelector(".summary");
-  cartSummary?.querySelectorAll("p:not(.total)").forEach(el=>el.hidden=true);
+  cartSummary?.querySelectorAll("p:not(.total):not(.cart-delivery-charge-row):not(.cart-delivery-distance-row)").forEach(el=>el.hidden=true);
   cart.querySelector(":scope > h2")?.remove();
   const cartCount=document.getElementById("cart-count");
   if(cartCount?.parentElement)cartCount.parentElement.hidden=true;
@@ -8885,11 +8932,11 @@ function modernUIInit(){
     catch(error){console.error("Could not clear overlay navigation history:",error);}
   };
   window.showPage=function(page,navigationOptions){
-    if(protectedCustomerPages.has(page)){
+    if(protectedCustomerPages.has(page)&&!navigationOptions?.customerAuthVerified){
       window.stvnRequireCustomerLogin({
         action:{type:"page",page},
         message:"Please sign in to view this section.",
-        onAuthorized:()=>window.showPage(page)
+        onAuthorized:()=>window.showPage(page,Object.assign({},navigationOptions,{customerAuthVerified:true}))
       });
       return;
     }
@@ -9207,19 +9254,17 @@ restoreAdminSession();
 <script id="stvn-delivery-charge-js">
 (function(){
   // Delivery charges:
-  // 0–1 km  = ₹30
-  // >1–2 km = ₹35
-  // >2–3 km = ₹40
-  // >3–4 km = ₹40
-  // >4–5 km = ₹45
+  // 0–2 km  = ₹10
+  // >2–3 km = ₹18
+  // >3–5 km = ₹25
   window.stvnGetDeliveryCharge = function(distanceKm){
     const d=Number(distanceKm);
     if(!Number.isFinite(d) || d<0) return 0;
-    if(d<=1) return 30;
-    if(d<=2) return 35;
-    if(d<=3) return 40;
-    if(d<=4) return 40;
-    if(d<=5) return 45;
+    if(d<=1) return 10;
+    if(d<=2) return 10;
+    if(d<=3) return 18;
+    if(d<=4) return 25;
+    if(d<=5) return 25;
     return null; // outside the 5 km delivery radius
   };
 
@@ -12925,18 +12970,19 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  };
  function keyForUser(){let e='guest';try{e=localStorage.getItem('vedantCustomerEmail')||'guest'}catch(_){}return 'vedantLanguage:'+e.toLowerCase()}
  function lang(){try{const saved=localStorage.getItem(keyForUser())||localStorage.getItem('vedantLanguagePreference')||'en';return ['en','hi','bn'].includes(saved)?saved:'en'}catch(_){return 'en'}}
- const originals=new WeakMap(),translatedValues=new WeakMap();
+ const originals=new WeakMap(),translatedValues=new WeakMap(),translatedLanguages=new WeakMap();
+ const indicText=/[\u0900-\u097F\u0980-\u09FF]/;
  function textMap(language){return language==='bn'?bnDict:language==='en'?enDict:dict}
- const sortedMaps={};
+ const compiledMaps={};
  function translatedText(source,language){
-  if(!sortedMaps[language])sortedMaps[language]=Object.entries(textMap(language)).sort((a,b)=>b[0].length-a[0].length);
-  let value=source;
-  for(const [key,translated] of sortedMaps[language]){
+  if(!compiledMaps[language])compiledMaps[language]=Object.entries(textMap(language)).sort((a,b)=>b[0].length-a[0].length).map(([key,translated])=>{
    const escaped=key.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
    const leftBoundary=/^[A-Za-z0-9]/.test(key)?'\\b':'';
    const rightBoundary=/[A-Za-z0-9]$/.test(key)?'\\b':'';
-   value=value.replace(new RegExp(leftBoundary+escaped+rightBoundary,'gi'),translated);
-  }
+   return {regex:new RegExp(leftBoundary+escaped+rightBoundary,'gi'),translated};
+  });
+  let value=source;
+  for(const entry of compiledMaps[language])value=value.replace(entry.regex,entry.translated);
   return value;
  }
  const walletDict={
@@ -12977,18 +13023,24 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  Object.assign(dict,{'Your Cart':'आपका कार्ट','Review items before checkout.':'चेकआउट से पहले सामान जाँचें।','Special Offer':'विशेष ऑफर','Premium Quality':'प्रीमियम गुणवत्ता','at Best Price':'सबसे अच्छी कीमत पर','Fresh essentials for your family, delivered locally.':'आपके परिवार के लिए ताज़ा ज़रूरी सामान, स्थानीय डिलीवरी के साथ।','Freshness at':'ताज़गी आपके','Your Doorstep':'द्वार पर','Delivery available within 5 km area.':'5 किमी क्षेत्र में डिलीवरी उपलब्ध है।','Choose your language':'अपनी भाषा चुनें','Prefer your language. You can change it anytime from My Account.':'अपनी पसंदीदा भाषा चुनें। आप इसे कभी भी मेरा अकाउंट से बदल सकते हैं।','Continue shopping in English':'अंग्रेज़ी में खरीदारी जारी रखें','हिंदी में खरीदारी जारी रखें':'हिंदी में खरीदारी जारी रखें'});
  Object.assign(bnDict,{'Your Cart':'আপনার কার্ট','Review items before checkout.':'চেকআউটের আগে পণ্য যাচাই করুন।','Special Offer':'বিশেষ অফার','Premium Quality':'উন্নত মান','at Best Price':'সেরা দামে','Fresh essentials for your family, delivered locally.':'আপনার পরিবারের জন্য তাজা নিত্যপ্রয়োজনীয় পণ্য, স্থানীয় ডেলিভারিসহ।','Freshness at':'তাজা পণ্য আপনার','Your Doorstep':'দোরগোড়ায়','Delivery available within 5 km area.':'৫ কিমি এলাকার মধ্যে ডেলিভারি উপলভ্য।','Choose your language':'আপনার ভাষা বেছে নিন','Prefer your language. You can change it anytime from My Account.':'আপনার পছন্দের ভাষা বেছে নিন। আমার অ্যাকাউন্ট থেকে যেকোনো সময় পরিবর্তন করতে পারবেন।','Continue shopping in English':'ইংরেজিতে কেনাকাটা চালিয়ে যান','हिंदी में खरीदारी जारी रखें':'হিন্দিতে কেনাকাটা চালিয়ে যান'});
  Object.assign(enDict,{'आपका कार्ट':'Your Cart','चेकआउट से पहले सामान जाँचें।':'Review items before checkout.','विशेष ऑफर':'Special Offer','प्रीमियम गुणवत्ता':'Premium Quality','सबसे अच्छी कीमत पर':'at the best price','आपके परिवार के लिए ताज़ा ज़रूरी सामान, स्थानीय डिलीवरी के साथ।':'Fresh essentials for your family, delivered locally.','ताज़गी आपके':'Freshness at your','द्वार पर':'doorstep','5 किमी क्षेत्र में डिलीवरी उपलब्ध है।':'Delivery is available within 5 km.','अपनी भाषा चुनें':'Choose your language','अपनी पसंदीदा भाषा चुनें। आप इसे कभी भी मेरा अकाउंट से बदल सकते हैं।':'Choose your preferred language. You can change it anytime from My Account.','अंग्रेज़ी में खरीदारी जारी रखें':'Continue shopping in English','हिंदी में खरीदारी जारी रखें':'Continue shopping in Hindi'});
- Object.assign(dict,{'Current location not selected':'वर्तमान लोकेशन नहीं चुनी गई','Location unavailable':'लोकेशन उपलब्ध नहीं','Not selected':'चुना नहीं गया','Continue browsing as guest':'गेस्ट के रूप में ब्राउज़ करें','← Back':'← वापस','← Back to browsing':'← ब्राउज़ करने वापस जाएँ','Login required to continue.':'जारी रखने के लिए लॉगिन करें।','Please sign in to view this section.':'यह सेक्शन देखने के लिए लॉगिन करें।','Please sign in to access your account.':'अपने अकाउंट के लिए लॉगिन करें।','Could not verify sign-in status. Please sign in to continue.':'लॉगिन की पुष्टि नहीं हो सकी। जारी रखने के लिए लॉगिन करें।'});
- Object.assign(bnDict,{'Current location not selected':'বর্তমান অবস্থান নির্বাচন করা হয়নি','Location unavailable':'অবস্থান পাওয়া যাচ্ছে না','Not selected':'নির্বাচিত নয়','Continue browsing as guest':'অতিথি হিসেবে ব্রাউজ করুন','← Back':'← ফিরে যান','← Back to browsing':'← ব্রাউজ করতে ফিরে যান','Login required to continue.':'চালিয়ে যেতে লগইন করুন।','Please sign in to view this section.':'এই বিভাগ দেখতে লগইন করুন।','Please sign in to access your account.':'আপনার অ্যাকাউন্ট দেখতে লগইন করুন।','Could not verify sign-in status. Please sign in to continue.':'লগইন যাচাই করা যায়নি। চালিয়ে যেতে লগইন করুন।'});
- Object.assign(enDict,{'वर्तमान लोकेशन नहीं चुनी गई':'Current location not selected','लोकेशन उपलब्ध नहीं':'Location unavailable','चुना नहीं गया':'Not selected','गेस्ट के रूप में ब्राउज़ करें':'Continue browsing as guest','← वापस':'← Back','← ফিরে যান':'← Back','← ब्राउज़ करने वापस जाएँ':'← Back to browsing','← ব্রাউজ করতে ফিরে যান':'← Back to browsing','जारी रखने के लिए लॉगिन करें।':'Login required to continue.','यह सेक्शन देखने के लिए लॉगिन करें।':'Please sign in to view this section.','अपने अकाउंट के लिए लॉगिन करें।':'Please sign in to access your account.','লগইন যাচাই করা যায়নি। চালিয়ে যেতে লগইন করুন।':'Could not verify sign-in status. Please sign in to continue.'});
+ Object.assign(dict,{'Current location not selected':'वर्तमान लोकेशन नहीं चुनी गई','Location unavailable':'लोकेशन उपलब्ध नहीं','Not selected':'चुना नहीं गया','Continue browsing as guest':'गेस्ट के रूप में ब्राउज़ करें','← Back':'← वापस','← Back to browsing':'← ब्राउज़ करने वापस जाएँ','Login required to continue.':'जारी रखने के लिए लॉगिन करें।','Checking sign-in status…':'लॉगिन की स्थिति जाँची जा रही है…','Please sign in to view this section.':'यह सेक्शन देखने के लिए लॉगिन करें।','Please sign in to access your account.':'अपने अकाउंट के लिए लॉगिन करें।','Could not verify sign-in status. Please sign in to continue.':'लॉगिन की पुष्टि नहीं हो सकी। जारी रखने के लिए लॉगिन करें।'});
+ Object.assign(bnDict,{'Current location not selected':'বর্তমান অবস্থান নির্বাচন করা হয়নি','Location unavailable':'অবস্থান পাওয়া যাচ্ছে না','Not selected':'নির্বাচিত নয়','Continue browsing as guest':'অতিথি হিসেবে ব্রাউজ করুন','← Back':'← ফিরে যান','← Back to browsing':'← ব্রাউজ করতে ফিরে যান','Login required to continue.':'চালিয়ে যেতে লগইন করুন।','Checking sign-in status…':'লগইন অবস্থা যাচাই করা হচ্ছে…','Please sign in to view this section.':'এই বিভাগ দেখতে লগইন করুন।','Please sign in to access your account.':'আপনার অ্যাকাউন্ট দেখতে লগইন করুন।','Could not verify sign-in status. Please sign in to continue.':'লগইন যাচাই করা যায়নি। চালিয়ে যেতে লগইন করুন।'});
+ Object.assign(enDict,{'वर्तमान लोकेशन नहीं चुनी गई':'Current location not selected','लोकेशन उपलब्ध नहीं':'Location unavailable','चुना नहीं गया':'Not selected','गेस्ट के रूप में ब्राउज़ करें':'Continue browsing as guest','← वापस':'← Back','← ফিরে যান':'← Back','← ब्राउज़ करने वापस जाएँ':'← Back to browsing','← ব্রাউজ করতে ফিরে যান':'← Back to browsing','जारी रखने के लिए लॉगिन करें।':'Login required to continue.','लॉगिन की स्थिति जाँची जा रही है…':'Checking sign-in status…','লগইন অবস্থা যাচাই করা হচ্ছে…':'Checking sign-in status…','यह सेक्शन देखने के लिए लॉगिन करें।':'Please sign in to view this section.','अपने अकाउंट के लिए लॉगिन करें।':'Please sign in to access your account.','লগইন যাচাই করা যায়নি। চালিয়ে যেতে লগইন करें।':'Could not verify sign-in status. Please sign in to continue.'});
+ Object.assign(dict,{'Delivery Distance':'डिलीवरी दूरी'});
+ Object.assign(bnDict,{'Delivery Distance':'ডেলিভারির দূরত্ব'});
+ Object.assign(enDict,{'डिलीवरी दूरी':'Delivery Distance','ডেলিভারির দূরত্ব':'Delivery Distance'});
  function translateNode(node,l){
   if(!node||node.nodeType!==Node.TEXT_NODE)return;
   const el=node.parentElement;
   if(!node.nodeValue.trim()||el?.closest('script,style,textarea,input,select,option,[contenteditable="true"],#vLangGate'))return;
+  if(translatedLanguages.get(node)===l&&node.nodeValue===translatedValues.get(node))return;
   if(!originals.has(node)||node.nodeValue!==translatedValues.get(node))originals.set(node,node.nodeValue);
   const original=originals.get(node);
-  const value=translatedText(original,l);
+  const value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
   // Avoid emitting a characterData mutation when the text is already translated.
-  if(node.nodeValue!==value){node.nodeValue=value;translatedValues.set(node,value)}
+  if(node.nodeValue!==value)node.nodeValue=value;
+  translatedValues.set(node,value);
+  translatedLanguages.set(node,l);
  }
 
  function translateAttributes(root,l){
@@ -13000,27 +13052,56 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(el.matches('input[placeholder],textarea[placeholder]')){
     if(!el.dataset.vlangOriginal)el.dataset.vlangOriginal=el.getAttribute('placeholder')||'';
     const original=el.dataset.vlangOriginal;
-    const value=translatedText(original,l);
+    const value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
     if(el.getAttribute('placeholder')!==value)el.setAttribute('placeholder',value);
    }
    ['aria-label','title'].forEach(attr=>{
     if(!el.hasAttribute(attr))return;
     const key='vlangOriginal'+attr.split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join('');
     if(!el.dataset[key])el.dataset[key]=el.getAttribute(attr)||'';
-    const original=el.dataset[key],value=translatedText(original,l);
+    const original=el.dataset[key],value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
     if(el.getAttribute(attr)!==value)el.setAttribute(attr,value);
    });
   });
  }
- function apply(){const l=lang();document.documentElement.lang=l;document.documentElement.dataset.language=l;
+ const translationJobs=[];
+ let translationScheduled=false,translationRun=0,translationAfterQueue=null;
+ function scheduleTranslationBatch(){
+  if(translationScheduled)return;
+  translationScheduled=true;
+  setTimeout(processTranslationBatch,0);
+ }
+ function enqueueTranslation(root,l,run=translationRun){
+  if(!root)return;
+  translationJobs.push({root,walker:document.createTreeWalker(root,NodeFilter.SHOW_TEXT),language:l,run,attributesDone:false});
+  scheduleTranslationBatch();
+ }
+ function processTranslationBatch(){
+  translationScheduled=false;
+  let processed=0;
+  while(translationJobs.length&&processed<80){
+   const job=translationJobs[0];
+   if(job.run!==translationRun){translationJobs.shift();continue}
+   const node=job.walker.nextNode();
+   if(node){translateNode(node,job.language);processed++;continue}
+   if(!job.attributesDone){translateAttributes(job.root,job.language);job.attributesDone=true}
+   translationJobs.shift();
+  }
+  if(translationJobs.length){scheduleTranslationBatch();return}
+  const afterQueue=translationAfterQueue;
+  translationAfterQueue=null;
+  if(afterQueue)afterQueue();
+ }
+ function apply(){const l=lang();translationRun++;translationJobs.length=0;translationAfterQueue=null;document.documentElement.lang=l;document.documentElement.dataset.language=l;
   if(!document.documentElement.dataset.vlangOriginalTitle)document.documentElement.dataset.vlangOriginalTitle=document.title;
   document.title=translatedText(document.documentElement.dataset.vlangOriginalTitle,l);
-  const walk=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while(n=walk.nextNode())translateNode(n,l);
-  translateAttributes(document.body,l);
-  if(l==='hi'&&typeof window.applyHindiProductNames==='function')window.applyHindiProductNames();
-  else document.querySelectorAll('#products .product-hindi-name').forEach(label=>label.remove());
+  translationAfterQueue=()=>{
+   if(l==='hi'&&typeof window.applyHindiProductNames==='function')window.applyHindiProductNames();
+   else document.querySelectorAll('#products .product-hindi-name').forEach(label=>label.remove());
+  };
+  enqueueTranslation(document.body,l);
  }
- let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE)translateNode(node,l);else if(node.nodeType===Node.ELEMENT_NODE){const w=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let t;while(t=w.nextNode())translateNode(t,l);translateAttributes(node,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
+ let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE)translateNode(node,l);else if(node.nodeType===Node.ELEMENT_NODE)enqueueTranslation(node,l);}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
  function open(force){if(!gate)return;gate.style.display='flex';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
  function close(){if(gate)gate.style.display='none';document.body.style.overflow='';apply();}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
@@ -13659,9 +13740,20 @@ body > .modern-nav, .modern-nav{display:none!important}
  }
  function init(){compactAdmin();shopCleanup();}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
- const mo=new MutationObserver(()=>{compactAdmin();shopCleanup();});
- mo.observe(document.body,{childList:true,subtree:true});
- setTimeout(()=>mo.disconnect(),12000);
+ const adminPanel=$('adminPanel');
+ if(adminPanel){
+   let compactQueued=false;
+   new MutationObserver(()=>{
+     if(compactQueued)return;
+     compactQueued=true;
+     requestAnimationFrame(()=>{compactQueued=false;compactAdmin();});
+   }).observe(adminPanel,{childList:true,subtree:true});
+ }
+ const shop=$('page-shop');
+ if(shop)new MutationObserver(records=>{
+   const offersAdded=records.some(record=>[...record.addedNodes].some(node=>node.nodeType===Node.ELEMENT_NODE&&(node.matches('.stvn-customer-offers')||node.querySelector('.stvn-customer-offers'))));
+   if(offersAdded)shopCleanup();
+ }).observe(shop,{childList:true,subtree:true});
 })();
 </script>
 
@@ -14051,31 +14143,40 @@ body > .modern-nav, .modern-nav{display:none!important}
   }
   .vg-store-header #stvnProfileToggle .stvn-avatar{width:20px!important;height:20px!important;font-size:13px!important}
   .vg-store-header #stvnProfileToggle span:last-child{display:block!important;max-width:49px!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:8px!important}
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open){grid-template-columns:minmax(0,1fr)!important}
   #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{
-    grid-column:auto!important;grid-template-columns:48px minmax(0,1fr)!important;grid-template-rows:auto!important;
-    min-width:0!important;min-height:68px!important;height:auto!important;padding:6px 16px 6px 6px!important;
-    gap:6px!important;text-align:left!important;
+    grid-column:1/-1!important;grid-template-columns:96px minmax(0,1fr)!important;grid-template-rows:auto!important;
+    min-width:0!important;min-height:112px!important;height:auto!important;padding:8px 18px 8px 8px!important;
+    gap:10px!important;text-align:left!important;
   }
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image{
-    grid-column:1!important;grid-row:1!important;width:48px!important;height:48px!important;min-height:48px!important;
-    margin:0!important;padding:2px!important;border-radius:9px!important;background:#fff!important;
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image,
+  #page-shop .categories.stvn-category-list.stvn-category-open .stvn-category-side.has-image{
+    grid-column:1!important;grid-row:1!important;width:96px!important;height:96px!important;min-height:96px!important;
+    margin:0!important;padding:2px!important;border-radius:10px!important;background:#fff!important;
   }
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-image{
-    width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;
+  #page-shop .categories.stvn-category-list .stvn-category-image{
+    width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;
   }
   #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side:not(.has-image){
-    grid-column:1!important;grid-row:1!important;width:42px!important;height:42px!important;min-height:42px!important;margin:0 auto!important;
+    grid-column:1!important;grid-row:1!important;width:72px!important;height:72px!important;min-height:72px!important;margin:auto!important;
   }
   #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-copy{grid-column:2!important;grid-row:1!important;min-width:0!important}
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-name{font-size:10px!important;line-height:1.2!important;overflow-wrap:anywhere!important}
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-count{font-size:8px!important}
+  #page-shop .categories.stvn-category-list.stvn-category-open .stvn-category-card.active{
+    grid-template-columns:96px minmax(0,1fr)!important;min-height:112px!important;
+  }
+  #page-shop .categories.stvn-category-list .stvn-category-hint{display:none!important}
+  #page-shop .categories.stvn-category-list .stvn-category-name{font-size:14px!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+  #page-shop .categories.stvn-category-list .stvn-category-count{font-size:10px!important}
   #page-shop #products .product-icon img,#page-home #products .product-icon img{object-fit:contain!important;object-position:center!important}
 }
 @media(max-width:360px){
   .vg-store-header #stvnProfileBar,.vg-store-header #stvnProfileToggle{width:72px!important}
   .vg-store-header #stvnProfileToggle span:last-child{max-width:43px!important}
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{grid-template-columns:42px minmax(0,1fr)!important}
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image{width:42px!important;height:42px!important;min-height:42px!important}
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{grid-template-columns:80px minmax(0,1fr)!important}
+  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image{width:80px!important;height:80px!important;min-height:80px!important}
+}
+#page-shop .categories.stvn-category-list.stvn-category-loading{
+  display:none!important;min-height:0!important;height:0!important;margin:0!important;padding:0!important;border:0!important;
 }
 .modern-bottom-nav button small{display:none!important}
 </style>
