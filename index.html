@@ -13470,9 +13470,16 @@ Object.assign(enDict,{
    if(l==='hi'&&typeof window.applyHindiProductNames==='function')window.setTimeout(()=>{try{window.applyHindiProductNames()}catch(error){console.warn('Hindi product-name translation skipped:',error)}},80);
    else document.querySelectorAll('#products .product-hindi-name').forEach(label=>label.remove());
   };
-  enqueueTranslation(document.body,l);
+  // Translate only the visible app shell and active page. Walking the entire body
+  // on mobile can compete with the first Shop render and make taps appear frozen.
+  const activePages=document.querySelectorAll('[id^="page-"].active');
+  activePages.forEach(page=>enqueueTranslation(page,l));
+  const header=document.querySelector('.vg-store-header,header,.modern-nav');
+  if(header)enqueueTranslation(header,l);
  }
- let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE){const parent=node.parentElement;if(parent&&!parent.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))translateNode(node,l);}else if(node.nodeType===Node.ELEMENT_NODE){if(!node.matches('script,style,noscript,template,[hidden],[aria-hidden="true"]')&&!node.closest('[id^="page-"]:not(.active)'))enqueueTranslation(node,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
+ let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE){const parent=node.parentElement;if(parent&&!parent.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))translateNode(node,l);}else if(node.nodeType===Node.ELEMENT_NODE){if(!node.matches('script,style,noscript,template,[hidden],[aria-hidden="true"]')&&!node.closest('[id^="page-"]:not(.active)'))enqueueTranslation(node,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
+  // When navigation activates another page, translate that page in small batches.
+  document.addEventListener('click',()=>window.setTimeout(()=>{const l=lang();document.querySelectorAll('[id^="page-"].active').forEach(page=>enqueueTranslation(page,l));},80),true);}
  function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
  function close(){if(gate){gate.style.display='none';gate.style.visibility='hidden';gate.style.pointerEvents='none';}document.body.style.overflow='';document.documentElement.style.visibility='visible';window.setTimeout(()=>apply(),0);}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
@@ -15503,69 +15510,117 @@ body > .modern-nav, .modern-nav{display:none!important}
 </style>
 <script id="vedant-mobile-truck-single-controller">
 (function(){
-  'use strict';
-  var rafId=0, startTime=0, activeRoad=null, lastCheck=0, checkTimer=0;
-  function visible(el){
-    if(!el || el.hidden) return false;
-    var cs=window.getComputedStyle(el);
-    if(cs.display==='none' || cs.visibility==='hidden' || Number(cs.opacity)===0) return false;
-    var r=el.getBoundingClientRect();
-    return r.width>40 && r.height>40 && r.bottom>0 && r.top<window.innerHeight;
-  }
-  function stop(){
-    if(rafId){cancelAnimationFrame(rafId);rafId=0;}
-    if(activeRoad){var t=activeRoad.querySelector('.vedant-truck-real-element');if(t)t.remove();}
-    activeRoad=null;startTime=0;
-  }
-  function frame(now){
-    rafId=0;
-    var road=activeRoad;
-    if(!visible(road)){stop();return;}
-    var truck=road.querySelector('.vedant-truck-real-element');
-    if(!truck){ensure();return;}
-    if(!startTime)startTime=now;
-    var available=Math.max(0,road.clientWidth-truck.offsetWidth-12);
-    var duration=2600;
-    var phase=((now-startTime)%(duration*2))/duration;
-    var progress=phase<=1?phase:2-phase;
-    var x=6+available*progress;
-    truck.style.setProperty('left',x+'px','important');
-    truck.style.setProperty('right','auto','important');
-    truck.style.setProperty('transform',phase<=1?'scaleX(1)':'scaleX(-1)','important');
-    rafId=requestAnimationFrame(frame);
-  }
-  function ensure(){
-    var road=document.getElementById('customer-products-status');
-    var shop=document.getElementById('page-shop');
-    if(!road || !shop || !shop.contains(road) || !visible(road)){
-      if(activeRoad)stop();
-      return;
-    }
-    var truck=road.querySelector('.vedant-truck-real-element');
-    if(!truck){
-      truck=document.createElement('span');
-      truck.className='vedant-truck-real-element';
-      truck.setAttribute('aria-hidden','true');
-      truck.textContent='🚚';
-      road.appendChild(truck);
-    }
-    if(activeRoad!==road){
-      if(rafId)cancelAnimationFrame(rafId);
-      activeRoad=road;startTime=0;rafId=requestAnimationFrame(frame);
-    }else if(!rafId){rafId=requestAnimationFrame(frame);}
-  }
-  function start(){
-    ensure();
-    if(checkTimer)return;
-    checkTimer=window.setInterval(ensure,350);
-    var observer=new MutationObserver(function(){ensure();});
-    observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
-    window.addEventListener('resize',ensure,{passive:true});
-    window.addEventListener('orientationchange',function(){setTimeout(ensure,150);},{passive:true});
-    document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else ensure();});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
+ 'use strict';
+ var raf=0,started=0,road=null,observer=null,timer=0;
+ function findRoad(){
+   var shop=document.getElementById('page-shop');
+   if(!shop||!shop.classList.contains('active')||shop.classList.contains('stvn-shop-is-closed')||shop.classList.contains('stvn-shop-is-maintenance'))return null;
+   return shop.querySelector('.categories.stvn-category-list.stvn-category-loading') || shop.querySelector('#customer-products-status:not([hidden])');
+ }
+ function isVisible(el){
+   if(!el||el.hidden)return false;
+   var cs=getComputedStyle(el),r=el.getBoundingClientRect();
+   return cs.display!=='none'&&cs.visibility!=='hidden'&&r.width>60&&r.height>60&&r.bottom>0&&r.top<innerHeight;
+ }
+ function stop(){
+   if(raf){cancelAnimationFrame(raf);raf=0;}
+   if(road){var old=road.querySelector('.vedant-mobile-moving-truck');if(old)old.remove();}
+   road=null;started=0;
+ }
+ function tick(now){
+   raf=0;
+   if(!isVisible(road)){stop();return;}
+   var truck=road.querySelector('.vedant-mobile-moving-truck');
+   if(!truck){sync();return;}
+   if(!started)started=now;
+   var max=Math.max(0,road.clientWidth-truck.offsetWidth-14);
+   var duration=2200,phase=((now-started)%(duration*2))/duration;
+   var progress=phase<=1?phase:2-phase;
+   truck.style.left=(7+max*progress)+'px';
+   truck.style.transform=phase<=1?'scaleX(1)':'scaleX(-1)';
+   raf=requestAnimationFrame(tick);
+ }
+ function sync(){
+   var next=findRoad();
+   if(!next||!isVisible(next)){stop();return;}
+   if(road!==next){stop();road=next;}
+   var truck=road.querySelector('.vedant-mobile-moving-truck');
+   if(!truck){
+     truck=document.createElement('span');truck.className='vedant-mobile-moving-truck';
+     truck.setAttribute('aria-hidden','true');truck.textContent='🚚';road.appendChild(truck);
+   }
+   if(!raf)raf=requestAnimationFrame(tick);
+ }
+ function init(){
+   sync();
+   if(observer)return;
+   observer=new MutationObserver(sync);
+   observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
+   timer=setInterval(sync,500);
+   addEventListener('resize',sync,{passive:true});
+   addEventListener('orientationchange',()=>setTimeout(sync,180),{passive:true});
+   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else sync();});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 
+<style id="vedant-final-mobile-status-truck-overrides">
+@media(max-width:700px){
+ /* Closed / maintenance: the status panel is the only shop content shown. */
+ #page-shop.stvn-shop-is-closed .section-head,
+ #page-shop.stvn-shop-is-maintenance .section-head,
+ #page-shop.stvn-shop-is-closed #products-heading,
+ #page-shop.stvn-shop-is-maintenance #products-heading,
+ #page-shop.stvn-shop-is-closed #searchBox,
+ #page-shop.stvn-shop-is-maintenance #searchBox,
+ #page-shop.stvn-shop-is-closed .vg-search,
+ #page-shop.stvn-shop-is-maintenance .vg-search,
+ #page-shop.stvn-shop-is-closed .categories,
+ #page-shop.stvn-shop-is-maintenance .categories,
+ #page-shop.stvn-shop-is-closed [class*="category"],
+ #page-shop.stvn-shop-is-maintenance [class*="category"],
+ #page-shop.stvn-shop-is-closed #products,
+ #page-shop.stvn-shop-is-maintenance #products,
+ #page-shop.stvn-shop-is-closed .vg-hero-brand,
+ #page-shop.stvn-shop-is-maintenance .vg-hero-brand{display:none!important;visibility:hidden!important;height:0!important;min-height:0!important}
+ #page-shop.stvn-shop-is-closed #stvnShopClosedDisplay,
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay{
+   display:flex!important;visibility:visible!important;opacity:1!important;
+   width:100%!important;min-height:calc(100svh - 110px)!important;height:auto!important;
+   margin:8px 0 18px!important;padding:28px 18px!important;box-sizing:border-box!important;
+   align-items:center!important;justify-content:center!important;flex-direction:column!important;
+ }
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay{background:linear-gradient(135deg,#ffe8b2 0%,#ffd98c 52%,#fff0cb 100%)!important;border:2px solid #98600b!important;color:#211707!important}
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay h2,
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay p,
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay .stvn-closed-stamp,
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay .stvn-closed-hours,
+ #page-shop.stvn-shop-is-maintenance #stvnShopStatusReasonTitle,
+ #page-shop.stvn-shop-is-maintenance #stvnShopStatusReasonText{color:#211707!important;font-weight:900!important;text-shadow:none!important;line-height:1.6!important}
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay h2{font-size:clamp(23px,6vw,30px)!important}
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay p{font-size:16px!important}
+ #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay .stvn-closed-stamp{border-color:#704500!important;color:#442900!important;background:#ffedc5!important}
+ /* The truck is a real element inside the category loading road; JS moves it. */
+ #page-shop .categories.stvn-category-list.stvn-category-loading{
+   display:block!important;position:relative!important;overflow:hidden!important;
+   width:100%!important;height:150px!important;min-height:150px!important;
+   margin:14px 0 20px!important;padding:0!important;box-sizing:border-box!important;
+   border:1px solid #b9d9c1!important;border-radius:20px!important;
+   background:linear-gradient(115deg,#f1fff4,#e1f3e6 55%,#fff1d5)!important;
+ }
+ #page-shop .categories.stvn-category-list.stvn-category-loading:before{content:none!important;display:none!important;animation:none!important}
+ #page-shop .categories.stvn-category-list.stvn-category-loading:after{
+   content:""!important;display:block!important;position:absolute!important;left:0!important;right:0!important;bottom:20px!important;height:7px!important;
+   background:repeating-linear-gradient(90deg,#397b49 0 34px,transparent 34px 54px)!important;z-index:2!important;animation:none!important
+ }
+ #page-shop .categories.stvn-category-list.stvn-category-loading .vedant-mobile-moving-truck,
+ #page-shop #customer-products-status .vedant-mobile-moving-truck{
+   display:block!important;position:absolute!important;left:7px;top:24px;width:78px;height:76px;
+   font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif!important;font-size:66px!important;line-height:1!important;
+   z-index:5!important;visibility:visible!important;opacity:1!important;pointer-events:none!important;
+   will-change:left,transform!important;transition:none!important
+ }
+ #page-shop #customer-products-status:not([hidden]){position:relative!important;overflow:hidden!important}
+}
+</style>
