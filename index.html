@@ -13086,7 +13086,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function scheduleTranslationBatch(){
   if(translationScheduled)return;
   translationScheduled=true;
-  setTimeout(processTranslationBatch,0);
+  if(typeof window.requestAnimationFrame==="function")window.requestAnimationFrame(processTranslationBatch);
+  else window.setTimeout(processTranslationBatch,16);
  }
  function enqueueTranslation(root,l,run=translationRun){
   if(!root)return;
@@ -13096,7 +13097,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function processTranslationBatch(){
   translationScheduled=false;
   let processed=0;
-  while(translationJobs.length&&processed<80){
+  const deadline=performance.now()+8;
+  while(translationJobs.length&&processed<24&&performance.now()<deadline){
    const job=translationJobs[0];
    if(job.run!==translationRun){translationJobs.shift();continue}
    const node=job.walker.nextNode();
@@ -13109,7 +13111,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   translationAfterQueue=null;
   if(afterQueue)afterQueue();
  }
- function apply(){const l=lang();translationRun++;translationJobs.length=0;translationAfterQueue=null;document.documentElement.lang=l;document.documentElement.dataset.language=l;
+ function apply(){const l=lang();observeLanguage();translationRun++;translationJobs.length=0;translationAfterQueue=null;document.documentElement.lang=l;document.documentElement.dataset.language=l;
   if(!document.documentElement.dataset.vlangOriginalTitle)document.documentElement.dataset.vlangOriginalTitle=document.title;
   document.title=translatedText(document.documentElement.dataset.vlangOriginalTitle,l);
   translationAfterQueue=()=>{
@@ -13124,7 +13126,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
  gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=x.value;updateChoices()}));
  gate?.querySelector('#vLangContinue').addEventListener('click',()=>{try{localStorage.setItem(keyForUser(),chosen);localStorage.setItem('vedantLanguagePreference',chosen)}catch(_){}close();});
- window.vedantChangeLanguage=open;window.vedantApplyLanguage=apply;observeLanguage();
+ window.vedantChangeLanguage=open;window.vedantApplyLanguage=apply;
  // Add a language option when the account menu is created, without replacing existing actions.
  function addLanguageButton(){const menu=document.getElementById('stvnProfileMenu');if(!menu)return false;if(!document.getElementById('vLangMenuButton')){const b=document.createElement('button');b.id='vLangMenuButton';b.type='button';b.textContent='🌐 Change Language';b.onclick=()=>open(true);menu.insertBefore(b,menu.querySelector('.stvn-logout')||null);}return true;}
  if(!addLanguageButton()){const menuObserver=new MutationObserver(()=>{if(addLanguageButton())menuObserver.disconnect()});menuObserver.observe(document.body,{childList:true,subtree:true});}
