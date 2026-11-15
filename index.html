@@ -3760,7 +3760,7 @@ updateOrderSummary();
 
 function continueToDeliveryDetails(){
   if(cartItems.length===0){
-    alert("पहले cart में products जोड़ें.");
+    alert("Please add products to your cart first.");
     return;
   }
   showPage("checkout");
@@ -3768,7 +3768,7 @@ function continueToDeliveryDetails(){
 
 async function continueToOrderReview(){
   if(cartItems.length===0){
-    alert("पहले cart में products जोड़ें.");
+    alert("Please add products to your cart first.");
     showPage("cart");
     return;
   }
@@ -3776,7 +3776,7 @@ async function continueToOrderReview(){
   const phone=document.getElementById("customer-phone").value.trim();
   const address=document.getElementById("customer-address").value.trim();
   if(!name||!phone||!address){
-    alert("कृपया अपना नाम, 10-digit mobile number और पूरा delivery address भरें.");
+    alert("Please enter your name, 10-digit mobile number and full delivery address.");
     return;
   }
   if(!/^[0-9]{10}$/.test(phone)){
@@ -3803,7 +3803,7 @@ async function continueToOrderReview(){
 
 function continueToPayment(){
   if(cartItems.length===0){
-    alert("पहले cart में products जोड़ें.");
+    alert("Please add products to your cart first.");
     showPage("cart");
     return;
   }
@@ -8738,14 +8738,14 @@ function modernUIInit(){
   const checkout=document.createElement("main");
   checkout.id="page-checkout"; checkout.className="page";
   body.appendChild(checkout);
-  checkout.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('cart')">← Cart</button><div><h2 style="margin:0">1. Delivery Details</h2><p style="margin:3px 0;color:var(--muted)">अपना नाम, मोबाइल नंबर और पूरा पता भरें</p></div></div>`;
+  checkout.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('cart')">← Cart</button><div><h2 style="margin:0">1. Delivery Details</h2><p style="margin:3px 0;color:var(--muted)">Enter your name, mobile number and full delivery address</p></div></div>`;
   const deliveryCard=document.createElement("div");
   deliveryCard.className="checkout-card checkout-step-card";
   checkout.appendChild(deliveryCard);
 
   const review=document.createElement("main");
   review.id="page-order-review"; review.className="page";
-  review.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. Review Your Order</h2><p style="margin:3px 0;color:var(--muted)">Items, discount, delivery charge और payable total जाँचें</p></div></div>`;
+  review.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. Review Your Order</h2><p style="margin:3px 0;color:var(--muted)">Review items, discount, delivery charge and payable total</p></div></div>`;
   const reviewCard=document.createElement("div");
   reviewCard.className="checkout-card checkout-step-card";
   review.appendChild(reviewCard);
@@ -8753,7 +8753,7 @@ function modernUIInit(){
 
   const paymentPage=document.createElement("main");
   paymentPage.id="page-payment"; paymentPage.className="page";
-  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('order-review')">← Review Order</button><div><h2 style="margin:0">3. Payment</h2><p style="margin:3px 0;color:var(--muted)">Payment पूरा करें या Cash on Delivery चुनें</p></div></div>`;
+  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('order-review')">← Review Order</button><div><h2 style="margin:0">3. Payment</h2><p style="margin:3px 0;color:var(--muted)">Complete payment or choose Cash on Delivery</p></div></div>`;
   const paymentCard=document.createElement("div");
   paymentCard.className="checkout-card checkout-step-card";
   paymentPage.appendChild(paymentCard);
@@ -8784,7 +8784,7 @@ function modernUIInit(){
     const paymentHeading=paymentBox.querySelector("h3");
     const paymentNote=paymentBox.querySelector(".payment-note");
     if(paymentHeading)paymentHeading.textContent="💳 Payment Method";
-    if(paymentNote)paymentNote.textContent="Payment details आगे वाले पेज पर दिखेंगे।";
+    if(paymentNote)paymentNote.textContent="Payment details will appear on the next page.";
     reviewCard.appendChild(paymentBox);
   }
   if(paymentInfo)paymentCard.appendChild(paymentInfo);
@@ -8845,7 +8845,7 @@ function modernUIInit(){
   body.appendChild(track);
   const trackHead=document.createElement("div");
   trackHead.className="section-head";
-  trackHead.innerHTML=`<div><h2>🚚 Track Your Order</h2><p>Enter your mobile number and choose an order to see its tracking.</p></div>`;
+  trackHead.innerHTML=`<div><h2>🚚 Track Your Order</h2><p>Sign in to view your orders automatically.</p></div>`;
   track.appendChild(trackHead);
   const trackingBox=document.getElementById("customer-tracking-box");
   if(trackingBox) track.appendChild(trackingBox);
@@ -12989,6 +12989,28 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function lang(){try{const saved=localStorage.getItem(keyForUser())||localStorage.getItem('vedantLanguagePreference')||'en';return ['en','hi','bn'].includes(saved)?saved:'en'}catch(_){return 'en'}}
  const originals=new WeakMap(),translatedValues=new WeakMap(),translatedLanguages=new WeakMap();
  const indicText=/[\u0900-\u097F\u0980-\u09FF]/;
+
+ Object.assign(dict,{
+  'Enter your name':'अपना नाम दर्ज करें','Enter mobile number':'मोबाइल नंबर दर्ज करें','Enter delivery address':'डिलीवरी का पता दर्ज करें',
+  'Your Name':'आपका नाम','Mobile Number':'मोबाइल नंबर','Delivery Address':'डिलीवरी का पता','Delivery Location':'डिलीवरी लोकेशन',
+  'Sign in to view your orders automatically.':'ट्रैकिंग देखने के लिए अपना मोबाइल नंबर दर्ज करें और ऑर्डर चुनें।',
+  'Enter your 10-digit mobile number':'अपना 10 अंकों का मोबाइल नंबर दर्ज करें','Find My Orders':'मेरे ऑर्डर खोजें',
+  'No Orders':'कोई ऑर्डर नहीं','Your Orders':'आपके ऑर्डर','Track this order':'इस ऑर्डर को ट्रैक करें',
+  'Proceed to Delivery Details':'डिलीवरी विवरण पर जाएँ','Choose your groceries and add them to your cart.':'अपना किराना चुनें और कार्ट में जोड़ें।'
+ });
+ Object.assign(bnDict,{
+  'Enter your name':'আপনার নাম লিখুন','Enter mobile number':'মোবাইল নম্বর লিখুন','Enter delivery address':'ডেলিভারির ঠিকানা লিখুন',
+  'Your Name':'আপনার নাম','Mobile Number':'মোবাইল নম্বর','Delivery Address':'ডেলিভারির ঠিকানা','Delivery Location':'ডেলিভারির অবস্থান',
+  'Sign in to view your orders automatically.':'ট্র্যাকিং দেখতে আপনার মোবাইল নম্বর লিখুন এবং একটি অর্ডার বেছে নিন।',
+  'Enter your 10-digit mobile number':'আপনার ১০ সংখ্যার মোবাইল নম্বর লিখুন','Find My Orders':'আমার অর্ডার খুঁজুন',
+  'No Orders':'কোনো অর্ডার নেই','Your Orders':'আপনার অর্ডার','Track this order':'এই অর্ডার ট্র্যাক করুন',
+  'Proceed to Delivery Details':'ডেলিভারির বিবরণে যান'
+ });
+ Object.assign(enDict,{
+  'अपना नाम दर्ज करें':'Enter your name','मोबाइल नंबर दर्ज करें':'Enter mobile number','डिलीवरी का पता दर्ज करें':'Enter delivery address',
+  'आपका नाम':'Your Name','मोबाइल नंबर':'Mobile Number','डिलीवरी का पता':'Delivery Address','डिलीवरी लोकेशन':'Delivery Location',
+  'मेरे ऑर्डर खोजें':'Find My Orders','कोई ऑर्डर नहीं':'No Orders','आपके ऑर्डर':'Your Orders','इस ऑर्डर को ट्रैक करें':'Track this order'
+ });
  function textMap(language){return language==='bn'?bnDict:language==='en'?enDict:dict}
  const compiledMaps={};
  function translatedText(source,language){
@@ -14300,3 +14322,156 @@ body > .modern-nav, .modern-nav{display:none!important}
 #stvnCustomerLoginGate .stvn-login-back-action:focus-visible{outline:3px solid #86d59a;outline-offset:3px}
 @media(max-width:480px){#stvnCustomerLoginGate .stvn-login-back-action{top:12px;left:12px;padding:8px 11px;font-size:12px}}
 </style>
+
+<!-- VEDANT CUSTOMER LANGUAGE, CONTRAST AND ACCOUNT ORDER ENHANCEMENTS -->
+<style id="vedant-requested-ux-fixes-v1">
+@media (max-width:700px){
+
+/* Strong, readable delivery form labels and section headings */
+#page-checkout .checkout-title h2,
+#page-checkout .checkout-card h2,
+#page-checkout .checkout-card h3,
+#page-checkout label,
+#page-checkout .stvn-saved-address-title,
+#page-checkout #customer-location-box strong,
+#page-checkout #customer-location-box h3,
+#page-checkout .location-success,
+#page-checkout .checkout-step-card > strong {
+  color:#142b1b!important;font-weight:900!important;text-shadow:0 1px 0 rgba(255,255,255,.45)
+}
+#page-checkout .checkout-title p{color:#35483b!important;font-weight:650!important}
+#page-checkout input,#page-checkout textarea,#page-checkout select{color:#17251b!important;font-weight:600}
+#page-checkout input::placeholder,#page-checkout textarea::placeholder{color:#69776d!important;opacity:1}
+#page-checkout #customer-location-box,
+#page-checkout #customer-location-box *{color:#173522}
+/* Category names: deep forest text, bold and high contrast */
+#page-shop .stvn-category-name,
+#page-shop .stvn-category-card .stvn-category-copy,
+#page-shop .categories button,
+.vg-category-tile,
+.vg-category-tile span{color:#102d1b!important;font-weight:950!important;text-shadow:0 1px 0 #fff}
+#page-shop .stvn-category-hint{color:#405b48!important;font-weight:750!important}
+/* Price labels must remain legible on every product card */
+#products .product .price,
+.vg-home-featured-grid .product .price{color:#07552a!important;background:#e4f6e9!important;border:1px solid #9ed6ad!important;font-weight:950!important;text-shadow:none!important;box-shadow:0 2px 7px rgba(8,72,32,.08)}
+#products .product h3{color:#14291b!important;font-weight:900!important}
+/* Product details becomes a true full-screen product viewer, image fully contained */
+#stvnProductDetailModal.stvn-product-detail-modal{padding:0!important;align-items:stretch!important;justify-content:stretch!important;background:rgba(3,12,7,.92)!important;overflow:hidden!important}
+#stvnProductDetailModal .stvn-product-detail-sheet{width:100vw!important;height:100dvh!important;max-height:100dvh!important;max-width:none!important;overflow-y:auto!important;border-radius:0!important;padding:clamp(14px,3vw,30px)!important;display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr)!important;grid-template-rows:minmax(0,1fr) auto!important;gap:14px!important;align-items:center!important}
+#stvnProductDetailModal .stvn-detail-gallery{grid-column:1;grid-row:1;min-height:0!important;height:min(76dvh,820px)!important;width:100%!important;background:#f5f8f5!important;border-radius:20px!important}
+#stvnProductDetailModal .stvn-detail-main-image{width:100%!important;height:100%!important;max-height:100%!important;object-fit:contain!important;padding:18px!important}
+#stvnProductDetailModal .stvn-detail-thumbnails{grid-column:1;grid-row:2;justify-content:center;max-width:100%;}
+#stvnProductDetailModal .stvn-detail-info{grid-column:2;grid-row:1 / span 2;max-width:620px;width:100%;margin:auto;padding:24px!important}
+#stvnProductDetailModal .stvn-detail-name{font-size:clamp(25px,3vw,38px)!important;color:#14291b!important}
+#stvnProductDetailModal .stvn-detail-price{font-size:clamp(23px,2.5vw,34px)!important;color:#07552a!important;font-weight:950!important}
+#stvnProductDetailModal .stvn-detail-description{font-size:16px!important;color:#394b3e!important}
+#stvnProductDetailModal .stvn-detail-close{position:fixed!important;top:14px!important;right:16px!important;width:46px!important;height:46px!important;font-size:30px!important;box-shadow:0 4px 16px #0003}
+@media(max-width:700px){
+ #stvnProductDetailModal .stvn-product-detail-sheet{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:8px!important;padding:12px!important;padding-top:58px!important}
+ #stvnProductDetailModal .stvn-detail-gallery{flex:0 0 auto!important;height:48dvh!important;min-height:250px!important;width:100%!important}
+ #stvnProductDetailModal .stvn-detail-main-image{padding:8px!important}
+ #stvnProductDetailModal .stvn-detail-thumbnails{flex:0 0 auto!important;justify-content:flex-start!important;padding:7px 2px!important}
+ #stvnProductDetailModal .stvn-detail-info{flex:1 0 auto!important;width:100%!important;padding:8px 4px 18px!important}
+ #stvnProductDetailModal .stvn-detail-actions{position:sticky;bottom:0;background:#fff;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:2}
+}
+/* Hide the old phone lookup controls; account identity is used instead. */
+#page-track #track-phone,#page-track #track-order-id{display:none!important}
+#page-track .stvn-account-orders-note{padding:12px 14px;margin:8px 0 14px;border:1px solid #cfe5d3;border-radius:13px;background:#f1faf3;color:#173d25;font-weight:750;overflow-wrap:anywhere}
+#page-track #customer-tracking-box > div:first-of-type{display:none!important}
+
+}
+</style>
+<script id="vedant-account-orders-auto-v1">
+(function(){
+  if(!window.matchMedia || !window.matchMedia("(max-width:700px)").matches) return;
+  const $=id=>document.getElementById(id);
+  const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let loadToken=0;
+  function ensureAccountNote(){
+    const box=$('customer-tracking-box');if(!box)return null;
+    let note=box.querySelector('.stvn-account-orders-note');
+    if(!note){note=document.createElement('div');note.className='stvn-account-orders-note';box.insertBefore(note,box.querySelector('#customer-tracking-orders'));}
+    return note;
+  }
+  async function loadOrdersForSignedInCustomer(){
+    const token=++loadToken;
+    const list=$('customer-tracking-orders'),status=$('tracking-status'),note=ensureAccountNote();
+    if(!list)return;
+    list.innerHTML='<p class="payment-note">Loading your orders…</p>';
+    if(status)status.textContent='Your order tracking details will appear after you select an order.';
+    let session;
+    try{
+      const result=await window.supabaseClient.auth.getSession();
+      if(result.error)throw result.error;
+      session=result.data?.session;
+    }catch(error){
+      if(token!==loadToken)return;
+      list.innerHTML='<p class="error">Could not verify your sign-in. Please sign in again.</p>';
+      return;
+    }
+    const email=String(session?.user?.email||'').trim().toLowerCase();
+    if(!email){
+      if(note)note.textContent='Please sign in with Google or email to view your orders.';
+      list.innerHTML='<p class="payment-note">Sign in to see your orders here. No mobile number is needed.</p>';
+      return;
+    }
+    if(note)note.textContent='Signed in as '+email+' · Your orders are linked to this account.';
+    try{
+      const {data,error}=await window.supabaseClient.from('orders').select('*').eq('customer_email',email).order('order_date',{ascending:false});
+      if(token!==loadToken)return;
+      if(error)throw error;
+      if(!Array.isArray(data)||data.length===0){
+        list.innerHTML='<div class="history-item"><strong>No Orders</strong><p>You have not placed any orders with this account yet.</p></div>';
+        return;
+      }
+      list.replaceChildren();
+      const heading=document.createElement('h3');heading.textContent='Your Orders';list.appendChild(heading);
+      data.forEach(order=>{
+        const id=String(order.order_id||order.id||'').trim();if(!id)return;
+        const card=document.createElement('article');card.className='history-item stvn-track-order-choice';
+        const title=document.createElement('strong');title.textContent='📦 '+id;
+        const details=document.createElement('p');
+        const date=order.order_date?new Date(order.order_date).toLocaleString():'Date unavailable';
+        details.textContent='Status: '+String(order.order_status||'pending')+' · Payment: '+String(order.payment_method||order.payment||'Not specified')+' · Total: ₹'+String(order.total??'—')+' · '+date;
+        const btn=document.createElement('button');btn.type='button';btn.className='shop-btn';btn.textContent='Track this order →';
+        btn.addEventListener('click',()=>{
+          const phone=String(order.customer_phone||'');
+          if(typeof window.saveTrackedOrder==='function')window.saveTrackedOrder(id,phone);
+          if(typeof window.setTrackingInputs==='function')window.setTrackingInputs(id,phone);
+          if(typeof window.renderCustomerTracking==='function')window.renderCustomerTracking(order);
+          if(typeof window.startCustomerOrderRealtime==='function')window.startCustomerOrderRealtime();
+          if(status)status.scrollIntoView({behavior:'smooth',block:'center'});
+        });
+        card.append(title,details,btn);list.appendChild(card);
+      });
+    }catch(error){
+      console.error('Account order lookup failed:',error);
+      if(token!==loadToken)return;
+      const msg=String(error?.message||'Could not load your orders.');
+      list.innerHTML='<p class="error">Could not load orders: '+safe(msg)+'. Please check that the orders table has a customer_email column and your Supabase customer RLS policy allows users to read only their own orders.</p>';
+    }
+  }
+  // Expose for the account navigation and auth event.
+  window.stvnLoadMyOrdersByAccount=loadOrdersForSignedInCustomer;
+  const originalShowPage=window.showPage;
+  if(typeof originalShowPage==='function'){
+    window.showPage=function(page,options){
+      const result=originalShowPage.apply(this,arguments);
+      if(page==='orders'||page==='track')setTimeout(loadOrdersForSignedInCustomer,180);
+      return result;
+    };
+  }
+  if(window.supabaseClient?.auth){
+    window.supabaseClient.auth.onAuthStateChange((event,session)=>{
+      if(event==='SIGNED_IN'&&session?.user){
+        try{localStorage.setItem('vedantCustomerEmail',String(session.user.email||'').toLowerCase());}catch(_e){}
+        if(document.getElementById('page-orders')?.classList.contains('active')||document.getElementById('page-track')?.classList.contains('active'))loadOrdersForSignedInCustomer();
+      }
+    });
+    window.supabaseClient.auth.getSession().then(({data})=>{
+      if(data?.session?.user && (document.getElementById('page-orders')?.classList.contains('active')||document.getElementById('page-track')?.classList.contains('active')))loadOrdersForSignedInCustomer();
+    }).catch(()=>{});
+  }
+})();
+</script>
+
