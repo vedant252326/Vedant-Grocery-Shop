@@ -2077,6 +2077,97 @@ body.stvn-detail-open{overflow:hidden}
 html{visibility:hidden}
 #vLangGate{visibility:visible;display:flex}
 </style>
+
+<style id="vedant-complete-mobile-layout-polish-20261115">
+/* Mobile-first polish: responsive layout only; existing actions and data logic stay intact. */
+*,*::before,*::after{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+img,video,canvas,svg{max-width:100%}
+button,input,select,textarea{font:inherit}
+@media(max-width:700px){
+  body{font-size:14px;line-height:1.42}
+  main,.main-content,.container,.page-content,#page-home,#page-shop,#page-cart,#page-orders,#page-track,#page-wallet,#page-admin,#page-order-review{max-width:100%!important;min-width:0!important}
+  #page-home,#page-shop,#page-cart,#page-orders,#page-track,#page-wallet,#page-admin,#page-order-review{padding-left:12px!important;padding-right:12px!important}
+  h1{font-size:clamp(21px,6vw,28px)!important;line-height:1.2!important}
+  h2{font-size:clamp(18px,5vw,23px)!important;line-height:1.25!important}
+  h3{font-size:15px!important;line-height:1.3!important}
+  p{overflow-wrap:anywhere}
+  /* Header and search: compact rows with a full-width search field. */
+  .vg-store-header{width:100%!important;max-width:100%!important;min-width:0!important;grid-template-columns:minmax(0,1fr) auto auto!important;gap:7px!important;padding:9px!important;margin:0 0 10px!important;border-radius:0 0 16px 16px!important}
+  .vg-brand{min-width:0!important;grid-column:1!important;grid-row:1!important}
+  .vg-brand-name{font-size:17px!important;line-height:1.1!important}
+  .vg-brand small,.vg-brand-subtitle{font-size:10px!important}
+  .vg-store-header .vg-cart-action{grid-column:2!important;grid-row:1!important;min-width:42px!important;min-height:42px!important;padding:5px!important}
+  #stvnProfileBar{grid-column:3!important;grid-row:1!important;min-width:0!important}
+  #stvnProfileToggle{min-height:40px!important;padding:5px 7px!important;font-size:10px!important;gap:4px!important}
+  .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important;min-width:0!important;min-height:42px!important;padding:6px 8px!important}
+  .vg-store-header .vg-action{grid-column:3!important;grid-row:2!important;min-width:0!important;min-height:42px!important;padding:0 7px!important;font-size:10px!important;white-space:normal!important}
+  .vg-store-header .vg-wallet-action{grid-column:1!important;grid-row:4!important;min-width:0!important;min-height:38px!important;padding:4px 6px!important;font-size:10px!important;white-space:normal!important}
+  .vg-store-header .vg-orders-action{grid-column:2/4!important;grid-row:4!important;min-width:0!important;min-height:38px!important;padding:4px 6px!important;font-size:10px!important;white-space:normal!important}
+  .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:3!important;width:100%!important;min-width:0!important;height:44px!important;min-height:44px!important;margin:0!important;position:relative!important;z-index:300!important}
+  .vg-store-header .vg-search input,.vg-search input,#searchBox{width:100%!important;max-width:100%!important;min-width:0!important;height:44px!important;min-height:44px!important;padding:0 13px!important;font-size:14px!important;line-height:1.2!important;border-radius:13px!important}
+  #searchBox{display:block;margin:10px 0!important}
+  .vg-product-search-host{position:relative!important;min-width:0!important;z-index:99990!important}
+  .vg-product-search-panel{position:absolute!important;left:0!important;right:auto!important;top:calc(100% + 5px)!important;width:min( calc(100vw - 24px), 440px )!important;max-width:calc(100vw - 24px)!important;max-height:min(56vh,390px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:8px!important;border-radius:13px!important;box-shadow:0 12px 28px rgba(20,45,27,.22)!important}
+  .vg-search-preview{grid-template-columns:52px minmax(0,1fr)!important;gap:8px!important;padding:7px!important;margin-bottom:6px!important;border-radius:10px!important}
+  .vg-search-preview img{width:52px!important;height:52px!important}
+  .vg-search-preview strong,.vg-search-row strong{font-size:12px!important;line-height:1.25!important}
+  .vg-search-preview small,.vg-search-row small{font-size:10px!important;margin-top:2px!important}
+  .vg-search-results-title{font-size:9px!important;padding:4px 5px!important}
+  .vg-search-row{grid-template-columns:40px minmax(0,1fr) auto!important;gap:7px!important;padding:6px!important;min-height:52px!important}
+  .vg-search-row img{width:40px!important;height:40px!important}
+  .vg-search-price{font-size:11px!important}
+  .vg-search-empty{padding:12px 8px!important;font-size:12px!important}
+  /* Home/shop hero and category cards. */
+  .vg-hero{min-height:0!important;padding:16px!important;border-radius:16px!important}
+  .vg-hero h1,.vg-hero h2{font-size:22px!important}
+  .vg-home-featured-grid,.feature-grid,.vg-category-panel,.vg-promo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  .vg-category-tile,.vg-promo-card,.feature-card{min-width:0!important;padding:10px!important;border-radius:13px!important}
+  #page-shop .stvn-category-intro{padding:10px 12px!important;margin:9px 0!important;border-radius:13px!important}
+  #page-shop .stvn-category-intro h2{font-size:18px!important}
+  #page-shop .stvn-category-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  #page-shop .stvn-category-card{min-width:0!important;padding:9px!important;font-size:12px!important}
+  #page-shop #products{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;width:100%!important;min-width:0!important}
+  #page-shop #products>.product{min-width:0!important;width:auto!important;margin:0!important;padding:9px!important;border-radius:13px!important}
+  #page-shop #products .product img{max-width:100%!important;height:auto;object-fit:contain}
+  #page-shop #products .product h3{font-size:12px!important;overflow-wrap:anywhere}
+  #page-shop #products .product button{max-width:100%!important;padding:8px 7px!important;font-size:11px!important}
+  /* Cart, orders, tracking and wallet cards. */
+  .cart-item,.order-card,.track-order-card,.wallet-action-card,.wallet-history-row{min-width:0!important;width:100%!important;max-width:100%!important;padding:11px!important;border-radius:13px!important;overflow-wrap:anywhere}
+  #cart-items,.cart-items,.orders-list,.track-orders-list,.wallet-history-list{width:100%!important;min-width:0!important}
+  .cart-item{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important}
+  .cart-item img{max-width:64px!important;height:auto!important}
+  .cart-item button,.order-card button,.track-order-card button{min-height:36px!important;padding:7px 9px!important;font-size:11px!important}
+  .wallet-hero,.wallet-panel{padding:13px!important;border-radius:15px!important}
+  .wallet-actions,.wallet-main-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  /* Checkout forms and payment choices. */
+  .checkout-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+  .checkout-step-card,#checkout-payment-box,.stvn-payment-choice,.stvn-payment-accordion-item{min-width:0!important;width:100%!important;max-width:100%!important;padding:12px!important;border-radius:13px!important}
+  #page-order-review input,#page-order-review select,#page-order-review textarea,#checkout-payment-box input,#checkout-payment-box select,#checkout-payment-box textarea{width:100%!important;max-width:100%!important;min-width:0!important;font-size:14px!important}
+  #page-order-review button,#checkout-payment-box button{max-width:100%;white-space:normal!important}
+  /* Dialogs and detail sheets fit the phone viewport. */
+  .stvn-product-detail-modal,.modal,.popup,.stvn-modal{padding:10px!important}
+  .stvn-product-detail-sheet,.modal-content,.popup-content{width:100%!important;max-width:100%!important;max-height:88dvh!important;overflow-y:auto!important;border-radius:18px!important}
+  .stvn-detail-gallery{max-height:34vh!important}
+  /* Admin tables scroll rather than stretching the whole page. */
+  table{max-width:100%!important}
+  .table-wrap,.admin-table-wrap,.orders-table-wrap{width:100%!important;max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+  th,td{font-size:11px!important;padding:7px!important}
+  input,select,textarea{max-width:100%}
+  /* Keep bottom navigation inside the screen and above device safe area. */
+  .modern-bottom-nav,.modern-nav-bottom,.vg-bottom-nav{max-width:100vw!important;left:0!important;right:0!important;padding-bottom:env(safe-area-inset-bottom)!important}
+}
+@media(max-width:390px){
+  .vg-brand-name{font-size:15px!important}
+  .vg-store-header{gap:5px!important;padding:7px!important}
+  #stvnProfileToggle{font-size:9px!important;padding:4px 5px!important}
+  #page-shop #products{gap:7px!important}
+  #page-shop #products>.product{padding:7px!important}
+  .vg-search-row{grid-template-columns:36px minmax(0,1fr) auto!important}
+  .vg-search-row img{width:36px!important;height:36px!important}
+}
+</style>
+
 </head>
 
 <body>
@@ -4041,92 +4132,30 @@ updateCart();
 /* ================= ORDER SUMMARY ================= */
 
 function updateOrderSummary(){
-
-let box =
-document.getElementById(
-"order-summary"
-);
-
-
-if(cartItems.length===0){
-
-box.innerHTML =
-"Your order summary will appear here.";
-
-return;
-
-}
-
-
-let html="";
-
-
-cartItems.forEach(
-item=>{
-
-html += `
-
-<p>
-
-${escapeHtml(item.name)}
-× ${item.quantity}
-
-=
-
-₹${item.price *
-item.quantity}
-
-</p>
-
-`;
-
-});
-
-
-html += `
-
-<hr>
-
-<p>
-Subtotal:
-₹${getSubtotal()}
-</p>
-
-<p>
-Discount:
-₹${discountAmount}
-</p>
-
-<p>
-Delivery Charge:
-₹${document.getElementById("delivery-charge").textContent}
-</p>
-
-<p>
-Delivery Distance:
-${document.getElementById("delivery-distance")?.textContent||"Not selected"}
-</p>
-
-<p>
-
-<strong>
-
-Grand Total:
-₹${
-document.getElementById(
-"cart-total"
-).textContent
-}
-
-</strong>
-
-</p>
-
-`;
-
-
-box.innerHTML=html;
-
+  const box = document.getElementById("order-summary");
+  if(!box) return;
+  box.hidden = false;
+  box.style.display = "block";
+  box.style.visibility = "visible";
+  if(!Array.isArray(cartItems) || cartItems.length===0){
+    box.innerHTML = '<p class="stvn-order-summary-empty">Your order summary will appear here.</p>';
+    return;
+  }
+  let html = '<div class="stvn-order-summary-lines">';
+  cartItems.forEach(item=>{
+    const quantity = Number(item.quantity)||0;
+    const price = Number(item.price)||0;
+    html += `<div class="stvn-order-summary-row"><span>${escapeHtml(item.name)} × ${quantity}</span><strong>₹${(price*quantity).toFixed(2)}</strong></div>`;
+  });
+  html += '</div>';
+  html += `<div class="stvn-order-summary-totals">
+    <div><span>Subtotal</span><strong>₹${Number(getSubtotal()||0).toFixed(2)}</strong></div>
+    <div><span>Discount</span><strong>− ₹${Number(discountAmount||0).toFixed(2)}</strong></div>
+    <div><span>Delivery Charge</span><strong>₹${(document.getElementById("delivery-charge")?.textContent||"0")}</strong></div>
+    <div><span>Delivery Distance</span><strong>${document.getElementById("delivery-distance")?.textContent||"Not selected"}</strong></div>
+    <div class="stvn-order-summary-grand"><span>Grand Total</span><strong>₹${document.getElementById("cart-total")?.textContent||"0"}</strong></div>
+  </div>`;
+  box.innerHTML = html;
 }
 
 
@@ -12594,6 +12623,170 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 }
 </style>
 
+
+<style id="vedant-truck-real-element-final-20261115">
+/* Reliable truck animation: use a real DOM element inside the visible road panel. */
+@media (min-width: 0px) {
+  /* Keep the single lower road panel; suppress the duplicate category placeholder. */
+  #page-shop .categories.stvn-category-list.stvn-category-loading {
+    display:none !important; visibility:hidden !important; height:0 !important;
+    min-height:0 !important; margin:0 !important; padding:0 !important;
+    border:0 !important; box-shadow:none !important;
+  }
+  #page-shop #customer-products-status:not([hidden]) {
+    display:block !important; visibility:visible !important; opacity:1 !important;
+    position:relative !important; isolation:isolate !important; overflow:hidden !important;
+    width:100% !important; height:154px !important; min-height:154px !important;
+    box-sizing:border-box !important; margin:14px 0 20px !important; padding:0 !important;
+    border:1px solid #c8e4ce !important; border-radius:22px !important;
+    background:linear-gradient(115deg,#effff3 0%,#e2f5e8 52%,#fff4df 100%) !important;
+    font-size:0 !important; line-height:0 !important;
+  }
+  #page-shop #customer-products-status .vedant-truck-real-element {
+    display:block !important; position:absolute !important;
+    left:0 !important; top:24px !important; width:88px !important; height:82px !important;
+    font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif !important;
+    font-size:68px !important; line-height:1 !important;
+    opacity:1 !important; visibility:visible !important; z-index:20 !important;
+    pointer-events:none !important; transform:translateX(0) !important;
+    animation:vedantTruckRealElementMove 3.2s linear infinite alternate !important;
+    will-change:transform !important;
+  }
+  #page-shop #customer-products-status::before { content:none !important; display:none !important; }
+  #page-shop #customer-products-status::after {
+    content:"" !important; display:block !important; position:absolute !important;
+    left:0 !important; right:0 !important; bottom:22px !important; height:7px !important;
+    background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px) !important;
+    z-index:2 !important;
+  }
+}
+@keyframes vedantTruckRealElementMove {
+  0% { transform:translateX(-4px) scaleX(1); }
+  48% { transform:translateX(calc(100vw - 112px)) scaleX(1); }
+  52% { transform:translateX(calc(100vw - 112px)) scaleX(-1); }
+  100% { transform:translateX(-4px) scaleX(-1); }
+}
+</style>
+<script id="vedant-truck-real-element-final-script">
+(function(){
+  function syncTruck(){
+    var shop=document.getElementById('page-shop');
+    var road=document.getElementById('customer-products-status');
+    if(!shop || !road) return;
+    var visible=!!(shop.classList.contains('active') || shop.offsetParent!==null);
+    var isHidden=road.hidden || getComputedStyle(road).display==='none';
+    if(!visible || isHidden){
+      var stale=road.querySelector('.vedant-truck-real-element');
+      if(stale) stale.remove();
+      return;
+    }
+    if(!road.querySelector('.vedant-truck-real-element')){
+      var truck=document.createElement('span');
+      truck.className='vedant-truck-real-element';
+      truck.setAttribute('aria-hidden','true');
+      truck.textContent='🚚';
+      road.appendChild(truck);
+    }
+  }
+  function start(){
+    syncTruck();
+    var road=document.getElementById('customer-products-status');
+    var shop=document.getElementById('page-shop');
+    if(road && !road.__vedantTruckFinalObserver){
+      new MutationObserver(syncTruck).observe(road,{attributes:true,childList:true,subtree:true});
+      road.__vedantTruckFinalObserver=true;
+    }
+    if(shop && !shop.__vedantTruckFinalObserver){
+      new MutationObserver(syncTruck).observe(shop,{attributes:true,childList:true,subtree:true});
+      shop.__vedantTruckFinalObserver=true;
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+  document.addEventListener('visibilitychange',syncTruck);
+  window.addEventListener('resize',syncTruck,{passive:true});
+  setInterval(syncTruck,900);
+})();
+</script>
+
+
+<style id="vedant-truck-position-motion-final">
+/* Final responsive truck motion: position is updated by JS, not CSS transform animation. */
+@media (min-width:0px){
+ #page-shop #customer-products-status .vedant-truck-real-element{
+   left:0!important; right:auto!important; top:24px!important;
+   transform:none!important; animation:none!important;
+   width:88px!important;height:82px!important;
+   font-size:68px!important;line-height:1!important;
+   display:block!important;position:absolute!important;
+   z-index:30!important;visibility:visible!important;opacity:1!important;
+   pointer-events:none!important;
+ }
+ #page-shop #customer-products-status .vedant-real-truck{display:none!important}
+}
+</style>
+<script id="vedant-truck-position-motion-final-script">
+(function(){
+  var raf=0, startAt=0, lastRoad=null;
+  function ensure(){
+    var shop=document.getElementById('page-shop');
+    var road=document.getElementById('customer-products-status');
+    if(!shop||!road) return;
+    var loading=!road.hidden && getComputedStyle(road).display!=='none' &&
+      (road.offsetWidth>0 && road.offsetHeight>0);
+    if(!loading || !(shop.classList.contains('active') || shop.offsetParent!==null)){
+      var old=road.querySelector('.vedant-truck-real-element');
+      if(old) old.remove();
+      if(raf){cancelAnimationFrame(raf);raf=0;}
+      lastRoad=null; startAt=0;
+      return;
+    }
+    var truck=road.querySelector('.vedant-truck-real-element');
+    if(!truck){
+      truck=document.createElement('span');
+      truck.className='vedant-truck-real-element';
+      truck.setAttribute('aria-hidden','true');
+      truck.textContent='🚚';
+      road.appendChild(truck);
+    }
+    if(lastRoad!==road || !raf){lastRoad=road;startAt=0; if(!raf) raf=requestAnimationFrame(tick);}
+  }
+  function tick(now){
+    var road=document.getElementById('customer-products-status');
+    var truck=road&&road.querySelector('.vedant-truck-real-element');
+    if(!road||!truck||road.hidden||getComputedStyle(road).display==='none'){
+      raf=0;lastRoad=null;return;
+    }
+    if(!startAt) startAt=now;
+    var max=Math.max(0,road.clientWidth-truck.offsetWidth-8);
+    var duration=3200, phase=((now-startAt)%(duration*2))/(duration);
+    var progress=phase<=1?phase:2-phase;
+    var x=4+max*progress;
+    truck.style.setProperty('left',x+'px','important');
+    truck.style.setProperty('right','auto','important');
+    truck.style.setProperty('transform',progress<=1?'scaleX(1)':'scaleX(-1)','important');
+    raf=requestAnimationFrame(tick);
+  }
+  function start(){
+    ensure();
+    var road=document.getElementById('customer-products-status');
+    var shop=document.getElementById('page-shop');
+    if(road && !road.__vedantMotionObserver){
+      new MutationObserver(ensure).observe(road,{attributes:true,childList:true,subtree:true});
+      road.__vedantMotionObserver=true;
+    }
+    if(shop && !shop.__vedantMotionObserver){
+      new MutationObserver(ensure).observe(shop,{attributes:true,childList:true,subtree:true});
+      shop.__vedantMotionObserver=true;
+    }
+    window.addEventListener('resize',ensure,{passive:true});
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)ensure();});
+    setInterval(ensure,700);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
+</script>
+
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
@@ -13288,25 +13481,20 @@ Object.assign(enDict,{
   translatedLanguages.set(node,l);
  }
 
- function translateAttributes(root,l){
-  const selector='input[placeholder],textarea[placeholder],[aria-label],[title]';
-  const elements=[];
-  if(root.nodeType===Node.ELEMENT_NODE&&root.matches(selector))elements.push(root);
-  if(root.querySelectorAll)elements.push(...root.querySelectorAll(selector));
-  elements.forEach(el=>{
-   if(el.matches('input[placeholder],textarea[placeholder]')){
-    if(!el.dataset.vlangOriginal)el.dataset.vlangOriginal=el.getAttribute('placeholder')||'';
-    const original=el.dataset.vlangOriginal;
-    const value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
-    if(el.getAttribute('placeholder')!==value)el.setAttribute('placeholder',value);
-   }
-   ['aria-label','title'].forEach(attr=>{
-    if(!el.hasAttribute(attr))return;
-    const key='vlangOriginal'+attr.split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join('');
-    if(!el.dataset[key])el.dataset[key]=el.getAttribute(attr)||'';
-    const original=el.dataset[key],value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
-    if(el.getAttribute(attr)!==value)el.setAttribute(attr,value);
-   });
+ function translateAttributes(el,l){
+  if(!el||el.nodeType!==Node.ELEMENT_NODE)return;
+  if(el.matches('input[placeholder],textarea[placeholder]')){
+   if(!el.dataset.vlangOriginal)el.dataset.vlangOriginal=el.getAttribute('placeholder')||'';
+   const original=el.dataset.vlangOriginal;
+   const value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
+   if(el.getAttribute('placeholder')!==value)el.setAttribute('placeholder',value);
+  }
+  ['aria-label','title'].forEach(attr=>{
+   if(!el.hasAttribute(attr))return;
+   const key='vlangOriginal'+attr.split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join('');
+   if(!el.dataset[key])el.dataset[key]=el.getAttribute(attr)||'';
+   const original=el.dataset[key],value=l==='en'&&!indicText.test(original)?original:translatedText(original,l);
+   if(el.getAttribute(attr)!==value)el.setAttribute(attr,value);
   });
  }
  const translationJobs=[];
@@ -13315,8 +13503,8 @@ Object.assign(enDict,{
  function scheduleTranslationBatch(){
   if(translationScheduled)return;
   translationScheduled=true;
-  if(typeof window.requestAnimationFrame==="function")window.requestAnimationFrame(processTranslationBatch);
-  else window.setTimeout(processTranslationBatch,16);
+  // setTimeout yields to user input more reliably than a continuous RAF chain on mobile.
+  window.setTimeout(processTranslationBatch,24);
  }
  function enqueueTranslation(root,l,run=translationRun){
   if(!root||root.nodeType!==Node.ELEMENT_NODE||root.id==='vLangGate'||root.closest?.('#vLangGate'))return;
@@ -13330,22 +13518,24 @@ Object.assign(enDict,{
    }
   }
   pendingTranslationRoots.add(root);
-  translationJobs.push({root,walker:document.createTreeWalker(root,NodeFilter.SHOW_TEXT),language:l,run,attributesDone:false});
+  translationJobs.push({root,walker:document.createTreeWalker(root,NodeFilter.SHOW_TEXT),elementWalker:document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT),language:l,run,attributesDone:false});
   scheduleTranslationBatch();
  }
  function processTranslationBatch(){
   translationScheduled=false;
   let processed=0;
-  // Keep each frame responsive while doing substantially more work than the old 24-node limit.
-  const deadline=performance.now()+5;
-  while(translationJobs.length&&processed<60&&performance.now()<deadline){
+  // Mobile-safe incremental translation: short slices and incremental attribute walking.
+  // Never run a full-page querySelectorAll/spread in one frame on slower phones.
+  const deadline=performance.now()+2.5;
+  while(translationJobs.length&&processed<18&&performance.now()<deadline){
    const job=translationJobs[0];
    if(job.run!==translationRun){
     translationJobs.shift();pendingTranslationRoots.delete(job.root);continue;
    }
    const node=job.walker.nextNode();
    if(node){translateNode(node,job.language);processed++;continue;}
-   if(!job.attributesDone){translateAttributes(job.root,job.language);job.attributesDone=true;}
+   const element=job.elementWalker.nextNode();
+   if(element){translateAttributes(element,job.language);processed++;continue;}
    translationJobs.shift();pendingTranslationRoots.delete(job.root);
   }
   if(translationJobs.length){scheduleTranslationBatch();return;}
@@ -13357,14 +13547,14 @@ Object.assign(enDict,{
   if(!document.documentElement.dataset.vlangOriginalTitle)document.documentElement.dataset.vlangOriginalTitle=document.title;
   document.title=translatedText(document.documentElement.dataset.vlangOriginalTitle,l);
   translationAfterQueue=()=>{
-   if(l==='hi'&&typeof window.applyHindiProductNames==='function')window.applyHindiProductNames();
+   if(l==='hi'&&typeof window.applyHindiProductNames==='function')window.setTimeout(()=>{try{window.applyHindiProductNames()}catch(error){console.warn('Hindi product-name translation skipped:',error)}},80);
    else document.querySelectorAll('#products .product-hindi-name').forEach(label=>label.remove());
   };
   enqueueTranslation(document.body,l);
  }
  let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE)translateNode(node,l);else if(node.nodeType===Node.ELEMENT_NODE)enqueueTranslation(node,l);}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
  function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
- function close(){if(gate)gate.style.display='none';document.body.style.overflow='';document.documentElement.style.visibility='visible';if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(()=>apply());else window.setTimeout(apply,0);}
+ function close(){if(gate){gate.style.display='none';gate.style.visibility='hidden';gate.style.pointerEvents='none';}document.body.style.overflow='';document.documentElement.style.visibility='visible';window.setTimeout(()=>apply(),0);}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
  gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=x.value;updateChoices()}));
  gate?.querySelector('#vLangContinue')?.addEventListener('click',()=>{const button=gate.querySelector('#vLangContinue');if(button?.disabled)return;if(button)button.disabled=true;try{localStorage.setItem(keyForUser(),chosen);localStorage.setItem('vedantLanguagePreference',chosen)}catch(_){}close();});
@@ -13976,6 +14166,333 @@ body > .modern-nav, .modern-nav{display:none!important}
   }
 }
 </style>
+
+
+<style id="vedant-real-truck-loader-dom-fix">
+@media (max-width:700px){
+  #page-shop #customer-products-status{
+    display:block!important; position:relative!important; overflow:hidden!important;
+    box-sizing:border-box!important; width:100%!important;
+    height:154px!important; min-height:154px!important;
+    margin:14px 0 20px!important; padding:0!important;
+    border:1px solid #c8e4ce!important; border-radius:22px!important;
+    background:linear-gradient(115deg,#effff3 0%,#e2f5e8 52%,#fff4df 100%)!important;
+    box-shadow:0 10px 24px rgba(28,91,48,.10)!important;
+    font-size:0!important; line-height:0!important;
+  }
+  #page-shop #customer-products-status .vedant-real-truck{
+    display:block!important; position:absolute!important;
+    left:0!important; top:28px!important;
+    width:82px!important; height:78px!important;
+    font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif!important;
+    font-size:66px!important; line-height:1!important;
+    z-index:20!important; opacity:1!important; visibility:visible!important;
+    pointer-events:none!important;
+    animation:vedantRealTruckAcross 3.2s ease-in-out infinite alternate!important;
+    will-change:transform!important;
+    filter:drop-shadow(0 6px 4px rgba(20,70,35,.20))!important;
+  }
+  #page-shop #customer-products-status:before{content:none!important;display:none!important}
+  #page-shop #customer-products-status:after{
+    content:""!important;display:block!important;position:absolute!important;
+    left:0!important;right:0!important;bottom:22px!important;height:7px!important;
+    background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px)!important;
+    z-index:2!important;
+  }
+}
+@keyframes vedantRealTruckAcross{
+  0%{transform:translateX(-90px) scaleX(1)}
+  48%{transform:translateX(calc(100vw - 120px)) scaleX(1)}
+  52%{transform:translateX(calc(100vw - 120px)) scaleX(-1)}
+  100%{transform:translateX(-90px) scaleX(-1)}
+}
+</style>
+<script id="vedant-real-truck-loader-dom-script">
+(function(){
+  function installTruck(){
+    var status=document.getElementById('customer-products-status');
+    if(!status)return;
+    var txt=(status.textContent||'').toLowerCase();
+    var loading=/लोड हो रहे|लोड हो रही|update हो रहे|loading|updating|fetching|please wait/.test(txt);
+    if(status.hidden || !loading){
+      var old=status.querySelector('.vedant-real-truck');
+      if(old)old.remove();
+      if(status.dataset.vedantTruckActive==='1')status.hidden=true;
+      return;
+    }
+    status.hidden=false;
+    status.dataset.vedantTruckActive='1';
+    if(!status.querySelector('.vedant-real-truck')){
+      var truck=document.createElement('span');
+      truck.className='vedant-real-truck';
+      truck.setAttribute('aria-hidden','true');
+      truck.textContent='🚚';
+      status.appendChild(truck);
+    }
+  }
+  function start(){
+    installTruck();
+    var status=document.getElementById('customer-products-status');
+    if(status && !status.__vedantTruckObserver){
+      var observer=new MutationObserver(installTruck);
+      observer.observe(status,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+      status.__vedantTruckObserver=observer;
+    }
+    var shop=document.getElementById('page-shop');
+    if(shop && !shop.__vedantTruckFinder){
+      var finder=new MutationObserver(function(){installTruck()});
+      finder.observe(shop,{childList:true,subtree:true});
+      shop.__vedantTruckFinder=finder;
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+  window.addEventListener('load',start,{once:true});
+})();
+</script>
+
+
+<style id="vedant-truck-real-element-final-20261115">
+/* Reliable truck animation: use a real DOM element inside the visible road panel. */
+@media (min-width: 0px) {
+  /* Keep the single lower road panel; suppress the duplicate category placeholder. */
+  #page-shop .categories.stvn-category-list.stvn-category-loading {
+    display:none !important; visibility:hidden !important; height:0 !important;
+    min-height:0 !important; margin:0 !important; padding:0 !important;
+    border:0 !important; box-shadow:none !important;
+  }
+  #page-shop #customer-products-status:not([hidden]) {
+    display:block !important; visibility:visible !important; opacity:1 !important;
+    position:relative !important; isolation:isolate !important; overflow:hidden !important;
+    width:100% !important; height:154px !important; min-height:154px !important;
+    box-sizing:border-box !important; margin:14px 0 20px !important; padding:0 !important;
+    border:1px solid #c8e4ce !important; border-radius:22px !important;
+    background:linear-gradient(115deg,#effff3 0%,#e2f5e8 52%,#fff4df 100%) !important;
+    font-size:0 !important; line-height:0 !important;
+  }
+  #page-shop #customer-products-status .vedant-truck-real-element {
+    display:block !important; position:absolute !important;
+    left:0 !important; top:24px !important; width:88px !important; height:82px !important;
+    font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif !important;
+    font-size:68px !important; line-height:1 !important;
+    opacity:1 !important; visibility:visible !important; z-index:20 !important;
+    pointer-events:none !important; transform:translateX(0) !important;
+    animation:vedantTruckRealElementMove 3.2s linear infinite alternate !important;
+    will-change:transform !important;
+  }
+  #page-shop #customer-products-status::before { content:none !important; display:none !important; }
+  #page-shop #customer-products-status::after {
+    content:"" !important; display:block !important; position:absolute !important;
+    left:0 !important; right:0 !important; bottom:22px !important; height:7px !important;
+    background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px) !important;
+    z-index:2 !important;
+  }
+}
+@keyframes vedantTruckRealElementMove {
+  0% { transform:translateX(-4px) scaleX(1); }
+  48% { transform:translateX(calc(100vw - 112px)) scaleX(1); }
+  52% { transform:translateX(calc(100vw - 112px)) scaleX(-1); }
+  100% { transform:translateX(-4px) scaleX(-1); }
+}
+</style>
+<script id="vedant-truck-real-element-final-script">
+(function(){
+  function syncTruck(){
+    var shop=document.getElementById('page-shop');
+    var road=document.getElementById('customer-products-status');
+    if(!shop || !road) return;
+    var visible=!!(shop.classList.contains('active') || shop.offsetParent!==null);
+    var isHidden=road.hidden || getComputedStyle(road).display==='none';
+    if(!visible || isHidden){
+      var stale=road.querySelector('.vedant-truck-real-element');
+      if(stale) stale.remove();
+      return;
+    }
+    if(!road.querySelector('.vedant-truck-real-element')){
+      var truck=document.createElement('span');
+      truck.className='vedant-truck-real-element';
+      truck.setAttribute('aria-hidden','true');
+      truck.textContent='🚚';
+      road.appendChild(truck);
+    }
+  }
+  function start(){
+    syncTruck();
+    var road=document.getElementById('customer-products-status');
+    var shop=document.getElementById('page-shop');
+    if(road && !road.__vedantTruckFinalObserver){
+      new MutationObserver(syncTruck).observe(road,{attributes:true,childList:true,subtree:true});
+      road.__vedantTruckFinalObserver=true;
+    }
+    if(shop && !shop.__vedantTruckFinalObserver){
+      new MutationObserver(syncTruck).observe(shop,{attributes:true,childList:true,subtree:true});
+      shop.__vedantTruckFinalObserver=true;
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+  document.addEventListener('visibilitychange',syncTruck);
+  window.addEventListener('resize',syncTruck,{passive:true});
+  setInterval(syncTruck,900);
+})();
+</script>
+
+
+<style id="vedant-truck-position-motion-final">
+/* Final responsive truck motion: position is updated by JS, not CSS transform animation. */
+@media (min-width:0px){
+ #page-shop #customer-products-status .vedant-truck-real-element{
+   left:0!important; right:auto!important; top:24px!important;
+   transform:none!important; animation:none!important;
+   width:88px!important;height:82px!important;
+   font-size:68px!important;line-height:1!important;
+   display:block!important;position:absolute!important;
+   z-index:30!important;visibility:visible!important;opacity:1!important;
+   pointer-events:none!important;
+ }
+ #page-shop #customer-products-status .vedant-real-truck{display:none!important}
+}
+</style>
+<script id="vedant-truck-position-motion-final-script">
+(function(){
+  var raf=0, startAt=0, lastRoad=null;
+  function ensure(){
+    var shop=document.getElementById('page-shop');
+    var road=document.getElementById('customer-products-status');
+    if(!shop||!road) return;
+    var loading=!road.hidden && getComputedStyle(road).display!=='none' &&
+      (road.offsetWidth>0 && road.offsetHeight>0);
+    if(!loading || !(shop.classList.contains('active') || shop.offsetParent!==null)){
+      var old=road.querySelector('.vedant-truck-real-element');
+      if(old) old.remove();
+      if(raf){cancelAnimationFrame(raf);raf=0;}
+      lastRoad=null; startAt=0;
+      return;
+    }
+    var truck=road.querySelector('.vedant-truck-real-element');
+    if(!truck){
+      truck=document.createElement('span');
+      truck.className='vedant-truck-real-element';
+      truck.setAttribute('aria-hidden','true');
+      truck.textContent='🚚';
+      road.appendChild(truck);
+    }
+    if(lastRoad!==road || !raf){lastRoad=road;startAt=0; if(!raf) raf=requestAnimationFrame(tick);}
+  }
+  function tick(now){
+    var road=document.getElementById('customer-products-status');
+    var truck=road&&road.querySelector('.vedant-truck-real-element');
+    if(!road||!truck||road.hidden||getComputedStyle(road).display==='none'){
+      raf=0;lastRoad=null;return;
+    }
+    if(!startAt) startAt=now;
+    var max=Math.max(0,road.clientWidth-truck.offsetWidth-8);
+    var duration=3200, phase=((now-startAt)%(duration*2))/(duration);
+    var progress=phase<=1?phase:2-phase;
+    var x=4+max*progress;
+    truck.style.setProperty('left',x+'px','important');
+    truck.style.setProperty('right','auto','important');
+    truck.style.setProperty('transform',progress<=1?'scaleX(1)':'scaleX(-1)','important');
+    raf=requestAnimationFrame(tick);
+  }
+  function start(){
+    ensure();
+    var road=document.getElementById('customer-products-status');
+    var shop=document.getElementById('page-shop');
+    if(road && !road.__vedantMotionObserver){
+      new MutationObserver(ensure).observe(road,{attributes:true,childList:true,subtree:true});
+      road.__vedantMotionObserver=true;
+    }
+    if(shop && !shop.__vedantMotionObserver){
+      new MutationObserver(ensure).observe(shop,{attributes:true,childList:true,subtree:true});
+      shop.__vedantMotionObserver=true;
+    }
+    window.addEventListener('resize',ensure,{passive:true});
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)ensure();});
+    setInterval(ensure,700);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
+</script>
+
+
+<style id="vedant-live-product-search-premium-20261115">
+.vg-product-search-host{position:relative!important;z-index:120!important}
+.vg-product-search-panel{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 8px)!important;max-height:min(68vh,520px)!important;overflow:auto!important;display:none;background:#fff!important;color:#183b2a!important;border:1px solid #d7e7da!important;border-radius:16px!important;box-shadow:0 16px 38px rgba(18,48,29,.2)!important;padding:10px!important;z-index:99999!important;box-sizing:border-box!important}
+.vg-product-search-panel.is-open{display:block!important}
+.vg-search-preview{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:center;padding:10px;border-radius:12px;background:linear-gradient(110deg,#f0fff3,#fff8e8);border:1px solid #dceee0;margin-bottom:9px}
+.vg-search-preview img,.vg-search-row img{width:100%;height:68px;object-fit:contain;border-radius:9px;background:#fff}
+.vg-search-preview strong,.vg-search-row strong{display:block;font-size:14px;color:#164b30;line-height:1.3}
+.vg-search-preview small,.vg-search-row small{display:block;color:#63766a;font-size:12px;margin-top:4px}
+.vg-search-results-title{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#718176;padding:5px 7px}
+.vg-search-row{width:100%;display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:8px;border:0;border-bottom:1px solid #edf1ed;background:#fff;color:#183b2a;cursor:pointer;border-radius:9px}
+.vg-search-row:last-child{border-bottom:0}.vg-search-row img{height:48px}.vg-search-row:active{background:#eff8f0}.vg-search-price{font-size:13px;font-weight:800;color:#167044;white-space:nowrap}
+.vg-search-empty{padding:18px 10px;text-align:center;color:#7b4b36;font-weight:700;background:#fff8f3;border-radius:10px}
+@media(max-width:700px){.vg-product-search-panel{max-height:62vh!important}.vg-search-preview{grid-template-columns:62px minmax(0,1fr)}.vg-search-preview img{height:60px}}
+</style>
+
+
+<script id="vedant-live-product-search-script-20261115">
+(function(){
+  const norm=s=>String(s||'').trim().toLocaleLowerCase().replace(/\s+/g,' ');
+  const getCards=()=>Array.from(document.querySelectorAll('#products .product'));
+  const getInfo=card=>{
+    const d=card._stvnProductData||{};
+    const name=String(d.name||card.querySelector('h3')?.textContent||card.dataset.name||'').trim();
+    const unit=String(d.unit||card.dataset.unit||'piece').trim();
+    const price=Number(d.price||card.querySelector('.cart-btn')?.dataset.price||0);
+    const img=d.image_url||card.querySelector('.product-icon img')?.currentSrc||card.querySelector('.product-icon img')?.src||'';
+    const stock=d.stock!=null?Number(d.stock):null;
+    const available=d.available!==false && stock!==0 && !card.dataset.outOfStock?.includes('true');
+    return {card,name,unit,price,img,available};
+  };
+  function openProduct(info){
+    try{
+      if(typeof window.openStvnProductDetails==='function' && info.card._stvnProductData){window.openStvnProductDetails(info.card._stvnProductData);return;}
+      info.card.click();
+    }catch(e){console.warn('Could not open searched product:',e);}
+  }
+  function bind(input){
+    if(!input||input.dataset.vgLiveSearchBound)return;
+    input.dataset.vgLiveSearchBound='1';
+    const host=input.parentElement;
+    if(!host)return;
+    host.classList.add('vg-product-search-host');
+    const panel=document.createElement('div');panel.className='vg-product-search-panel';panel.setAttribute('role','listbox');panel.setAttribute('aria-label','Product search results');
+    host.appendChild(panel);
+    const close=()=>panel.classList.remove('is-open');
+    function render(){
+      const q=norm(input.value);
+      if(!q){panel.innerHTML='';close();return;}
+      const all=getCards().map(getInfo).filter(x=>x.name);
+      const starts=all.filter(x=>norm(x.name).startsWith(q));
+      const contains=all.filter(x=>!norm(x.name).startsWith(q)&&norm(x.name).includes(q));
+      const matches=[...starts,...contains];
+      if(!matches.length){panel.innerHTML='<div class="vg-search-empty">Not Available — “'+escapeText(input.value.trim())+'” नहीं मिला</div>';panel.classList.add('is-open');return;}
+      const first=matches[0];
+      const image=(x,cls)=>x.img?'<img class="'+cls+'" src="'+escapeAttr(x.img)+'" alt="'+escapeAttr(x.name)+'">':'<div class="'+cls+'" aria-hidden="true">🛒</div>';
+      panel.innerHTML='<div class="vg-search-preview">'+image(first,'')+'<div><strong>'+escapeText(first.name)+'</strong><small>'+escapeText(first.unit)+' · '+(first.available?'Available':'Out of Stock')+'</small><strong>₹'+(Number.isFinite(first.price)?first.price.toFixed(2):'0.00')+'</strong></div></div><div class="vg-search-results-title">'+matches.length+' matching product'+(matches.length===1?'':'s')+'</div><div class="vg-search-results"></div>';
+      const list=panel.querySelector('.vg-search-results');
+      matches.forEach(info=>{
+        const row=document.createElement('button');row.type='button';row.className='vg-search-row';row.setAttribute('role','option');
+        row.innerHTML=(info.img?'<img src="'+escapeAttr(info.img)+'" alt="">':'<span>🛒</span>')+'<span><strong>'+escapeText(info.name)+'</strong><small>'+escapeText(info.unit)+' · '+(info.available?'In Stock':'Out of Stock')+'</small></span><span class="vg-search-price">₹'+(Number.isFinite(info.price)?info.price.toFixed(2):'—')+'</span>';
+        row.addEventListener('click',()=>{input.value=info.name;const main=document.getElementById('searchBox');if(main)main.value=info.name;document.querySelectorAll('.vg-live-search').forEach(el=>{if(el!==input)el.value=info.name;});close();if(typeof window.showPage==='function')window.showPage('shop');openProduct(info);});
+        list.appendChild(row);
+      });
+      panel.classList.add('is-open');
+    }
+    input.addEventListener('input',render);
+    input.addEventListener('focus',()=>{if(input.value.trim())render();});
+    input.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Enter'&&panel.classList.contains('is-open')){const first=panel.querySelector('.vg-search-row');if(first){e.preventDefault();first.click();}}});
+    document.addEventListener('click',e=>{if(!host.contains(e.target))close();});
+  }
+  function escapeText(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function escapeAttr(s){return escapeText(s);}
+  function scan(){bind(document.getElementById('searchBox'));document.querySelectorAll('.vg-live-search').forEach(bind);}
+  scan();
+  new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
 
 </body>
 </html>
@@ -15014,3 +15531,145 @@ body > .modern-nav, .modern-nav{display:none!important}
   #page-shop #customer-products-status:not([hidden])::before{animation-duration:6s!important}
 }
 </style>
+
+
+<style id="vedant-final-real-category-truck-runway">
+/* FINAL: the category list (the lower/road box) is the ONLY loading runway. */
+@media (max-width: 900px) {
+  /* Remove the separate upper status panel completely while categories load. */
+  #page-shop #customer-products-status:not([hidden]) {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  /* Keep only the lower category box as the animated truck runway. */
+  #page-shop .categories.stvn-category-list.stvn-category-loading {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 154px !important;
+    min-height: 154px !important;
+    margin: 12px 0 18px !important;
+    padding: 0 !important;
+    border: 1px solid #c8e4ce !important;
+    border-radius: 22px !important;
+    background: linear-gradient(115deg,#effff3 0%,#e2f5e8 52%,#fff4df 100%) !important;
+    box-shadow: 0 10px 24px rgba(28,91,48,.10) !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+  }
+  #page-shop .categories.stvn-category-list.stvn-category-loading .stvn-category-empty {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  #page-shop .categories.stvn-category-list.stvn-category-loading::before {
+    content: '🚚' !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    left: -88px !important;
+    right: auto !important;
+    top: 30px !important;
+    bottom: auto !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif !important;
+    font-size: 76px !important;
+    line-height: 1 !important;
+    z-index: 5 !important;
+    filter: drop-shadow(0 7px 5px rgba(20,70,35,.22)) !important;
+    animation: vedantPinkRunwayTruck 2.8s linear infinite !important;
+    will-change: left, transform !important;
+  }
+  #page-shop .categories.stvn-category-list.stvn-category-loading::after {
+    content: '' !important;
+    display: block !important;
+    visibility: visible !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 22px !important;
+    width: auto !important;
+    height: 7px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px) !important;
+    opacity: .82 !important;
+    z-index: 2 !important;
+    animation: none !important;
+  }
+}
+@keyframes vedantPinkRunwayTruck {
+  0% { left: -88px; transform: scaleX(1); }
+  48% { left: calc(100% - 78px); transform: scaleX(1); }
+  52% { left: calc(100% - 78px); transform: scaleX(-1); }
+  98% { left: -88px; transform: scaleX(-1); }
+  100% { left: -88px; transform: scaleX(1); }
+}
+</style>
+
+
+<style id="vedant-order-summary-visible-neutral-fix">
+/* Order Summary: visible, readable, and neutral (no green background). */
+#page-order-review #order-summary,
+#order-summary.summary,
+.checkout-step-card #order-summary{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  width:100%!important;min-height:54px!important;height:auto!important;
+  box-sizing:border-box!important;padding:16px!important;margin:12px 0 18px!important;
+  color:#252a27!important;background:#fff!important;
+  border:1px solid #deded9!important;border-radius:16px!important;
+  box-shadow:0 5px 16px rgba(20,25,22,.06)!important;
+}
+#page-order-review #order-summary p,
+#order-summary .stvn-order-summary-row,
+#order-summary .stvn-order-summary-totals>div{
+  display:flex!important;justify-content:space-between!important;align-items:flex-start!important;
+  gap:12px!important;padding:10px 0!important;margin:0!important;
+  color:#252a27!important;background:transparent!important;
+  border-bottom:1px solid #ecece8!important;line-height:1.45!important;
+}
+#order-summary .stvn-order-summary-totals{margin-top:8px!important}
+#order-summary .stvn-order-summary-grand{
+  margin-top:8px!important;padding-top:14px!important;
+  border-top:2px solid #d9d9d3!important;border-bottom:0!important;
+  color:#171b19!important;font-size:17px!important;font-weight:850!important;
+}
+#order-summary .stvn-order-summary-grand strong{color:#171b19!important;font-size:19px!important}
+#order-summary .stvn-order-summary-empty{display:block!important;color:#555!important;margin:0!important;padding:8px 0!important}
+#page-order-review .checkout-step-card{background:#fff!important}
+@media(max-width:700px){
+  #page-order-review #order-summary,#order-summary.summary,.checkout-step-card #order-summary{padding:13px!important;border-radius:14px!important}
+}
+</style>
+<script id="vedant-order-summary-refresh-fix">
+(function(){
+  function refresh(){try{if(typeof window.updateOrderSummary==='function')window.updateOrderSummary();}catch(e){console.warn('Order summary refresh:',e);}}
+  const originalShowPage=window.showPage;
+  if(typeof originalShowPage==='function'&&!originalShowPage.__orderSummaryRefreshWrapped){
+    const wrapped=function(page){const result=originalShowPage.apply(this,arguments);if(page==='order-review'){refresh();requestAnimationFrame(refresh);}return result;};
+    wrapped.__orderSummaryRefreshWrapped=true;window.showPage=wrapped;
+  }
+  document.addEventListener('DOMContentLoaded',refresh,{once:true});
+  refresh();
+})();
+</script>
