@@ -36,6 +36,10 @@
 <!-- Browser tab, supported search previews, and Apple touch icon -->
 <link rel="icon" type="image/png" sizes="32x32" href="/Vedant-Grocery-Shop/logo.png">
 <link rel="apple-touch-icon" href="/Vedant-Grocery-Shop/logo.png">
+<link rel="manifest" href="/Vedant-Grocery-Shop/manifest.webmanifest">
+<meta name="theme-color" content="#145c31">
+<meta name="application-name" content="Vedant Grocery Shop">
+<meta name="apple-mobile-web-app-capable" content="yes">
 
 <!-- Schema.org (Google Logo Info) -->
 <script type="application/ld+json">
@@ -12422,6 +12426,21 @@ body > .modern-nav, .modern-nav{display:none!important}
 @media(max-width:600px){#admin-view-withdrawal-status,#admin-sound-email-toggle,#admin-shop-status-toolbar-toggle{font-size:10px!important;padding:7px 8px!important}.stvn-wallet-request-row{font-size:12px}}
 </style>
 
+<script id="stvn-pwa-service-worker">
+if("serviceWorker" in navigator&&location.protocol==="https:"){
+  const manifestLink=document.querySelector('link[rel="manifest"]');
+  const appPath=manifestLink
+    ?new URL(manifestLink.href,location.href).pathname.replace(/manifest\.webmanifest$/,"")
+    :"";
+  if(appPath&&location.pathname.startsWith(appPath)){
+    window.addEventListener("load",()=>{
+      navigator.serviceWorker.register(appPath+"sw.js",{scope:appPath}).catch(error=>{
+        console.error("PWA service worker registration failed:",error);
+      });
+    },{once:true});
+  }
+}
+</script>
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
