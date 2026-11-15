@@ -12540,6 +12540,60 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 }
 </style>
 
+
+<style id="vedant-category-loading-truck-corrected">
+/* While categories are loading, hide their separate text/card completely.
+   Use the existing full-width products status panel as the single truck runway. */
+#page-shop .categories.stvn-category-list.stvn-category-loading{
+  display:none!important; visibility:hidden!important; height:0!important;
+  min-height:0!important; margin:0!important; padding:0!important;
+  border:0!important; background:transparent!important; box-shadow:none!important;
+}
+#page-shop .categories.stvn-category-list.stvn-category-loading .stvn-category-empty{
+  display:none!important;
+}
+#page-shop #customer-products-status:not([hidden]){
+  display:block!important; visibility:visible!important; opacity:1!important;
+  position:relative!important; isolation:isolate!important; overflow:hidden!important;
+  width:100%!important; max-width:none!important; height:154px!important;
+  min-height:154px!important; box-sizing:border-box!important;
+  margin:14px 0 20px!important; padding:0!important;
+  border:1px solid #c8e4ce!important; border-radius:22px!important;
+  background:linear-gradient(115deg,#f2fff5 0%,#e3f5e8 48%,#fff5df 100%)!important;
+  box-shadow:0 10px 24px rgba(28,91,48,.10)!important;
+  font-size:0!important; line-height:0!important;
+}
+#page-shop #customer-products-status:not([hidden])::before{
+  content:'🚚'!important; display:block!important; visibility:visible!important;
+  position:absolute!important; left:-92px!important; right:auto!important;
+  top:34px!important; bottom:auto!important; width:auto!important; height:auto!important;
+  margin:0!important; padding:0!important; border:0!important; background:none!important;
+  font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif!important;
+  font-size:76px!important; line-height:1!important; opacity:1!important;
+  z-index:5!important; filter:drop-shadow(0 7px 5px rgba(20,70,35,.20))!important;
+  animation:vedantTruckDriveV7 3.2s linear infinite!important;
+  will-change:left,transform!important;
+}
+#page-shop #customer-products-status:not([hidden])::after{
+  content:''!important; display:block!important; visibility:visible!important;
+  position:absolute!important; left:0!important; right:0!important;
+  top:auto!important; bottom:22px!important; width:auto!important; height:7px!important;
+  margin:0!important; padding:0!important; border:0!important; border-radius:10px!important;
+  background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px)!important;
+  opacity:.78!important; z-index:2!important; animation:none!important;
+}
+@media(max-width:700px){
+  #page-shop #customer-products-status:not([hidden]){
+    height:154px!important; min-height:154px!important; margin:14px 0 20px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-shop #customer-products-status:not([hidden])::before{
+    animation-duration:6s!important;
+  }
+}
+</style>
+
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
