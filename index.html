@@ -2073,6 +2073,10 @@ body.stvn-detail-open{overflow:hidden}
 @media(max-width:520px){.stvn-product-detail-modal{padding:0;align-items:flex-end}.stvn-product-detail-sheet{width:100%;max-height:94vh;border-radius:20px 20px 0 0;padding:14px}.stvn-detail-gallery{height:36vh;min-height:210px}.stvn-detail-name{font-size:20px}.stvn-detail-price{font-size:19px}}
 </style>
 
+<style id="vedant-first-paint-language-guard">
+html{visibility:hidden}
+#vLangGate{visibility:visible;display:flex}
+</style>
 </head>
 
 <body>
@@ -2234,18 +2238,18 @@ Grand Total: ₹<span id="cart-total">0</span>
 
   <div class="payment-box stvn-saved-address-card" id="stvnSavedAddressBox" style="margin-top:10px">
     <div id="stvnSavedAddressCompact" hidden>
-      <div class="stvn-saved-address-summary"><div><strong>📍 आपका सेव्ड डिलीवरी पता</strong><div id="stvnSavedAddressSummaryText" class="payment-note">Address Line 1</div></div><button type="button" class="dark-btn" id="stvnSavedAddressToggle" onclick="stvnToggleAddressEditor()">＋ Add New Address</button></div>
+      <div class="stvn-saved-address-summary"><div><strong>📍 Your Saved Delivery Address</strong><div id="stvnSavedAddressSummaryText" class="payment-note">Address Line 1</div></div><button type="button" class="dark-btn" id="stvnSavedAddressToggle" onclick="stvnToggleAddressEditor()">＋ Add New Address</button></div>
     </div>
     <div id="stvnSavedAddressEditor">
-      <strong>📍 सेव्ड एड्रेस चुनें या नया पता जोड़ें</strong>
-      <p class="payment-note">एक बार सेव करने के बाद अगली बार पता अपने-आप भर जाएगा।</p>
+      <strong>📍 Choose a Saved Address or Add a New One</strong>
+      <p class="payment-note">Once saved, your address will be filled in automatically next time.</p>
       <select id="stvnSavedAddressSelect" aria-label="Choose saved delivery address" onchange="stvnChooseSavedAddress(this.value)" style="width:100%;margin:8px 0;padding:12px;border-radius:10px">
-        <option value="">＋ नया पता जोड़ें</option>
+        <option value="">＋ Add a New Address</option>
       </select>
-      <input id="stvnSavedAddressLabel" type="text" placeholder="पते का नाम (घर / काम)" style="width:100%;margin:6px 0;padding:12px;border-radius:10px">
-      <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input id="stvnSaveAddressOnOrder" type="checkbox" checked> इस पते को मेरे अकाउंट में सेव करें</label>
-      <button type="button" class="shop-btn" onclick="stvnSaveCheckoutAddress()">💾 पता सेव करें</button>
-      <button type="button" class="dark-btn" onclick="stvnToggleAddressEditor(false)">बंद करें</button>
+      <input id="stvnSavedAddressLabel" type="text" placeholder="Address Label (Home / Work)" style="width:100%;margin:6px 0;padding:12px;border-radius:10px">
+      <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input id="stvnSaveAddressOnOrder" type="checkbox" checked> Save this address to my account</label>
+      <button type="button" class="shop-btn" onclick="stvnSaveCheckoutAddress()">💾 Save Address</button>
+      <button type="button" class="dark-btn" onclick="stvnToggleAddressEditor(false)">Close</button>
       <p id="stvnSavedAddressMessage" class="payment-note" role="status"></p>
     </div>
   </div>
@@ -2254,7 +2258,7 @@ Grand Total: ₹<span id="cart-total">0</span>
     <strong>📍 Delivery Location</strong>
 
     <p id="location-status" class="payment-note">
-      Order Review और delivery charge दिखाने के लिए current location ज़रूरी है।
+      Your current location is required to review your order and calculate the delivery charge.
     </p>
 
     <button
@@ -2288,7 +2292,7 @@ Grand Total: ₹<span id="cart-total">0</span>
           <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
         </button>
         <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-cod">
-          <p>Cash payment करें जब आपका grocery order deliver हो जाए।</p>
+          <p>Pay in cash when your grocery order is delivered.</p>
           <span class="stvn-payment-selected-label">✓ Selected payment method</span>
         </div>
       </div>
@@ -2296,12 +2300,12 @@ Grand Total: ₹<span id="cart-total">0</span>
       <div class="stvn-payment-accordion-item stvn-vedant-wallet-choice" data-payment-card="VEDANT_WALLET">
         <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-vedant-wallet" onclick="toggleVedantPayment('VEDANT_WALLET')">
           <span class="stvn-payment-icon stvn-vedant-wallet-logo"><img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo"></span>
-          <span class="stvn-payment-card-copy"><strong>Vedant Wallet</strong><small>अपने wallet balance से तुरंत payment करें</small></span>
+          <span class="stvn-payment-card-copy"><strong>Vedant Wallet</strong><small>Pay instantly using your wallet balance</small></span>
           <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
         </button>
         <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-vedant-wallet">
-          <p>आपका Vedant Wallet balance नीचे दिखेगा। Wallet चुनने पर payment server से verify होकर balance से कटेगा और order उसी transaction में place होगा।</p>
-          <div class="stvn-checkout-wallet-balance" aria-live="polite">Wallet balance: लोड हो रहा है…</div>
+          <p>Your Vedant Wallet balance will appear below. When you select Wallet, payment is verified by the server and deducted from your balance as the order is placed.</p>
+          <div class="stvn-checkout-wallet-balance" aria-live="polite">Wallet balance: Loading…</div>
           <span class="stvn-payment-selected-label">✓ Selected payment method</span>
         </div>
       </div>
@@ -2313,13 +2317,13 @@ Grand Total: ₹<span id="cart-total">0</span>
           <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
         </button>
         <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-upi">
-          <p>Place Order दबाने पर Razorpay का dynamic UPI QR खुलेगा। भुगतान होते ही server verification के बाद order अपने-आप Paid और Confirm होगा।</p>
+          <p>When you select Place Order, a dynamic Razorpay UPI QR will open. After payment, server verification will automatically mark the order as Paid and Confirmed.</p>
           <span class="stvn-payment-selected-label">✓ Selected payment method</span>
         </div>
       </div>
 
       <div class="stvn-online-method-group" aria-label="Choose an online payment method">
-        <div class="stvn-online-method-heading">Online Payment Methods <small>एक विकल्प चुनें</small></div>
+        <div class="stvn-online-method-heading">Online Payment Methods <small>Choose an option</small></div>
         <button type="button" class="stvn-online-method" data-online-method="card" onclick="selectVedantOnlineMethod('card',this)" aria-pressed="false">
           <span class="stvn-online-method-logo stvn-card-brand-logo" aria-hidden="true"><b>VISA</b><i>●●</i></span>
           <span class="stvn-online-method-copy"><strong>Cards</strong><small>Credit Card / Debit Card</small></span>
@@ -2340,7 +2344,7 @@ Grand Total: ₹<span id="cart-total">0</span>
           <span class="stvn-online-method-copy"><strong>Wallets</strong><small>Choose an available digital wallet</small></span>
           <span class="stvn-online-method-radio" aria-hidden="true"></span>
         </button>
-        <p class="stvn-online-method-footnote">विकल्प चुनकर Continue to Payment दबाएँ। आगे सुरक्षित पेमेंट स्क्रीन पर जरूरी details भरें। उपलब्धता आपके payment account पर निर्भर करेगी।</p>
+        <p class="stvn-online-method-footnote">Choose an option and select Continue to Payment. Enter the required details on the secure payment screen. Availability depends on your payment account.</p>
       </div>
     </div>
 
@@ -3809,7 +3813,7 @@ function continueToPayment(){
   }
   const selectedPayment=document.getElementById("payment-method")?.value;
   if(selectedPayment==="RAZORPAY" && !window.vedantSelectedRazorpayMethod){
-    alert("कृपया Cards, Net Banking, EMI या Wallets में से एक विकल्प चुनें.");
+    alert("कृपया Cards, Net Banking, EMI या Wallets में से Choose an option.");
     return;
   }
   updateCart();
@@ -4148,7 +4152,7 @@ if(method==="VEDANT_WALLET"){
   const total = Number((document.getElementById("cart-total")?.textContent || "0").replace(/[^0-9.]/g,"")) || 0;
   info.innerHTML = `<div class="stvn-payment-choice stvn-wallet-payment-summary"><strong>
     <img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo"> Vedant Wallet Payment</strong>
-    <div class="stvn-checkout-wallet-balance" id="stvnWalletCheckoutBalance">Wallet balance लोड हो रहा है…</div>
+    <div class="stvn-checkout-wallet-balance" id="stvnWalletCheckoutBalance">Wallet balance Loading…</div>
     <div class="payment-note">इस order के लिए ₹${total.toFixed(2)} कटेंगे। Balance पर्याप्त होने पर payment और order एक साथ confirm होंगे।</div>
     <div class="stvn-wallet-payment-after" id="stvnWalletCheckoutAfter">Payment के बाद बचा balance calculate हो रहा है…</div>
   </div>`;
@@ -11937,7 +11941,7 @@ function isOwner(){try{const e=String(localStorage.getItem('vedantCustomerEmail'
 function addCustomerBox(pageId){const page=$(pageId);if(!page||page.querySelector('.stvn-customer-offers'))return;const box=document.createElement('section');box.className='stvn-customer-offers';box.setAttribute('aria-label','Latest offers');box.innerHTML='<div class="stvn-customer-offers-head"><div class="stvn-customer-offers-icon">🎁</div><div><h3>आज के खास Offers</h3><p>Vedant Grocery Shop की ताज़ा बचत आपके लिए</p></div></div><div class="stvn-customer-offers-list"><div class="stvn-customer-offer"><p>ऑफर लोड हो रहे हैं…</p></div></div>';const location=page.querySelector('.stvn-delivery-location-card');if(location)location.insertAdjacentElement('afterend',box);else{const anchor=pageId==='page-home'?(page.querySelector('.top.hero')||page.querySelector('.hero')):page.querySelector('.section-head');if(anchor)anchor.insertAdjacentElement('afterend',box);else page.prepend(box)}}
 function renderOffers(offers){document.querySelectorAll('.stvn-customer-offers').forEach(box=>{const list=box.querySelector('.stvn-customer-offers-list');if(!list)return;if(!offers.length){box.style.display='none';return}box.style.display='';list.innerHTML=offers.map(o=>'<article class="stvn-customer-offer"><span class="stvn-customer-offer-badge">'+esc(o.badge||'Special Offer')+'</span><h4>'+esc(o.title)+'</h4><p>'+esc(o.description||'')+'</p>'+(o.code?'<span class="stvn-customer-offer-code">Code: '+esc(o.code)+'</span>':'')+'</article>').join('')})}
 async function loadOffers(){const c=client();if(!c||typeof c.from!=='function'){renderOffers([]);return}try{const {data,error}=await c.from(TABLE).select('id,title,description,badge,code,is_active,created_at').eq('is_active',true).order('created_at',{ascending:false}).limit(12);if(error)throw error;renderOffers(data||[])}catch(e){console.warn('Offers could not be loaded:',e.message);renderOffers([])}}
-function adminMarkup(){const panel=$('adminContent');if(!panel||$('stvnOffersAdmin'))return;const box=document.createElement('section');box.id='stvnOffersAdmin';box.innerHTML='<h3>🎁 Offers Update</h3><p class="stvn-offer-admin-sub">यहाँ offer जोड़ें या बंद करें। Active offer Home और Shop पेज पर delivery location/time box के ठीक नीचे दिखेगा।</p><div class="stvn-offer-form-grid"><div><label for="stvnOfferTitle">Offer का नाम / Headline *</label><input id="stvnOfferTitle" maxlength="90" placeholder="जैसे: आज की खास बचत" required></div><div><label for="stvnOfferBadge">छोटा Badge</label><input id="stvnOfferBadge" maxlength="28" placeholder="जैसे: TODAY DEAL"></div><div class="stvn-offer-full"><label for="stvnOfferDescription">Offer की जानकारी *</label><textarea id="stvnOfferDescription" maxlength="260" placeholder="जैसे: चुनिंदा grocery products पर खास कीमतें" required></textarea></div><div><label for="stvnOfferCode">Coupon Code (optional)</label><input id="stvnOfferCode" maxlength="40" placeholder="जैसे: VEDANT10"></div><div><label for="stvnOfferActive">स्थिति</label><select id="stvnOfferActive"><option value="true">🟢 ग्राहकों को दिखाएँ</option><option value="false">⚪ अभी छिपाएँ</option></select></div></div><div class="stvn-offer-actions"><button type="button" id="stvnOfferSave">＋ Offer जोड़ें</button><button type="button" id="stvnOfferCancel" class="stvn-offer-secondary" style="display:none">Cancel Edit</button><button type="button" id="stvnOfferRefresh" class="stvn-offer-secondary">↻ Refresh</button></div><p id="stvnOfferAdminMessage" role="status" aria-live="polite" class="admin-small"></p><div id="stvnOfferAdminList" class="stvn-offer-admin-list"></div>';const anchor=panel.querySelector('.admin-toolbar');if(anchor)anchor.insertAdjacentElement('afterend',box);else panel.prepend(box);$('stvnOfferSave').addEventListener('click',saveOffer);$('stvnOfferCancel').addEventListener('click',resetForm);$('stvnOfferRefresh').addEventListener('click',loadAdminOffers);loadAdminOffers()}
+function adminMarkup(){const panel=$('adminContent');if(!panel||$('stvnOffersAdmin'))return;const box=document.createElement('section');box.id='stvnOffersAdmin';box.innerHTML='<h3>🎁 Offers Update</h3><p class="stvn-offer-admin-sub">यहाँ offer जोड़ें या Close। Active offer Home और Shop पेज पर delivery location/time box के ठीक नीचे दिखेगा।</p><div class="stvn-offer-form-grid"><div><label for="stvnOfferTitle">Offer का नाम / Headline *</label><input id="stvnOfferTitle" maxlength="90" placeholder="जैसे: आज की खास बचत" required></div><div><label for="stvnOfferBadge">छोटा Badge</label><input id="stvnOfferBadge" maxlength="28" placeholder="जैसे: TODAY DEAL"></div><div class="stvn-offer-full"><label for="stvnOfferDescription">Offer की जानकारी *</label><textarea id="stvnOfferDescription" maxlength="260" placeholder="जैसे: चुनिंदा grocery products पर खास कीमतें" required></textarea></div><div><label for="stvnOfferCode">Coupon Code (optional)</label><input id="stvnOfferCode" maxlength="40" placeholder="जैसे: VEDANT10"></div><div><label for="stvnOfferActive">स्थिति</label><select id="stvnOfferActive"><option value="true">🟢 ग्राहकों को दिखाएँ</option><option value="false">⚪ अभी छिपाएँ</option></select></div></div><div class="stvn-offer-actions"><button type="button" id="stvnOfferSave">＋ Offer जोड़ें</button><button type="button" id="stvnOfferCancel" class="stvn-offer-secondary" style="display:none">Cancel Edit</button><button type="button" id="stvnOfferRefresh" class="stvn-offer-secondary">↻ Refresh</button></div><p id="stvnOfferAdminMessage" role="status" aria-live="polite" class="admin-small"></p><div id="stvnOfferAdminList" class="stvn-offer-admin-list"></div>';const anchor=panel.querySelector('.admin-toolbar');if(anchor)anchor.insertAdjacentElement('afterend',box);else panel.prepend(box);$('stvnOfferSave').addEventListener('click',saveOffer);$('stvnOfferCancel').addEventListener('click',resetForm);$('stvnOfferRefresh').addEventListener('click',loadAdminOffers);loadAdminOffers()}
 let editingId=null;
 function msg(t){const e=$('stvnOfferAdminMessage');if(e)e.textContent=t}
 function resetForm(){editingId=null;['stvnOfferTitle','stvnOfferBadge','stvnOfferDescription','stvnOfferCode'].forEach(id=>{if($(id))$(id).value=''});if($('stvnOfferActive'))$('stvnOfferActive').value='true';if($('stvnOfferSave'))$('stvnOfferSave').textContent='＋ Offer जोड़ें';if($('stvnOfferCancel'))$('stvnOfferCancel').style.display='none';msg('')}
@@ -12439,6 +12443,98 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
   }
 }
 </script>
+
+<style id="vedant-mobile-cart-checkout-product-premium-v2">
+@media (max-width:700px){
+  /* Cart items: deep premium surface with crisp white text */
+  #page-cart #cart-items .cart-item,
+  #cart #cart-items .cart-item,
+  #cart-items .cart-item{
+    background:linear-gradient(135deg,#17251d 0%,#233b2d 58%,#14251b 100%)!important;
+    color:#fff!important;border:1px solid #45634e!important;border-radius:17px!important;
+    box-shadow:0 9px 22px rgba(8,28,15,.22)!important;padding:14px!important;
+  }
+  #cart-items .cart-item *,
+  #cart-items .cart-item strong,
+  #cart-items .cart-item span,
+  #cart-items .cart-item p{color:#fff!important}
+  #cart-items .cart-item button{color:#fff!important}
+  #cart-items .cart-item button:not(.remove-btn){background:linear-gradient(135deg,#248c50,#12683a)!important;border:1px solid #58b77b!important}
+  #cart-items .cart-item .remove-btn{background:#b8323d!important;color:#fff!important}
+  #cart > h2,#cart > p,#cart .summary p,#cart .summary .total{
+    color:#15281b!important;font-weight:850!important
+  }
+  #cart .summary{
+    background:linear-gradient(140deg,#f0f9f1,#fffdf5)!important;
+    border:1px solid #cfe3d2!important;border-radius:17px!important;padding:13px!important
+  }
+  #cart .summary .total{font-size:21px!important;color:#07552a!important}
+
+  /* Delivery form headings and labels: high contrast, dark ink */
+  #page-checkout .checkout-title h2,
+  #page-checkout .checkout-card h2,
+  #page-checkout .checkout-card h3,
+  #page-checkout #checkout-payment-box h3,
+  #page-checkout #checkout-payment-box > strong,
+  #page-checkout label,
+  #page-checkout .stvn-saved-address-card strong,
+  #page-checkout .stvn-saved-address-title,
+  #checkout-payment-box h3,
+  #checkout-payment-box label,
+  #checkout-payment-box strong{
+    color:#102719!important;font-weight:900!important
+  }
+  #page-checkout .checkout-card,
+  #checkout-payment-box{
+    background:linear-gradient(145deg,#ffffff 0%,#f2faf3 65%,#fff9eb 100%)!important;
+    border:1px solid #cfe3d2!important
+  }
+  #page-checkout input,#page-checkout textarea,#page-checkout select,
+  #checkout-payment-box input,#checkout-payment-box textarea,#checkout-payment-box select{
+    color:#14251a!important;background:#fff!important;border:1px solid #c9d9cc!important
+  }
+
+  /* Product detail viewer: rich fruit-market inspired gradient */
+  #stvnProductDetailModal.stvn-product-detail-modal{
+    background:radial-gradient(ellipse at 8% 5%,rgba(255,213,112,.32),transparent 34%),
+               radial-gradient(ellipse at 94% 92%,rgba(76,190,115,.28),transparent 38%),
+               linear-gradient(145deg,#102b1d 0%,#173d2a 48%,#0c2418 100%)!important;
+    backdrop-filter:blur(10px)!important
+  }
+  #stvnProductDetailModal .stvn-product-detail-sheet{
+    background:linear-gradient(155deg,#fffef8 0%,#f0faef 48%,#fff4dc 100%)!important;
+    color:#17291d!important;border:1px solid rgba(255,255,255,.75)!important;
+    box-shadow:0 22px 70px rgba(0,0,0,.34)!important
+  }
+  #stvnProductDetailModal .stvn-detail-gallery{
+    background:radial-gradient(circle at 50% 35%,#fff 0%,#f5f9ed 54%,#e6f2df 100%)!important;
+    border:1px solid #d8e8d4!important;box-shadow:inset 0 1px 0 #fff,0 10px 28px rgba(34,85,42,.12)!important
+  }
+  #stvnProductDetailModal .stvn-detail-info{
+    background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(244,251,239,.96) 60%,rgba(255,248,229,.96))!important;
+    border:1px solid #dcebd8!important;border-radius:20px!important;
+    box-shadow:0 10px 28px rgba(25,75,39,.10)!important
+  }
+  #stvnProductDetailModal .stvn-detail-name{color:#123b23!important;font-weight:950!important}
+  #stvnProductDetailModal .stvn-detail-description{color:#405747!important}
+  #stvnProductDetailModal .stvn-detail-price{
+    color:#08743d!important;background:linear-gradient(100deg,#e3f7e8,#fff1d0)!important;
+    border:1px solid #c9e6ce!important;border-radius:13px!important;padding:7px 12px!important
+  }
+  #stvnProductDetailModal .stvn-detail-actions{
+    background:linear-gradient(90deg,rgba(255,255,255,.97),rgba(242,250,239,.97))!important;
+    border-top:1px solid #dcebd8!important
+  }
+  #stvnProductDetailModal .stvn-detail-actions button{
+    border-radius:13px!important;font-weight:900!important;box-shadow:0 7px 16px rgba(24,91,46,.16)!important
+  }
+  #stvnProductDetailModal .stvn-detail-close{
+    background:linear-gradient(135deg,#173d29,#0c2518)!important;color:#fff!important;
+    border:1px solid rgba(255,255,255,.35)!important
+  }
+}
+</style>
+
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
@@ -12964,7 +13060,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <!-- Vedant language preference gate -->
 <style>
-#vLangGate{position:fixed;inset:0;z-index:300000;display:none;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 15% 15%,#b8f5ce 0,transparent 32%),linear-gradient(145deg,#07351f,#071b12 75%);font-family:Arial,sans-serif}
+#vLangGate{position:fixed;inset:0;z-index:300000;display:flex;visibility:visible;align-items:center;justify-content:center;padding:20px;background:linear-gradient(145deg,#07351f,#071b12 75%);font-family:Arial,sans-serif}
 #vLangGate .vlang-card{width:min(100%,520px);padding:clamp(25px,5vw,42px);border-radius:28px;background:#fff;color:#183624;text-align:center;box-shadow:0 28px 90px #0006}
 #vLangGate .vlang-logo{width:76px;height:76px;margin:0 auto 10px;padding:5px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(135deg,#eff9eb,#fff3d8);box-shadow:0 8px 20px rgba(31,82,42,.14)}
 #vLangGate .vlang-logo img{display:block;width:100%;height:100%;object-fit:contain}
@@ -12983,7 +13079,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
  const gate=document.getElementById('vLangGate');let chosen='en';
  const dict={
- 'My Account':'मेरा अकाउंट','My Profile':'मेरी प्रोफ़ाइल','My Orders':'मेरे ऑर्डर','My Address':'मेरा पता','Customer Care':'ग्राहक सहायता','Log out':'लॉग आउट','Shop':'दुकान','Home':'होम','Cart':'कार्ट','Wishlist':'पसंदीदा','Search':'खोजें','Add to Cart':'कार्ट में जोड़ें','Buy Now':'अभी खरीदें','Checkout':'चेकआउट','Delivery Details':'डिलीवरी विवरण','Review Your Order':'अपने ऑर्डर की समीक्षा करें','Place Order':'ऑर्डर करें','Order History':'ऑर्डर इतिहास','Payment Method':'भुगतान का तरीका','Cash on Delivery':'डिलीवरी पर नकद','UPI Payment':'UPI भुगतान','Saved Addresses':'सेव किए गए पते','Add New Address':'नया पता जोड़ें','Save This Address':'यह पता सेव करें','Save this address to my account':'यह पता मेरे अकाउंट में सेव करें','Select Address':'पता चुनें','Continue':'जारी रखें','Continue Shopping':'खरीदारी जारी रखें','Apply':'लागू करें','Remove':'हटाएँ','Total':'कुल','Subtotal':'उप-कुल','Delivery Charge':'डिलीवरी शुल्क','My Wallet':'मेरा वॉलेट','Withdrawal Status':'निकासी की स्थिति','Available Balance':'उपलब्ध बैलेंस','Your Name':'आपका नाम','Mobile Number':'मोबाइल नंबर','Full Address':'पूरा पता','Pincode':'पिन कोड','Landmark':'नज़दीकी पहचान','Current Location':'वर्तमान लोकेशन','Use Current Location':'वर्तमान लोकेशन इस्तेमाल करें','Save':'सेव करें','Cancel':'रद्द करें','Close':'बंद करें','Refresh':'रीफ्रेश करें','All Products':'सभी उत्पाद','Categories':'श्रेणियाँ','Offers':'ऑफर','Terms & Conditions':'नियम और शर्तें','Privacy Policy':'गोपनीयता नीति','Under 10 Minutes':'10 मिनट के अंदर','Order Placed':'ऑर्डर हो गया','Track Order':'ऑर्डर ट्रैक करें'
+ 'My Account':'मेरा अकाउंट','My Profile':'मेरी प्रोफ़ाइल','My Orders':'मेरे ऑर्डर','My Address':'मेरा पता','Customer Care':'ग्राहक सहायता','Log out':'लॉग आउट','Shop':'दुकान','Home':'होम','Cart':'कार्ट','Wishlist':'पसंदीदा','Search':'खोजें','Add to Cart':'कार्ट में जोड़ें','Buy Now':'अभी खरीदें','Checkout':'चेकआउट','Delivery Details':'डिलीवरी विवरण','Review Your Order':'अपने ऑर्डर की समीक्षा करें','Place Order':'ऑर्डर करें','Order History':'ऑर्डर इतिहास','Payment Method':'भुगतान का तरीका','Cash on Delivery':'डिलीवरी पर नकद','UPI Payment':'UPI भुगतान','Saved Addresses':'सेव किए गए पते','Add New Address':'नया पता जोड़ें','Save This Address':'यह पता सेव करें','Save this address to my account':'यह पता मेरे अकाउंट में सेव करें','Select Address':'पता चुनें','Continue':'जारी रखें','Continue Shopping':'खरीदारी जारी रखें','Apply':'लागू करें','Remove':'हटाएँ','Total':'कुल','Subtotal':'उप-कुल','Delivery Charge':'डिलीवरी शुल्क','My Wallet':'मेरा वॉलेट','Withdrawal Status':'निकासी की स्थिति','Available Balance':'उपलब्ध बैलेंस','Your Name':'आपका नाम','Mobile Number':'मोबाइल नंबर','Full Address':'पूरा पता','Pincode':'पिन कोड','Landmark':'नज़दीकी पहचान','Current Location':'वर्तमान लोकेशन','Use Current Location':'वर्तमान लोकेशन इस्तेमाल करें','Save':'सेव करें','Cancel':'रद्द करें','Close':'Close','Refresh':'रीफ्रेश करें','All Products':'सभी उत्पाद','Categories':'श्रेणियाँ','Offers':'ऑफर','Terms & Conditions':'नियम और शर्तें','Privacy Policy':'गोपनीयता नीति','Under 10 Minutes':'10 मिनट के अंदर','Order Placed':'ऑर्डर हो गया','Track Order':'ऑर्डर ट्रैक करें'
  };
  function keyForUser(){let e='guest';try{e=localStorage.getItem('vedantCustomerEmail')||'guest'}catch(_){}return 'vedantLanguage:'+e.toLowerCase()}
  function lang(){try{const saved=localStorage.getItem(keyForUser())||localStorage.getItem('vedantLanguagePreference')||'en';return ['en','hi','bn'].includes(saved)?saved:'en'}catch(_){return 'en'}}
@@ -13009,7 +13105,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  Object.assign(enDict,{
   'अपना नाम दर्ज करें':'Enter your name','मोबाइल नंबर दर्ज करें':'Enter mobile number','डिलीवरी का पता दर्ज करें':'Enter delivery address',
   'आपका नाम':'Your Name','मोबाइल नंबर':'Mobile Number','डिलीवरी का पता':'Delivery Address','डिलीवरी लोकेशन':'Delivery Location',
-  'मेरे ऑर्डर खोजें':'Find My Orders','कोई ऑर्डर नहीं':'No Orders','आपके ऑर्डर':'Your Orders','इस ऑर्डर को ट्रैक करें':'Track this order'
+  'मेरे ऑर्डर खोजें':'Find My Orders','कोई ऑर्डर नहीं':'No Orders','आपके ऑर्डर':'Your Orders','इस ऑर्डर को ट्रैक करें':'Track this order',
+  'आपका सेव्ड डिलीवरी पता':'Your Saved Delivery Address','सेव्ड एड्रेस चुनें या नया पता जोड़ें':'Choose a Saved Address or Add a New One',
+  'एक बार सेव करने के बाद अगली बार पता अपने-आप भर जाएगा।':'Once saved, your address will be filled in automatically next time.',
+  'पते का नाम (घर / काम)':'Address Label (Home / Work)','इस पते को मेरे अकाउंट में सेव करें':'Save this address to my account',
+  'पता सेव करें':'Save Address','बंद करें':'Close','वर्तमान लोकेशन इस्तेमाल करें':'Use Current Location',
+  'ऑर्डर समीक्षा':'Order Review','डिलीवरी विवरण':'Delivery Details'
  });
  function textMap(language){return language==='bn'?bnDict:language==='en'?enDict:dict}
  const compiledMaps={};
@@ -13043,7 +13144,45 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  };
  Object.assign(dict,{'Vedant':'वेदांत','Grocery Shop':'किराना दुकान','Vedant Grocery Shop':'वेदांत किराना दुकान','Login to continue':'लॉगिन जारी रखने के लिए','Account balance':'खाते का बैलेंस','Account balance unavailable':'बैलेंस उपलब्ध नहीं है','grocery shopping':'किराने की खरीदारी','Fresh groceries':'ताज़ा किराना','Quick checkout':'तेज़ चेकआउट','Shopping benefits':'खरीदारी के लाभ','Open cart':'कार्ट खोलें'});
  Object.assign(bnDict,{'Vedant':'বেদান্ত','Grocery Shop':'মুদি দোকান','Vedant Grocery Shop':'বেদান্ত মুদি দোকান','Login to continue':'লগইন চালিয়ে যেতে','Account balance':'অ্যাকাউন্টের ব্যালেন্স','Account balance unavailable':'ব্যালেন্স পাওয়া যাচ্ছে না','grocery shopping':'মুদি কেনাকাটা','Fresh groceries':'তাজা মুদি পণ্য','Quick checkout':'দ্রুত চেকআউট','Shopping benefits':'কেনাকাটার সুবিধা','Open cart':'কার্ট খুলুন','होम':'হোম','दुकान':'দোকান','कार्ट':'কার্ট','विशलिस्ट':'পছন্দের তালিকা','ऑर्डर':'অর্ডার','ट्रैक':'ট্র্যাক','अपनी grocery shopping शुरू करने के लिए पहले login करें।':'কেনাকাটা শুরু করতে প্রথমে লগইন করুন।'});
- const enDict={'मेरा अकाउंट':'My Account','मेरी प्रोफ़ाइल':'My Profile','मेरे ऑर्डर':'My Orders','मेरा पता':'My Address','ग्राहक सहायता':'Customer Care','लॉग आउट':'Log out','दुकान':'Shop','होम':'Home','कार्ट':'Cart','पसंदीदा':'Wishlist','खोजें':'Search','कार्ट में जोड़ें':'Add to Cart','अभी खरीदें':'Buy Now','चेकआउट':'Checkout','डिलीवरी विवरण':'Delivery Details','अपने ऑर्डर की समीक्षा करें':'Review your order','ऑर्डर करें':'Place Order','ऑर्डर इतिहास':'Order History','भुगतान का तरीका':'Payment Method','डिलीवरी पर नकद':'Cash on Delivery','UPI भुगतान':'UPI Payment','सेव किए गए पते':'Saved Addresses','नया पता जोड़ें':'Add New Address','पता चुनें':'Select Address','जारी रखें':'Continue','खरीदारी जारी रखें':'Continue Shopping','लागू करें':'Apply','हटाएँ':'Remove','कुल':'Total','उप-कुल':'Subtotal','डिलीवरी शुल्क':'Delivery Charge','मेरा वॉलेट':'My Wallet','निकासी की स्थिति':'Withdrawal Status','उपलब्ध बैलेंस':'Available Balance','आपका नाम':'Your Name','मोबाइल नंबर':'Mobile Number','पूरा पता':'Full Address','पिन कोड':'Pincode','नज़दीकी पहचान':'Landmark','वर्तमान लोकेशन':'Current Location','वर्तमान लोकेशन इस्तेमाल करें':'Use Current Location','सेव करें':'Save','रद्द करें':'Cancel','बंद करें':'Close','रीफ्रेश करें':'Refresh','सभी उत्पाद':'All Products','श्रेणियाँ':'Categories','ऑफर':'Offers','नियम और शर्तें':'Terms & Conditions','गोपनीयता नीति':'Privacy Policy','10 मिनट के अंदर':'Under 10 Minutes','ऑर्डर हो गया':'Order Placed','ऑर्डर ट्रैक करें':'Track Order','वेदांत किराना दुकान':'Vedant Grocery Shop','लॉगिन जारी रखने के लिए':'Login to continue','खाते का बैलेंस':'Account balance','बैलेंस उपलब्ध नहीं है':'Account balance unavailable','किराने की खरीदारी':'Grocery shopping','ताज़ा किराना':'Fresh groceries','तेज़ चेकआउट':'Quick checkout','खरीदारी के लाभ':'Shopping benefits','कार्ट खोलें':'Open cart','अपनी grocery shopping शुरू करने के लिए पहले login करें।':'Log in first to start grocery shopping.'};
+ const enDict={'मेरा अकाउंट':'My Account','मेरी प्रोफ़ाइल':'My Profile','मेरे ऑर्डर':'My Orders','मेरा पता':'My Address','ग्राहक सहायता':'Customer Care','लॉग आउट':'Log out','दुकान':'Shop','होम':'Home','कार्ट':'Cart','पसंदीदा':'Wishlist','खोजें':'Search','कार्ट में जोड़ें':'Add to Cart','अभी खरीदें':'Buy Now','चेकआउट':'Checkout','डिलीवरी विवरण':'Delivery Details','अपने ऑर्डर की समीक्षा करें':'Review your order','ऑर्डर करें':'Place Order','ऑर्डर इतिहास':'Order History','भुगतान का तरीका':'Payment Method','डिलीवरी पर नकद':'Cash on Delivery','UPI भुगतान':'UPI Payment','सेव किए गए पते':'Saved Addresses','नया पता जोड़ें':'Add New Address','पता चुनें':'Select Address','जारी रखें':'Continue','खरीदारी जारी रखें':'Continue Shopping','लागू करें':'Apply','हटाएँ':'Remove','कुल':'Total','उप-कुल':'Subtotal','डिलीवरी शुल्क':'Delivery Charge','मेरा वॉलेट':'My Wallet','निकासी की स्थिति':'Withdrawal Status','उपलब्ध बैलेंस':'Available Balance','आपका नाम':'Your Name','मोबाइल नंबर':'Mobile Number','पूरा पता':'Full Address','पिन कोड':'Pincode','नज़दीकी पहचान':'Landmark','वर्तमान लोकेशन':'Current Location','वर्तमान लोकेशन इस्तेमाल करें':'Use Current Location','सेव करें':'Save','रद्द करें':'Cancel','Close':'Close','रीफ्रेश करें':'Refresh','सभी उत्पाद':'All Products','श्रेणियाँ':'Categories','ऑफर':'Offers','नियम और शर्तें':'Terms & Conditions','गोपनीयता नीति':'Privacy Policy','10 मिनट के अंदर':'Under 10 Minutes','ऑर्डर हो गया':'Order Placed','ऑर्डर ट्रैक करें':'Track Order','वेदांत किराना दुकान':'Vedant Grocery Shop','लॉगिन जारी रखने के लिए':'Login to continue','खाते का बैलेंस':'Account balance','बैलेंस उपलब्ध नहीं है':'Account balance unavailable','किराने की खरीदारी':'Grocery shopping','ताज़ा किराना':'Fresh groceries','तेज़ चेकआउट':'Quick checkout','खरीदारी के लाभ':'Shopping benefits','कार्ट खोलें':'Open cart','अपनी grocery shopping शुरू करने के लिए पहले login करें।':'Log in first to start grocery shopping.'};
+ Object.assign(enDict,{
+  'Current location ली जा रही है...':'Getting your current location...',
+  'Current location मिल गई।':'Current location detected.',
+  'Shop से दूरी:':'Distance from shop:',
+  'आपकी location shop से':'Your location is',
+  'दूर है.':'away from the shop.',
+  'Delivery radius सिर्फ 5 km है.':'The delivery radius is 5 km only.',
+  '5 km radius के अंदर':'within the 5 km radius',
+  'इस browser में location support नहीं है।':'Location is not supported by this browser.',
+  'Location नहीं मिली। Address से order continue किया जा सकता है।':'Location could not be detected. You can continue by entering your address.',
+  'Current location order के साथ save होगी.':'Your current location will be saved with the order.',
+  'वर्तमान लोकेशन':'Current Location',
+  'वर्तमान लोकेशन इस्तेमाल करें':'Use Current Location',
+  'लोकेशन उपलब्ध नहीं':'Location unavailable',
+  'लोकेशन नहीं मिली':'Location not found',
+  'सेव्ड पता चुनें या नया पता जोड़ें':'Choose a saved address or add a new one',
+  'एक बार सेव करने के बाद अगली बार पता अपने-आप भर जाएगा।':'Once saved, your address will be filled in automatically next time.',
+  'पते का नाम (घर / काम)':'Address Label (Home / Work)',
+  'इस पते को मेरे अकाउंट में सेव करें':'Save this address to my account',
+  'पता सेव करें':'Save Address',
+  'सेव्ड पता चुन लिया गया है।':'Saved address selected.',
+  'डिलीवरी विवरण':'Delivery Details',
+  'पूरा नाम':'Full Name',
+  'मोबाइल नंबर':'Mobile Number',
+  'डिलीवरी का पता':'Delivery Address',
+  'अपना नाम दर्ज करें':'Enter your name',
+  'मोबाइल नंबर दर्ज करें':'Enter your mobile number',
+  'अपना पूरा डिलीवरी पता दर्ज करें':'Enter your complete delivery address',
+  'कृपया address, city और 6 digit PIN code सही भरें।':'Please enter a valid address, city and 6-digit PIN code.',
+  'आपका address save हो गया।':'Your address has been saved.',
+  'Address save नहीं हो पाया। Browser storage check करें।':'Address could not be saved. Please check browser storage.',
+  'आपका सेव्ड पता लोड हो गया है।':'Your saved address has been loaded.',
+  'पहले अपना डिलीवरी पता भरकर सेव करें।':'Please enter and save your delivery address first.',
+  'Saved Address database तैयार नहीं है। पहले नीचे दिया SQL चलाएँ।':'The Saved Address database is not set up yet. Please run the SQL shown below first.',
+  'सेव्ड पता चुन लिया गया है।':'Saved address selected.',
+  'नया पता भरें, current location चुनें और पता सेव करें।':'Enter a new address, select your current location and save the address.',
+  '✅ पता आपके अकाउंट में सेव हो गया।':'✅ Address saved to your account.'
+ });
  Object.assign(dict,{
   'Shop Now':'अभी खरीदें','Shop by Category':'श्रेणी के अनुसार खरीदें','Our Products':'हमारे उत्पाद','Products':'उत्पाद','Biscuits':'बिस्कुट','Namkeen And Snacks':'नमकीन और स्नैक्स','Vegetables':'सब्ज़ियाँ','Face And Body Care':'चेहरे और शरीर की देखभाल','Grocery':'किराना','Perfumes':'इत्र','Stationary':'स्टेशनरी','Shoes':'जूते','Sweets And Chocolates':'मिठाई और चॉकलेट','View All':'सभी देखें','Continue with Email':'ईमेल से जारी रखें','Continue with Google':'Google से जारी रखें','Search products':'उत्पाद खोजें','Search for products...':'उत्पाद खोजें...','Change Language':'भाषा बदलें','WELCOME TO':'में आपका स्वागत है','Secure login':'सुरक्षित लॉगिन','आपके email पर verification code आएगा।':'आपके ईमेल पर सत्यापन कोड आएगा।','Email address / ईमेल':'ईमेल पता','Secure email verification · सुरक्षित login':'सुरक्षित ईमेल सत्यापन','Fresh & Local Groceries':'ताज़ा स्थानीय किराना','at Your Doorstep':'आपके दरवाज़े पर','Quality Products':'गुणवत्तापूर्ण उत्पाद','Best Prices':'सबसे अच्छी कीमतें','Local Delivery':'स्थानीय डिलीवरी','Choose a collection to see only its products.':'श्रेणी चुनें और केवल उसी के उत्पाद देखें।','All categories start closed.':'सभी श्रेणियाँ शुरू में बंद हैं।','Products और categories update हो रहे हैं…':'उत्पाद और श्रेणियाँ अपडेट हो रही हैं…','Free delivery':'मुफ़्त डिलीवरी','on orders above':'से अधिक के ऑर्डर पर'
  });
@@ -13143,8 +13282,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   enqueueTranslation(document.body,l);
  }
  let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData')translateNode(rec.target,l);for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE)translateNode(node,l);else if(node.nodeType===Node.ELEMENT_NODE)enqueueTranslation(node,l);}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
- function open(force){if(!gate)return;gate.style.display='flex';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
- function close(){if(gate)gate.style.display='none';document.body.style.overflow='';apply();}
+ function open(force){if(!gate)return;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
+ function close(){if(gate)gate.style.display='none';document.body.style.overflow='';document.documentElement.style.visibility='visible';apply();}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
  gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=x.value;updateChoices()}));
  gate?.querySelector('#vLangContinue').addEventListener('click',()=>{try{localStorage.setItem(keyForUser(),chosen);localStorage.setItem('vedantLanguagePreference',chosen)}catch(_){}close();});
@@ -13236,99 +13375,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<style id="vedant-header-account-layout-v2">
-/* One clean grocery header: keep existing application actions, only restyle/reposition. */
-.vg-store-header{display:grid!important;grid-template-columns:auto auto minmax(170px,1fr) auto auto auto!important;align-items:center;gap:clamp(7px,1vw,16px)!important;padding:10px clamp(12px,2vw,28px)!important;background:rgba(255,255,255,.97)!important;border:1px solid #e3eee3!important;border-radius:18px!important;box-shadow:0 8px 24px rgba(19,75,36,.09)!important;}
-.vg-location-button{cursor:pointer;text-align:left;border:0!important;background:#f1f9ed!important;border-radius:14px!important;min-height:54px}.vg-location-button:hover{background:#e6f5df!important}.vg-location-button .vg-update-location{display:block;color:#16813b;font-weight:800;font-size:10px;margin-top:2px;text-decoration:underline}.vg-search{min-width:0}.vg-search input{min-width:0;width:100%;font-size:15px}.vg-action,.vg-cart-action,.vg-account-action{min-height:48px;border:1px solid #cfe2cf!important;border-radius:999px!important;background:#fff!important;color:#164b29!important;box-shadow:0 4px 12px #174a2810!important;font-weight:900!important;white-space:nowrap}.vg-action{padding:0 15px!important}.vg-cart-action{position:relative;min-width:54px;font-size:23px!important}.vg-cart-count{position:absolute;right:-3px;top:-5px;background:#ed1c24;color:white;border-radius:50%;min-width:19px;height:19px;font-size:11px;display:grid;place-items:center}.vg-account-action{padding:0 14px!important;font-size:13px!important;display:flex;align-items:center;gap:6px}
-/* The legacy profile control now lives in the header account area; no second floating account bar. */
-#stvnProfileBar{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;z-index:15001!important;margin:0!important}
-#stvnProfileToggle{min-height:48px!important;padding:8px 13px!important;border:1px solid #cfe2cf!important;background:#fff!important;box-shadow:0 4px 12px #174a2810!important}
-#stvnProfileMenu{top:56px!important;right:0!important;left:auto!important;z-index:200000!important;width:250px!important;max-height:min(75vh,560px);overflow:auto}
-#stvnProfileMenu button{cursor:pointer!important}
-/* Match the reference grocery palette across the shopping surface. */
-#page-home,#page-shop{background:linear-gradient(180deg,#f7fbf2,#fff 48%,#f5f9f1)!important;color:#173622!important}
-.vg-hero{border-radius:22px!important;box-shadow:0 10px 28px #386c2a20!important}
-.vg-category-panel,.vg-home-featured-grid,.vg-promo-card{border-radius:20px!important;box-shadow:0 8px 22px #234d2512!important}
-.vg-category-tile{border-radius:15px!important;box-shadow:0 5px 14px #193d2418!important}
-.vg-shop-products-head h2,.vg-section-title h2{color:#143b24!important}
-#page-shop .stvn-category-intro{display:block!important;background:#fff;border:1px solid #e4eee1;border-radius:16px;padding:12px 16px;margin:12px 0!important}
-#page-shop .stvn-category-list{display:flex!important;flex-wrap:wrap;gap:9px!important}
-#page-shop .stvn-category-card{border-radius:13px!important}
-@media(max-width:900px){.vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto!important;gap:7px!important;padding:8px!important}.vg-location-button{grid-column:1/3;grid-row:2;min-height:42px;padding:4px 8px!important}.vg-search{grid-column:1/-1;grid-row:3;height:42px!important;order:unset!important}.vg-action{grid-row:2;padding:0 10px!important;font-size:12px!important}.vg-cart-action{grid-row:1;grid-column:3}.vg-account-action{grid-row:1;grid-column:4;padding:0 9px!important}.vg-brand{grid-row:1;grid-column:1/3}.vg-location-button .pin{font-size:20px}.vg-location-button b{font-size:12px}.vg-location-button small{font-size:9px}}
-@media(max-width:520px){.vg-store-header{margin:0 0 9px!important;border-radius:0 0 16px 16px!important;grid-template-columns:minmax(0,1fr) auto auto!important}.vg-brand{grid-column:1/2!important}.vg-brand-name{font-size:18px!important}.vg-cart-action{grid-column:2!important;grid-row:1!important}.vg-account-action{grid-column:3!important;grid-row:1!important;font-size:11px!important}.vg-location-button{grid-column:1/2!important;grid-row:2!important}.vg-action{grid-column:2/4!important;grid-row:2!important;justify-content:center}.vg-search{grid-column:1/-1!important;grid-row:3!important}.vg-action .vg-ico{font-size:17px}.vg-location-button .vg-update-location{font-size:9px}}
-</style>
-<script id="vedant-account-menu-actions-v2">
-(function(){
- function addMenuAction(id,label,handler,beforeLogout=true){const menu=document.getElementById('stvnProfileMenu');if(!menu||document.getElementById(id))return;const b=document.createElement('button');b.type='button';b.id=id;b.textContent=label;b.addEventListener('click',handler);const logout=menu.querySelector('.stvn-logout');if(beforeLogout&&logout)menu.insertBefore(b,logout);else menu.appendChild(b);}
- function clickPage(name){const b=document.querySelector('[data-page="'+name+'"]');if(b)b.click();else if(typeof window.showPage==='function')window.showPage(name);}
- function init(){
-  const menu=document.getElementById('stvnProfileMenu');
-  if(menu){
-   addMenuAction('vgMenuWallet','👛 Wallet',()=>clickPage('wallet'));
-   addMenuAction('vgMenuOrders','📦 My Orders',()=>clickPage('orders'));
-   addMenuAction('vgMenuWishlist','❤️ Wishlist',()=>{const w=document.getElementById('wishlist');if(w){w.scrollIntoView({behavior:'smooth',block:'start'});if(typeof window.showPage==='function')window.showPage('cart');}});
-   addMenuAction('vgMenuTrack','🚚 Track Order',()=>{if(typeof window.goToTracking==='function')window.goToTracking();});
-   addMenuAction('vgMenuAdmin','⚙️ Admin Panel',()=>clickPage('admin'));
-  }
-  // Relocate the pre-existing account menu control into the visible account slot, retaining its original handlers.
-  document.querySelectorAll('.vg-store-header').forEach(header=>{const slot=header.querySelector('.vg-account-action');const bar=document.getElementById('stvnProfileBar');if(slot&&!slot.dataset.vgBound){slot.dataset.vgBound='1';slot.addEventListener('click',()=>{if(bar&&bar.parentElement!==header){header.appendChild(bar);bar.classList.add('vg-account-host');}if(typeof window.stvnToggleProfileMenu==='function')window.stvnToggleProfileMenu();});}});
-  // Keep location label in sync with the existing saved-location component.
-  const update=()=>{const saved=document.querySelector('.stvn-delivery-location-name');const label=document.querySelector('.vg-location-label');if(saved&&label&&saved.textContent.trim()&&!/अपनी वर्तमान|choose|select/i.test(saved.textContent))label.textContent=saved.textContent.trim().slice(0,34);};
-  update();const target=document.querySelector('.stvn-delivery-location-card');if(target)new MutationObserver(update).observe(target,{subtree:true,childList:true,characterData:true});
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,250));else setTimeout(init,250);
- document.addEventListener('click',()=>setTimeout(init,250));
-})();
-</script>
 
 
-<style id="vedant-final-clean-header-fix">
-/* Remove the duplicate legacy top navigation; all customer actions are in the new store header. */
-body > .modern-nav, .modern-nav{display:none!important}
-#stvnProfileBar{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;margin:0!important;z-index:200010!important;display:block!important;flex:0 0 auto!important}
-#stvnProfileToggle{min-height:48px!important;padding:7px 11px!important;border:1px solid #d4e7d5!important;border-radius:15px!important;background:#fff!important;color:#164b29!important;box-shadow:0 4px 12px #174a2810!important;white-space:nowrap!important}
-#stvnProfileMenu{top:54px!important;right:0!important;left:auto!important;z-index:200020!important}
-.vg-store-header{display:grid!important;grid-template-columns:auto auto minmax(150px,1fr) auto auto auto auto!important;align-items:center!important;gap:clamp(6px,1vw,14px)!important;overflow:visible!important}
-.vg-store-header .vg-account-action{display:none!important}
-.vg-store-header .vg-wallet-action,.vg-store-header .vg-orders-action{min-height:46px;border:1px solid #cfe2cf!important;border-radius:999px!important;background:#fff!important;color:#164b29!important;padding:0 12px!important;font-weight:900!important;white-space:nowrap!important;box-shadow:0 4px 12px #174a2810!important;cursor:pointer!important}
-.vg-store-header .vg-wallet-action small{display:block;font-size:10px;color:#16813b;font-weight:800}
-.vg-store-header .vg-search input{font-size:14px!important;padding-left:12px!important}
-.vg-store-header .vg-brand-name{font-size:20px!important}
-/* Do not create a second empty category panel. Use the real category list populated by the store. */
-.vg-category-panel,.vg-shop-products-head{display:none!important}
-#page-home .vg-hero,#page-shop .vg-hero{margin-top:10px!important}
-#page-shop .section-head{margin-top:14px!important}
-#page-shop .stvn-category-intro{display:block!important;margin:10px 0 8px!important}
-#page-shop .stvn-category-list{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important;gap:10px!important}
-#page-shop .stvn-category-card{min-width:0!important}
-#page-shop #products-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important}
-#page-shop #products{scroll-margin-top:16px}
-@media(max-width:900px){
- .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto auto!important;gap:7px!important}
- .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important}
- .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:3!important}
- .vg-store-header .vg-action{grid-column:3/5!important;grid-row:2!important}
- .vg-store-header .vg-cart-action{grid-column:3!important;grid-row:1!important}
- #stvnProfileBar{grid-column:4!important;grid-row:1!important}
- #stvnProfileToggle{padding:6px 8px!important;font-size:11px!important}
- .vg-store-header .vg-wallet-action{grid-column:1/3!important;grid-row:4!important;min-height:40px!important}
- .vg-store-header .vg-orders-action{grid-column:3/5!important;grid-row:4!important;min-height:40px!important}
-}
-@media(max-width:520px){
- .vg-store-header{grid-template-columns:minmax(0,1fr) auto auto!important;padding:9px!important}
- .vg-store-header .vg-brand{grid-column:1!important;grid-row:1!important}
- .vg-store-header .vg-cart-action{grid-column:2!important;grid-row:1!important}
- #stvnProfileBar{grid-column:3!important;grid-row:1!important}
- .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important}
- .vg-store-header .vg-action{grid-column:3!important;grid-row:2!important;padding:0 8px!important;font-size:11px!important}
- .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:3!important}
- .vg-store-header .vg-wallet-action{grid-column:1/2!important;grid-row:4!important;padding:0 8px!important;font-size:11px!important}
- .vg-store-header .vg-orders-action{grid-column:2/4!important;grid-row:4!important;padding:0 8px!important;font-size:11px!important}
- #stvnProfileToggle .stvn-avatar{width:25px!important;height:25px!important}
- #stvnProfileToggle span:last-child{font-size:10px!important}
- #page-shop .stvn-category-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
-</style>
+
+
+
 <script id="vedant-final-header-actions-fix">
 (function(){
  'use strict';
@@ -13484,117 +13535,10 @@ body > .modern-nav, .modern-nav{display:none!important}
 </style>
 
 
-<style id="vedant-mobile-layout-refinement-v5">
-/* Keep the home/shop action bar compact and aligned on narrow phones. */
-@media(max-width:600px){
-  .vg-store-header{
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) repeat(4,minmax(34px,auto))!important;
-    grid-template-rows:42px 38px auto!important;
-    align-items:center!important;gap:4px!important;
-    padding:6px 8px 8px!important;
-  }
-  .vg-store-header .vg-brand{grid-column:1/3!important;grid-row:1!important;min-width:0!important;gap:6px!important}
-  .vg-store-header .vg-location{display:none!important}
-  .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:2!important;width:100%!important;min-width:0!important;margin:0!important}
-  .vg-store-header .vg-action,
-  .vg-store-header .vg-wallet-action,
-  .vg-store-header .vg-orders-action,
-  .vg-store-header .vg-cart-action,
-  .vg-store-header .vg-account-action,
-  .vg-store-header #stvnProfileBar,
-  .vg-store-header #stvnProfileToggle{
-    grid-row:3!important;align-self:center!important;justify-self:stretch!important;
-    min-width:0!important;width:auto!important;max-width:100%!important;
-    height:34px!important;min-height:34px!important;padding:3px 4px!important;
-    border-radius:10px!important;font-size:10px!important;line-height:1.05!important;
-    gap:3px!important;white-space:normal!important;overflow:hidden!important;
-    display:flex!important;align-items:center!important;justify-content:center!important;
-  }
-  .vg-store-header .vg-action span:not(.vg-ico),
-  .vg-store-header .vg-wallet-action span:not(.vg-ico),
-  .vg-store-header .vg-orders-action span:not(.vg-ico),
-  .vg-store-header .vg-account-action span{font-size:9px!important;line-height:1!important}
-  .vg-store-header .vg-ico{font-size:14px!important}
-  .vg-store-header .vg-cart-action{font-size:17px!important}
-  .vg-store-header #stvnProfileToggle .stvn-avatar{width:21px!important;height:21px!important;flex:0 0 21px!important}
-  #stvnProfileMenu{z-index:99999!important;max-width:calc(100vw - 20px)!important}
-
-  /* Category cards: larger, clear, two-column layout instead of tiny scrolling tiles. */
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open){
-    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    grid-auto-flow:row!important;flex-wrap:initial!important;overflow:visible!important;
-    gap:10px!important;padding:10px!important;width:100%!important;
-  }
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{
-    width:100%!important;min-width:0!important;max-width:none!important;
-    flex:initial!important;height:auto!important;min-height:172px!important;
-    padding:13px 8px!important;gap:7px!important;border-radius:16px!important;
-  }
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image{
-    width:100%!important;height:108px!important;min-height:108px!important;
-  }
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side:not(.has-image){
-    width:56px!important;height:56px!important;margin:4px auto!important;
-  }
-  #page-shop .stvn-category-name{font-size:13px!important;line-height:1.2!important}
-  #page-shop .stvn-category-count{font-size:10px!important}
-  /* Once a category is selected, keep its products compact and easy to scan. */
-  #page-shop.stvn-category-open #products,
-  #page-shop #products{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-  #page-shop #products .product{min-width:0!important;padding:8px!important;border-radius:13px!important}
-  #page-shop #products .product-icon{min-height:76px!important;height:76px!important;padding:6px!important;font-size:39px!important}
-  #page-shop #products .product h3{font-size:12px!important;line-height:1.25!important;margin:7px 0 3px!important}
-  #page-shop #products .product .price{font-size:13px!important}
-  #page-shop #products .product .rating{font-size:10px!important}
-  #page-shop #products .product button,#page-shop #products .product .cart-btn,#page-shop #products .product .wish-btn{min-height:32px!important;padding:6px 7px!important;font-size:10px!important}
-  .vg-hero-brand{font-size:11px!important;letter-spacing:1.8px!important;font-weight:1000!important;color:#14783b!important;margin-bottom:7px!important}
-  .vg-hero{min-height:180px!important}
-}
-@media(max-width:390px){
-  .vg-store-header{grid-template-columns:minmax(0,1fr) repeat(4,minmax(30px,auto))!important;gap:3px!important;padding-left:6px!important;padding-right:6px!important}
-  .vg-store-header .vg-action,.vg-store-header .vg-wallet-action,.vg-store-header .vg-orders-action,.vg-store-header .vg-cart-action,.vg-store-header .vg-account-action,.vg-store-header #stvnProfileToggle{font-size:9px!important;padding:2px!important}
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{min-height:158px!important}
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-side.has-image{height:94px!important;min-height:94px!important}
-  #page-shop #products .product-icon{height:68px!important;min-height:68px!important;font-size:35px!important}
-}
-@media(min-width:601px){
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open){display:grid!important;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;gap:13px!important;overflow:visible!important}
-  #page-shop .categories.stvn-category-list:not(.stvn-category-open) .stvn-category-card{width:100%!important;min-width:0!important;min-height:180px!important;height:auto!important;flex:initial!important}
-  #page-shop #products{grid-template-columns:repeat(auto-fill,minmax(175px,1fr))!important;gap:12px!important}
-  #page-shop #products .product-icon{min-height:105px!important}
-}
-</style>
 
 
-<style id="stvn-v6-wallet-admin-tracking-polish">
-/* Wallet request status: compact customer controls; hide locally without deleting financial audit records. */
-#page-wallet .stvn-wallet-status-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 10px}
-#page-wallet .stvn-wallet-status-tools strong{font-size:14px;color:#183d2a;font-weight:900}
-#page-wallet .stvn-wallet-delete-all,#page-wallet .stvn-wallet-delete-status{border:0!important;background:#263b31!important;color:#fff!important;font-weight:850!important;border-radius:9px!important;cursor:pointer}
-#page-wallet .stvn-wallet-delete-all{padding:7px 11px!important;font-size:11px!important}
-#page-wallet .stvn-wallet-request-row{align-items:center;gap:8px}
-#page-wallet .stvn-wallet-delete-status{padding:6px 9px!important;min-width:30px;min-height:30px;font-size:12px!important;background:#8b3030!important}
-#page-wallet .wallet-panel button,#page-wallet #stvnWalletAddButton,#page-wallet #stvnWalletWithdrawButton{background:linear-gradient(135deg,#155b36,#103f29)!important;color:#fff!important;border:1px solid #0d3823!important;font-weight:900!important;transition:filter .15s,transform .15s}
-#page-wallet .wallet-panel button:active,#page-wallet #stvnWalletAddButton:active,#page-wallet #stvnWalletWithdrawButton:active{filter:brightness(1.35)!important;transform:scale(.985)}
-#page-wallet select,#page-wallet .wallet-panel select{background:#263b31!important;color:#fff!important;border-color:#16291f!important}
-#adminContent .admin-toolbar .admin-btn,#adminContent .admin-toolbar button{background:#263b31!important;color:#fff!important;border-color:#17291f!important;font-weight:850}
-#adminContent .admin-toolbar .admin-btn:active,#adminContent .admin-toolbar button:active{filter:brightness(1.35)}
-#admin-view-withdrawal-status,#admin-sound-email-toggle,#admin-shop-status-toolbar-toggle{font-size:12px!important;padding:8px 10px!important;min-height:34px!important;border-radius:10px!important}
-#page-track #tracking-status{display:block;min-height:70px;padding:14px!important;border:1px solid var(--border);border-radius:14px;background:var(--surface);color:var(--text);overflow-wrap:anywhere}
-#page-track #customer-tracking-orders:empty{display:none}
-#page-track #customer-tracking-box{width:100%;max-width:100%;}
-#page-track .tracking-step{font-weight:850;color:#183d2a}
-#page-track .tracking-active{color:#fff!important}
-#page-cart h2,#page-cart h3,#page-track h2,#page-track h3,#page-checkout h2,#page-checkout h3,.delivery-details h2,.delivery-details h3{color:#183d2a;font-weight:950}
-#page-track button,#page-cart #proceed-checkout-btn,#page-cart .place-order{background:linear-gradient(135deg,#155b36,#103f29)!important;color:#fff!important;font-weight:900!important;border-color:#0d3823!important}
-#page-shop .stvn-category-list.stvn-category-loading{position:relative;min-height:110px;overflow:hidden}
-#page-shop .stvn-category-list.stvn-category-loading:after{content:'Loading categories…';display:flex;align-items:center;justify-content:center;position:absolute;inset:0;background:rgba(246,255,249,.94);color:#155b36;font-weight:900;letter-spacing:.02em;animation:stvnLoadingPulse 1.1s ease-in-out infinite alternate;z-index:3}
-#page-shop .stvn-category-list.stvn-category-loading:before{content:'';position:absolute;z-index:4;left:15%;right:15%;bottom:20px;height:4px;border-radius:8px;background:linear-gradient(90deg,#155b36 0 35%,#bde7ca 35% 100%);transform-origin:left;animation:stvnLoadingBar 1.1s ease-in-out infinite}
-@keyframes stvnLoadingPulse{from{opacity:.72}to{opacity:1}}
-@keyframes stvnLoadingBar{0%{transform:scaleX(.2)}100%{transform:scaleX(1)}}
-@media(max-width:600px){#admin-view-withdrawal-status,#admin-sound-email-toggle,#admin-shop-status-toolbar-toggle{font-size:10px!important;padding:7px 8px!important}.stvn-wallet-request-row{font-size:12px}}
-</style>
+
+
 
 </body>
 </html>
@@ -14475,3 +14419,40 @@ body > .modern-nav, .modern-nav{display:none!important}
 })();
 </script>
 
+
+
+<!-- Vedant final language/location polish: visual-only + customer location text -->
+<style id="vedant-final-location-heading-polish">
+#customer-location-box>strong{display:block!important;color:#102d1c!important;font-weight:950!important;font-size:16px!important;letter-spacing:.01em!important;text-shadow:0 1px 0 rgba(255,255,255,.7)}
+#customer-location-box #location-status{color:#263d30!important;font-weight:650!important}
+@media(max-width:700px){#customer-location-box{background:linear-gradient(145deg,#fff 0%,#eef8ef 100%)!important;border:1px solid #cfe4d2!important}#customer-location-box>strong{font-size:15px!important}}
+</style>
+<script id="vedant-final-location-language-fix">
+(function(){
+  const messages={
+    en:{unsupported:'Location is not supported by this browser.',pending:'Getting your current location...',success:'Current location detected.',distance:'Distance from shop:',available:'Delivery is available within the 5 km radius.',outside:'Sorry! Delivery is currently unavailable at your location.',outsideDistance:'Your location is outside the 5 km delivery radius.',failed:'Location could not be detected. You can continue by entering your delivery address.',saved:'Your current location will be saved with the order.'},
+    hi:{unsupported:'इस ब्राउज़र में लोकेशन उपलब्ध नहीं है।',pending:'आपकी वर्तमान लोकेशन प्राप्त की जा रही है...',success:'वर्तमान लोकेशन मिल गई।',distance:'दुकान से दूरी:',available:'5 किमी के दायरे में डिलीवरी उपलब्ध है।',outside:'माफ़ कीजिए! आपकी लोकेशन पर अभी डिलीवरी उपलब्ध नहीं है।',outsideDistance:'आपकी लोकेशन 5 किमी डिलीवरी सीमा से बाहर है।',failed:'लोकेशन नहीं मिल सकी। आप डिलीवरी पता भरकर आगे बढ़ सकते हैं।',saved:'आपकी वर्तमान लोकेशन ऑर्डर के साथ सेव होगी।'},
+    bn:{unsupported:'এই ব্রাউজারে লোকেশন সমর্থিত নয়।',pending:'আপনার বর্তমান অবস্থান নেওয়া হচ্ছে...',success:'বর্তমান অবস্থান পাওয়া গেছে।',distance:'দোকান থেকে দূরত্ব:',available:'৫ কিমি এলাকার মধ্যে ডেলিভারি উপলভ্য।',outside:'দুঃখিত! আপনার অবস্থানে এখন ডেলিভারি উপলভ্য নয়।',outsideDistance:'আপনার অবস্থান ৫ কিমি ডেলিভারি সীমার বাইরে।',failed:'অবস্থান পাওয়া যায়নি। ঠিকানা লিখে অর্ডার চালিয়ে যেতে পারেন।',saved:'আপনার বর্তমান অবস্থান অর্ডারের সঙ্গে সংরক্ষিত হবে.'}
+  };
+  function lang(){const l=document.documentElement.dataset.language||'en';return messages[l]?l:'en';}
+  function setStatus(el,html,kind){if(!el)return;el.innerHTML=html;el.className=kind||'payment-note';}
+  window.requestCustomerLocation=function(){
+    const status=document.getElementById('location-status');const m=messages[lang()];
+    if(!navigator.geolocation){setStatus(status,'❌ '+m.unsupported,'error');return;}
+    setStatus(status,'⏳ '+m.pending,'payment-note');
+    navigator.geolocation.getCurrentPosition(function(position){
+      try{customerLatitude=position.coords.latitude;customerLongitude=position.coords.longitude;}catch(e){}
+      if(typeof window.updateCart==='function')window.updateCart();
+      let radius={allowed:true,distance:null};
+      try{if(typeof checkDeliveryRadius==='function')radius=checkDeliveryRadius();}catch(e){}
+      if(radius.allowed){
+        const dist=radius.distance!==null&&radius.distance!==undefined&&Number.isFinite(Number(radius.distance))?'<br>📏 '+m.distance+' <strong>'+Number(radius.distance).toFixed(2)+' km</strong>':'';
+        setStatus(status,'✅ '+m.success+dist+'<br>🟢 '+m.available,'location-success');
+      }else{
+        const dist=radius.distance!==null&&radius.distance!==undefined&&Number.isFinite(Number(radius.distance))?'<br>📏 '+m.distance+' <strong>'+Number(radius.distance).toFixed(2)+' km</strong>':'';
+        setStatus(status,'❌ '+m.outside+dist+'<br>'+m.outsideDistance,'error');
+      }
+    },function(error){console.warn('Customer location:',error&&error.message||error);try{customerLatitude=null;customerLongitude=null;}catch(e){}setStatus(status,'⚠️ '+m.failed,'payment-note');},{enableHighAccuracy:false,timeout:10000,maximumAge:60000});
+  };
+})();
+</script>
