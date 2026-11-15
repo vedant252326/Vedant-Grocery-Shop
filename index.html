@@ -5505,9 +5505,11 @@ async function placeOrder(){
 async function saveVedantOrder(order,customerEmail){
   const message=document.getElementById("order-message");
   let savedWithoutCustomerEmail=false;
+  let authenticatedUserId=null;
+  try{const authResult=await supabaseClient.auth.getUser();authenticatedUserId=authResult?.data?.user?.id||null;}catch(_authLookupError){}
   const orderRecord={
     order_id:order.id, customer_name:order.name, customer_phone:order.phone,
-    customer_address:order.address, customer_email:customerEmail,
+    customer_address:order.address, customer_email:customerEmail, user_id:authenticatedUserId,
     latitude:order.latitude, longitude:order.longitude,
     delivery_charge:order.delivery_charge, delivery_distance_km:order.delivery_distance_km, payment_method:order.payment,
     payment_status:order.payment_status, order_status:order.order_status,
@@ -5522,6 +5524,7 @@ async function saveVedantOrder(order,customerEmail){
     ({error:supabaseError}=await supabaseClient.from("orders").insert([recordToSave]));
     if(!supabaseError)break;
     if(Object.prototype.hasOwnProperty.call(recordToSave,"customer_email")&&isMissingCustomerEmailColumn(supabaseError)){delete recordToSave.customer_email;savedWithoutCustomerEmail=true;continue;}
+    if(Object.prototype.hasOwnProperty.call(recordToSave,"user_id")&&isMissingOrderColumn(supabaseError,"user_id")){delete recordToSave.user_id;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"delivery_charge")&&isMissingOrderColumn(supabaseError,"delivery_charge")){delete recordToSave.delivery_charge;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"delivery_distance_km")&&isMissingOrderColumn(supabaseError,"delivery_distance_km")){delete recordToSave.delivery_distance_km;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"razorpay_order_id")&&/razorpay_order_id/i.test(String(supabaseError.message||""))){delete recordToSave.razorpay_order_id;delete recordToSave.razorpay_payment_id;continue;}
@@ -13099,15 +13102,20 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function textMap(language){return language==='bn'?bnDict:language==='en'?enDict:dict}
  const compiledMaps={};
  function translatedText(source,language){
-  if(!compiledMaps[language])compiledMaps[language]=Object.entries(textMap(language)).sort((a,b)=>b[0].length-a[0].length).map(([key,translated])=>{
-   const escaped=key.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-   const leftBoundary=/^[A-Za-z0-9]/.test(key)?'\\b':'';
-   const rightBoundary=/[A-Za-z0-9]$/.test(key)?'\\b':'';
-   return {regex:new RegExp(leftBoundary+escaped+rightBoundary,'gi'),translated};
-  });
-  let value=source;
-  for(const entry of compiledMaps[language])value=value.replace(entry.regex,entry.translated);
-  return value;
+  if(!compiledMaps[language]){
+   const entries=Object.entries(textMap(language)).sort((a,b)=>b[0].length-a[0].length);
+   const replacements=Object.create(null),patterns=[];
+   for(const [key,translated] of entries){
+    const escaped=key.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const leftBoundary=/^[A-Za-z0-9]/.test(key)?'\\b':'';
+    const rightBoundary=/[A-Za-z0-9]$/.test(key)?'\\b':'';
+    patterns.push(leftBoundary+escaped+rightBoundary);
+    replacements[key.toLowerCase()]=translated;
+   }
+   compiledMaps[language]={regex:new RegExp(patterns.join('|'),'gi'),replacements};
+  }
+  const compiled=compiledMaps[language];
+  return source.replace(compiled.regex,match=>compiled.replacements[match.toLowerCase()]??match);
  }
  const walletDict={
  'Vedant Wallet':'वेदांत वॉलेट','A secure wallet for your grocery orders':'आपके किराना ऑर्डर के लिए सुरक्षित वॉलेट',
@@ -13275,8 +13283,8 @@ Object.assign(enDict,{
   translationScheduled=false;
   let processed=0;
   // Keep each frame responsive while doing substantially more work than the old 24-node limit.
-  const deadline=performance.now()+10;
-  while(translationJobs.length&&processed<120&&performance.now()<deadline){
+  const deadline=performance.now()+5;
+  while(translationJobs.length&&processed<60&&performance.now()<deadline){
    const job=translationJobs[0];
    if(job.run!==translationRun){
     translationJobs.shift();pendingTranslationRoots.delete(job.root);continue;
@@ -13874,6 +13882,46 @@ body > .modern-nav, .modern-nav{display:none!important}
  if(continueButton){continueButton.addEventListener('click',()=>{setTimeout(()=>{if(gate.style.display==='none'){gate.style.pointerEvents='none';gate.style.visibility='hidden';document.documentElement.style.visibility='visible';document.body.style.overflow='';}},0);});}
 })();
 </script>
+
+
+<style id="vedant-local-category-truck-animation-final">
+/* Local + hosted: show the animated delivery truck only while categories are loading. */
+#page-shop .categories.stvn-category-list.stvn-category-loading{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  width:100%!important;min-height:150px!important;height:150px!important;
+  box-sizing:border-box!important;margin:14px 0 20px!important;padding:0!important;
+  border:1px solid #c7e4ce!important;border-radius:20px!important;
+  background:linear-gradient(115deg,#f4fff5 0%,#e5f6e9 52%,#fff4dc 100%)!important;
+  box-shadow:0 9px 22px rgba(28,91,48,.10)!important;
+}
+#page-shop .categories.stvn-category-list.stvn-category-loading:before{
+  content:'🚚'!important;display:block!important;position:absolute!important;
+  left:-90px!important;right:auto!important;top:22px!important;bottom:auto!important;
+  width:auto!important;height:auto!important;margin:0!important;padding:0!important;
+  background:none!important;border:0!important;font-size:76px!important;line-height:1!important;
+  opacity:1!important;visibility:visible!important;z-index:8!important;
+  animation:vedantLocalTruckDrive 3.2s linear infinite!important;
+  will-change:left!important;
+}
+#page-shop .categories.stvn-category-list.stvn-category-loading:after{
+  content:''!important;display:block!important;position:absolute!important;
+  left:0!important;right:0!important;top:auto!important;bottom:18px!important;
+  width:auto!important;height:7px!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:9px!important;
+  background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px)!important;
+  opacity:.75!important;z-index:2!important;animation:none!important;
+}
+@keyframes vedantLocalTruckDrive{
+  0%{left:-90px}
+  100%{left:calc(100% + 90px)}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-shop .categories.stvn-category-list.stvn-category-loading:before{
+    animation-duration:6s!important;
+  }
+}
+</style>
 
 </body>
 </html>
@@ -14678,66 +14726,83 @@ body > .modern-nav, .modern-nav{display:none!important}
     if(!list)return;
     list.innerHTML='<p class="payment-note">Loading your orders…</p>';
     if(status)status.textContent='Your order tracking details will appear after you select an order.';
-    let session=null, authClient=window.supabaseClient||((typeof supabaseClient!=='undefined')?supabaseClient:null), authError=null;
+    const client=window.supabaseClient||((typeof supabaseClient!=='undefined')?supabaseClient:null);
+    let session=null;
     try{
-      if(!authClient?.auth)throw new Error('Authentication client is unavailable.');
-      const result=await authClient.auth.getSession();
+      if(!client?.auth)throw new Error('Authentication client is unavailable.');
+      const result=await client.auth.getSession();
       if(result.error)throw result.error;
       session=result.data?.session||null;
-      // If session restoration is still completing, ask Supabase to validate the current user.
-      if(!session?.user){
-        const verified=await authClient.auth.getUser();
-        if(verified.error)throw verified.error;
-        if(verified.data?.user)session={user:verified.data.user};
-      }
-    }catch(error){authError=error;}
-    if(authError){
-      if(token!==loadToken)return;
-      console.warn('Track Order auth check:',authError);
-      list.innerHTML='<p class="error">Sign-in could not be confirmed yet. Please refresh once, then sign in again if needed.</p>';
-      return;
-    }
-    const email=String(session?.user?.email||'').trim().toLowerCase();
-    if(!email){
-      if(note)note.textContent='Please sign in with Google or email to view your orders.';
-      list.innerHTML='<p class="payment-note">Sign in to see your orders here. No mobile number is needed.</p>';
-      return;
-    }
-    if(note)note.textContent='Signed in as '+email+' · Your orders are linked to this account.';
-    try{
-      const {data,error}=await window.supabaseClient.from('orders').select('*').eq('customer_email',email).order('order_date',{ascending:false});
-      if(token!==loadToken)return;
-      if(error)throw error;
-      if(!Array.isArray(data)||data.length===0){
-        list.innerHTML='<div class="history-item"><strong>No Orders</strong><p>You have not placed any orders with this account yet.</p></div>';
-        return;
-      }
-      list.replaceChildren();
-      const heading=document.createElement('h3');heading.textContent='Your Orders';list.appendChild(heading);
-      data.forEach(order=>{
-        const id=String(order.order_id||order.id||'').trim();if(!id)return;
-        const card=document.createElement('article');card.className='history-item stvn-track-order-choice';
-        const title=document.createElement('strong');title.textContent='📦 '+id;
-        const details=document.createElement('p');
-        const date=order.order_date?new Date(order.order_date).toLocaleString():'Date unavailable';
-        details.textContent='Status: '+String(order.order_status||'pending')+' · Payment: '+String(order.payment_method||order.payment||'Not specified')+' · Total: ₹'+String(order.total??'—')+' · '+date;
-        const btn=document.createElement('button');btn.type='button';btn.className='shop-btn';btn.textContent='Track this order →';
-        btn.addEventListener('click',()=>{
-          const phone=String(order.customer_phone||'');
-          if(typeof window.saveTrackedOrder==='function')window.saveTrackedOrder(id,phone);
-          if(typeof window.setTrackingInputs==='function')window.setTrackingInputs(id,phone);
-          if(typeof window.renderCustomerTracking==='function')window.renderCustomerTracking(order);
-          if(typeof window.startCustomerOrderRealtime==='function')window.startCustomerOrderRealtime();
-          if(status)status.scrollIntoView({behavior:'smooth',block:'center'});
-        });
-        card.append(title,details,btn);list.appendChild(card);
-      });
+      if(!session?.user){const verified=await client.auth.getUser();if(verified.error)throw verified.error;if(verified.data?.user)session={user:verified.data.user};}
     }catch(error){
-      console.error('Account order lookup failed:',error);
       if(token!==loadToken)return;
-      const msg=String(error?.message||'Could not load your orders.');
-      list.innerHTML='<p class="error">Could not load orders: '+safe(msg)+'. Please check that the orders table has a customer_email column and your Supabase customer RLS policy allows users to read only their own orders.</p>';
+      console.warn('Track Order auth check:',error);
+      list.innerHTML='<p class="error">Sign-in could not be confirmed. Please refresh once and sign in again if needed.</p>';
+      return;
     }
+    const user=session?.user||null;
+    const email=String(user?.email||'').trim().toLowerCase();
+    if(!user?.id){
+      if(note)note.textContent='Please sign in with Google or email to view your orders.';
+      list.innerHTML='<p class="payment-note">Sign in to see your orders here.</p>';
+      return;
+    }
+    if(note)note.textContent=(email?'Signed in as '+email:'Signed in')+' · Your orders are linked to this account.';
+    let rows=null,lookupError=null,missingIdentityColumn=false;
+    try{
+      let result;
+      if(email){
+        result=await client.from('orders').select('*').eq('customer_email',email).order('order_date',{ascending:false});
+        if(result.error && /(customer_email).*(column|schema cache|does not exist|could not find)|(column|schema cache|does not exist|could not find).*(customer_email)/i.test(String(result.error.message||''))){
+          result=await client.from('orders').select('*').eq('user_id',user.id).order('order_date',{ascending:false});
+          if(result.error && /(user_id).*(column|schema cache|does not exist|could not find)|(column|schema cache|does not exist|could not find).*(user_id)/i.test(String(result.error.message||'')))missingIdentityColumn=true;
+        }
+      }else{
+        result=await client.from('orders').select('*').eq('user_id',user.id).order('order_date',{ascending:false});
+        if(result.error && /(user_id).*(column|schema cache|does not exist|could not find)|(column|schema cache|does not exist|could not find).*(user_id)/i.test(String(result.error.message||'')))missingIdentityColumn=true;
+      }
+      if(result?.error && !missingIdentityColumn)throw result.error;
+      rows=Array.isArray(result?.data)?result.data:null;
+    }catch(error){lookupError=error;}
+    if(token!==loadToken)return;
+    if(missingIdentityColumn){
+      let local=[];
+      try{local=JSON.parse(localStorage.getItem('vedantOrders')||'[]');if(!Array.isArray(local))local=[];}catch(_e){local=[];}
+      rows=local.filter(order=>String(order.customer_email||'').trim().toLowerCase()===email && email);
+      if(note)note.textContent='This device’s saved orders are shown. Enable account-linked order history with the supplied Supabase SQL setup.';
+    }
+    if(lookupError){
+      console.error('Account order lookup failed:',lookupError);
+      list.innerHTML='<p class="error">Could not load orders: '+safe(lookupError.message||'Database access failed.')+'. Check the orders table columns and customer-only SELECT policy.</p>';
+      return;
+    }
+    if(!rows||rows.length===0){
+      list.innerHTML=missingIdentityColumn
+        ? '<div class="history-item"><strong>No locally saved orders</strong><p>New orders will appear across devices after the Supabase account-link columns and customer policy are added.</p></div>'
+        : '<div class="history-item"><strong>No Orders</strong><p>You have not placed any orders with this account yet.</p></div>';
+      return;
+    }
+    list.replaceChildren();
+    if(missingIdentityColumn){const hint=document.createElement('p');hint.className='payment-note';hint.textContent='Showing orders saved on this device only. Complete the Supabase SQL setup to sync orders across devices.';list.appendChild(hint);}
+    const heading=document.createElement('h3');heading.textContent='Your Orders';list.appendChild(heading);
+    rows.forEach(order=>{
+      const id=String(order.order_id||order.id||'').trim();if(!id)return;
+      const card=document.createElement('article');card.className='history-item stvn-track-order-choice';
+      const title=document.createElement('strong');title.textContent='📦 '+id;
+      const details=document.createElement('p');
+      const date=order.order_date?new Date(order.order_date).toLocaleString():'Date unavailable';
+      details.textContent='Status: '+String(order.order_status||'pending')+' · Payment: '+String(order.payment_method||order.payment||'Not specified')+' · Total: ₹'+String(order.total??'—')+' · '+date;
+      const btn=document.createElement('button');btn.type='button';btn.className='shop-btn';btn.textContent='Track this order →';
+      btn.addEventListener('click',()=>{
+        const phone=String(order.customer_phone||order.phone||'');
+        if(typeof window.saveTrackedOrder==='function')window.saveTrackedOrder(id,phone);
+        if(typeof window.setTrackingInputs==='function')window.setTrackingInputs(id,phone);
+        if(typeof window.renderCustomerTracking==='function')window.renderCustomerTracking(order);
+        if(typeof window.startCustomerOrderRealtime==='function')window.startCustomerOrderRealtime();
+        if(status)status.scrollIntoView({behavior:'smooth',block:'center'});
+      });
+      card.append(title,details,btn);list.appendChild(card);
+    });
   }
   // Expose for the account navigation and auth event.
   window.stvnLoadMyOrdersByAccount=loadOrdersForSignedInCustomer;
@@ -14800,3 +14865,37 @@ body > .modern-nav, .modern-nav{display:none!important}
   };
 })();
 </script>
+
+<style id="vedant-final-mobile-freeze-truck-and-category-fix-v2">
+/* Final override: keep the animated delivery truck visible while products/categories load. */
+@media(max-width:700px){
+  #page-shop .categories.stvn-category-list.stvn-category-loading{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    width:100%!important;min-height:154px!important;height:154px!important;
+    margin:12px 0 18px!important;padding:0!important;overflow:hidden!important;
+    position:relative!important;box-sizing:border-box!important;
+    border:1px solid #c8e4ce!important;border-radius:22px!important;
+    background:linear-gradient(115deg,#f2fff5 0%,#e3f5e8 48%,#fff5df 100%)!important;
+    box-shadow:0 10px 24px rgba(28,91,48,.10)!important;
+  }
+  #page-shop .categories.stvn-category-list.stvn-category-loading:before{
+    display:block!important;content:'🚚'!important;position:absolute!important;
+    left:-92px!important;right:auto!important;top:25px!important;bottom:auto!important;
+    width:auto!important;height:auto!important;background:none!important;
+    font-size:76px!important;line-height:1!important;z-index:5!important;
+    animation:vedantTruckDriveV7 3s linear infinite!important;will-change:left,transform!important;
+  }
+  #page-shop .categories.stvn-category-list.stvn-category-loading:after{
+    display:block!important;content:''!important;position:absolute!important;inset:0!important;
+    background:repeating-linear-gradient(90deg,transparent 0 34px,rgba(67,134,83,.13) 34px 54px) bottom/100% 7px no-repeat!important;
+    z-index:2!important;animation:none!important;
+  }
+  #page-shop #customer-products-status{min-height:100px!important;display:block!important;}
+  #page-shop #customer-products-status:before{animation:vedantTruckDriveV7 3s linear infinite!important;will-change:left,transform!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-shop .categories.stvn-category-list.stvn-category-loading:before,
+ #page-shop #customer-products-status:before{animation-duration:8s!important}
+}
+</style>
+
