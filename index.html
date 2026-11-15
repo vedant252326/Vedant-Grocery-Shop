@@ -2988,6 +2988,8 @@ window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_PUBLISHABLE_KEY
 );
+// Share the same authenticated client with the account, wallet and tracking modules.
+window.supabaseClient = supabaseClient;
 
 
 /* ===== CUSTOMER FRONT-PAGE LOGIN GATE (kept separate from admin login code) ===== */
@@ -13807,6 +13809,72 @@ body > .modern-nav, .modern-nav{display:none!important}
 }
 </style>
 
+
+<style id="vedant-final-loading-truck-size-and-cart-contrast">
+/* Loading panel: full-width, taller runway and a clearly visible animated delivery truck. */
+#page-shop #customer-products-status:not([hidden]){
+  display:block!important;width:100%!important;max-width:none!important;min-height:154px!important;height:154px!important;
+  box-sizing:border-box!important;margin:16px 0 20px!important;padding:0!important;border-radius:22px!important;
+  border:1px solid #c8e4ce!important;
+  background:linear-gradient(115deg,#f2fff5 0%,#e3f5e8 48%,#fff5df 100%)!important;
+  box-shadow:0 10px 24px rgba(28,91,48,.10)!important;overflow:hidden!important;position:relative!important;
+  font-size:0!important;line-height:0!important;
+}
+#page-shop #customer-products-status:before{
+  content:'🚚'!important;position:absolute!important;left:-92px!important;top:22px!important;right:auto!important;
+  font-size:76px!important;line-height:1!important;filter:drop-shadow(0 7px 5px rgba(20,70,35,.20))!important;
+  animation:vedantTruckDriveV7 3.0s linear infinite!important;z-index:2!important;
+}
+#page-shop #customer-products-status:after{
+  content:''!important;position:absolute!important;left:0!important;right:0!important;bottom:22px!important;height:7px!important;
+  border-radius:10px!important;background:repeating-linear-gradient(90deg,#438653 0 34px,transparent 34px 54px)!important;opacity:.75!important;
+}
+/* Keep the category-list loading placeholder visible and broad until categories arrive. */
+#page-shop .categories.stvn-category-list.stvn-category-loading{
+  display:block!important;visibility:visible!important;width:100%!important;min-height:154px!important;height:154px!important;
+  box-sizing:border-box!important;position:relative!important;overflow:hidden!important;margin:12px 0 18px!important;padding:0!important;
+  border:1px solid #c8e4ce!important;border-radius:22px!important;
+  background:linear-gradient(115deg,#f2fff5 0%,#e3f5e8 48%,#fff5df 100%)!important;
+  box-shadow:0 10px 24px rgba(28,91,48,.10)!important;
+}
+#page-shop .categories.stvn-category-list.stvn-category-loading:before{
+  content:'🚚'!important;position:absolute!important;left:-92px!important;top:22px!important;right:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;background:none!important;font-size:76px!important;line-height:1!important;
+  animation:vedantTruckDriveV7 3s linear infinite!important;z-index:3!important;
+}
+#page-shop .categories.stvn-category-list.stvn-category-loading:after{
+  content:''!important;position:absolute!important;inset:0!important;background:transparent!important;z-index:1!important;
+}
+/* Cart: replace the near-black green block with a light premium surface and readable cards. */
+@media(max-width:700px){
+ #page-cart{color:#183526!important}
+ #page-cart #cart{background:linear-gradient(145deg,#f7fff8 0%,#edf7ef 58%,#fff8e9 100%)!important;color:#183526!important;border:1px solid #d6e9d9!important;border-radius:22px!important;box-shadow:0 10px 26px rgba(28,76,43,.09)!important;padding:14px!important}
+ #page-cart #cart h2,#page-cart #cart>p,#page-cart #cart>p strong{color:#183526!important}
+ #page-cart #cart-items{background:transparent!important;color:#183526!important;border:0!important;border-radius:16px!important;padding:8px 0!important}
+ #page-cart .cart-items{background:linear-gradient(145deg,#f7fff8,#edf7ef)!important;color:#183526!important;border:1px solid #d6e9d9!important;border-radius:20px!important;padding:12px!important}
+ #page-cart .cart-item,#page-cart #cart-items .cart-item{background:linear-gradient(145deg,#ffffff 0%,#f0f8f1 100%)!important;color:#183526!important;border:1px solid #cfe2d2!important;box-shadow:0 5px 15px rgba(28,76,43,.08)!important}
+ #page-cart .cart-item :is(h3,h4,p,span,strong,b,label,small){color:#183526!important}
+ #page-cart .cart-item .price,#page-cart .cart-item .item-total{color:#08783d!important;font-weight:900!important}
+ #page-cart .cart-item button{color:#fff!important}
+ #page-cart .cart-item .remove-item,#page-cart .cart-item button.remove{background:#fff!important;color:#a43b3b!important;border:1px solid #f0cccc!important}
+ #page-cart .cart-summary,#page-cart .cart-total-box,#page-cart .cart-summary-card{background:linear-gradient(145deg,#fff 0%,#f0f8f1 100%)!important;color:#183526!important;border:1px solid #d4e6d6!important;border-radius:18px!important}
+ #page-cart .cart-summary :is(p,span,strong,b),#page-cart .cart-total-box :is(p,span,strong,b){color:#183526!important}
+}
+/* A hidden language dialog must never sit above the app and intercept taps. */
+#vLangGate[style*="display: none"]{pointer-events:none!important;visibility:hidden!important}
+#vLangGate{z-index:2147483000!important}
+</style>
+<script id="vedant-final-language-click-safety">
+(function(){
+ const gate=document.getElementById('vLangGate');if(!gate)return;
+ const continueButton=gate.querySelector('#vLangContinue');
+ gate.querySelectorAll('label[data-lang-choice]').forEach(label=>{
+   label.addEventListener('click',()=>{const radio=label.querySelector('input[name="vlang"]');if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));}},{passive:true});
+ });
+ if(continueButton){continueButton.addEventListener('click',()=>{setTimeout(()=>{if(gate.style.display==='none'){gate.style.pointerEvents='none';gate.style.visibility='hidden';document.documentElement.style.visibility='visible';document.body.style.overflow='';}},0);});}
+})();
+</script>
+
 </body>
 </html>
 
@@ -14610,14 +14678,23 @@ body > .modern-nav, .modern-nav{display:none!important}
     if(!list)return;
     list.innerHTML='<p class="payment-note">Loading your orders…</p>';
     if(status)status.textContent='Your order tracking details will appear after you select an order.';
-    let session;
+    let session=null, authClient=window.supabaseClient||((typeof supabaseClient!=='undefined')?supabaseClient:null), authError=null;
     try{
-      const result=await window.supabaseClient.auth.getSession();
+      if(!authClient?.auth)throw new Error('Authentication client is unavailable.');
+      const result=await authClient.auth.getSession();
       if(result.error)throw result.error;
-      session=result.data?.session;
-    }catch(error){
+      session=result.data?.session||null;
+      // If session restoration is still completing, ask Supabase to validate the current user.
+      if(!session?.user){
+        const verified=await authClient.auth.getUser();
+        if(verified.error)throw verified.error;
+        if(verified.data?.user)session={user:verified.data.user};
+      }
+    }catch(error){authError=error;}
+    if(authError){
       if(token!==loadToken)return;
-      list.innerHTML='<p class="error">Could not verify your sign-in. Please sign in again.</p>';
+      console.warn('Track Order auth check:',authError);
+      list.innerHTML='<p class="error">Sign-in could not be confirmed yet. Please refresh once, then sign in again if needed.</p>';
       return;
     }
     const email=String(session?.user?.email||'').trim().toLowerCase();
