@@ -4407,18 +4407,19 @@ window.stvnStartCustomerLocationAndWhatsApp = function(){
   const statusBox=document.getElementById("live-location-status");
   if(statusBox)statusBox.textContent="⏳ GPS permission माँगी जा रही है…";
   startCustomerLiveLocation();
-  const tab=window.open("about:blank","_blank");
   navigator.geolocation.getCurrentPosition(function(position){
     const lat=Number(position.coords.latitude),lng=Number(position.coords.longitude);
     const mapUrl="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lng);
-    const message="Vedant Grocery order "+trackedOrderId+" — customer live location sharing started. Current location: "+mapUrl;
+    const message="Vedant Grocery order "+trackedOrderId+" — मेरी वर्तमान लोकेशन: "+mapUrl;
     const waNumber=String(window.stvnCustomerCareWhatsApp||"").replace(/\D/g,"");
-    const whatsappUrl="https://wa.me/"+(waNumber||"")+"?text="+encodeURIComponent(message);
-    if(tab)tab.location.href=whatsappUrl;else window.location.href=whatsappUrl;
+    const whatsappUrl=waNumber
+      ? "https://wa.me/"+waNumber+"?text="+encodeURIComponent(message)
+      : "https://wa.me/?text="+encodeURIComponent(message);
     updateCustomerLiveLocation(position);
+    window.location.assign(whatsappUrl);
   },function(error){
-    if(tab)tab.close();
     if(statusBox)statusBox.textContent=error&&error.code===1?"❌ Location permission Allow करें।":"❌ GPS location नहीं मिली। फिर से कोशिश करें।";
+    window.stvnAlert(error&&error.code===1?"Location permission Allow करें।":"GPS location नहीं मिली। फिर से कोशिश करें।");
   },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
 };
 window.stvnShareCurrentLocationOnWhatsApp=window.stvnStartCustomerLocationAndWhatsApp;
@@ -4601,7 +4602,8 @@ function startCustomerOrderRealtime(){
     const target=document.getElementById(activeTrackingBoxId)||document.getElementById("tracking-status");
     const lat=Number(updatedOrder.delivery_boy_latitude),lng=Number(updatedOrder.delivery_boy_longitude);
     const stillDelivering=String(updatedOrder.order_status||"").toLowerCase()==="out_for_delivery";
-    if(stillDelivering&&window.stvnCustomerDeliveryMap&&window.stvnDeliveryBikeMarker&&Number.isFinite(lat)&&Number.isFinite(lng)){
+    const hasLivePartnerGPS=Number.isFinite(lat)&&Number.isFinite(lng)&&(lat!==0||lng!==0);
+    if(stillDelivering&&window.stvnCustomerDeliveryMap&&window.stvnDeliveryBikeMarker&&hasLivePartnerGPS){
       window.stvnDeliveryBikeMarker.setLatLng([lat,lng]);
       window.stvnCustomerDeliveryMap.panTo([lat,lng],{animate:true,duration:0.5});
     }else{
@@ -5291,7 +5293,7 @@ if (status === "out_for_delivery" || status === "shipped") {
   html += '<section class="stvn-customer-live-tracking stvn-zomato-tracking-card">' +
     '<div class="stvn-customer-live-heading"><strong>🚚 Track your order</strong><span class="stvn-live-pill">LIVE</span></div>' +
     '<div id="stvn-customer-delivery-map" class="stvn-customer-delivery-map" role="img" aria-label="Live delivery route map"></div>' +
-    '<div class="stvn-map-legend"><span>🛵 Shop</span><span>🛵 Delivery partner</span><span>🏠 Your location</span></div>' +
+    '<div class="stvn-map-legend"><span>🛵 Delivery partner</span><span>🏠 Your location</span></div>' +
     '</section>';
 }
 
@@ -8862,7 +8864,6 @@ function modernUIInit(){
   if(waLocationButton)waLocationButton.addEventListener("click",function(){
     if(!navigator.geolocation){window.stvnAlert("इस browser में GPS location उपलब्ध नहीं है।");return;}
     if(!window.isSecureContext){window.stvnAlert("Location share करने के लिए वेबसाइट HTTPS पर खुली होनी चाहिए।");return;}
-    const waTab=window.open("about:blank","_blank");
     waLocationButton.disabled=true;
     waLocationButton.textContent="⏳ Getting current location…";
     navigator.geolocation.getCurrentPosition(function(position){
@@ -8870,12 +8871,13 @@ function modernUIInit(){
       const mapUrl="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lng);
       const message="Vedant Grocery Shop — मेरी वर्तमान लोकेशन: "+mapUrl;
       const waNumber=String(window.stvnCustomerCareWhatsApp||"").replace(/\D/g,"");
-      const waUrl="https://wa.me/"+(waNumber||"")+"?text="+encodeURIComponent(message);
-      if(waTab)waTab.location.href=waUrl;else window.location.href=waUrl;
+      const waUrl=waNumber
+        ? "https://wa.me/"+waNumber+"?text="+encodeURIComponent(message)
+        : "https://wa.me/?text="+encodeURIComponent(message);
       waLocationButton.disabled=false;
       waLocationButton.textContent="☘ WhatsApp · Send";
+      window.location.assign(waUrl);
     },function(error){
-      if(waTab)waTab.close();
       waLocationButton.disabled=false;
       waLocationButton.textContent="☘ WhatsApp · Send";
       window.stvnAlert(error&&error.code===1?"Location permission Allow करें।":"GPS location नहीं मिली। फिर से कोशिश करें।");
@@ -12941,10 +12943,8 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
     const map=L.map(el,{zoomControl:true,scrollWheelZoom:false}).setView(hasCustomer?[customerLat,customerLng]:[SHOP_LAT,SHOP_LNG],hasCustomer?13:14);
     window.stvnCustomerDeliveryMap=map;
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
-    const shopIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:19px;line-height:1;filter:drop-shadow(0 1px 2px #777)'>🛵</div>",iconSize:[23,25],iconAnchor:[11,21]});
     const homeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:25px;filter:drop-shadow(0 1px 2px #777)'>🏠</div>",iconSize:[30,34],iconAnchor:[15,28]});
     const bikeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:30px;filter:drop-shadow(0 1px 2px #777)'>🛵</div>",iconSize:[36,38],iconAnchor:[18,30]});
-    const shop=L.marker([SHOP_LAT,SHOP_LNG],{icon:shopIcon}).addTo(map).bindPopup("Vedant Grocery Shop");
     const bounds=[[SHOP_LAT,SHOP_LNG]];
     if(hasCustomer){
       L.marker([customerLat,customerLng],{icon:homeIcon}).addTo(map).bindPopup("Delivery address");
