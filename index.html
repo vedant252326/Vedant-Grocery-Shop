@@ -5412,13 +5412,25 @@ function isMissingOrderColumn(error,column){
 }
 
 async function placeOrder(){
-  if(window.__vgPlaceOrderInFlight){return;}
+  // One checkout attempt per browser tab + short cross-tab guard for rapid taps.
+  const now=Date.now();
+  let customerLockKey="vedant_place_order_lock";
+  try{
+    const lockAuth=await supabaseClient.auth.getUser();
+    const savedEmail=String(lockAuth?.data?.user?.email||"").trim().toLowerCase();
+    if(savedEmail)customerLockKey+=":"+savedEmail;
+  }catch(_lockAuthError){}
+  let existingLock=0;
+  try{existingLock=Number(localStorage.getItem(customerLockKey)||0);}catch(_storageReadError){}
+  if(window.__vgPlaceOrderInFlight || (window.__vgLastPlaceOrderTap && now-window.__vgLastPlaceOrderTap<12000) || (existingLock && now-existingLock<12000)){return;}
+  window.__vgLastPlaceOrderTap=now;
   window.__vgPlaceOrderInFlight=true;
+  try{localStorage.setItem(customerLockKey,String(now));}catch(_storageWriteError){}
   window.__vgPaymentCheckoutPending=false;
-  if(cartItems.length===0){window.__vgPlaceOrderInFlight=false;window.stvnAlert("Please add products to your cart first.");return;}
+  if(cartItems.length===0){window.__vgPlaceOrderInFlight=false;try{localStorage.removeItem(customerLockKey);}catch(_e){}window.stvnAlert("Please add products to your cart first.");return;}
   const message=document.getElementById("order-message");
-  const button=document.querySelector("#page-payment .place-order") || document.querySelector(".place-order");
-  if(button){button.disabled=true;button.textContent="Please wait...";}
+  const buttons=document.querySelectorAll(".place-order");
+  buttons.forEach(b=>{b.disabled=true;b.textContent="Please wait...";});
   try{
     const {data:authData,error:authError}=await supabaseClient.auth.getUser();
     if(authError || !authData.user?.email) throw new Error("Order करने के लिए कृपया अपने account में फिर से login करें.");
@@ -5528,8 +5540,15 @@ async function placeOrder(){
     console.error("Place order error:",err);
     message.innerHTML='<span class="error">❌ '+escapeHtml(err.message||"कृपया कुछ देर बाद फिर कोशिश करें.")+'</span>';
   }finally{
-    if(!window.__vgPaymentCheckoutPending)window.__vgPlaceOrderInFlight=false;
-    if(button && button.textContent!=="Verifying Payment..."){button.disabled=false;button.textContent="🛒 Place Order";}
+    if(!window.__vgPaymentCheckoutPending){
+      window.__vgPlaceOrderInFlight=false;
+      // Keep the short lock after success; release it on errors so retry remains possible.
+      if(message?.querySelector('.error')){
+        window.__vgLastPlaceOrderTap=0;
+        try{localStorage.removeItem(customerLockKey);}catch(_e){}
+      }
+      buttons.forEach(b=>{b.disabled=false;b.textContent="🛒 Place Order";});
+    }
   }
 }
 
@@ -5560,6 +5579,20 @@ async function saveVedantOrder(order,customerEmail){
     razorpay_order_id:order.razorpay_order_id||null,
     razorpay_payment_id:order.razorpay_payment_id||null
   };
+  // Avoid inserting the same order ID twice if the save callback is repeated.
+  try{
+    const {data:alreadySaved,error:lookupError}=await supabaseClient
+      .from("orders").select("order_id").eq("order_id",orderRecord.order_id).limit(1);
+    if(!lookupError && Array.isArray(alreadySaved) && alreadySaved.length){
+      orderHistory=Array.isArray(orderHistory)?orderHistory.filter(existing=>String(existing.order_id||existing.id||'')!==String(order.id)):[];
+      orderHistory.unshift(order); saveData();
+      message.innerHTML=`<span class="success">✅ यह order पहले से save है। Duplicate entry नहीं बनाई गई।<br>🧾 Order ID: ${escapeHtml(order.id)}</span>`;
+      cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
+      saveData(); updateCart(); showOrderHistory(); showOrderConfirmation(order);
+      setTimeout(openNewestOrderTrackingAfterCheckout,500);
+      return;
+    }
+  }catch(duplicateLookupError){console.warn("Order duplicate pre-check skipped:",duplicateLookupError);}
   let recordToSave={...orderRecord};
   let supabaseError;
   while(true){
@@ -5577,6 +5610,7 @@ async function saveVedantOrder(order,customerEmail){
     message.innerHTML='<span class="error">❌ Payment verification सफल है, लेकिन order database में save नहीं हुआ: '+escapeHtml(supabaseError.message||"Please contact the shop.")+'. कृपया दोबारा payment न करें.</span>';
     return;
   }
+  orderHistory=Array.isArray(orderHistory)?orderHistory.filter(existing=>String(existing.order_id||existing.id||'')!==String(order.id)):[];
   orderHistory.unshift(order); saveData();
   message.innerHTML=`<span class="success">✅ Order placed successfully!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: ${escapeHtml(order.payment)}<br>📦 Order Status: ${escapeHtml(order.order_status)}<br>💳 Payment Status: ${escapeHtml(order.payment_status)}${order.razorpay_payment_id?"<br>Razorpay Payment ID: "+escapeHtml(order.razorpay_payment_id):""}${order.latitude!==null&&order.longitude!==null?"<br>📍 Location saved with this order":"<br>📍 Location not available; address saved"}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}${savedWithoutCustomerEmail?"<br>⚠️ Database में customer_email column जोड़ने की जरूरत है.":""}</span>`;
   cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
@@ -5666,6 +5700,10 @@ function stvnStartCustomerCancelTimers(){
   if(window.stvnCustomerCancelTimer)clearInterval(window.stvnCustomerCancelTimer);
   const tick=()=>{
     document.querySelectorAll(".order-cancel-button[data-order-created-at]").forEach(button=>{
+      const orderCard=button.closest("[data-order-id]");
+      const orderId=String(orderCard?.dataset.orderId||"");
+      const cachedOrder=window.stvnCustomerOrdersById?.[orderId];
+      if(cachedOrder && !["pending","confirmed"].includes(String(cachedOrder.order_status||"").toLowerCase())){button.remove();return;}
       const remaining=stvnCustomerCancelTimeRemaining(button.dataset.orderCreatedAt);
       if(remaining<=0){button.remove();return;}
       const seconds=Math.ceil(remaining/1000);
@@ -5954,6 +5992,7 @@ async function cancelCustomerOrder(orderId,phone,button){
     if(updateError)throw updateError;
     if(!updatedOrder)throw new Error("Order status बदल गया है। Orders refresh करके फिर कोशिश करें।");
 
+    document.querySelectorAll(".order-cancel-button").forEach(el=>{const card=el.closest("[data-order-id]");if(card?.dataset.orderId===cleanOrderId)el.remove();});
     const localOrder=orderHistory.find(item=>String(item.order_id||item.id||"")===cleanOrderId);
     if(localOrder){
       localOrder.order_status="cancelled";
@@ -5962,7 +6001,7 @@ async function cancelCustomerOrder(orderId,phone,button){
       if(trackedOrderId===cleanOrderId)renderCustomerTracking(localOrder);
     }
 
-    await showOrderHistory();
+    try{await showOrderHistory();}catch(refreshError){console.warn("Order cancelled; history refresh will retry:",refreshError);}
     window.stvnAlert("✅ आपका order cancel हो गया है।");
   }catch(error){
     console.error("Customer order cancellation failed:",error);
@@ -16081,8 +16120,14 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
         .eq('order_id',id).eq('customer_email',email).in('order_status',['pending','confirmed']).select('order_id');
       if(error)throw error;
       if(!Array.isArray(data)||!data.length)throw new Error('Order status बदल गया है। Refresh करके फिर कोशिश करें।');
-      await loadMyOrders();
-      if(typeof window.stvnRefreshLiveOrderBar==='function')await window.stvnRefreshLiveOrderBar();
+      // Stop every copy of this order's countdown immediately after confirmed cancellation.
+      document.querySelectorAll('.order-cancel-button').forEach(el=>{
+        const card=el.closest('[data-order-id]');
+        if(card?.dataset.orderId===id)el.remove();
+      });
+      const cached=window.stvnCustomerOrdersById?.[id];if(cached)cached.order_status='cancelled';
+      try{await loadMyOrders();}catch(refreshError){console.warn('Order cancelled; list refresh will retry:',refreshError);}
+      try{if(typeof window.stvnRefreshLiveOrderBar==='function')await window.stvnRefreshLiveOrderBar();}catch(refreshError){console.warn('Live bar refresh after cancellation:',refreshError);}
       window.stvnAlert('✅ आपका order cancel हो गया है।');
     }catch(error){
       console.error('Tracking cancellation failed:',error);
@@ -16176,11 +16221,6 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
         cancel.addEventListener('click',event=>{event.stopPropagation();cancelTrackedCustomerOrder(id,cancel);});
         cancelRow.append(timerLabel,cancel);card.appendChild(cancelRow);
       }
-      const deleteButton=document.createElement('button');
-      deleteButton.type='button';deleteButton.className='stvn-customer-order-delete';
-      deleteButton.textContent='🗑 Delete from My Orders';
-      deleteButton.addEventListener('click',event=>{event.stopPropagation();hideOrderForSignedInCustomer(id,deleteButton).catch(error=>{console.error('Delete from My Orders:',error);window.stvnAlert('ऑर्डर आपकी लिस्ट से नहीं हट सका: '+String(error.message||error));deleteButton.disabled=false;deleteButton.textContent='🗑 Delete from My Orders';});});
-      card.appendChild(deleteButton);
       card.append(panel);list.appendChild(card);
       if(id===String(activeOrder.order_id||activeOrder.id))panel.dataset.autoOpen='true';
     });
@@ -16367,4 +16407,19 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 #page-track .stvn-track-inline-cancel,#page-orders .stvn-track-inline-cancel{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;min-width:105px;min-height:30px!important;margin:0!important;padding:5px 9px!important;border-radius:8px!important;font-size:11px!important;white-space:nowrap}
 .vg-admin-cancelled-banner{background:#ffe4e6!important;color:#a30d20!important;border-color:#b42332!important}
 @media(max-width:700px){#page-track .stvn-track-cancel-row,#page-orders .stvn-track-cancel-row{font-size:11px;padding:6px 8px}#page-track .stvn-track-inline-cancel,#page-orders .stvn-track-inline-cancel{min-width:96px;min-height:29px!important;font-size:10px!important;padding:5px 7px!important}}
+</style>
+
+<style id="vg-mobile-order-dedupe-cancel-polish">
+/* Track page is read/track/cancel only: customer deletion remains in My Orders. */
+#page-track .stvn-customer-order-delete,#page-track .stvn-my-orders-delete{display:none!important}
+#page-track .stvn-track-cancel-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#page-track .stvn-track-inline-cancel{width:auto!important;min-width:86px!important;min-height:34px!important;padding:6px 10px!important;font-size:12px!important}
+@media(max-width:700px){
+ #page-track .stvn-track-order-choice{padding:11px!important;min-width:0!important}
+ #page-track .stvn-track-order-head{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important}
+ #page-track .stvn-track-order-meta{font-size:11px!important;overflow-wrap:anywhere!important}
+ #page-track .stvn-track-cancel-row{margin:8px 0!important;padding:7px 8px!important;font-size:11px!important}
+ #page-track .stvn-track-inline-cancel{min-height:30px!important;padding:5px 9px!important;font-size:11px!important}
+ #page-orders .stvn-my-orders-delete{display:inline-flex!important}
+}
 </style>
