@@ -3850,12 +3850,12 @@ async function continueToOrderReview(){
 function continueToLocationReview(){
   syncCustomerLocationFromWindow();
   if(customerLatitude===null||customerLongitude===null){
-    window.stvnAlert("कृपया पहले ‘वर्तमान लोकेशन अपडेट करें’ बटन दबाएँ.");
+    window.stvnAlert("Please update your current location first.");
     return;
   }
   const radiusCheck=checkDeliveryRadius();
   if(!radiusCheck.allowed){
-    window.stvnAlert("आपकी लोकेशन दुकान से "+radiusCheck.distance.toFixed(2)+" km दूर है। डिलीवरी केवल 5 km के अंदर उपलब्ध है.");
+    window.stvnAlert("Your location is "+radiusCheck.distance.toFixed(2)+" km from the shop. Delivery is available only within 5 km.");
     return;
   }
   updateCart();
@@ -4221,99 +4221,41 @@ let customerLongitude = null;
 
 
 function requestCustomerLocation(){
-
-const status =
-document.getElementById(
-"location-status"
-);
-
-
-if(!navigator.geolocation){
-
-status.textContent =
-"❌ इस browser में location support नहीं है।";
-
-status.className="error";
-
-return;
-
-}
-
-
-status.textContent =
-"⏳ Current location ली जा रही है...";
-
-status.className="payment-note";
-
-
-navigator.geolocation.getCurrentPosition(
-
-position => {
-
-customerLatitude =
-position.coords.latitude;
-
-customerLongitude =
-position.coords.longitude;
-
-
-const radiusCheck = checkDeliveryRadius();
-
-if(radiusCheck.allowed){
-
-status.innerHTML =
-"✅ Current location मिल गई।<br>" +
-"📏 Shop से दूरी: " +
-"<strong>" + radiusCheck.distance.toFixed(2) + " km</strong><br>" +
-"🟢 Delivery available (5 km radius के अंदर)";
-
-status.className = "location-success";
-
-}else{
-
-status.innerHTML =
-"❌ Sorry! Currently not available.<br>" +
-"📏 आपकी location shop से " +
-"<strong>" + radiusCheck.distance.toFixed(2) + " km</strong> दूर है.<br>" +
-"🚚 Delivery radius सिर्फ 5 km है.";
-
-status.className = "error";
-
-}
-
-
-},
-
-error => {
-
-console.log(
-"Location error:",
-error
-);
-
-customerLatitude=null;
-customerLongitude=null;
-
-
-status.textContent =
-"⚠️ Location नहीं मिली। Address से order continue किया जा सकता है.";
-
-status.className =
-"payment-note";
-
-},
-
-{
-
-enableHighAccuracy:false,
-timeout:5000,
-maximumAge:60000
-
-}
-
-);
-
-
+  const status=document.getElementById("location-status");
+  const details=document.getElementById("stvnGpsCoordinates");
+  const continueButton=document.getElementById("stvnLocationContinue");
+  if(continueButton){continueButton.hidden=true;continueButton.style.display="none";}
+  if(details)details.style.display="none";
+  if(!navigator.geolocation){
+    if(status){status.textContent="GPS location is not supported by this browser.";status.className="error";}
+    return;
+  }
+  if(status){status.textContent="Getting your current location… Please allow location access.";status.className="payment-note";}
+  navigator.geolocation.getCurrentPosition(position=>{
+    customerLatitude=Number(position.coords.latitude);
+    customerLongitude=Number(position.coords.longitude);
+    const radiusCheck=checkDeliveryRadius();
+    const lat=document.getElementById("stvnGpsLat");
+    const lng=document.getElementById("stvnGpsLng");
+    const distance=document.getElementById("stvnGpsDistance");
+    if(lat)lat.textContent="Latitude: "+customerLatitude.toFixed(6);
+    if(lng)lng.textContent="Longitude: "+customerLongitude.toFixed(6);
+    if(distance)distance.textContent="Distance from shop: "+radiusCheck.distance.toFixed(2)+" km";
+    if(details)details.style.display="block";
+    if(radiusCheck.allowed){
+      if(status){status.textContent="Location updated successfully. Your delivery location is within the 5 km service area.";status.className="location-success";}
+      if(continueButton){continueButton.hidden=false;continueButton.style.display="block";}
+    }else{
+      if(status){status.textContent="Delivery is currently unavailable at this location. The shop delivers within a 5 km radius.";status.className="error";}
+    }
+    updateCart();
+  },error=>{
+    console.warn("GPS location error:",error);
+    customerLatitude=null;customerLongitude=null;
+    if(status){status.textContent="Unable to get your location. Please enable GPS/location permission and try again.";status.className="error";}
+    if(details)details.style.display="none";
+    if(continueButton){continueButton.hidden=true;continueButton.style.display="none";}
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 
 async function getCustomerLocationForOrder(){
@@ -8835,16 +8777,16 @@ function modernUIInit(){
 
   const locationPage=document.createElement("main");
   locationPage.id="page-location"; locationPage.className="page";
-  locationPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. अपना वर्तमान स्थान अपडेट करें</h2><p style="margin:3px 0;color:var(--muted)">डिलीवरी सही जगह पहुँचाने के लिए GPS लोकेशन चुनें</p></div></div>`;
+  locationPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. Update Your Current Location</h2><p style="margin:3px 0;color:var(--muted)">Choose your GPS location to ensure accurate delivery</p></div></div>`;
   const locationStepCard=document.createElement("div");
   locationStepCard.className="checkout-card checkout-step-card stvn-location-step-card";
-  locationStepCard.innerHTML=`<div class="stvn-location-intro"><div class="stvn-location-pin">📍</div><h3>अपनी वर्तमान लोकेशन अपडेट करें</h3><p>नीचे बटन दबाएँ। आपकी लोकेशन और दुकान से दूरी दिखेगी। यही लोकेशन आपके ऑर्डर और ट्रैकिंग पेज में सेव होगी।</p></div>`;
+  locationStepCard.innerHTML=`<div class="stvn-location-intro"><div class="stvn-location-pin">📍</div><h3>Update Your Current Location</h3><p>Tap the button below to get your GPS coordinates and distance from the shop. This location will be saved with your order and shown on the tracking page.</p></div>`;
   locationPage.appendChild(locationStepCard);
   body.appendChild(locationPage);
 
   const review=document.createElement("main");
   review.id="page-order-review"; review.className="page";
-  review.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('location')">← लोकेशन</button><div><h2 style="margin:0">3. ऑर्डर की समीक्षा करें</h2><p style="margin:3px 0;color:var(--muted)">Review items, discount, delivery charge and payable total</p></div></div>`;
+  review.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('location')">← Location</button><div><h2 style="margin:0">3. Review Your Order</h2><p style="margin:3px 0;color:var(--muted)">Review items, discount, delivery charge and payable total</p></div></div>`;
   const reviewCard=document.createElement("div");
   reviewCard.className="checkout-card checkout-step-card";
   review.appendChild(reviewCard);
@@ -8852,7 +8794,7 @@ function modernUIInit(){
 
   const paymentPage=document.createElement("main");
   paymentPage.id="page-payment"; paymentPage.className="page";
-  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('order-review')">← Review Order</button><div><h2 style="margin:0">4. भुगतान</h2><p style="margin:3px 0;color:var(--muted)">Complete payment or choose Cash on Delivery</p></div></div>`;
+  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('order-review')">← Review Order</button><div><h2 style="margin:0">4. Payment</h2><p style="margin:3px 0;color:var(--muted)">Complete payment or choose Cash on Delivery</p></div></div>`;
   const paymentCard=document.createElement("div");
   paymentCard.className="checkout-card checkout-step-card";
   paymentPage.appendChild(paymentCard);
@@ -8877,6 +8819,7 @@ function modernUIInit(){
 
   if(primaryCheckout)deliveryCard.appendChild(primaryCheckout);
   if(locationBox)locationStepCard.appendChild(locationBox);
+  if(locationBox && !document.getElementById("stvnGpsCoordinates")){const gps=document.createElement("div");gps.id="stvnGpsCoordinates";gps.className="payment-note";gps.style.cssText="margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:12px;display:none;overflow-wrap:anywhere";gps.setAttribute("aria-live","polite");gps.innerHTML="<strong>GPS Coordinates</strong><br><span id=\"stvnGpsLat\"></span><br><span id=\"stvnGpsLng\"></span><br><span id=\"stvnGpsDistance\"></span>";locationBox.appendChild(gps);}
   if(orderSummaryHeading)reviewCard.appendChild(orderSummaryHeading);
   if(orderSummary)reviewCard.appendChild(orderSummary);
   if(paymentBox){
@@ -8899,7 +8842,9 @@ function modernUIInit(){
   const locationNext=document.createElement("button");
   locationNext.type="button";
   locationNext.className="place-order";
-  locationNext.textContent="लोकेशन सेव करें और आगे बढ़ें →";
+  locationNext.textContent="Continue →";
+  locationNext.id="stvnLocationContinue";
+  locationNext.hidden=true;
   locationNext.onclick=continueToLocationReview;
   locationStepCard.appendChild(locationNext);
   const reviewNext=document.createElement("button");
@@ -8911,7 +8856,7 @@ function modernUIInit(){
   const deliveryNext=document.createElement("button");
   deliveryNext.type="button";
   deliveryNext.className="place-order";
-  deliveryNext.textContent="लोकेशन अपडेट करें →";
+  deliveryNext.textContent="Update Location →";
   deliveryNext.onclick=continueToOrderReview;
   deliveryCard.appendChild(deliveryNext);
 
@@ -13466,20 +13411,22 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .vlang-choice.selected{border-color:#15934e;background:#effbf3}.vlang-choice input{accent-color:#15934e;width:19px;height:19px}.vlang-choice strong{display:block;font-size:19px}.vlang-choice small{color:#718075}
 #vLangContinue{width:100%;padding:15px;border:0;border-radius:14px;background:linear-gradient(135deg,#20b75f,#08783d);color:white;font-size:16px;font-weight:900;cursor:pointer;margin-top:12px}
 @media(max-width:600px){#vLangGate{padding:14px}#vLangGate .vlang-card{max-height:calc(100vh - 28px);overflow-y:auto;padding:22px;border-radius:21px}.vlang-choice{gap:11px;padding:13px;margin:9px 0}}
+#stvnLocationContinue[hidden]{display:none!important}
 </style>
 <div id="vLangGate" role="dialog" aria-modal="true" aria-labelledby="vLangTitle"><div class="vlang-card"><div class="vlang-logo"><img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo" width="66" height="66" decoding="async"></div><div style="font-size:12px;letter-spacing:2px;font-weight:900;color:#16864a">VEDANT GROCERY SHOP</div><h1 id="vLangTitle">Choose your language</h1><p>Prefer your language. You can change it anytime from My Account.</p>
 <label class="vlang-choice selected" data-lang-choice="en"><input type="radio" name="vlang" value="en" checked><span>🇬🇧 <strong>English</strong><small>Continue shopping in English</small></span></label>
 <label class="vlang-choice" data-lang-choice="hi"><input type="radio" name="vlang" value="hi"><span>🇮🇳 <strong>हिन्दी</strong><small>हिंदी में खरीदारी जारी रखें</small></span></label>
-<label class="vlang-choice" data-lang-choice="bn"><input type="radio" name="vlang" value="bn"><span>🇧🇩 <strong>বাংলা</strong><small>বাংলায় কেনাকাটা চালিয়ে যান</small></span></label>
+
 <button id="vLangContinue" type="button">Continue →</button></div></div>
 <script>
 (function(){
  const gate=document.getElementById('vLangGate');let chosen='en';
  const dict={
+ 'Update Your Current Location':'अपना वर्तमान स्थान अपडेट करें','Choose your GPS location to ensure accurate delivery':'सही डिलीवरी के लिए अपनी GPS लोकेशन चुनें','Tap the button below to get your GPS coordinates and distance from the shop. This location will be saved with your order and shown on the tracking page.':'नीचे बटन दबाकर GPS निर्देशांक और दुकान से दूरी देखें। यही लोकेशन आपके ऑर्डर और ट्रैकिंग पेज में सेव होगी।','Continue →':'आगे बढ़ें →','Update Location →':'लोकेशन अपडेट करें →','GPS Coordinates':'GPS निर्देशांक','Latitude:':'अक्षांश:','Longitude:':'देशांतर:','Distance from shop:':'दुकान से दूरी:','Location updated successfully. Your delivery location is within the 5 km service area.':'लोकेशन सफलतापूर्वक अपडेट हो गई। आपका पता 5 km डिलीवरी क्षेत्र में है।','Delivery is currently unavailable at this location. The shop delivers within a 5 km radius.':'इस लोकेशन पर डिलीवरी उपलब्ध नहीं है। दुकान 5 km के दायरे में डिलीवरी करती है।','Getting your current location… Please allow location access.':'आपकी वर्तमान लोकेशन ली जा रही है… कृपया लोकेशन की अनुमति दें।','GPS location is not supported by this browser.':'इस ब्राउज़र में GPS लोकेशन सपोर्ट नहीं है।','Unable to get your location. Please enable GPS/location permission and try again.':'आपकी लोकेशन नहीं मिल सकी। GPS/लोकेशन अनुमति चालू करके फिर कोशिश करें।','Please update your current location first.':'कृपया पहले अपनी वर्तमान लोकेशन अपडेट करें।' ,
  'My Account':'मेरा अकाउंट','My Profile':'मेरी प्रोफ़ाइल','My Orders':'मेरे ऑर्डर','My Address':'मेरा पता','Customer Care':'ग्राहक सहायता','Log out':'लॉग आउट','Shop':'दुकान','Home':'होम','Cart':'कार्ट','Wishlist':'पसंदीदा','Search':'खोजें','Add to Cart':'कार्ट में जोड़ें','Buy Now':'अभी खरीदें','Checkout':'चेकआउट','Delivery Details':'डिलीवरी विवरण','Review Your Order':'अपने ऑर्डर की समीक्षा करें','Place Order':'ऑर्डर करें','Order History':'ऑर्डर इतिहास','Payment Method':'भुगतान का तरीका','Cash on Delivery':'डिलीवरी पर नकद','UPI Payment':'UPI भुगतान','Saved Addresses':'सेव किए गए पते','Add New Address':'नया पता जोड़ें','Save This Address':'यह पता सेव करें','Save this address to my account':'यह पता मेरे अकाउंट में सेव करें','Select Address':'पता चुनें','Continue':'जारी रखें','Continue Shopping':'खरीदारी जारी रखें','Apply':'लागू करें','Remove':'हटाएँ','Total':'कुल','Subtotal':'उप-कुल','Delivery Charge':'डिलीवरी शुल्क','My Wallet':'मेरा वॉलेट','Withdrawal Status':'निकासी की स्थिति','Available Balance':'उपलब्ध बैलेंस','Your Name':'आपका नाम','Mobile Number':'मोबाइल नंबर','Full Address':'पूरा पता','Pincode':'पिन कोड','Landmark':'नज़दीकी पहचान','Current Location':'वर्तमान लोकेशन','Use Current Location':'वर्तमान लोकेशन इस्तेमाल करें','Save':'सेव करें','Cancel':'रद्द करें','Close':'Close','Refresh':'रीफ्रेश करें','All Products':'सभी उत्पाद','Categories':'श्रेणियाँ','Offers':'ऑफर','Terms & Conditions':'नियम और शर्तें','Privacy Policy':'गोपनीयता नीति','Under 10 Minutes':'10 मिनट के अंदर','Order Placed':'ऑर्डर हो गया','Track Order':'ऑर्डर ट्रैक करें'
  };
  function keyForUser(){let e='guest';try{e=localStorage.getItem('vedantCustomerEmail')||'guest'}catch(_){}return 'vedantLanguage:'+e.toLowerCase()}
- function lang(){try{const saved=localStorage.getItem(keyForUser())||localStorage.getItem('vedantLanguagePreference')||'en';return ['en','hi','bn'].includes(saved)?saved:'en'}catch(_){return 'en'}}
+ function lang(){try{const saved=localStorage.getItem(keyForUser())||localStorage.getItem('vedantLanguagePreference')||'en';return ['en','hi'].includes(saved)?saved:'en'}catch(_){return 'en'}}
  const originals=new WeakMap(),translatedValues=new WeakMap(),translatedLanguages=new WeakMap();
  const indicText=/[\u0900-\u097F\u0980-\u09FF]/;
 
@@ -13498,7 +13445,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   'No Orders':'कोई ऑर्डर नहीं','Your Orders':'आपके ऑर्डर','Track this order':'इस ऑर्डर को ट्रैक करें',
   'Proceed to Delivery Details':'डिलीवरी विवरण पर जाएँ','Choose your groceries and add them to your cart.':'अपना किराना चुनें और कार्ट में जोड़ें।'
  });
- function textMap(language){return language==='bn'?bnDict:language==='en'?enDict:dict}
+ function textMap(language){return language==='en'?enDict:dict}
  const compiledMaps={};
  function translatedText(source,language){
   if(!compiledMaps[language]){
@@ -13532,24 +13479,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  Object.assign(dict,walletDict);
  Object.assign(dict,{'Order cancelled successfully.':'ऑर्डर सफलतापूर्वक रद्द हो गया है।','Order cancelled':'ऑर्डर रद्द हो गया है','CANCELLED · यह ऑर्डर रद्द हो चुका है':'ऑर्डर रद्द हो चुका है'});
  Object.assign(dict,{'Order cancelled successfully.':'ऑर्डर सफलतापूर्वक रद्द हो गया है।','Order is still active. Please refresh and try again.':'ऑर्डर अभी सक्रिय है। रीफ्रेश करके फिर कोशिश करें।'});
- const bnDict={
-  'My Account':'আমার অ্যাকাউন্ট','My Profile':'আমার প্রোফাইল','My Orders':'আমার অর্ডার','My Address':'আমার ঠিকানা','Customer Care':'গ্রাহক সহায়তা','Log out':'লগ আউট','Shop':'দোকান','Home':'হোম','Cart':'কার্ট','Wishlist':'পছন্দের তালিকা','Search':'খুঁজুন','Add to Cart':'কার্টে যোগ করুন','Buy Now':'এখনই কিনুন','Checkout':'চেকআউট','Delivery Details':'ডেলিভারির বিবরণ','Review Your Order':'আপনার অর্ডার যাচাই করুন','Place Order':'অর্ডার করুন','Order History':'অর্ডারের ইতিহাস','Payment Method':'পেমেন্টের পদ্ধতি','Cash on Delivery':'ক্যাশ অন ডেলিভারি','UPI Payment':'UPI পেমেন্ট','Saved Addresses':'সংরক্ষিত ঠিকানা','Add New Address':'নতুন ঠিকানা যোগ করুন','Save This Address':'এই ঠিকানা সংরক্ষণ করুন','Save this address to my account':'এই ঠিকানা আমার অ্যাকাউন্টে সংরক্ষণ করুন','Select Address':'ঠিকানা নির্বাচন করুন','Continue':'চালিয়ে যান','Continue Shopping':'কেনাকাটা চালিয়ে যান','Apply':'প্রয়োগ করুন','Remove':'সরান','Total':'মোট','Subtotal':'সাবটোটাল','Delivery Charge':'ডেলিভারি চার্জ','My Wallet':'আমার ওয়ালেট','Withdrawal Status':'টাকা তোলার অবস্থা','Available Balance':'উপলব্ধ ব্যালেন্স','Your Name':'আপনার নাম','Mobile Number':'মোবাইল নম্বর','Full Address':'সম্পূর্ণ ঠিকানা','Pincode':'পিনকোড','Landmark':'ল্যান্ডমার্ক','Current Location':'বর্তমান অবস্থান','Use Current Location':'বর্তমান অবস্থান ব্যবহার করুন','Save':'সংরক্ষণ করুন','Cancel':'বাতিল','Close':'বন্ধ করুন','Refresh':'রিফ্রেশ','All Products':'সব পণ্য','Categories':'বিভাগ','Offers':'অফার','Terms & Conditions':'শর্তাবলী','Privacy Policy':'গোপনীয়তা নীতি','Under 10 Minutes':'১০ মিনিটের মধ্যে','Order Placed':'অর্ডার সম্পন্ন','Track Order':'অর্ডার ট্র্যাক করুন','Account Balance':'অ্যাকাউন্ট ব্যালেন্স','Vedant Wallet':'বেদান্ত ওয়ালেট','A secure wallet for your grocery orders':'আপনার মুদি অর্ডারের জন্য নিরাপদ ওয়ালেট','Available Wallet Balance':'উপলব্ধ ওয়ালেট ব্যালেন্স','Your verified balance will appear here':'আপনার যাচাই করা ব্যালেন্স এখানে দেখা যাবে','Add Money':'টাকা যোগ করুন','Withdraw Money':'টাকা তুলুন','Wallet Status':'ওয়ালেটের অবস্থা','Save for Future':'ভবিষ্যতের জন্য সংরক্ষণ করুন','Add New UPI':'নতুন UPI যোগ করুন','Add New Bank':'নতুন ব্যাংক অ্যাকাউন্ট যোগ করুন','Saved Payment Accounts':'সংরক্ষিত পেমেন্ট অ্যাকাউন্ট','Account Holder Name':'অ্যাকাউন্টধারীর নাম','Amount (₹)':'পরিমাণ (₹)','Bank Account':'ব্যাংক অ্যাকাউন্ট','Bank Account Number':'ব্যাংক অ্যাকাউন্ট নম্বর','IFSC Code':'IFSC কোড','Submit Withdrawal Request':'টাকা তোলার অনুরোধ জমা দিন','Transaction History':'লেনদেনের ইতিহাস','Refresh Status':'অবস্থা রিফ্রেশ করুন','No verified transactions yet.':'এখনও যাচাই করা কোনো লেনদেন নেই।','Money Added':'টাকা যোগ হয়েছে','Money Debited':'টাকা কাটা হয়েছে','Shop Now':'এখনই কিনুন','View All':'সব দেখুন','View All Products':'সব পণ্য দেখুন','Fresh & Local Groceries':'তাজা স্থানীয় মুদি পণ্য','at Your Doorstep':'আপনার দোরগোড়ায়','Delivering to':'ডেলিভারি হবে','Update location':'অবস্থান আপডেট করুন','Search for products...':'পণ্য খুঁজুন...','Choose your groceries and add them to your cart.':'আপনার পছন্দের মুদি পণ্য কার্টে যোগ করুন।','Review items before checkout.':'চেকআউটের আগে পণ্য যাচাই করুন।','Back':'ফিরে যান'
- };
+ 
  Object.assign(dict,{'Vedant':'वेदांत','Grocery Shop':'किराना दुकान','Vedant Grocery Shop':'वेदांत किराना दुकान','Login to continue':'लॉगिन जारी रखने के लिए','Account balance':'खाते का बैलेंस','Account balance unavailable':'बैलेंस उपलब्ध नहीं है','grocery shopping':'किराने की खरीदारी','Fresh groceries':'ताज़ा किराना','Quick checkout':'तेज़ चेकआउट','Shopping benefits':'खरीदारी के लाभ','Open cart':'कार्ट खोलें'});
- Object.assign(bnDict,{'Vedant':'বেদান্ত','Grocery Shop':'মুদি দোকান','Vedant Grocery Shop':'বেদান্ত মুদি দোকান','Login to continue':'লগইন চালিয়ে যেতে','Account balance':'অ্যাকাউন্টের ব্যালেন্স','Account balance unavailable':'ব্যালেন্স পাওয়া যাচ্ছে না','grocery shopping':'মুদি কেনাকাটা','Fresh groceries':'তাজা মুদি পণ্য','Quick checkout':'দ্রুত চেকআউট','Shopping benefits':'কেনাকাটার সুবিধা','Open cart':'কার্ট খুলুন','होम':'হোম','दुकान':'দোকান','कार्ट':'কার্ট','विशलिस्ट':'পছন্দের তালিকা','ऑर्डर':'অর্ডার','ट्रैक':'ট্র্যাক','अपनी grocery shopping शुरू करने के लिए पहले login करें।':'কেনাকাটা শুরু করতে প্রথমে লগইন করুন।'});
  const enDict={'मेरा अकाउंट':'My Account','मेरी प्रोफ़ाइल':'My Profile','मेरे ऑर्डर':'My Orders','मेरा पता':'My Address','ग्राहक सहायता':'Customer Care','लॉग आउट':'Log out','दुकान':'Shop','होम':'Home','कार्ट':'Cart','पसंदीदा':'Wishlist','खोजें':'Search','कार्ट में जोड़ें':'Add to Cart','अभी खरीदें':'Buy Now','चेकआउट':'Checkout','डिलीवरी विवरण':'Delivery Details','अपने ऑर्डर की समीक्षा करें':'Review your order','ऑर्डर करें':'Place Order','ऑर्डर इतिहास':'Order History','भुगतान का तरीका':'Payment Method','डिलीवरी पर नकद':'Cash on Delivery','UPI भुगतान':'UPI Payment','सेव किए गए पते':'Saved Addresses','नया पता जोड़ें':'Add New Address','पता चुनें':'Select Address','जारी रखें':'Continue','खरीदारी जारी रखें':'Continue Shopping','लागू करें':'Apply','हटाएँ':'Remove','कुल':'Total','उप-कुल':'Subtotal','डिलीवरी शुल्क':'Delivery Charge','मेरा वॉलेट':'My Wallet','निकासी की स्थिति':'Withdrawal Status','उपलब्ध बैलेंस':'Available Balance','आपका नाम':'Your Name','मोबाइल नंबर':'Mobile Number','पूरा पता':'Full Address','पिन कोड':'Pincode','नज़दीकी पहचान':'Landmark','वर्तमान लोकेशन':'Current Location','वर्तमान लोकेशन इस्तेमाल करें':'Use Current Location','सेव करें':'Save','रद्द करें':'Cancel','Close':'Close','रीफ्रेश करें':'Refresh','सभी उत्पाद':'All Products','श्रेणियाँ':'Categories','ऑफर':'Offers','नियम और शर्तें':'Terms & Conditions','गोपनीयता नीति':'Privacy Policy','10 मिनट के अंदर':'Under 10 Minutes','ऑर्डर हो गया':'Order Placed','ऑर्डर ट्रैक करें':'Track Order','वेदांत किराना दुकान':'Vedant Grocery Shop','लॉगिन जारी रखने के लिए':'Login to continue','खाते का बैलेंस':'Account balance','बैलेंस उपलब्ध नहीं है':'Account balance unavailable','किराने की खरीदारी':'Grocery shopping','ताज़ा किराना':'Fresh groceries','तेज़ चेकआउट':'Quick checkout','खरीदारी के लाभ':'Shopping benefits','कार्ट खोलें':'Open cart','अपनी grocery shopping शुरू करने के लिए पहले login करें।':'Log in first to start grocery shopping.'};
 
 Object.assign(enDict, {'डिलीवरी का पता': 'Delivery Address', 'डिलीवरी लोकेशन': 'Delivery Location', 'वर्तमान लोकेशन': 'Current Location', 'वर्तमान लोकेशन इस्तेमाल करें': 'Use Current Location', 'अपना नाम दर्ज करें': 'Enter your name', 'मोबाइल नंबर दर्ज करें': 'Enter your mobile number', 'डिलीवरी का पता दर्ज करें': 'Enter delivery address', 'अपना पूरा डिलीवरी पता दर्ज करें': 'Enter your complete delivery address', 'आपका नाम': 'Your Name', 'पूरा नाम': 'Full Name', 'मोबाइल नंबर': 'Mobile Number', 'पूरा पता': 'Full Address', 'पता चुनें': 'Select Address', 'सेव किए गए पते': 'Saved Addresses', 'नया पता जोड़ें': 'Add New Address', 'पता सेव करें': 'Save Address', 'सेव करें': 'Save', 'रद्द करें': 'Cancel', 'जारी रखें': 'Continue', 'वर्तमान लोकेशन ली जा रही है...': 'Getting current location...', 'इस browser में location support नहीं है।': 'This browser does not support location.', 'Current location मिल गई।': 'Current location received.', 'Shop से दूरी:': 'Distance from shop:', 'आपकी location shop से ': 'Your location is ', 'दूर है.': 'away.', 'Delivery radius सिर्फ 5 km है.': 'Delivery radius is only 5 km.', 'Location नहीं मिली। Address से order continue किया जा सकता है.': 'Location not received. You can continue your order using your address.', 'Order total और delivery charge दिखाने के लिए current location की permission दें.': 'Allow location access to show the order total and delivery charge.', 'Current location order के साथ save होगी.': 'Current location will be saved with your order.', 'डिलीवरी विवरण': 'Delivery Details', 'डिलीवरी विवरण पर जाएँ': 'Proceed to Delivery Details', 'सेव्ड पता चुन लिया गया है।': 'Saved address selected.', 'आपका पूरा डिलीवरी पता दर्ज करें': 'Enter your complete delivery address', '📍 Delivery Location': '📍 Delivery Location'});
  
- Object.assign(bnDict,{'Order cancelled successfully.':'অর্ডার সফলভাবে বাতিল হয়েছে।','Order is still active. Please refresh and try again.':'অর্ডারটি এখনও সক্রিয়। রিফ্রেশ করে আবার চেষ্টা করুন।'});
- Object.assign(bnDict,{
-  'Enter your name':'আপনার নাম লিখুন','Enter mobile number':'মোবাইল নম্বর লিখুন','Enter delivery address':'ডেলিভারির ঠিকানা লিখুন',
-  'Your Name':'আপনার নাম','Mobile Number':'মোবাইল নম্বর','Delivery Address':'ডেলিভারির ঠিকানা','Delivery Location':'ডেলিভারির অবস্থান',
-  'Sign in to view your orders automatically.':'ট্র্যাকিং দেখতে আপনার মোবাইল নম্বর লিখুন এবং একটি অর্ডার বেছে নিন।',
-  'Enter your 10-digit mobile number':'আপনার ১০ সংখ্যার মোবাইল নম্বর লিখুন','Find My Orders':'আমার অর্ডার খুঁজুন',
-  'No Orders':'কোনো অর্ডার নেই','Your Orders':'আপনার অর্ডার','Track this order':'এই অর্ডার ট্র্যাক করুন',
-  'Proceed to Delivery Details':'ডেলিভারির বিবরণে যান'
- });
+ 
+ 
  Object.assign(enDict,{'ऑर्डर सफलतापूर्वक कैंसल हो गया है।':'Order cancelled successfully.','ऑर्डर अभी सक्रिय है। रीफ्रेश करके फिर कोशिश करें।':'Order is still active. Please refresh and try again.'});
  Object.assign(enDict,{'CANCELLED · यह ऑर्डर रद्द हो चुका है':'CANCELLED','ऑर्डर कैंसल हो गया है':'Order cancelled','ऑर्डर रद्द हो चुका है':'Order has been cancelled','यह ऑर्डर रद्द हो चुका है':'This order has been cancelled','ऑर्डर सफलतापूर्वक रद्द हो गया है।':'Order cancelled successfully.','ऑर्डर आईडी:':'Order ID:','भुगतान:':'Payment:','स्थिति:':'Status:'});
  Object.assign(enDict,{
@@ -13603,27 +13540,50 @@ Object.assign(enDict,{
  Object.assign(dict,{
   'Shop Now':'अभी खरीदें','Shop by Category':'श्रेणी के अनुसार खरीदें','Our Products':'हमारे उत्पाद','Products':'उत्पाद','Biscuits':'बिस्कुट','Namkeen And Snacks':'नमकीन और स्नैक्स','Vegetables':'सब्ज़ियाँ','Face And Body Care':'चेहरे और शरीर की देखभाल','Grocery':'किराना','Perfumes':'इत्र','Stationary':'स्टेशनरी','Shoes':'जूते','Sweets And Chocolates':'मिठाई और चॉकलेट','View All':'सभी देखें','Continue with Email':'ईमेल से जारी रखें','Continue with Google':'Google से जारी रखें','Search products':'उत्पाद खोजें','Search for products...':'उत्पाद खोजें...','Change Language':'भाषा बदलें','WELCOME TO':'में आपका स्वागत है','Secure login':'सुरक्षित लॉगिन','आपके email पर verification code आएगा।':'आपके ईमेल पर सत्यापन कोड आएगा।','Email address / ईमेल':'ईमेल पता','Secure email verification · सुरक्षित login':'सुरक्षित ईमेल सत्यापन','Fresh & Local Groceries':'ताज़ा स्थानीय किराना','at Your Doorstep':'आपके दरवाज़े पर','Quality Products':'गुणवत्तापूर्ण उत्पाद','Best Prices':'सबसे अच्छी कीमतें','Local Delivery':'स्थानीय डिलीवरी','Choose a collection to see only its products.':'श्रेणी चुनें और केवल उसी के उत्पाद देखें।','All categories start closed.':'सभी श्रेणियाँ शुरू में बंद हैं।','Products और categories update हो रहे हैं…':'उत्पाद और श्रेणियाँ अपडेट हो रही हैं…','Free delivery':'मुफ़्त डिलीवरी','on orders above':'से अधिक के ऑर्डर पर'
  });
- Object.assign(bnDict,{
-  'Shop by Category':'বিভাগ অনুযায়ী কিনুন','Our Products':'আমাদের পণ্য','Products':'পণ্য','Biscuits':'বিস্কুট','Namkeen And Snacks':'নমকিন ও স্ন্যাকস','Vegetables':'সবজি','Face And Body Care':'মুখ ও শরীরের যত্ন','Grocery':'মুদি পণ্য','Perfumes':'সুগন্ধি','Stationary':'স্টেশনারি','Shoes':'জুতা','Sweets And Chocolates':'মিষ্টি ও চকলেট','Continue with Email':'ইমেল দিয়ে চালিয়ে যান','Continue with Google':'Google দিয়ে চালিয়ে যান','Search products':'পণ্য খুঁজুন','Search for products...':'পণ্য খুঁজুন...','Change Language':'ভাষা পরিবর্তন করুন','WELCOME TO':'স্বাগতম','Secure login':'নিরাপদ লগইন','आपके email पर verification code आएगा।':'আপনার ইমেইলে যাচাইকরণ কোড পাঠানো হবে।','Email address / ईमेल':'ইমেইল ঠিকানা','Secure email verification · सुरक्षित login':'নিরাপদ ইমেইল যাচাইকরণ','वेदांत किराना दुकान':'বেদান্ত মুদি দোকান','Fresh & Local Groceries':'তাজা স্থানীয় মুদি পণ্য','at Your Doorstep':'আপনার দোরগোড়ায়','Quality Products':'মানসম্পন্ন পণ্য','Best Prices':'সেরা দাম','Local Delivery':'স্থানীয় ডেলিভারি','Choose a collection to see only its products.':'শুধুমাত্র সেই বিভাগের পণ্য দেখতে একটি বিভাগ বেছে নিন।','All categories start closed.':'সব বিভাগ শুরুতে বন্ধ থাকে।','Products और categories update हो रहे हैं…':'পণ্য ও বিভাগ আপডেট হচ্ছে…','Free delivery':'বিনামূল্যে ডেলিভারি','on orders above':'এর বেশি অর্ডারে'
- });
+ 
  Object.assign(enDict,{
   'श्रेणी के अनुसार खरीदें':'Shop by Category','हमारे उत्पाद':'Our Products','उत्पाद':'Products','बिस्कुट':'Biscuits','नमकीन और स्नैक्स':'Namkeen and Snacks','सब्ज़ियाँ':'Vegetables','चेहरे और शरीर की देखभाल':'Face and Body Care','किराना':'Grocery','इत्र':'Perfumes','स्टेशनरी':'Stationery','जूते':'Shoes','मिठाई और चॉकलेट':'Sweets and Chocolates','ताज़ा स्थानीय किराना':'Fresh & Local Groceries','आपके दरवाज़े पर':'at Your Doorstep','गुणवत्तापूर्ण उत्पाद':'Quality Products','सबसे अच्छी कीमतें':'Best Prices','स्थानीय डिलीवरी':'Local Delivery','श्रेणी चुनें और केवल उसी के उत्पाद देखें।':'Choose a category to see only its products.','सभी श्रेणियाँ शुरू में बंद हैं।':'All categories start closed.','उत्पाद और श्रेणियाँ अपडेट हो रही हैं…':'Products and categories are updating…','मुफ़्त डिलीवरी':'Free delivery','Shop Now':'Shop now','सभी देखें':'View all','ईमेल से जारी रखें':'Continue with Email','Google से जारी रखें':'Continue with Google','उत्पाद खोजें':'Search products','भाषा बदलें':'Change Language','में आपका स्वागत है':'Welcome to','सुरक्षित लॉगिन':'Secure login','आपके email पर verification code आएगा।':'A verification code will be sent to your email.','ईमेल पता':'Email address','सुरक्षित ईमेल सत्यापन':'Secure email verification','Secure email verification · सुरक्षित login':'Secure email verification','वेदांत किराना दुकान':'Vedant Grocery Shop'
  });
  dict['Vedant Grocery Shop (वेदांत किराना दुकान)']='वेदांत किराना दुकान';
- bnDict['Vedant Grocery Shop (वेदांत किराना दुकान)']='বেদান্ত মুদি দোকান';
  enDict['Vedant Grocery Shop (वेदांत किराना दुकान)']='Vedant Grocery Shop';
  Object.assign(dict,{'OR':'या','Fresh':'ताज़ा','min':'मिनट','5 km area':'5 किमी क्षेत्र','Capture delivery location':'डिलीवरी लोकेशन चुनें'});
- Object.assign(bnDict,{'OR':'অথবা','Fresh':'তাজা','min':'মিনিট','5 km area':'৫ কিমি এলাকা','Capture delivery location':'ডেলিভারির অবস্থান বেছে নিন'});
+ 
  Object.assign(enDict,{'ताज़ा':'Fresh','मिनट':'min','5 किमी क्षेत्र':'5 km area','या':'OR','डिलीवरी लोकेशन चुनें':'Choose delivery location','ताज़ा':'Fresh'});
  Object.assign(dict,{'Your Cart':'आपका कार्ट','Review items before checkout.':'चेकआउट से पहले सामान जाँचें।','Special Offer':'विशेष ऑफर','Premium Quality':'प्रीमियम गुणवत्ता','at Best Price':'सबसे अच्छी कीमत पर','Fresh essentials for your family, delivered locally.':'आपके परिवार के लिए ताज़ा ज़रूरी सामान, स्थानीय डिलीवरी के साथ।','Freshness at':'ताज़गी आपके','Your Doorstep':'द्वार पर','Delivery available within 5 km area.':'5 किमी क्षेत्र में डिलीवरी उपलब्ध है।','Choose your language':'अपनी भाषा चुनें','Prefer your language. You can change it anytime from My Account.':'अपनी पसंदीदा भाषा चुनें। आप इसे कभी भी मेरा अकाउंट से बदल सकते हैं।','Continue shopping in English':'अंग्रेज़ी में खरीदारी जारी रखें','हिंदी में खरीदारी जारी रखें':'हिंदी में खरीदारी जारी रखें'});
- Object.assign(bnDict,{'Your Cart':'আপনার কার্ট','Review items before checkout.':'চেকআউটের আগে পণ্য যাচাই করুন।','Special Offer':'বিশেষ অফার','Premium Quality':'উন্নত মান','at Best Price':'সেরা দামে','Fresh essentials for your family, delivered locally.':'আপনার পরিবারের জন্য তাজা নিত্যপ্রয়োজনীয় পণ্য, স্থানীয় ডেলিভারিসহ।','Freshness at':'তাজা পণ্য আপনার','Your Doorstep':'দোরগোড়ায়','Delivery available within 5 km area.':'৫ কিমি এলাকার মধ্যে ডেলিভারি উপলভ্য।','Choose your language':'আপনার ভাষা বেছে নিন','Prefer your language. You can change it anytime from My Account.':'আপনার পছন্দের ভাষা বেছে নিন। আমার অ্যাকাউন্ট থেকে যেকোনো সময় পরিবর্তন করতে পারবেন।','Continue shopping in English':'ইংরেজিতে কেনাকাটা চালিয়ে যান','हिंदी में खरीदारी जारी रखें':'হিন্দিতে কেনাকাটা চালিয়ে যান'});
+ 
  Object.assign(enDict,{'आपका कार्ट':'Your Cart','चेकआउट से पहले सामान जाँचें।':'Review items before checkout.','विशेष ऑफर':'Special Offer','प्रीमियम गुणवत्ता':'Premium Quality','सबसे अच्छी कीमत पर':'at the best price','आपके परिवार के लिए ताज़ा ज़रूरी सामान, स्थानीय डिलीवरी के साथ।':'Fresh essentials for your family, delivered locally.','ताज़गी आपके':'Freshness at your','द्वार पर':'doorstep','5 किमी क्षेत्र में डिलीवरी उपलब्ध है।':'Delivery is available within 5 km.','अपनी भाषा चुनें':'Choose your language','अपनी पसंदीदा भाषा चुनें। आप इसे कभी भी मेरा अकाउंट से बदल सकते हैं।':'Choose your preferred language. You can change it anytime from My Account.','अंग्रेज़ी में खरीदारी जारी रखें':'Continue shopping in English','हिंदी में खरीदारी जारी रखें':'Continue shopping in Hindi'});
  Object.assign(dict,{'Current location not selected':'वर्तमान लोकेशन नहीं चुनी गई','Location unavailable':'लोकेशन उपलब्ध नहीं','Not selected':'चुना नहीं गया','Continue browsing as guest':'गेस्ट के रूप में ब्राउज़ करें','← Back':'← वापस','← Back to browsing':'← ब्राउज़ करने वापस जाएँ','Login required to continue.':'जारी रखने के लिए लॉगिन करें।','Checking sign-in status…':'लॉगिन की स्थिति जाँची जा रही है…','Please sign in to view this section.':'यह सेक्शन देखने के लिए लॉगिन करें।','Please sign in to access your account.':'अपने अकाउंट के लिए लॉगिन करें।','Could not verify sign-in status. Please sign in to continue.':'लॉगिन की पुष्टि नहीं हो सकी। जारी रखने के लिए लॉगिन करें।'});
- Object.assign(bnDict,{'Current location not selected':'বর্তমান অবস্থান নির্বাচন করা হয়নি','Location unavailable':'অবস্থান পাওয়া যাচ্ছে না','Not selected':'নির্বাচিত নয়','Continue browsing as guest':'অতিথি হিসেবে ব্রাউজ করুন','← Back':'← ফিরে যান','← Back to browsing':'← ব্রাউজ করতে ফিরে যান','Login required to continue.':'চালিয়ে যেতে লগইন করুন।','Checking sign-in status…':'লগইন অবস্থা যাচাই করা হচ্ছে…','Please sign in to view this section.':'এই বিভাগ দেখতে লগইন করুন।','Please sign in to access your account.':'আপনার অ্যাকাউন্ট দেখতে লগইন করুন।','Could not verify sign-in status. Please sign in to continue.':'লগইন যাচাই করা যায়নি। চালিয়ে যেতে লগইন করুন।'});
- Object.assign(enDict,{'वर्तमान लोकेशन नहीं चुनी गई':'Current location not selected','लोकेशन उपलब्ध नहीं':'Location unavailable','चुना नहीं गया':'Not selected','गेस्ट के रूप में ब्राउज़ करें':'Continue browsing as guest','← वापस':'← Back','← ফিরে যান':'← Back','← ब्राउज़ करने वापस जाएँ':'← Back to browsing','← ব্রাউজ করতে ফিরে যান':'← Back to browsing','जारी रखने के लिए लॉगिन करें।':'Login required to continue.','लॉगिन की स्थिति जाँची जा रही है…':'Checking sign-in status…','লগইন অবস্থা যাচাই করা হচ্ছে…':'Checking sign-in status…','यह सेक्शन देखने के लिए लॉगिन करें।':'Please sign in to view this section.','अपने अकाउंट के लिए लॉगिन करें।':'Please sign in to access your account.','লগইন যাচাই করা যায়নি। চালিয়ে যেতে লগইন करें।':'Could not verify sign-in status. Please sign in to continue.'});
+ 
+ Object.assign(enDict,{'वर्तमान लोकेशन नहीं चुनी गई':'Current location not selected','लोकेशन उपलब्ध नहीं':'Location unavailable','चुना नहीं गया':'Not selected','गेस्ट के रूप में ब्राउज़ करें':'Continue browsing as guest','← वापस':'← Back','← ब्राउज़ करने वापस जाएँ':'← Back to browsing','जारी रखने के लिए लॉगिन करें।':'Login required to continue.','लॉगिन की स्थिति जाँची जा रही है…':'Checking sign-in status…','यह सेक्शन देखने के लिए लॉगिन करें।':'Please sign in to view this section.','अपने अकाउंट के लिए लॉगिन करें।':'Please sign in to access your account.',});
  Object.assign(dict,{'Delivery Distance':'डिलीवरी दूरी'});
- Object.assign(bnDict,{'Delivery Distance':'ডেলিভারির দূরত্ব'});
- Object.assign(enDict,{'डिलीवरी दूरी':'Delivery Distance','ডেলিভারির দূরত্ব':'Delivery Distance'});
+ 
+ Object.assign(enDict,{'डिलीवरी दूरी':'Delivery Distance',});
+ // Checkout/location flow: provide English equivalents for strings that were
+ // added after the original language dictionary was created.
+ Object.assign(enDict,{
+  'अपना वर्तमान स्थान अपडेट करें':'Update Your Current Location',
+  'अपना वर्तमान स्थान अपडेट करें':'Update Your Current Location',
+  'अपनी वर्तमान लोकेशन अपडेट करें':'Update Your Current Location',
+  'डिलीवरी सही जगह पहुँचाने के लिए GPS लोकेशन चुनें':'Choose your GPS location to ensure accurate delivery',
+  'नीचे बटन दबाएँ। आपकी लोकेशन और दुकान से दूरी दिखेगी। यही लोकेशन आपके ऑर्डर और ट्रैकिंग पेज में सेव होगी।':'Tap the button below. Your location and distance from the shop will be displayed. This location will be saved with your order and on the tracking page.',
+  'लोकेशन सेव करें और आगे बढ़ें →':'Save Location and Continue →',
+  'लोकेशन Save और आगे बढ़ें →':'Save Location and Continue →',
+  '← लोकेशन':'← Location',
+  '3. ऑर्डर की समीक्षा करें':'3. Review Your Order',
+  '2. अपना वर्तमान स्थान अपडेट करें':'2. Update Your Current Location',
+  'आपकी वर्तमान लोकेशन सेव है':'Your current location is saved',
+  'वर्तमान लोकेशन सेव है':'Current location is saved',
+  'दूरी:':'Distance:',
+  'डिलीवरी उपलब्ध नहीं':'Delivery unavailable',
+  'अनुमानित समय:':'Estimated time:',
+  'डिलीवरी समय:':'Delivery time:',
+  'माफ़ कीजिए, आपकी लोकेशन 5 km डिलीवरी क्षेत्र से बाहर है।':'Sorry, your location is outside the 5 km delivery area.',
+  'आपकी लोकेशन 5 km डिलीवरी क्षेत्र के अंदर है।':'Your location is within the 5 km delivery area.',
+  '🔄 लोकेशन अपडेट करें':'🔄 Update Location',
+  'Review items, discount, delivery charge and payable total':'Review items, discount, delivery charge and payable total',
+  'भुगतान के लिए आगे बढ़ें →':'Proceed to Payment →'
+ });
+
  function translateNode(node,l){
   if(!node||node.nodeType!==Node.TEXT_NODE)return;
   const el=node.parentElement;
@@ -13634,8 +13594,7 @@ Object.assign(enDict,{
   // Text already written in the selected Indic script does not need to be
   // re-processed through the large phrase dictionary on every page update.
   const hasLatin=/[A-Za-z]/.test(original);
-  const alreadyTargetScript=(l==='hi' && /[\u0900-\u097F]/.test(original) && !hasLatin) ||
-                            (l==='bn' && /[\u0980-\u09FF]/.test(original) && !hasLatin);
+  const alreadyTargetScript=(l==='hi' && /[\u0900-\u097F]/.test(original) && !hasLatin);
   const value=(l==='en'&&!indicText.test(original))||alreadyTargetScript
     ? original
     : translatedText(original,l);
@@ -13729,7 +13688,7 @@ Object.assign(enDict,{
  function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
  function close(){if(gate){gate.style.display='none';gate.style.visibility='hidden';gate.style.pointerEvents='none';}document.body.style.overflow='';document.documentElement.style.visibility='visible';window.setTimeout(()=>apply(),0);}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
- gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=x.value;updateChoices()}));
+ gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=(x.value==='hi'?'hi':'en');updateChoices()}));
  gate?.querySelector('#vLangContinue')?.addEventListener('click',()=>{const button=gate.querySelector('#vLangContinue');if(button?.disabled)return;if(button)button.disabled=true;try{localStorage.setItem(keyForUser(),chosen);localStorage.setItem('vedantLanguagePreference',chosen)}catch(_){}close();});
  window.vedantChangeLanguage=open;window.vedantApplyLanguage=apply;
  // Add a language option when the account menu is created, without replacing existing actions.
@@ -14748,8 +14707,8 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
  const overlay=document.getElementById('stvn-dialog-overlay'),card=document.getElementById('stvn-dialog-card'),title=document.getElementById('stvn-dialog-title'),message=document.getElementById('stvn-dialog-message'),mark=document.getElementById('stvn-dialog-mark'),input=document.getElementById('stvn-dialog-input'),ok=document.getElementById('stvn-dialog-ok'),cancel=document.getElementById('stvn-dialog-cancel');
  if(!overlay)return;
  const queue=[];let active=null,previousFocus=null;
- function language(){let l=document.documentElement.dataset.language||document.documentElement.lang||'en';try{l=localStorage.getItem('vedantLanguagePreference')||l;const email=localStorage.getItem('vedantCustomerEmail')||'guest';l=localStorage.getItem('vedantLanguage:'+email.toLowerCase())||l}catch(_){}return ['hi','bn'].includes(l)?l:'en'}
- function labels(){const l=language();return l==='hi'?{ok:'ठीक है',cancel:'रद्द करें',notice:'सूचना',confirm:'पुष्टि करें',input:'अपना जवाब लिखें'}:l==='bn'?{ok:'ঠিক আছে',cancel:'বাতিল',notice:'বার্তা',confirm:'নিশ্চিত করুন',input:'আপনার উত্তর লিখুন'}:{ok:'OK',cancel:'Cancel',notice:'Notice',confirm:'Confirm',input:'Enter your response'};}
+ function language(){let l=document.documentElement.dataset.language||document.documentElement.lang||'en';try{l=localStorage.getItem('vedantLanguagePreference')||l;const email=localStorage.getItem('vedantCustomerEmail')||'guest';l=localStorage.getItem('vedantLanguage:'+email.toLowerCase())||l}catch(_){}return l==='hi'?'hi':'en'}
+ function labels(){const l=language();return l==='hi'?{ok:'ठीक है',cancel:'रद्द करें',notice:'सूचना',confirm:'पुष्टि करें',input:'अपना जवाब लिखें'}:{ok:'OK',cancel:'Cancel',notice:'Notice',confirm:'Confirm',input:'Enter your response'};}
  function next(){if(active||!queue.length)return;active=queue.shift();previousFocus=document.activeElement;const t=labels();title.textContent=active.title|| (active.type==='confirm'?t.confirm:active.type==='prompt'?t.input:t.notice);message.textContent=String(active.message??'');mark.textContent=active.type==='confirm'?'?':active.type==='prompt'?'✎':active.type==='error'?'!':'✓';mark.style.background=active.type==='error'?'#fff0ed':'#e9f8ef';mark.style.color=active.type==='error'?'#c33b2d':'#16864a';ok.textContent=active.okText||t.ok;cancel.textContent=active.cancelText||t.cancel;cancel.style.display=active.type==='alert'?'none':'';input.style.display=active.type==='prompt'?'block':'none';input.value=active.defaultValue||'';input.placeholder=t.input;ok.classList.toggle('stvn-dialog-danger',active.danger===true);overlay.classList.add('stvn-dialog-open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(()=>active.type==='prompt'?input.focus():ok.focus());}
  function finish(value){if(!active)return;const job=active;active=null;overlay.classList.remove('stvn-dialog-open');overlay.setAttribute('aria-hidden','true');document.body.style.overflow='';if(job.resolve)job.resolve(value);if(previousFocus&&typeof previousFocus.focus==='function')setTimeout(()=>previousFocus.focus(),0);setTimeout(next,30);}
  function show(type,msg,opts){return new Promise(resolve=>{queue.push({type,message:msg,resolve,...(opts||{})});next();});}
@@ -14802,31 +14761,23 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 <script id="stvn-pwa-install-prompt">
 (function(){
   let installPromptEvent=null;
-  let dismissedThisPage=false;
   const modalId="stvnInstallPromptModal";
-  // QR poster points to the site with ?from=qr. Ordinary visits never auto-open this prompt.
-  const params=new URLSearchParams(window.location.search);
-  const cameFromShopQr=params.get("from")==="qr";
   function ensureModal(){
     if(document.getElementById(modalId))return;
     const modal=document.createElement("div");modal.id=modalId;modal.style.cssText="display:none;position:fixed;inset:0;z-index:999999;align-items:center;justify-content:center;padding:18px;background:rgba(8,25,15,.68);backdrop-filter:blur(5px)";
-    modal.innerHTML=`<section style="width:min(100%,390px);padding:25px 20px;border-radius:24px;background:linear-gradient(150deg,#fff,#effff4);text-align:center;box-shadow:0 22px 70px #0005;color:#163b27"><div style="font-size:42px">🛍️</div><h2 style="margin:8px 0;color:#087c42">वेदांत ग्रोसरी शॉप ऐप इंस्टॉल करें</h2><p style="margin:0 0 18px;line-height:1.55;color:#52665a">तेज़ और आसान खरीदारी के लिए हमारी दुकान अपने मोबाइल में जोड़ें।</p><button id="stvnInstallNow" style="width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#087c42,#20ad62);color:white;font-size:16px;font-weight:900">📲 अभी इंस्टॉल करें</button><button id="stvnInstallLater" style="margin-top:10px;padding:10px 14px;border:0;background:transparent;color:#607468;font-weight:700">अभी नहीं</button><p id="stvnInstallHelp" style="display:none;margin:12px 0 0;font-size:12px;line-height:1.5;color:#607468">यदि इंस्टॉल विकल्प अपने आप न खुले, तो Chrome के ⋮ मेन्यू में “ऐप इंस्टॉल करें” या “होम स्क्रीन पर जोड़ें” चुनें।</p></section>`;
+    modal.innerHTML=`<section style="width:min(100%,390px);padding:25px 20px;border-radius:24px;background:linear-gradient(150deg,#fff,#effff4);text-align:center;box-shadow:0 22px 70px #0005;color:#163b27"><div style="font-size:42px">🛍️</div><h2 style="margin:8px 0;color:#087c42">वेदांत ग्रोसरी शॉप ऐप इंस्टॉल करें</h2><p style="margin:0 0 18px;line-height:1.55;color:#52665a">तेज़ और आसान खरीदारी के लिए हमारी दुकान अपने मोबाइल में जोड़ें।</p><button id="stvnInstallNow" style="width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#087c42,#20ad62);color:white;font-size:16px;font-weight:900">📲 अभी इंस्टॉल करें</button><button id="stvnInstallLater" style="margin-top:10px;padding:10px 14px;border:0;background:transparent;color:#607468;font-weight:700">अभी नहीं</button><p id="stvnInstallHelp" style="display:none;margin:12px 0 0;font-size:12px;line-height:1.5;color:#607468">Chrome के ⋮ मेन्यू में जाकर “ऐप इंस्टॉल करें” या “होम स्क्रीन पर जोड़ें” चुनें।</p></section>`;
     document.body.appendChild(modal);
-    modal.addEventListener("click",e=>{if(e.target===modal){dismissedThisPage=true;modal.style.display="none";}});
-    modal.querySelector("#stvnInstallLater").onclick=()=>{dismissedThisPage=true;modal.style.display="none";};
+    modal.addEventListener("click",e=>{if(e.target===modal)modal.style.display="none";});
+    modal.querySelector("#stvnInstallLater").onclick=()=>{modal.style.display="none";try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}};
     modal.querySelector("#stvnInstallNow").onclick=async()=>{
-      if(installPromptEvent){const promptEvent=installPromptEvent;installPromptEvent=null;try{await promptEvent.prompt();await promptEvent.userChoice;}catch(e){}modal.style.display="none";}
+      if(installPromptEvent){installPromptEvent.prompt();try{await installPromptEvent.userChoice;}catch(e){}installPromptEvent=null;modal.style.display="none";}
       else{modal.querySelector("#stvnInstallHelp").style.display="block";}
     };
   }
-  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPromptEvent=e;if(cameFromShopQr)ensureModal();});
-  window.addEventListener("load",()=>{
-    if(!cameFromShopQr)return;
-    ensureModal();
-    setTimeout(()=>{const m=document.getElementById(modalId);if(m&&!dismissedThisPage)m.style.display="flex";},900);
-  },{once:true});
-  window.addEventListener("appinstalled",()=>{const m=document.getElementById(modalId);if(m)m.style.display="none";dismissedThisPage=true;});
-  window.stvnShowInstallPrompt=function(){if(!cameFromShopQr)return;ensureModal();const m=document.getElementById(modalId);if(m&&!dismissedThisPage)m.style.display="flex";};
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPromptEvent=e;ensureModal();});
+  window.addEventListener("load",()=>{ensureModal();setTimeout(()=>{const m=document.getElementById(modalId);let dismissed=false;try{dismissed=!!sessionStorage.getItem("stvnInstallPromptDismissed");}catch(e){}if(m&&!dismissed)m.style.display="flex";},1100);},{once:true});
+  window.addEventListener("appinstalled",()=>{const m=document.getElementById(modalId);if(m)m.style.display="none";try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}});
+  window.stvnShowInstallPrompt=function(){ensureModal();const m=document.getElementById(modalId);if(m)m.style.display="flex";};
 })();
 </script>
 </body>
@@ -15624,35 +15575,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 #customer-location-box #location-status{color:#263d30!important;font-weight:650!important}
 @media(max-width:700px){#customer-location-box{background:linear-gradient(145deg,#fff 0%,#eef8ef 100%)!important;border:1px solid #cfe4d2!important}#customer-location-box>strong{font-size:15px!important}}
 </style>
-<script id="vedant-final-location-language-fix">
-(function(){
-  const messages={
-    en:{unsupported:'Location is not supported by this browser.',pending:'Getting your current location...',success:'Current location detected.',distance:'Distance from shop:',available:'Delivery is available within the 5 km radius.',outside:'Sorry! Delivery is currently unavailable at your location.',outsideDistance:'Your location is outside the 5 km delivery radius.',failed:'Location could not be detected. You can continue by entering your delivery address.',saved:'Your current location will be saved with the order.'},
-    hi:{unsupported:'इस ब्राउज़र में लोकेशन उपलब्ध नहीं है।',pending:'आपकी वर्तमान लोकेशन प्राप्त की जा रही है...',success:'वर्तमान लोकेशन मिल गई।',distance:'दुकान से दूरी:',available:'5 किमी के दायरे में डिलीवरी उपलब्ध है।',outside:'माफ़ कीजिए! आपकी लोकेशन पर अभी डिलीवरी उपलब्ध नहीं है।',outsideDistance:'आपकी लोकेशन 5 किमी डिलीवरी सीमा से बाहर है।',failed:'लोकेशन नहीं मिल सकी। आप डिलीवरी पता भरकर आगे बढ़ सकते हैं।',saved:'आपकी वर्तमान लोकेशन ऑर्डर के साथ सेव होगी।'},
-    bn:{unsupported:'এই ব্রাউজারে লোকেশন সমর্থিত নয়।',pending:'আপনার বর্তমান অবস্থান নেওয়া হচ্ছে...',success:'বর্তমান অবস্থান পাওয়া গেছে।',distance:'দোকান থেকে দূরত্ব:',available:'৫ কিমি এলাকার মধ্যে ডেলিভারি উপলভ্য।',outside:'দুঃখিত! আপনার অবস্থানে এখন ডেলিভারি উপলভ্য নয়।',outsideDistance:'আপনার অবস্থান ৫ কিমি ডেলিভারি সীমার বাইরে।',failed:'অবস্থান পাওয়া যায়নি। ঠিকানা লিখে অর্ডার চালিয়ে যেতে পারেন।',saved:'আপনার বর্তমান অবস্থান অর্ডারের সঙ্গে সংরক্ষিত হবে.'}
-  };
-  function lang(){const l=document.documentElement.dataset.language||'en';return messages[l]?l:'en';}
-  function setStatus(el,html,kind){if(!el)return;el.innerHTML=html;el.className=kind||'payment-note';}
-  window.requestCustomerLocation=function(){
-    const status=document.getElementById('location-status');const m=messages[lang()];
-    if(!navigator.geolocation){setStatus(status,'❌ '+m.unsupported,'error');return;}
-    setStatus(status,'⏳ '+m.pending,'payment-note');
-    navigator.geolocation.getCurrentPosition(function(position){
-      try{customerLatitude=position.coords.latitude;customerLongitude=position.coords.longitude;}catch(e){}
-      if(typeof window.updateCart==='function')window.updateCart();
-      let radius={allowed:true,distance:null};
-      try{if(typeof checkDeliveryRadius==='function')radius=checkDeliveryRadius();}catch(e){}
-      if(radius.allowed){
-        const dist=radius.distance!==null&&radius.distance!==undefined&&Number.isFinite(Number(radius.distance))?'<br>📏 '+m.distance+' <strong>'+Number(radius.distance).toFixed(2)+' km</strong>':'';
-        setStatus(status,'✅ '+m.success+dist+'<br>🟢 '+m.available,'location-success');
-      }else{
-        const dist=radius.distance!==null&&radius.distance!==undefined&&Number.isFinite(Number(radius.distance))?'<br>📏 '+m.distance+' <strong>'+Number(radius.distance).toFixed(2)+' km</strong>':'';
-        setStatus(status,'❌ '+m.outside+dist+'<br>'+m.outsideDistance,'error');
-      }
-    },function(error){console.warn('Customer location:',error&&error.message||error);try{customerLatitude=null;customerLongitude=null;}catch(e){}setStatus(status,'⚠️ '+m.failed,'payment-note');},{enableHighAccuracy:false,timeout:10000,maximumAge:60000});
-  };
-})();
-</script>
+
 
 <style id="vedant-final-mobile-freeze-truck-and-category-fix-v2">
 /* Final override: keep the animated delivery truck visible while products/categories load. */
