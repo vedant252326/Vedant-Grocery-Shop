@@ -16252,7 +16252,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
         card.appendChild(cancelled);
       }else if(['pending','confirmed'].includes(status) && typeof stvnCustomerCancelTimeRemaining==='function' && stvnCustomerCancelTimeRemaining(order.order_date)>0){
         const cancelRow=document.createElement('div');cancelRow.className='stvn-track-cancel-row';
-        const timerLabel=document.createElement('span');timerLabel.textContent='Cancel window';
+        const timerLabel=document.createElement('span');timerLabel.textContent='Order cancel करने का समय';
         const cancel=document.createElement('button');
         cancel.type='button';cancel.className='order-cancel-button remove-btn stvn-track-inline-cancel';
         cancel.dataset.orderCreatedAt=String(order.order_date||'');
@@ -16620,3 +16620,87 @@ body.vg-order-confirmation-open{overflow:hidden!important}
 })();
 </script>
 
+
+
+<style id="vedant-checkout-location-payment-fix-20261116">
+/* Checkout GPS result: always visible, compact and readable on phones. */
+#page-location #customer-location-box{display:block!important;visibility:visible!important;opacity:1!important;width:100%!important}
+#page-location #location-status{display:block!important;white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.5!important}
+#page-location #stvnGpsCoordinates{display:block!important;margin-top:12px!important;padding:14px!important;border:1px solid #cbded1!important;border-radius:14px!important;background:#f5fbf6!important;color:#173c27!important;line-height:1.65!important;font-size:14px!important}
+#page-location #stvnGpsCoordinates[hidden]{display:none!important}
+#page-location #stvnLocationContinue{width:100%!important;margin-top:14px!important}
+#page-payment .stvn-payment-accordion-item.is-selected{border:2px solid #16834b!important;background:#eaf8ef!important;box-shadow:0 0 0 3px rgba(22,131,75,.12)!important}
+#page-payment .stvn-payment-accordion-item.is-selected .stvn-payment-card-copy:after{content:'✓ Selected';display:inline-block;margin-left:10px;padding:4px 9px;border-radius:20px;background:#16834b;color:#fff;font-size:12px;font-weight:900;vertical-align:middle}
+#page-payment .stvn-payment-accordion-item.is-selected .stvn-payment-accordion-trigger:after{content:'✓';display:grid;place-items:center;flex:0 0 27px;width:27px;height:27px;border-radius:50%;background:#16834b;color:white;font-weight:900;margin-left:auto}
+#page-payment .stvn-payment-accordion-trigger{width:100%;min-height:70px}
+@media(max-width:600px){#page-location #stvnGpsCoordinates{font-size:13px;padding:12px!important}#page-payment .stvn-payment-accordion-trigger{min-height:68px;padding:10px!important}}
+</style>
+<script id="vedant-checkout-location-payment-behavior-fix-20261116">
+(function(){
+'use strict';
+const SHOP_LAT=25.3698055556, SHOP_LNG=83.1131388889, RADIUS=5;
+window.SHOP_LATITUDE=SHOP_LAT; window.SHOP_LONGITUDE=SHOP_LNG;
+function kmBetween(a,b,c,d){const r=Math.PI/180,da=(c-a)*r,db=(d-b)*r,x=Math.sin(da/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(db/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+window.requestCustomerLocation=function(){
+ const status=document.getElementById('location-status'),details=document.getElementById('stvnGpsCoordinates'),next=document.getElementById('stvnLocationContinue'),btn=document.getElementById('stvnGpsUpdateButton');
+ if(next){next.hidden=true;next.style.display='none';} if(details){details.hidden=true;details.style.display='none';}
+ if(!navigator.geolocation){if(status){status.textContent='इस ब्राउज़र में GPS उपलब्ध नहीं है।';status.className='error';}return;}
+ if(btn){btn.disabled=true;btn.textContent='लोकेशन प्राप्त हो रही है…';}
+ if(status){status.textContent='आपकी वर्तमान लोकेशन प्राप्त की जा रही है। कृपया GPS अनुमति दें…';status.className='payment-note';}
+ navigator.geolocation.getCurrentPosition(async pos=>{
+   const lat=Number(pos.coords.latitude),lng=Number(pos.coords.longitude),accuracy=Number(pos.coords.accuracy)||0;
+   if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat < -90||lat > 90||lng < -180||lng > 180){throw new Error('GPS coordinates अमान्य हैं।');}
+   const distance=kmBetween(lat,lng,SHOP_LAT,SHOP_LNG),allowed=distance<=RADIUS;
+   window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=distance;window.currentDeliveryAvailable=allowed;
+   try{localStorage.setItem('vedantCustomerDeliveryLocationV1',JSON.stringify({lat,lng,km:distance,name:'वर्तमान लोकेशन',updatedAt:Date.now(),accuracy}));}catch(e){}
+   // Keep the original checkout variables in sync for order submission and radius validation.
+   try{customerLatitude=lat;customerLongitude=lng;}catch(e){}
+   const a=document.getElementById('stvnGpsLat'),b=document.getElementById('stvnGpsLng'),c=document.getElementById('stvnGpsDistance');
+   if(a)a.textContent='Latitude: '+lat.toFixed(6);
+   if(b)b.textContent='Longitude: '+lng.toFixed(6);
+   if(c)c.textContent='आपके घर से दुकान की दूरी: '+distance.toFixed(2)+' km  |  GPS accuracy: लगभग '+Math.round(accuracy)+' m';
+   if(details){details.hidden=false;details.style.display='block';}
+   if(status){status.textContent=allowed?'✅ लोकेशन अपडेट हो गई। आपके घर से दुकान की दूरी '+distance.toFixed(2)+' km है। डिलीवरी उपलब्ध है।':'❌ आपके घर से दुकान की दूरी '+distance.toFixed(2)+' km है। डिलीवरी केवल 5 km के अंदर उपलब्ध है।';status.className=allowed?'location-success':'error';}
+   if(next){next.hidden=!allowed;next.style.display=allowed?'block':'none';}
+   if(btn){btn.disabled=false;btn.textContent='↻ Update Location';}
+   if(typeof updateCart==='function')updateCart();
+ },err=>{
+   console.warn('Checkout GPS error',err);
+   if(status){status.textContent=err.code===1?'लोकेशन की अनुमति नहीं मिली। iPhone/Browser Settings में Location Allow करके फिर कोशिश करें।':'लोकेशन नहीं मिल सकी। GPS चालू करके दोबारा Update Location दबाएँ।';status.className='error';}
+   if(btn){btn.disabled=false;btn.textContent='↻ Update Location';}
+   if(details){details.hidden=true;details.style.display='none';}
+   if(next){next.hidden=true;next.style.display='none';}
+ },{enableHighAccuracy:true,timeout:25000,maximumAge:0});
+};
+window.toggleVedantPayment=function(method){
+ const select=document.getElementById('payment-method');if(!select||!['COD','UPI'].includes(method))return;
+ select.value=method;
+ document.querySelectorAll('.stvn-payment-accordion-item').forEach(card=>{
+   const active=card.getAttribute('data-payment-card')===method;
+   card.classList.toggle('is-selected',active);card.classList.toggle('is-open',active);
+   const trigger=card.querySelector('.stvn-payment-accordion-trigger');if(trigger)trigger.setAttribute('aria-expanded',active?'true':'false');
+ });
+ if(typeof window.showPaymentInfo==='function')window.showPaymentInfo();
+};
+window.syncVedantPaymentAccordion=function(){const method=document.getElementById('payment-method')?.value||'COD';document.querySelectorAll('.stvn-payment-accordion-item').forEach(card=>{const active=card.getAttribute('data-payment-card')===method;card.classList.toggle('is-selected',active);card.classList.toggle('is-open',active);const trigger=card.querySelector('.stvn-payment-accordion-trigger');if(trigger)trigger.setAttribute('aria-expanded',active?'true':'false');});};
+function init(){
+ const select=document.getElementById('payment-method');if(select){select.addEventListener('change',window.syncVedantPaymentAccordion);window.syncVedantPaymentAccordion();}
+ // Requested order: Order Summary first, then Payment Method selector, then Place Order.
+ const paymentCard=document.querySelector('#page-payment .checkout-step-card');
+ const summary=document.getElementById('order-summary');
+ const summaryHeading=summary?.previousElementSibling;
+ const paymentBox=document.getElementById('payment-method')?.closest('.payment-box');
+ if(paymentCard&&summary&&paymentBox){
+   if(summaryHeading&&summaryHeading.tagName==='H2'){
+     summaryHeading.textContent='📋 Order Summary';
+     paymentCard.insertBefore(summaryHeading,paymentBox);
+   }
+   paymentCard.insertBefore(summary,paymentBox);
+ }
+ const methodHeading=paymentBox?.querySelector('h3');
+ if(methodHeading)methodHeading.textContent='💳 Payment Method';
+ // Keep the review step's old summary heading from appearing empty after moving the summary.
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
