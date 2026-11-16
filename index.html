@@ -13711,18 +13711,47 @@ Object.assign(enDict,{
   const header=document.querySelector('.vg-store-header,header,.modern-nav');
   if(header)enqueueTranslation(header,l);
  }
- let languageObserver=null;function observeLanguage(){if(languageObserver)return;languageObserver=new MutationObserver(records=>{const l=lang();for(const rec of records){if(rec.type==='characterData'){const node=rec.target;if(translatedLanguages.get(node)===l&&node.nodeValue===translatedValues.get(node))continue;translateNode(node,l);continue;}for(const node of rec.addedNodes||[]){if(node.nodeType===Node.TEXT_NODE){const parent=node.parentElement;if(parent&&!parent.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))translateNode(node,l);}else if(node.nodeType===Node.ELEMENT_NODE){if(!node.matches('script,style,noscript,template,[hidden],[aria-hidden="true"]')&&!node.closest('[id^="page-"]:not(.active)'))enqueueTranslation(node,l);}}}});languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});
-  // When navigation activates another page, translate that page in small batches.
-  let lastTranslatedActivePage='';
+ let languageObserver=null;
+ let lastTranslatedActivePage='';
+ function observeLanguage(){
+  if(languageObserver)return;
+  languageObserver=new MutationObserver(records=>{
+   const l=lang();
+   // DOM updates from product lists, cart counters and navigation can produce
+   // hundreds of mutations. Never translate those synchronously in the observer.
+   // Queue only the changed subtree; the existing short translation batches do the work.
+   for(const rec of records){
+    if(rec.type==='characterData'){
+     const node=rec.target;
+     if(translatedLanguages.get(node)===l&&node.nodeValue===translatedValues.get(node))continue;
+     const parent=node.parentElement;
+     if(!parent||parent.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))continue;
+     const page=parent.closest('[id^="page-"]');
+     if(page&&!page.classList.contains('active'))continue;
+     enqueueTranslation(parent,l);
+     continue;
+    }
+    for(const node of rec.addedNodes||[]){
+     const target=node.nodeType===Node.TEXT_NODE?node.parentElement:node;
+     if(!target||target.nodeType!==Node.ELEMENT_NODE)continue;
+     if(target.matches('script,style,noscript,template,[hidden],[aria-hidden="true"]')||target.closest('script,style,noscript,template,#vLangGate,[hidden],[aria-hidden="true"]'))continue;
+     const page=target.closest('[id^="page-"]');
+     if(page&&!page.classList.contains('active'))continue;
+     enqueueTranslation(target,l);
+    }
+   }
+  });
+  languageObserver.observe(document.body,{subtree:true,childList:true,characterData:true});
+  // Translate a newly opened page once; ordinary product/category clicks must not
+  // trigger another scan of the whole Shop page.
   document.addEventListener('click',()=>window.setTimeout(()=>{
    const activePage=document.querySelector('[id^="page-"].active');
    const activeId=activePage?.id||'';
-   // Do not rescan the entire Shop page for every product/category click.
-   // Re-translate only when navigation actually switches to another page.
    if(!activePage||activeId===lastTranslatedActivePage)return;
    lastTranslatedActivePage=activeId;
    enqueueTranslation(activePage,lang());
-  },80),true);}
+  },80),true);
+ }
  function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
  function close(){if(gate){gate.style.display='none';gate.style.visibility='hidden';gate.style.pointerEvents='none';}document.body.style.overflow='';document.documentElement.style.visibility='visible';window.setTimeout(()=>apply(),0);}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
