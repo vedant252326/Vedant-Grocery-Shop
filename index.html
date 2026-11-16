@@ -2192,6 +2192,17 @@ button,input,select,textarea{font:inherit}
 .stvn-admin-customer-phone-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.stvn-admin-call-customer{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 12px;min-height:34px;border-radius:999px;background:#0b8748;color:#fff!important;text-decoration:none!important;font-size:13px;font-weight:900;box-shadow:0 3px 9px #0002}.stvn-admin-call-customer:active{transform:scale(.97)}
 @media(max-width:600px){.stvn-location-step-card{margin:10px 0;padding:14px!important}.stvn-location-intro h3{font-size:19px}#page-location .checkout-title{align-items:flex-start;gap:8px}.stvn-admin-call-customer{padding:7px 10px}}
 </style>
+
+<style id="stvn-clean-payment-location-ui">
+#page-location .stvn-location-intro p{display:none!important}
+#page-location #customer-location-box>strong{display:none!important}
+#page-location #customer-location-box .payment-note{margin:8px 0!important}
+#page-payment .payment-box>h3,#page-payment .payment-box>.payment-note{display:none!important}
+#page-payment .stvn-payment-accordion-detail,#page-payment .stvn-payment-chevron,#page-payment #payment-info{display:none!important}
+#page-payment .stvn-payment-accordion{margin:0!important}
+#page-payment .stvn-payment-accordion-trigger{justify-content:flex-start!important}
+#page-payment .stvn-payment-card-copy small{display:none!important}
+</style>
 </head>
 
 <body>
@@ -2401,25 +2412,19 @@ Grand Total: ₹<span id="cart-total">0</span>
       <div class="stvn-payment-accordion-item" data-payment-card="COD">
         <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-cod" onclick="toggleVedantPayment('COD')">
           <span class="stvn-payment-icon stvn-cod-icon" aria-hidden="true">🫴💵</span>
-          <span class="stvn-payment-card-copy"><strong>Cash on Delivery</strong><small>Pay when your order arrives</small></span>
-          <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
+          <span class="stvn-payment-card-copy"><strong>Pay by cash</strong></span>
+          
         </button>
-        <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-cod">
-          <p>Pay in cash when your grocery order is delivered.</p>
-          <span class="stvn-payment-selected-label">✓ Selected payment method</span>
-        </div>
+
       </div>
 
       <div class="stvn-payment-accordion-item" data-payment-card="UPI">
         <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-upi" onclick="toggleVedantPayment('UPI')">
           <span class="stvn-payment-icon stvn-online-icon" aria-hidden="true">📱</span>
-          <span class="stvn-payment-card-copy"><strong>Pay with QR</strong><small>Scan the PhonePe QR code using any UPI app</small></span>
-          <span class="stvn-payment-chevron" aria-hidden="true">⌄</span>
+          <span class="stvn-payment-card-copy"><strong>Online Payment</strong></span>
+          
         </button>
-        <div class="stvn-payment-accordion-detail" id="stvn-payment-detail-upi">
-          <p>Pay with QR पर क्लिक करें, PhonePe QR scan करके भुगतान करें। भुगतान दुकान द्वारा verify होने तक order Pending रहेगा।</p>
-          <span class="stvn-payment-selected-label">✓ Selected payment method</span>
-        </div>
+
       </div>
 
     </div>
@@ -2848,48 +2853,18 @@ type="text"
 placeholder="Unit (kg, litre, piece...)"
 value="piece">
 
-<input
-id="product-image"
-type="text"
-placeholder="Image URL (optional)"
-oninput="previewProductImage()">
+<!-- Hidden compatibility field: existing product save/edit code still reads this ID. -->
+<input id="product-image" type="hidden" value="">
 
-<div class="product-image-buttons">
-  <label class="product-image-btn camera-btn">
-    📷 Camera
-    <input
-      id="product-camera-input"
-      type="file"
-      accept="image/*"
-      capture="environment"
-      onchange="useCameraProductImage(this)"
-      hidden>
-  </label>
-
-  <button
-    type="button"
-    class="product-image-btn internet-btn"
-    onclick="useInternetProductImage()">
-    🌐 Image from Internet
-  </button>
-
-  <label class="product-image-btn gallery-btn">
-    🖼️ Choose from Gallery
-    <input
-      id="product-gallery-input"
-      type="file"
-      accept="image/*"
-      onchange="useGalleryProductImage(this)"
-      hidden>
-  </label>
-</div>
-
+<!-- One simple control for adding one or many product photos. -->
 <div class="stvn-multi-photo-admin">
-  <label class="product-image-btn gallery-btn">
-    🖼️ Add Multiple Photos (Gallery)
-    <input id="product-multiple-images" type="file" accept="image/*" multiple onchange="handleMultipleProductImages(this)" hidden>
-  </label>
-  <p class="admin-small">एक प्रोडक्ट की कई फोटो चुनें। Save करने पर सभी ग्राहकों को दिखेंगी।</p>
+  <button type="button" class="product-image-btn gallery-btn stvn-add-another-product-image"
+    onclick="document.getElementById('product-multiple-images').click()">
+    ＋ Add another image
+  </button>
+  <input id="product-multiple-images" type="file" accept="image/*" multiple
+    onchange="handleMultipleProductImages(this)" hidden>
+  <p class="admin-small">Select multiple photos together, or tap again to add more photos.</p>
   <div id="product-multiple-image-previews" class="stvn-admin-photo-strip"></div>
 </div>
 
@@ -3859,7 +3834,8 @@ function continueToLocationReview(){
     return;
   }
   updateCart();
-  showPage("order-review");
+  showPaymentInfo();
+  showPage("payment");
 }
 
 function continueToPayment(){
@@ -3868,7 +3844,6 @@ function continueToPayment(){
     showPage("cart");
     return;
   }
-  const selectedPayment=document.getElementById("payment-method")?.value;
   updateCart();
   showPaymentInfo();
   showPage("payment");
@@ -4148,15 +4123,15 @@ const VEDANT_UPI_ID = "q573765706@ybl";
 function showPaymentInfo(){
   const method=document.getElementById("payment-method")?.value||"COD";
   const info=document.getElementById("payment-info");
-  const placeButton=document.querySelector(".place-order");
+  const placeButton=document.getElementById("stvnFinalPlaceOrderButton")||document.querySelector(".place-order");
   if(!info)return;
-  if(placeButton)placeButton.textContent=method==="UPI"?"📱 Pay with QR":"🛒 Place Order";
+  if(placeButton)placeButton.textContent=method==="UPI"?"Online Payment":"Place Order";
   if(method==="COD"){
-    info.innerHTML='<div class="stvn-payment-choice cod-choice"><strong>💵 Cash on Delivery</strong><div class="payment-note">Order receive करते समय cash payment करें.</div></div>';
+    info.innerHTML="";
     return;
   }
   const total=Number((document.getElementById("cart-total")?.textContent||"0").replace(/[^0-9.]/g,""))||0;
-  info.innerHTML='<div class="stvn-payment-choice stvn-upi-payment"><strong>📱 Pay with QR code</strong><p class="payment-note">Pay with QR पर क्लिक करने के बाद PhonePe QR खुलेगा। UPI app से scan करके भुगतान करें। Payment verify होने के बाद ही order Paid होगा।</p><div class="stvn-upi-amount">भुगतान राशि: <strong>₹'+total.toFixed(2)+'</strong></div></div>';
+  info.innerHTML="";
 }
 
 async function copyVedantUpiId(){
@@ -8777,10 +8752,10 @@ function modernUIInit(){
 
   const locationPage=document.createElement("main");
   locationPage.id="page-location"; locationPage.className="page";
-  locationPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. Update Your Current Location</h2><p style="margin:3px 0;color:var(--muted)">Choose your GPS location to ensure accurate delivery</p></div></div>`;
+  locationPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Back</button><div><h2 style="margin:0">Update Location</h2></div></div>`;
   const locationStepCard=document.createElement("div");
   locationStepCard.className="checkout-card checkout-step-card stvn-location-step-card";
-  locationStepCard.innerHTML=`<div class="stvn-location-intro"><div class="stvn-location-pin">📍</div><h3>Update Your Current Location</h3><p>Tap the button below to get your GPS coordinates and distance from the shop. This location will be saved with your order and shown on the tracking page.</p><button type="button" id="stvnGpsUpdateButton" class="place-order" style="display:block!important;width:100%;min-height:52px;margin:14px 0 10px;font-size:15px;font-weight:900" onclick="requestCustomerLocation()">📍 Update Current Location &amp; Get GPS Coordinates</button></div>`;
+  locationStepCard.innerHTML=`<div class="stvn-location-intro"><div class="stvn-location-pin">📍</div><h3>Update Location</h3><button type="button" id="stvnGpsUpdateButton" class="place-order" style="display:block!important;width:100%;min-height:52px;margin:14px 0 10px;font-size:15px;font-weight:900" onclick="requestCustomerLocation()">Update Location</button></div>`;
   locationPage.appendChild(locationStepCard);
   body.appendChild(locationPage);
 
@@ -8794,7 +8769,7 @@ function modernUIInit(){
 
   const paymentPage=document.createElement("main");
   paymentPage.id="page-payment"; paymentPage.className="page";
-  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('order-review')">← Review Order</button><div><h2 style="margin:0">4. Payment</h2><p style="margin:3px 0;color:var(--muted)">Complete payment or choose Cash on Delivery</p></div></div>`;
+  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('location')">← Location</button><div><h2 style="margin:0">Payment</h2></div></div>`;
   const paymentCard=document.createElement("div");
   paymentCard.className="checkout-card checkout-step-card";
   paymentPage.appendChild(paymentCard);
@@ -8825,24 +8800,25 @@ function modernUIInit(){
   if(paymentBox){
     const paymentHeading=paymentBox.querySelector("h3");
     const paymentNote=paymentBox.querySelector(".payment-note");
-    if(paymentHeading)paymentHeading.textContent="💳 Payment Method";
-    if(paymentNote)paymentNote.textContent="Payment details will appear on the next page.";
-    reviewCard.appendChild(paymentBox);
+    if(paymentHeading)paymentHeading.textContent="";
+    if(paymentNote)paymentNote.style.display="none";
+    paymentCard.appendChild(paymentBox);
   }
   if(paymentInfo)paymentCard.appendChild(paymentInfo);
   if(placeOrderButton)placeOrderButton.remove();
   if(orderMessage)paymentCard.appendChild(orderMessage);
   const finalPlaceOrder=document.createElement("button");
   finalPlaceOrder.type="button";
+  finalPlaceOrder.id="stvnFinalPlaceOrderButton";
   finalPlaceOrder.className="place-order";
-  finalPlaceOrder.textContent="🛒 Place Order";
+  finalPlaceOrder.textContent="Place Order";
   finalPlaceOrder.onclick=placeOrder;
   paymentCard.appendChild(finalPlaceOrder);
   if(confirmationModal)paymentCard.appendChild(confirmationModal);
   const locationNext=document.createElement("button");
   locationNext.type="button";
   locationNext.className="place-order";
-  locationNext.textContent="Continue →";
+  locationNext.textContent="Continue";
   locationNext.id="stvnLocationContinue";
   locationNext.hidden=true;
   locationNext.onclick=continueToLocationReview;
@@ -8895,7 +8871,7 @@ function modernUIInit(){
   body.appendChild(track);
   const trackHead=document.createElement("div");
   trackHead.className="section-head";
-  trackHead.innerHTML=`<div><h2>🚚 Track Your Order</h2><p>Sign in to view your orders automatically.</p></div>`;
+  trackHead.innerHTML=`<div><h2>🚚 Track Your Order</h2></div>`;
   track.appendChild(trackHead);
   const trackingBox=document.getElementById("customer-tracking-box");
   if(trackingBox) track.appendChild(trackingBox);
@@ -9366,17 +9342,9 @@ restoreAdminSession();
       partnerWatchId=null;partnerWatchOrderId=null;
     }
     if(id){
-      try{
-        const {error}=await supabaseClient.from("orders").update({
-          delivery_boy_latitude:null,delivery_boy_longitude:null
-        }).eq("order_id",id);
-        if(error)throw error;
-        setStatus(id,"⛔ Location sharing stopped; live coordinates cleared.");
-      }catch(error){
-        console.error("Stop delivery location failed:",error);
-        setStatus(id,"❌ Location stop failed: "+String(error.message||error),true);
-        window.stvnAlert("Location stop नहीं हुआ: "+String(error.message||error));
-      }
+      // Keep the last GPS point so the customer map does not jump back to the shop
+      // when the partner pauses sharing. No further movement is tracked after GPS stops.
+      setStatus(id,"⏸️ GPS sharing paused. Last known location is retained; route will not move until sharing resumes.");
     }
   };
 })();
@@ -13376,55 +13344,85 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <script id="stvn-pwa-install-prompt">
 (function(){
-  // Show the custom install prompt only for the dedicated QR entry URL.
-  // The existing QR must encode the site URL with ?from=qr.
-  const isQrEntry = new URLSearchParams(window.location.search).get("from") === "qr";
-  // Never show the install prompt inside an already-installed PWA/app.
-  const isAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches ||
-    window.matchMedia("(display-mode: fullscreen)").matches ||
-    window.navigator.standalone === true;
-  const shouldShowQrInstall = isQrEntry && !isAlreadyInstalled;
+  // QR visitors must complete language selection, then see install choice.
+  // Ordinary links and installed-app launches continue to the full website.
+  const params=new URLSearchParams(location.search);
+  const isQrEntry=params.get('from')==='qr';
+  const isInstalled=matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || navigator.standalone===true;
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const isSafari=/Safari/i.test(navigator.userAgent)&&!/CriOS|FxiOS|EdgiOS|OPiOS/i.test(navigator.userAgent);
+  const qrFlow=isQrEntry&&!isInstalled;
   let installPromptEvent=null;
-  const modalId="stvnInstallPromptModal";
+  const modalId='stvnInstallPromptModal';
+  let finished=false;
+  function finishQrFlow(){
+    if(!qrFlow||finished)return;
+    finished=true;
+    document.body.classList.add('stvn-qr-flow-ended');
+    document.body.style.overflow='hidden';
+    const m=document.getElementById(modalId);if(m)m.remove();
+    const g=document.getElementById('vLangGate');if(g)g.remove();
+    // Leave a completely blank, closed-looking page after either choice.
+  }
   function ensureModal(){
     if(document.getElementById(modalId))return;
-    const modal=document.createElement("div");modal.id=modalId;modal.style.cssText="display:none;position:fixed;inset:0;z-index:2147483647;align-items:center;justify-content:center;padding:18px;background:rgba(8,25,15,.68);backdrop-filter:blur(5px)";
-    modal.innerHTML=`<section style="width:min(100%,390px);padding:25px 20px;border-radius:24px;background:linear-gradient(150deg,#fff,#effff4);text-align:center;box-shadow:0 22px 70px #0005;color:#163b27"><div style="font-size:42px">🛍️</div><h2 style="margin:8px 0;color:#087c42">Install Vedant Grocery Shop App</h2><p style="margin:0 0 18px;line-height:1.55;color:#52665a">Add our store to your phone for fast and easy shopping.</p><button id="stvnInstallNow" style="width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#087c42,#20ad62);color:white;font-size:16px;font-weight:900">📲 Install Now</button><button id="stvnInstallLater" style="margin-top:10px;padding:10px 14px;border:0;background:transparent;color:#607468;font-weight:700">Not Now</button><p id="stvnInstallHelp" style="display:none;margin:12px 0 0;font-size:12px;line-height:1.5;color:#607468">Open the Chrome ⋮ menu and select “Install app” or “Add to Home screen”.</p></section>`;
+    const modal=document.createElement('div');modal.id=modalId;
+    modal.style.cssText='display:none;position:fixed;inset:0;z-index:2147483647;align-items:center;justify-content:center;padding:18px;background:rgba(8,25,15,.78);backdrop-filter:blur(6px)';
+    modal.innerHTML=`<section style="width:min(100%,390px);padding:25px 20px;border-radius:24px;background:linear-gradient(150deg,#fff,#effff4);text-align:center;box-shadow:0 22px 70px #0005;color:#163b27"><div style="font-size:42px">🛍️</div><h2 style="margin:8px 0;color:#087c42">Install Vedant Grocery Shop App</h2><p style="margin:0 0 18px;line-height:1.55;color:#52665a">Install the app to continue.</p><button id="stvnInstallNow" style="width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#087c42,#20ad62);color:white;font-size:16px;font-weight:900">📲 Install Now</button><button id="stvnInstallLater" style="margin-top:10px;padding:10px 14px;border:0;background:transparent;color:#607468;font-weight:700">Not Now</button><div id="stvnInstallHelp" style="display:none;margin:14px 0 0;padding:13px;border-radius:14px;background:#f0f8f2;text-align:left;font-size:13px;line-height:1.55;color:#365443"></div><button id="stvnInstallDone" style="display:none;width:100%;margin-top:12px;padding:13px;border:0;border-radius:14px;background:#163b27;color:#fff;font-size:14px;font-weight:800">Done — Close QR Page</button></section>`;
     document.body.appendChild(modal);
-    modal.addEventListener("click",e=>{if(e.target===modal)modal.style.display="none";});
-    modal.querySelector("#stvnInstallLater").onclick=()=>{modal.style.display="none";try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}};
-    modal.querySelector("#stvnInstallNow").onclick=async()=>{
-      if(installPromptEvent){installPromptEvent.prompt();try{await installPromptEvent.userChoice;}catch(e){}installPromptEvent=null;modal.style.display="none";}
-      else{modal.querySelector("#stvnInstallHelp").style.display="block";}
+    modal.querySelector('#stvnInstallLater').onclick=finishQrFlow;
+    modal.querySelector('#stvnInstallDone').onclick=finishQrFlow;
+    modal.querySelector('#stvnInstallNow').onclick=async()=>{
+      const b=modal.querySelector('#stvnInstallNow');
+      if(installPromptEvent){
+        b.disabled=true;
+        try{await installPromptEvent.prompt();await installPromptEvent.userChoice;}catch(e){}
+        installPromptEvent=null;finishQrFlow();
+      }else if(isIOS){
+        // iOS Safari does not support beforeinstallprompt. Guide the user
+        // through Share > Add to Home Screen; never expose the shop in QR mode.
+        b.style.display='none';
+        modal.querySelector('#stvnInstallLater').style.display='none';
+        const help=modal.querySelector('#stvnInstallHelp');
+        help.innerHTML=isSafari
+          ? '<strong>Install on iPhone / iPad</strong><br>1. Tap the <strong>Share</strong> button <span style="font-size:18px">□↑</span> in Safari.<br>2. Scroll down and choose <strong>Add to Home Screen</strong>.<br>3. Tap <strong>Add</strong> at the top.<br><br>After adding, return here and tap Done. Open Vedant Grocery Shop from its new Home Screen icon.'
+          : '<strong>To install on iPhone / iPad</strong><br>Open this QR link in <strong>Safari</strong>, tap <strong>Share</strong> □↑, choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>. Return here and tap Done to close this QR page.';
+        help.style.display='block';
+        modal.querySelector('#stvnInstallDone').style.display='block';
+      }else{
+        b.disabled=true;
+        modal.querySelector('#stvnInstallHelp').textContent='Use your browser menu to install the app. This QR session will now close.';
+        modal.querySelector('#stvnInstallHelp').style.display='block';
+        setTimeout(finishQrFlow,1800);
+      }
     };
   }
-  window.addEventListener("beforeinstallprompt",e=>{
-    if(!shouldShowQrInstall) return; // Normal visits and installed-app launches never show it.
-    e.preventDefault();
-    installPromptEvent=e;
+  if(qrFlow){
+    document.body.classList.add('stvn-qr-entry-flow');
     ensureModal();
-    const m=document.getElementById(modalId);
-    if(m)m.style.display="flex";
-  });
-  function showQrPromptAtStartup(){
-    if(!shouldShowQrInstall) return;
-    ensureModal();
-    const m=document.getElementById(modalId);
-    if(m) m.style.display="flex";
+    // Keep the language gate as the only first screen; do not reveal the shop.
+    window.stvnQrLanguageComplete=function(){
+      if(finished)return;
+      document.documentElement.style.visibility='visible';
+      document.body.classList.add('stvn-qr-install-step');
+      const gate=document.getElementById('vLangGate');if(gate){gate.style.display='none';gate.style.visibility='hidden';}
+      const m=document.getElementById(modalId);if(m)m.style.display='flex';
+    };
   }
-  // Display the QR-only prompt immediately, before the language chooser is parsed.
-  showQrPromptAtStartup();
-  window.addEventListener("appinstalled",()=>{
-    const m=document.getElementById(modalId);if(m)m.style.display="none";
-    try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}
+  window.addEventListener('beforeinstallprompt',e=>{
+    if(!qrFlow)return;e.preventDefault();installPromptEvent=e;
   });
-  window.stvnShowInstallPrompt=function(){
-    if(!shouldShowQrInstall) return;
-    ensureModal();
-    const m=document.getElementById(modalId);if(m)m.style.display="flex";
-  };
+  window.addEventListener('appinstalled',()=>{if(qrFlow)finishQrFlow();});
+  window.stvnShowInstallPrompt=function(){if(qrFlow){ensureModal();const m=document.getElementById(modalId);if(m)m.style.display='flex';}};
 })();
 </script>
+<style id="stvn-qr-entry-flow-visibility">
+body.stvn-qr-entry-flow{overflow:hidden!important;background:#fff!important}
+body.stvn-qr-entry-flow> :not(#vLangGate):not(#stvnInstallPromptModal):not(script):not(style){display:none!important}
+body.stvn-qr-entry-flow:not(.stvn-qr-install-step) #vLangGate{display:flex!important;visibility:visible!important}
+body.stvn-qr-flow-ended,body.stvn-qr-flow-ended html{background:#fff!important;overflow:hidden!important}
+body.stvn-qr-flow-ended>*{display:none!important}
+</style>
 
 <style id="stvn-gps-qr-final-fix">
 #stvnGpsUpdateButton{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:5!important;cursor:pointer!important}
@@ -13719,7 +13717,7 @@ Object.assign(enDict,{
  function close(){if(gate){gate.style.display='none';gate.style.visibility='hidden';gate.style.pointerEvents='none';}document.body.style.overflow='';document.documentElement.style.visibility='visible';window.setTimeout(()=>apply(),0);}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
  gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=(x.value==='hi'?'hi':'en');updateChoices()}));
- gate?.querySelector('#vLangContinue')?.addEventListener('click',()=>{const button=gate.querySelector('#vLangContinue');if(button?.disabled)return;if(button)button.disabled=true;try{localStorage.setItem(keyForUser(),chosen);localStorage.setItem('vedantLanguagePreference',chosen)}catch(_){}close();});
+ gate?.querySelector('#vLangContinue')?.addEventListener('click',()=>{const button=gate.querySelector('#vLangContinue');if(button?.disabled)return;if(button)button.disabled=true;try{localStorage.setItem(keyForUser(),chosen);localStorage.setItem('vedantLanguagePreference',chosen)}catch(_){}if(typeof window.stvnQrLanguageComplete==='function'){gate.style.display='none';gate.style.visibility='hidden';window.stvnQrLanguageComplete();}else{close();}});
  window.vedantChangeLanguage=open;window.vedantApplyLanguage=apply;
  // Add a language option when the account menu is created, without replacing existing actions.
  function addLanguageButton(){const menu=document.getElementById('stvnProfileMenu');if(!menu)return false;if(!document.getElementById('vLangMenuButton')){const b=document.createElement('button');b.id='vLangMenuButton';b.type='button';b.textContent='🌐 Change Language';b.onclick=()=>open(true);menu.insertBefore(b,menu.querySelector('.stvn-logout')||null);}return true;}
@@ -16509,3 +16507,116 @@ body.vg-order-confirmation-open{overflow:hidden!important}
 .stvn-customer-delivery-map{display:block;width:100%;height:260px;min-height:220px;border:0;border-radius:12px;overflow:hidden}
 @media(max-width:700px){.stvn-customer-delivery-map{height:245px;min-height:220px}.stvn-whatsapp-location-button{font-size:14px}.stvn-customer-live-tracking{max-width:100%;overflow:hidden}}
 </style>
+
+
+<style id="vedant-mobile-product-photo-and-direct-tracking-20261116">
+/* Product form: only one add-image action is visible; old controls stay removed. */
+.stvn-add-another-product-image{display:inline-flex!important;align-items:center;justify-content:center;min-height:42px;padding:10px 16px;border-radius:11px;font-weight:700;cursor:pointer}
+.stvn-multi-photo-admin{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+/* Track page: show the live progress panel directly, without a Current/Previous order chooser. */
+#page-track #stvn-account-orders-note,
+#page-track #customer-tracking-orders>h3,
+#page-track .stvn-track-order-head,
+#page-track .stvn-track-order-meta,
+#page-track .stvn-track-cancel-row{display:none!important}
+#page-track .stvn-track-order-choice{display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;cursor:default!important}
+#page-track .stvn-track-order-choice .stvn-order-tracking-panel{margin:0!important;width:100%!important;max-width:100%!important}
+#page-track .stvn-order-tracking-panel[hidden]{display:none!important}
+#page-track .stvn-order-tracking-panel:not([hidden]){display:block!important}
+@media(max-width:600px){
+  #page-track #customer-tracking-orders{display:block!important;width:100%;min-width:0}
+  #page-track .stvn-order-tracking-panel{padding:10px!important;border-radius:12px!important}
+  .stvn-add-another-product-image{width:100%;max-width:100%}
+}
+</style>
+
+<!-- Vedant: remaining road route tracking. The blue route is recalculated from the partner's latest GPS point to the customer. -->
+<style id="vedant-remaining-road-route-v1">
+#page-track .stvn-customer-delivery-map{height:280px!important;min-height:250px!important}
+@media(max-width:700px){#page-track .stvn-customer-delivery-map{height:260px!important;min-height:235px!important}}
+</style>
+<script id="vedant-remaining-road-route-v1-js">
+(function(){
+  const SHOP_LAT=25.3698055556, SHOP_LNG=83.1131388889;
+  const valid=(a,b)=>Number.isFinite(a)&&Number.isFinite(b)&&(a!==0||b!==0);
+  let routeRequest=0, lastRouteAt=0, pendingRouteTimer=null, lastCustomerPoint=null;
+  function note(text){const n=document.getElementById('stvn-delivery-map-note');if(n)n.textContent=text;}
+  async function drawRemainingRoute(partnerLat,partnerLng,customerLat,customerLng,force){
+    const map=window.stvnCustomerDeliveryMap;
+    if(!map||!window.L||!valid(partnerLat,partnerLng)||!valid(customerLat,customerLng))return;
+    const now=Date.now();
+    if(!force&&now-lastRouteAt<1800){
+      clearTimeout(pendingRouteTimer);
+      pendingRouteTimer=setTimeout(()=>drawRemainingRoute(partnerLat,partnerLng,customerLat,customerLng,true),1800-(now-lastRouteAt));
+      return;
+    }
+    lastRouteAt=now;
+    const requestId=++routeRequest;
+    const url='https://router.project-osrm.org/route/v1/driving/'+partnerLng+','+partnerLat+';'+customerLng+','+customerLat+'?overview=full&geometries=geojson&steps=false';
+    try{
+      const response=await fetch(url,{cache:'no-store'});
+      if(!response.ok)throw new Error('Route unavailable');
+      const data=await response.json();
+      if(requestId!==routeRequest||map!==window.stvnCustomerDeliveryMap||!data.routes||!data.routes[0])return;
+      const coords=data.routes[0].geometry.coordinates.map(p=>[p[1],p[0]]);
+      if(window.stvnRemainingRoadPolyline){map.removeLayer(window.stvnRemainingRoadPolyline);}
+      window.stvnRemainingRoadPolyline=L.polyline(coords,{color:'#1677ff',weight:6,opacity:.96,lineCap:'round',lineJoin:'round'}).addTo(map);
+      note('🔵 नीली लाइन डिलीवरी पार्टनर की मौजूदा लोकेशन से आपके पते तक बचा हुआ रोड रूट दिखाती है। पार्टनर आगे बढ़ेगा तो पीछे का रास्ता हटता जाएगा।');
+      const customer=window.stvnCustomerHomeMarker;
+      const bike=window.stvnDeliveryBikeMarker;
+      if(customer&&bike){map.fitBounds(L.latLngBounds([bike.getLatLng(),customer.getLatLng()]),{padding:[28,28],maxZoom:17});}
+    }catch(error){
+      if(requestId!==routeRequest)return;
+      note('रोड रूट अभी लोड नहीं हो पाया। Internet connection आने पर route फिर से update होगा।');
+      console.warn('Remaining delivery route:',error);
+    }
+  }
+  window.stvnUpdateRemainingDeliveryRoute=function(lat,lng){
+    const c=lastCustomerPoint;
+    if(c)drawRemainingRoute(Number(lat),Number(lng),c.lat,c.lng,false);
+  };
+  window.stvnRenderCustomerDeliveryMap=function(order){
+    const el=document.getElementById('stvn-customer-delivery-map');
+    if(!el||!window.L)return;
+    if(window.stvnCustomerDeliveryMap){window.stvnCustomerDeliveryMap.remove();window.stvnCustomerDeliveryMap=null;}
+    window.stvnRemainingRoadPolyline=null;window.stvnDeliveryBikeMarker=null;window.stvnCustomerHomeMarker=null;
+    routeRequest++;clearTimeout(pendingRouteTimer);lastRouteAt=0;
+    const cLat=Number(order.latitude),cLng=Number(order.longitude);
+    const pLat=Number(order.delivery_boy_latitude),pLng=Number(order.delivery_boy_longitude);
+    const hasCustomer=valid(cLat,cLng),hasPartner=valid(pLat,pLng);
+    lastCustomerPoint=hasCustomer?{lat:cLat,lng:cLng}:null;
+    const center=hasPartner?[pLat,pLng]:(hasCustomer?[cLat,cLng]:[SHOP_LAT,SHOP_LNG]);
+    const map=L.map(el,{zoomControl:true,scrollWheelZoom:false}).setView(center,hasPartner?15:13);
+    window.stvnCustomerDeliveryMap=map;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    const icon=(html,size,anchor)=>L.divIcon({className:'stvn-map-emoji-marker',html,iconSize:size,iconAnchor:anchor});
+    const shopIcon=icon('<div style="font-size:25px;filter:drop-shadow(0 1px 2px #777)">🏪</div>',[30,34],[15,28]);
+    const homeIcon=icon('<div style="font-size:25px;filter:drop-shadow(0 1px 2px #777)">🏠</div>',[30,34],[15,28]);
+    const bikeIcon=icon('<div style="font-size:30px;filter:drop-shadow(0 1px 2px #777)">🛵</div>',[36,38],[18,30]);
+    if(hasCustomer)window.stvnCustomerHomeMarker=L.marker([cLat,cLng],{icon:homeIcon}).addTo(map).bindPopup('आपका डिलीवरी पता');
+    if(hasPartner){
+      window.stvnDeliveryBikeMarker=L.marker([pLat,pLng],{icon:bikeIcon,zIndexOffset:1000}).addTo(map).bindPopup('Delivery partner · Latest GPS');
+      const originalSetLatLng=window.stvnDeliveryBikeMarker.setLatLng.bind(window.stvnDeliveryBikeMarker);
+      window.stvnDeliveryBikeMarker.setLatLng=function(point){
+        const result=originalSetLatLng(point);
+        if(lastCustomerPoint)window.stvnUpdateRemainingDeliveryRoute(point.lat,point.lng);
+        return result;
+      };
+      if(hasCustomer)drawRemainingRoute(pLat,pLng,cLat,cLng,true);
+      else note('Customer GPS location उपलब्ध नहीं है, इसलिए रोड रूट नहीं दिख सकता।');
+      map.setView([pLat,pLng],15);
+    }else if(hasCustomer){
+      L.marker([SHOP_LAT,SHOP_LNG],{icon:shopIcon}).addTo(map).bindPopup('Vedant Grocery Shop');
+      note('Delivery partner की GPS location का इंतज़ार है। Location share शुरू होते ही नीली remaining-road line दिखेगी।');
+      fetch('https://router.project-osrm.org/route/v1/driving/'+SHOP_LNG+','+SHOP_LAT+';'+cLng+','+cLat+'?overview=full&geometries=geojson')
+        .then(r=>r.ok?r.json():Promise.reject(new Error('Route unavailable')))
+        .then(data=>{if(map!==window.stvnCustomerDeliveryMap||!data.routes?.[0])return;L.polyline(data.routes[0].geometry.coordinates.map(p=>[p[1],p[0]]),{color:'#24965a',weight:4,opacity:.75,dashArray:'8 7'}).addTo(map);map.fitBounds(L.latLngBounds([[SHOP_LAT,SHOP_LNG],[cLat,cLng]]),{padding:[25,25]});})
+        .catch(()=>note('Delivery partner की GPS location का इंतज़ार है।'));
+    }else{
+      note('Order में customer GPS location उपलब्ध नहीं है; route नहीं दिखाया जा सकता।');
+    }
+    setTimeout(()=>{if(window.stvnCustomerDeliveryMap===map)map.invalidateSize();},250);
+  };
+})();
+</script>
+
