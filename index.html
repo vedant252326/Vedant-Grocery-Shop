@@ -4824,6 +4824,7 @@ async function findCustomerOrders(){
     return;
   }
 
+  data=stvnUniqueOrdersById(data);
   if(!data || data.length===0){
     if(listBox)listBox.innerHTML='<p class="payment-note">इस mobile number से कोई order नहीं मिला। Number जाँचकर फिर कोशिश करें।</p>';
     return;
@@ -5278,7 +5279,7 @@ const steps = [
 
 const currentIndex = steps.findIndex(step => step.statuses.includes(status));
 const isDelivered = status === "delivered";
-const isCancelled = status === "cancelled";
+const isCancelled = ["cancelled","cancelled_by_admin"].includes(status);
 let html = "";
 
 if (!isDelivered && !isCancelled) {
@@ -5344,8 +5345,21 @@ if (paymentIsConfirmed && !isCancelled) {
 if (isCancelled) html += '<div class="tracking-step" style="color:#ffb9b9;background:#3b2022;border-color:#824448;">❌ Order Cancelled</div>';
 if (isDelivered) html += '<p class="payment-note">✅ This order has been delivered. Live delivery-partner tracking has been closed.</p>';
 
+// Keep the compact cancel control visible inside the expanded Track Order panel.
+const trackingOrderId = String(order.order_id || order.id || "").trim();
+const canCancelFromTracking = !isDelivered && !isCancelled &&
+  ["pending", "confirmed"].includes(status) &&
+  typeof stvnCustomerCancelTimeRemaining === "function" &&
+  stvnCustomerCancelTimeRemaining(order.order_date) > 0;
+if (isCancelled) {
+  html += '<div class="vg-customer-cancelled-banner">' + (status === "cancelled_by_admin" ? "CANCELLED BY ADMIN" : "CANCELLED · यह ऑर्डर रद्द हो चुका है") + '</div>';
+} else if (canCancelFromTracking && trackingOrderId) {
+  html += `<div class="stvn-track-cancel-row"><span>Cancel available</span><button type="button" class="order-cancel-button stvn-track-inline-cancel" data-order-created-at="${escapeAttribute(order.order_date || "")}" onclick="event.stopPropagation();window.stvnCancelTrackedCustomerOrder('${escapeAttribute(trackingOrderId)}',this)">Cancel · 02:00</button></div>`;
+}
+
 box.innerHTML =
 html;
+if (typeof stvnStartCustomerCancelTimers === "function") stvnStartCustomerCancelTimers();
 
 // Render the map immediately; add the bike marker as soon as GPS coordinates are available.
 try {
@@ -5432,7 +5446,7 @@ async function placeOrder(){
       delivery_charge:Number(document.getElementById("delivery-charge")?.textContent||0),
       delivery_distance_km:Number(radiusCheck.distance.toFixed(2)),
       latitude:customerLatitude, longitude:customerLongitude,
-      items:JSON.parse(JSON.stringify(cartItems)), delivery:"20–25 Minutes", date:new Date().toLocaleString()
+      items:JSON.parse(JSON.stringify(cartItems)), delivery:"20–25 Minutes", order_date:new Date().toISOString(), date:new Date().toLocaleString()
     };
 
     if(payment==="VEDANT_WALLET"){
@@ -5595,6 +5609,15 @@ function goToTracking(){
   setTimeout(()=>{document.getElementById("tracking-status")?.scrollIntoView({behavior:"smooth",block:"nearest"});},120);
 }
 
+/* Keep one visible row per real database order ID. Duplicate rows in the table
+   are collapsed for customers; the admin database records are never deleted here. */
+function stvnUniqueOrdersById(rows){
+  const sorted=[...(Array.isArray(rows)?rows:[])].sort((a,b)=>new Date(b.order_date||b.date||0)-new Date(a.order_date||a.date||0));
+  const seen=new Set(),out=[];
+  for(const row of sorted){const id=String(row?.order_id||row?.id||'').trim();if(!id||seen.has(id))continue;seen.add(id);out.push(row);}
+  return out;
+}
+
 /* ================= ORDER HISTORY ================= */
 
 function getCustomerHiddenOrderIds(customerEmail){
@@ -5630,6 +5653,32 @@ function getOrderDeliveryCharge(order){
   const distance=calculateDistanceKm(latitude,longitude,SHOP_LATITUDE,SHOP_LONGITUDE);
   const charge=window.stvnGetDeliveryCharge(distance);
   return Number.isFinite(charge)&&charge>=0?charge:null;
+}
+
+// Customer cancellation window: 2 minutes from the database order_date.
+const STVN_CUSTOMER_CANCEL_WINDOW_MS = 2 * 60 * 1000;
+function stvnCustomerCancelTimeRemaining(orderDate){
+  const placedAt=Date.parse(String(orderDate||""));
+  if(!Number.isFinite(placedAt))return 0;
+  return Math.max(0,STVN_CUSTOMER_CANCEL_WINDOW_MS-(Date.now()-placedAt));
+}
+function stvnStartCustomerCancelTimers(){
+  if(window.stvnCustomerCancelTimer)clearInterval(window.stvnCustomerCancelTimer);
+  const tick=()=>{
+    document.querySelectorAll(".order-cancel-button[data-order-created-at]").forEach(button=>{
+      const remaining=stvnCustomerCancelTimeRemaining(button.dataset.orderCreatedAt);
+      if(remaining<=0){button.remove();return;}
+      const seconds=Math.ceil(remaining/1000);
+      const minutes=String(Math.floor(seconds/60)).padStart(2,"0");
+      const rest=String(seconds%60).padStart(2,"0");
+      button.textContent=`Cancel Order · ${minutes}:${rest}`;
+    });
+    if(!document.querySelector(".order-cancel-button[data-order-created-at]")){
+      clearInterval(window.stvnCustomerCancelTimer);window.stvnCustomerCancelTimer=null;
+    }
+  };
+  tick();
+  window.stvnCustomerCancelTimer=setInterval(tick,1000);
 }
 
 async function showOrderHistory(){
@@ -5698,13 +5747,27 @@ const localCustomerOrders=orderHistory.filter(order=>
 const remoteOrderIds=new Set((remoteOrders||[]).map(order=>
   String(order.order_id||order.id||"")
 ));
-const orders=usingLocalOrderHistory
+const mergedOrders=usingLocalOrderHistory
   ? localCustomerOrders
   : [...(remoteOrders||[]),...localCustomerOrders.filter(order=>
       !remoteOrderIds.has(String(order.order_id||order.id||""))
     )];
+const orders=stvnUniqueOrdersById(mergedOrders);
 
 const hiddenOrderIds=getCustomerHiddenOrderIds(customerEmail);
+// Also read the account-level hide list so a customer deletion follows their Gmail
+// account to another phone/browser. This never deletes or edits the shop order.
+try{
+  const userId=String(authData.session?.user?.id||"");
+  if(userId){
+    const {data:hiddenRows,error:hiddenError}=await supabaseClient
+      .from("customer_hidden_orders").select("order_id").eq("user_id",userId);
+    if(hiddenError)throw hiddenError;
+    (hiddenRows||[]).forEach(row=>hiddenOrderIds.add(String(row.order_id)));
+  }
+}catch(hiddenError){
+  console.warn("Account-wide hidden order list unavailable; local Gmail list is used:",hiddenError.message||hiddenError);
+}
 const visibleOrders=(orders||[]).filter(order=>
   !hiddenOrderIds.has(String(order.order_id||order.id||""))
 );
@@ -5737,7 +5800,7 @@ order.id ||
 "N/A";
 
 const orderStatus=String(order.order_status||"pending").trim().toLowerCase();
-const canCancelOrder=["pending","confirmed"].includes(orderStatus);
+const canCancelOrder=["pending","confirmed"].includes(orderStatus) && stvnCustomerCancelTimeRemaining(order.order_date)>0;
 const canDeleteOrder=orderStatus==="delivered";
 
 let total =
@@ -5786,7 +5849,9 @@ box.innerHTML += `
 <p><strong>Order ID:</strong> ${escapeHtml(orderId)}</p>
 <p><strong>Delivery Charge:</strong> ${deliveryCharge===null?"Not available":"₹"+deliveryCharge.toFixed(2)}</p>
 <p><strong>Grand Total:</strong> ₹${escapeHtml(total)}</p>
-<p><strong>Order Status:</strong> ${escapeHtml(orderStatus.replaceAll("_"," "))}</p>
+<p><strong>Order Status:</strong> <strong class="${["cancelled","cancelled_by_admin"].includes(orderStatus)?"status-cancelled":""}">${escapeHtml(orderStatus==="cancelled_by_admin"?"CANCELLED BY ADMIN":orderStatus.replaceAll("_"," ").toUpperCase())}</strong></p>
+${["cancelled","cancelled_by_admin"].includes(orderStatus)?`<div class="vg-customer-cancelled-banner">${orderStatus==="cancelled_by_admin"?"CANCELLED BY ADMIN":"CANCELLED · यह ऑर्डर रद्द हो चुका है"}</div>`:""}
+${orderStatus==="delivered"?'<div class="vg-customer-delivered-banner">✓ DELIVERED · ऑर्डर सफलतापूर्वक डिलीवर हो चुका है। अब इसमें बदलाव या कैंसिलेशन नहीं हो सकता।</div>':""}
 
 ${itemsHtml}
 
@@ -5795,18 +5860,17 @@ ${itemsHtml}
 <div id="${trackingPanelId}" class="stvn-order-tracking-panel" aria-live="polite"></div>
 
 ${canCancelOrder?`
-<button type="button" class="remove-btn order-cancel-button"
-onclick="cancelCustomerOrder('${escapeAttribute(orderId)}','${escapeAttribute(order.customer_phone||order.phone||"")}',this)">
-Cancel Order
-</button>
+<div class="stvn-track-cancel-row stvn-myorders-cancel-row"><span>Cancel window</span><button type="button" class="remove-btn order-cancel-button stvn-track-inline-cancel" data-order-created-at="${escapeAttribute(order.order_date||'')}" onclick="cancelCustomerOrder('${escapeAttribute(orderId)}','${escapeAttribute(order.customer_phone||order.phone||"")}',this)">Cancel · 02:00</button></div>
 `:""}
-
+<button type="button" class="stvn-my-orders-delete" onclick="window.stvnHideOrderFromCustomerAccount('${escapeAttribute(orderId)}',this)">🗑 Delete from My Orders</button>
 
 </div>
 
 `
 
 });
+
+stvnStartCustomerCancelTimers();
 
 }
 catch(error){
@@ -5831,6 +5895,12 @@ async function cancelCustomerOrder(orderId,phone,button){
   const cleanPhone=String(phone||"").replace(/\D/g,"");
   if(!cleanOrderId||cleanOrderId==="N/A"){
     window.stvnAlert("❌ इस order का सही ID नहीं मिला।");
+    return;
+  }
+  const orderForCancel=window.stvnCustomerOrdersById?.[cleanOrderId] || orderHistory.find(item=>String(item.order_id||item.id||"")===cleanOrderId);
+  if(!orderForCancel || stvnCustomerCancelTimeRemaining(orderForCancel.order_date)<=0){
+    window.stvnAlert("❌ ऑर्डर करने के 2 मिनट बाद कैंसिलेशन का समय समाप्त हो जाता है।");
+    if(button)button.remove();
     return;
   }
   if(!(await window.stvnConfirm("क्या आप Order "+cleanOrderId+" cancel करना चाहते हैं?")))return;
@@ -6310,7 +6380,7 @@ return "status-confirmed";
 }
 
 
-if(value==="cancelled"){
+if(value==="cancelled" || value==="cancelled_by_admin"){
 
 return "status-cancelled";
 
@@ -6561,13 +6631,7 @@ ascending:false
 
 
 if(filter!=="all"){
-
-query =
-query.eq(
-"order_status",
-filter
-);
-
+  query = filter==="cancelled" ? query.in("order_status",["cancelled","cancelled_by_admin"]) : query.eq("order_status",filter);
 }
 
 
@@ -6688,9 +6752,9 @@ Number(order.longitude)
 
 ordersBox.innerHTML += `
 
-<div class="admin-order ${orderStatus==="cancelled"?"admin-order-cancelled":""}">
+<div class="admin-order ${["cancelled","cancelled_by_admin"].includes(orderStatus)?"admin-order-cancelled":""}">
 
-${orderStatus==="cancelled"?'<div class="vg-admin-cancelled-banner">CANCELLED · CUSTOMER ORDER CANCELLED</div>':""}
+${orderStatus==="cancelled_by_admin"?'<div class="vg-admin-cancelled-banner">CANCELLED BY ADMIN</div>':orderStatus==="cancelled"?'<div class="vg-admin-cancelled-banner">CANCELLED · CUSTOMER ORDER CANCELLED</div>':""}
 
 <div class="admin-grid">
 
@@ -6987,7 +7051,7 @@ Delivered
 
 <option
 value="cancelled"
-${orderStatus==="cancelled"
+${["cancelled","cancelled_by_admin"].includes(orderStatus)
 ? "selected"
 : ""}>
 
@@ -7251,19 +7315,20 @@ url,
 async function updateOrderStatus(orderId){
   const select=document.getElementById("order-status-"+orderId);
   if(!select){window.stvnAlert("❌ Order status selector नहीं मिला.");return;}
-  const newStatus=String(select.value||"pending");
+  const selectedStatus=String(select.value||"pending");
+  const newStatus=selectedStatus==="cancelled"?"cancelled_by_admin":selectedStatus;
   const button=select.parentElement?.querySelector('button[onclick*="updateOrderStatus"]');
   const oldText=button?.textContent;
   if(button){button.disabled=true;button.textContent="⏳ Updating…";}
   try{
     const updateValues={order_status:newStatus};
-    if(newStatus==="delivered"||newStatus==="cancelled"){
+    if(newStatus==="delivered"||newStatus==="cancelled"||newStatus==="cancelled_by_admin"){
       updateValues.delivery_boy_latitude=null;updateValues.delivery_boy_longitude=null;
     }
     const {data,error}=await supabaseClient.from("orders").update(updateValues).eq("order_id",String(orderId)).select("order_id");
     if(error)throw new Error(error.message);
     if(!data||!data.length)throw new Error("कोई order update नहीं हुआ। Admin UPDATE permission/RLS policy जाँचें.");
-    if(newStatus==="delivered"||newStatus==="cancelled"){
+    if(newStatus==="delivered"||newStatus==="cancelled"||newStatus==="cancelled_by_admin"){
       if(typeof window.stopDeliveryPartnerLocation==="function")window.stopDeliveryPartnerLocation(orderId);
     }
     await Promise.all([loadAdminOrders(),showOrderHistory()]);
@@ -12734,7 +12799,46 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 #page-track .stvn-order-tracking-panel{margin-top:10px}
 @media(min-width:701px){#page-track .stvn-customer-delivery-map{height:340px!important}}
 </style>
-\n</body>
+\n
+<style id="vedant-order-history-delete-dedupe-polish">
+.stvn-customer-order-delete{width:auto!important;min-height:32px!important;margin:8px 0 0!important;padding:6px 11px!important;font-size:12px!important}
+#page-track #tracking-status:empty{display:none!important}
+#page-track #tracking-status[data-stvn-slash-only="true"]{display:none!important}
+</style>
+
+
+<style id="vg-customer-order-history-final-mobile-fix">
+.stvn-my-orders-delete{display:inline-flex;align-items:center;justify-content:center;width:auto;max-width:100%;margin:8px 0 2px;padding:7px 10px;border:1px solid #814044;border-radius:9px;background:#402022;color:#ffdede;font-size:12px;font-weight:850;cursor:pointer}
+.stvn-my-orders-delete:disabled{opacity:.55}
+.vg-customer-delivered-banner{display:block;margin:9px 0;padding:11px 12px;border:1px solid #23834a;border-radius:10px;background:#e7f8ed;color:#116333;font-weight:850;text-align:center}
+@media(max-width:700px){
+ #page-orders .stvn-my-orders-delete{min-height:34px!important;width:auto!important;padding:6px 10px!important;font-size:11px!important}
+ #page-orders .vg-customer-cancelled-banner,#page-track .vg-customer-cancelled-banner{font-size:17px!important;padding:11px 9px!important}
+ #page-orders .vg-customer-delivered-banner{font-size:12px!important}
+ #page-track #tracking-status[data-stvn-slash-only="true"]{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important}
+}
+</style>
+<script id="vg-hide-tracking-slash-only">
+(function(){
+  function cleanSlash(el){
+    if(!el)return;
+    const onlySlash=String(el.textContent||'').replace(/\s+/g,'').replace(/[\u200B-\u200D\uFEFF]/g,'')==='/';
+    if(onlySlash){el.dataset.stvnSlashOnly='true';el.setAttribute('aria-hidden','true');}
+    else{delete el.dataset.stvnSlashOnly;el.removeAttribute('aria-hidden');}
+  }
+  function watch(){
+    const el=document.getElementById('tracking-status');if(!el)return;
+    cleanSlash(el);
+    if(el.dataset.stvnSlashWatcher==='yes')return;
+    el.dataset.stvnSlashWatcher='yes';
+    new MutationObserver(()=>cleanSlash(el)).observe(el,{childList:true,subtree:true,characterData:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch,{once:true});else watch();
+  document.addEventListener('click',()=>setTimeout(watch,0),true);
+})();
+</script>
+
+</body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
 .stvn-delivery-location-card h2,.stvn-delivery-location-card h3,.stvn-delivery-location-name{color:#123e70!important}
@@ -14581,6 +14685,13 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 }
 </style>
 
+
+<style id="vedant-order-history-delete-dedupe-polish">
+.stvn-customer-order-delete{width:auto!important;min-height:32px!important;margin:8px 0 0!important;padding:6px 11px!important;font-size:12px!important}
+#page-track #tracking-status:empty{display:none!important}
+#page-track #tracking-status[data-stvn-slash-only="true"]{display:none!important}
+</style>
+
 </body>
 </html>
 
@@ -15366,124 +15477,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 
 }
 </style>
-<script id="vedant-account-orders-auto-v1">
-(function(){
-  if(!window.matchMedia || !window.matchMedia("(max-width:700px)").matches) return;
-  const $=id=>document.getElementById(id);
-  const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let loadToken=0;
-  function ensureAccountNote(){
-    const box=$('customer-tracking-box');if(!box)return null;
-    let note=box.querySelector('.stvn-account-orders-note');
-    if(!note){note=document.createElement('div');note.className='stvn-account-orders-note';box.insertBefore(note,box.querySelector('#customer-tracking-orders'));}
-    return note;
-  }
-  async function loadOrdersForSignedInCustomer(){
-    const token=++loadToken;
-    const list=$('customer-tracking-orders'),status=$('tracking-status'),note=ensureAccountNote();
-    if(!list)return;
-    list.innerHTML='<p class="payment-note">Loading your orders…</p>';
-    if(status)status.textContent='Your order tracking details will appear after you select an order.';
-    const client=window.supabaseClient||((typeof supabaseClient!=='undefined')?supabaseClient:null);
-    let session=null;
-    try{
-      if(!client?.auth)throw new Error('Authentication client is unavailable.');
-      const result=await client.auth.getSession();
-      if(result.error)throw result.error;
-      session=result.data?.session||null;
-      if(!session?.user){const verified=await client.auth.getUser();if(verified.error)throw verified.error;if(verified.data?.user)session={user:verified.data.user};}
-    }catch(error){
-      if(token!==loadToken)return;
-      console.warn('Track Order auth check:',error);
-      list.innerHTML='<p class="error">Sign-in could not be confirmed. Please refresh once and sign in again if needed.</p>';
-      return;
-    }
-    const user=session?.user||null;
-    const email=String(user?.email||'').trim().toLowerCase();
-    if(!user?.id){
-      if(note)note.textContent='Please sign in with Google or email to view your orders.';
-      list.innerHTML='<p class="payment-note">Sign in to see your orders here.</p>';
-      return;
-    }
-    if(note){note.textContent='';note.hidden=true;}
-    let rows=null,lookupError=null,missingIdentityColumn=false;
-    try{
-      let result;
-      if(email){
-        result=await client.from('orders').select('*').eq('customer_email',email).order('order_date',{ascending:false});
-        if(result.error && /(customer_email).*(column|schema cache|does not exist|could not find)|(column|schema cache|does not exist|could not find).*(customer_email)/i.test(String(result.error.message||''))){
-          result=await client.from('orders').select('*').eq('user_id',user.id).order('order_date',{ascending:false});
-          if(result.error && /(user_id).*(column|schema cache|does not exist|could not find)|(column|schema cache|does not exist|could not find).*(user_id)/i.test(String(result.error.message||'')))missingIdentityColumn=true;
-        }
-      }else{
-        result=await client.from('orders').select('*').eq('user_id',user.id).order('order_date',{ascending:false});
-        if(result.error && /(user_id).*(column|schema cache|does not exist|could not find)|(column|schema cache|does not exist|could not find).*(user_id)/i.test(String(result.error.message||'')))missingIdentityColumn=true;
-      }
-      if(result?.error && !missingIdentityColumn)throw result.error;
-      rows=Array.isArray(result?.data)?result.data:null;
-    }catch(error){lookupError=error;}
-    if(token!==loadToken)return;
-    if(missingIdentityColumn){
-      let local=[];
-      try{local=JSON.parse(localStorage.getItem('vedantOrders')||'[]');if(!Array.isArray(local))local=[];}catch(_e){local=[];}
-      rows=local.filter(order=>String(order.customer_email||'').trim().toLowerCase()===email && email);
-      if(note)note.textContent='This device’s saved orders are shown. Enable account-linked order history with the supplied Supabase SQL setup.';
-    }
-    if(lookupError){
-      console.error('Account order lookup failed:',lookupError);
-      list.innerHTML='<p class="error">Could not load orders: '+safe(lookupError.message||'Database access failed.')+'. Check the orders table columns and customer-only SELECT policy.</p>';
-      return;
-    }
-    if(!rows||rows.length===0){
-      list.innerHTML=missingIdentityColumn
-        ? '<div class="history-item"><strong>No locally saved orders</strong><p>New orders will appear across devices after the Supabase account-link columns and customer policy are added.</p></div>'
-        : '<div class="history-item"><strong>No Orders</strong><p>You have not placed any orders with this account yet.</p></div>';
-      return;
-    }
-    list.replaceChildren();
-    if(missingIdentityColumn){const hint=document.createElement('p');hint.className='payment-note';hint.textContent='Showing orders saved on this device only. Complete the Supabase SQL setup to sync orders across devices.';list.appendChild(hint);}
-    const heading=document.createElement('h3');heading.textContent='Your Orders';list.appendChild(heading);
-    rows.forEach(order=>{
-      const id=String(order.order_id||order.id||'').trim();if(!id)return;
-      const card=document.createElement('article');card.className='history-item stvn-track-order-choice';
-      const title=document.createElement('strong');title.textContent='📦 '+id;
-      const details=document.createElement('p');
-      const date=order.order_date?new Date(order.order_date).toLocaleString():'Date unavailable';
-      details.textContent='Status: '+String(order.order_status||'pending')+' · Payment: '+String(order.payment_method||order.payment||'Not specified')+' · Total: ₹'+String(order.total??'—')+' · '+date;
-      window.stvnCustomerOrdersById[String(id)]=order;
-      const panelId='account-order-tracking-'+String(rows.indexOf(order));
-      const panel=document.createElement('div');panel.id=panelId;panel.dataset.orderId=id;
-      panel.className='stvn-order-tracking-panel';panel.hidden=true;panel.setAttribute('aria-live','polite');
-      card.addEventListener('click',event=>{
-        if(event.target.closest('a,button,input,select,textarea'))return;
-        if(typeof window.toggleCustomerOrderTracking==='function')window.toggleCustomerOrderTracking(id,null,panelId);
-      });
-      card.append(title,details,panel);list.appendChild(card);
-    });
-  }
-  // Expose for the account navigation and auth event.
-  window.stvnLoadMyOrdersByAccount=loadOrdersForSignedInCustomer;
-  const originalShowPage=window.showPage;
-  if(typeof originalShowPage==='function'){
-    window.showPage=function(page,options){
-      const result=originalShowPage.apply(this,arguments);
-      if(page==='orders')setTimeout(loadOrdersForSignedInCustomer,180);
-      return result;
-    };
-  }
-  if(window.supabaseClient?.auth){
-    window.supabaseClient.auth.onAuthStateChange((event,session)=>{
-      if(event==='SIGNED_IN'&&session?.user){
-        try{localStorage.setItem('vedantCustomerEmail',String(session.user.email||'').toLowerCase());}catch(_e){}
-        if(document.getElementById('page-orders')?.classList.contains('active')||document.getElementById('page-track')?.classList.contains('active'))loadOrdersForSignedInCustomer();
-      }
-    });
-    window.supabaseClient.auth.getSession().then(({data})=>{
-      if(data?.session?.user && (document.getElementById('page-orders')?.classList.contains('active')||document.getElementById('page-track')?.classList.contains('active')))loadOrdersForSignedInCustomer();
-    }).catch(()=>{});
-  }
-})();
-</script>
+
 
 
 
@@ -16023,7 +16017,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     const c=client();if(!c)return [];
     const {data,error}=await c.from('orders').select('*').eq('customer_email',email).order('order_date',{ascending:false});
     if(error){console.warn('Account-linked order list:',error.message);return []}
-    return Array.isArray(data)?data:[];
+    return stvnUniqueOrdersById(Array.isArray(data)?data:[]);
   }
   async function fetchHiddenOrderIds(userId,email){
     const c=client();
@@ -16065,22 +16059,28 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
   async function cancelTrackedCustomerOrder(orderId,button){
     const id=String(orderId||'').trim();
     if(!id)return;
+    const trackedOrder=window.stvnCustomerOrdersById?.[id];
+    if(!trackedOrder || stvnCustomerCancelTimeRemaining(trackedOrder.order_date)<=0){
+      window.stvnAlert('❌ ऑर्डर करने के 2 मिनट बाद कैंसिलेशन का समय समाप्त हो जाता है।');
+      if(button)button.remove();
+      return;
+    }
     if(!(await window.stvnConfirm('क्या आप Order '+id+' cancel करना चाहते हैं?')))return;
     if(button){button.disabled=true;button.textContent='Cancelling…';}
     try{
       const c=client();const user=await getSignedInUser();
       if(!c||!user?.email)throw new Error('कृपया उसी customer account में login करें।');
       const email=String(user.email).trim().toLowerCase();
-      const {data:row,error:findError}=await c.from('orders').select('order_status')
-        .eq('order_id',id).eq('customer_email',email).maybeSingle();
+      const {data:matches,error:findError}=await c.from('orders').select('order_status')
+        .eq('order_id',id).eq('customer_email',email).limit(20);
       if(findError)throw findError;
-      if(!row)throw new Error('यह order आपके account में नहीं मिला।');
-      if(!['pending','confirmed'].includes(String(row.order_status||'pending').toLowerCase()))
-        throw new Error('Preparing शुरू होने के बाद order cancel नहीं किया जा सकता।');
+      if(!matches?.length)throw new Error('यह order आपके account में नहीं मिला।');
+      const cancellable=matches.some(row=>['pending','confirmed'].includes(String(row.order_status||'pending').toLowerCase()));
+      if(!cancellable)throw new Error('Preparing शुरू होने के बाद order cancel नहीं किया जा सकता।');
       const {data,error}=await c.from('orders').update({order_status:'cancelled'})
-        .eq('order_id',id).eq('customer_email',email).in('order_status',['pending','confirmed']).select('order_id').maybeSingle();
+        .eq('order_id',id).eq('customer_email',email).in('order_status',['pending','confirmed']).select('order_id');
       if(error)throw error;
-      if(!data)throw new Error('Order status बदल गया है। Refresh करके फिर कोशिश करें।');
+      if(!Array.isArray(data)||!data.length)throw new Error('Order status बदल गया है। Refresh करके फिर कोशिश करें।');
       await loadMyOrders();
       if(typeof window.stvnRefreshLiveOrderBar==='function')await window.stvnRefreshLiveOrderBar();
       window.stvnAlert('✅ आपका order cancel हो गया है।');
@@ -16091,23 +16091,36 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     }
   }
   window.stvnCancelTrackedCustomerOrder=cancelTrackedCustomerOrder;
+  // Refresh My Orders status periodically so admin changes appear without manual reload.
+  if(!window.__stvnMyOrdersStatusPoll){
+    window.__stvnMyOrdersStatusPoll=setInterval(()=>{
+      const ordersPage=byId('page-orders'),trackPage=byId('page-track');
+      if((ordersPage?.classList.contains('active')||trackPage?.classList.contains('active')) && !document.hidden){
+        loadMyOrders().catch(error=>console.warn('My Orders status refresh:',error));
+      }
+    },5000);
+  }
   async function hideOrderForSignedInCustomer(orderId,button){
     const id=String(orderId||'').trim();
     if(!id||!activeUserId)throw new Error('Sign in to the customer account first.');
     if(!(await window.stvnConfirm('Remove order '+id+' from your order history? It will remain visible in the shop Admin Panel.')))return;
     if(button){button.disabled=true;button.textContent='Removing…';}
     const c=client();
-    const {error}=await c.from('customer_hidden_orders').upsert(
-      {user_id:activeUserId,order_id:id},
-      {onConflict:'user_id,order_id',ignoreDuplicates:true}
-    );
-    if(error)throw error;
-    try{
-      const key='vedantHiddenOrders:'+String(activeEmail||'').toLowerCase();
-      const local=JSON.parse(localStorage.getItem(key)||'[]');
-      if(!local.includes(id)){local.push(id);localStorage.setItem(key,JSON.stringify(local));}
-    }catch(_e){}
+    let savedToAccountTable=false;
+    if(c&&activeUserId){
+      const {error}=await c.from('customer_hidden_orders').upsert(
+        {user_id:activeUserId,order_id:id},
+        {onConflict:'user_id,order_id',ignoreDuplicates:true}
+      );
+      if(!error)savedToAccountTable=true;
+      else console.warn('Account delete table unavailable; using this device account list:',error.message);
+    }
+    const key='vedantHiddenOrders:'+String(activeEmail||'').toLowerCase();
+    const local=JSON.parse(localStorage.getItem(key)||'[]');
+    if(!local.includes(id)){local.push(id);localStorage.setItem(key,JSON.stringify(local));}
+    if(button){button.textContent='✓ Removed from My Orders';button.disabled=true;}
     await loadMyOrders();
+    if(!savedToAccountTable)window.stvnAlert('यह ऑर्डर इस फोन/ब्राउज़र में आपकी Gmail वाली लिस्ट से हटाया गया है। दूसरे डिवाइस पर भी हटाने के लिए customer_hidden_orders SQL table चाहिए।');
   }
   function ensureOrderList(){
     const box=byId('customer-tracking-box');if(!box)return null;
@@ -16126,7 +16139,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     const previouslyOpen=list.querySelector('.stvn-order-tracking-panel:not([hidden])')?.dataset.orderId||'';
     list.replaceChildren();lastRenderedSignature=signature;
     const heading=document.createElement('h3');heading.textContent='Current & Recent Orders';list.appendChild(heading);
-    const activeOrder=rows.find(o=>!['delivered','cancelled'].includes(String(o.order_status||'').toLowerCase()))||rows[0];
+    const activeOrder=rows.find(o=>!['delivered','cancelled','cancelled_by_admin'].includes(String(o.order_status||'').toLowerCase()))||rows[0];
     rows.forEach((order,index)=>{
       const id=String(order.order_id||order.id||'').trim();if(!id)return;
       window.stvnCustomerOrdersById=window.stvnCustomerOrdersById||Object.create(null);
@@ -16148,21 +16161,30 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       });
       card.append(head,meta);
       const status=String(order.order_status||'pending').toLowerCase();
-      if(status==='cancelled'){
+      if(['cancelled','cancelled_by_admin'].includes(status)){
         const cancelled=document.createElement('div');
         cancelled.className='vg-customer-cancelled-banner';
-        cancelled.textContent='CANCELLED · यह ऑर्डर रद्द हो चुका है';
+        cancelled.textContent=status==='cancelled_by_admin'?'CANCELLED BY ADMIN':'CANCELLED · यह ऑर्डर रद्द हो चुका है';
         card.appendChild(cancelled);
-      }else if(['pending','confirmed'].includes(status)){
+      }else if(['pending','confirmed'].includes(status) && typeof stvnCustomerCancelTimeRemaining==='function' && stvnCustomerCancelTimeRemaining(order.order_date)>0){
+        const cancelRow=document.createElement('div');cancelRow.className='stvn-track-cancel-row';
+        const timerLabel=document.createElement('span');timerLabel.textContent='Cancel window';
         const cancel=document.createElement('button');
-        cancel.type='button';cancel.className='order-cancel-button remove-btn';
-        cancel.textContent='Cancel Order';
+        cancel.type='button';cancel.className='order-cancel-button remove-btn stvn-track-inline-cancel';
+        cancel.dataset.orderCreatedAt=String(order.order_date||'');
+        cancel.textContent='Cancel · 02:00';
         cancel.addEventListener('click',event=>{event.stopPropagation();cancelTrackedCustomerOrder(id,cancel);});
-        card.appendChild(cancel);
+        cancelRow.append(timerLabel,cancel);card.appendChild(cancelRow);
       }
+      const deleteButton=document.createElement('button');
+      deleteButton.type='button';deleteButton.className='stvn-customer-order-delete';
+      deleteButton.textContent='🗑 Delete from My Orders';
+      deleteButton.addEventListener('click',event=>{event.stopPropagation();hideOrderForSignedInCustomer(id,deleteButton).catch(error=>{console.error('Delete from My Orders:',error);window.stvnAlert('ऑर्डर आपकी लिस्ट से नहीं हट सका: '+String(error.message||error));deleteButton.disabled=false;deleteButton.textContent='🗑 Delete from My Orders';});});
+      card.appendChild(deleteButton);
       card.append(panel);list.appendChild(card);
       if(id===String(activeOrder.order_id||activeOrder.id))panel.dataset.autoOpen='true';
     });
+    if(typeof stvnStartCustomerCancelTimers==='function')stvnStartCustomerCancelTimers();
     const openId=previouslyOpen||String(activeOrder.order_id||activeOrder.id||'');
     const openPanel=openId?list.querySelector('.stvn-order-tracking-panel[data-order-id="'+CSS.escape(openId)+'"]'):null;
     if(openPanel && (openPanel.dataset.autoOpen==='true'||previouslyOpen===openId)){
@@ -16176,7 +16198,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       if(!user){activeEmail='';hideBar();return}
       const email=String(user.email).trim().toLowerCase();activeEmail=email;
       const rows=await fetchOrders(email);
-      const active=rows.find(order=>!['delivered','cancelled'].includes(String(order.order_status||'').toLowerCase()));
+      const active=rows.find(order=>!['delivered','cancelled','cancelled_by_admin'].includes(String(order.order_status||'').toLowerCase()));
       const bar=ensureBar();
       if(!active){hideBar();return}
       bar.dataset.orderId=String(active.order_id||active.id||'');
@@ -16299,11 +16321,15 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 }
 .stvn-customer-order-delete{
   display:inline-flex;align-items:center;justify-content:center;
-  width:100%;margin-top:7px;padding:10px 12px;
-  border:1px solid #814044;border-radius:10px;
+  width:auto;max-width:100%;margin-top:7px;padding:7px 10px;
+  border:1px solid #814044;border-radius:9px;font-size:12px;
   background:#402022;color:#ffdede;font-weight:850;cursor:pointer;
 }
 .stvn-customer-order-delete:disabled{opacity:.6;cursor:wait}
+
+.stvn-track-cancel-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0;padding:9px 11px;border:1px solid #d7a3a3;border-radius:12px;background:#fff5f5;color:#702323;font-size:13px;font-weight:800}
+.stvn-track-inline-cancel{width:auto!important;min-height:34px!important;margin:0!important;padding:7px 11px!important;border-radius:9px!important;font-size:12px!important;white-space:nowrap}
+@media(max-width:700px){.stvn-track-cancel-row{gap:7px;padding:8px;font-size:12px}.stvn-track-inline-cancel{min-height:32px!important;padding:6px 9px!important}}
 </style>
 
 
@@ -16334,4 +16360,11 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     display:flex;justify-content:space-between;gap:12px;color:#edf5ef!important;padding:7px 0;border-bottom:1px solid #365141
   }
 }
+</style>
+
+<style id="vedant-cancel-inline-sync-v2">
+#page-track .stvn-track-cancel-row,#page-orders .stvn-track-cancel-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0;padding:7px 9px;border:1px solid #a94b54;border-radius:10px;background:#fff3f4;color:#7c2029;font-size:12px;font-weight:800}
+#page-track .stvn-track-inline-cancel,#page-orders .stvn-track-inline-cancel{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;min-width:105px;min-height:30px!important;margin:0!important;padding:5px 9px!important;border-radius:8px!important;font-size:11px!important;white-space:nowrap}
+.vg-admin-cancelled-banner{background:#ffe4e6!important;color:#a30d20!important;border-color:#b42332!important}
+@media(max-width:700px){#page-track .stvn-track-cancel-row,#page-orders .stvn-track-cancel-row{font-size:11px;padding:6px 8px}#page-track .stvn-track-inline-cancel,#page-orders .stvn-track-inline-cancel{min-width:96px;min-height:29px!important;font-size:10px!important;padding:5px 7px!important}}
 </style>
