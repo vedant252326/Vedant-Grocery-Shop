@@ -2458,22 +2458,29 @@ Grand Total: ₹<span id="cart-total">0</span>
 
   <div id="order-message"></div>
 
-  <div id="order-confirmation-modal" class="order-confirmation-modal">
-    <div class="order-confirmation-content">
-      <div class="order-confirmation-icon">✅</div>
-      <h2 class="order-confirmation-title">Order Confirmed!</h2>
-      <p class="order-confirmation-message">आपका ऑर्डर सफलतापूर्वक प्राप्त हो गया है</p>
-      <div id="confirmation-order-id" class="order-confirmation-id">Order ID: #12345</div>
-      <div id="confirmation-details" class="order-confirmation-details">
-        <p><strong>💳 Payment:</strong> <span id="conf-payment">Cash on Delivery</span></p>
-        <p><strong>📍 Status:</strong> <span id="conf-status">Pending</span></p>
+  <dialog id="order-confirmation-modal" class="order-confirmation-modal vg-fresh-confirm" aria-labelledby="vg-order-confirmation-title">
+    <div class="order-confirmation-content vg-fresh-confirm-card">
+      <button type="button" class="vg-confirm-x" onclick="closeOrderConfirmation()" aria-label="Close confirmation">×</button>
+      <div class="vg-confirm-confetti" aria-hidden="true">✦　✧　•　✦　•</div>
+      <div class="vg-confirm-topline"><span>Happy<br>Shopping!</span><span class="vg-confirm-basket" aria-hidden="true">🧺🥬🍅🍌🥛</span></div>
+      <div class="vg-confirm-check" aria-hidden="true">✓</div>
+      <div class="vg-confirm-ribbon"><h2 id="vg-order-confirmation-title">Order Confirmed!</h2></div>
+      <p class="order-confirmation-message vg-confirm-message">Your order has been placed successfully</p>
+      <p class="vg-confirm-thanks">Thank you for choosing <strong>Vedant Grocery Shop</strong> ❤️</p>
+      <div id="confirmation-details" class="vg-confirm-info-grid">
+        <div class="vg-confirm-info"><span class="vg-confirm-info-icon">🛒</span><small>Order ID</small><strong id="confirmation-order-id">#12345</strong></div>
+        <div class="vg-confirm-info"><span class="vg-confirm-info-icon">🕒</span><small>Delivery Time</small><strong id="conf-delivery">20–25 Minutes</strong></div>
+        <div class="vg-confirm-info"><span class="vg-confirm-info-icon">💳</span><small>Payment Method</small><strong id="conf-payment">Cash on Delivery</strong></div>
+        <div class="vg-confirm-info"><span class="vg-confirm-info-icon">📦</span><small>Order Status</small><strong><span id="conf-status" class="vg-confirm-status">Pending</span></strong></div>
       </div>
-      <div class="order-confirmation-buttons">
-        <button class="order-confirmation-btn close" onclick="closeOrderConfirmation()">Continue Shopping</button>
-        <button class="order-confirmation-btn track" onclick="goToTracking()">Track Order</button>
+      <div class="vg-confirm-placed" id="conf-placed-time">🕒 Order placed: —</div>
+      <div class="order-confirmation-buttons vg-confirm-actions">
+        <button class="order-confirmation-btn track" onclick="goToTracking()">📍 Track My Order <span>›</span></button>
+        <button class="order-confirmation-btn close" onclick="closeOrderConfirmation()">🛍️ Continue Shopping</button>
       </div>
+      <div class="vg-confirm-footer">♡　Fresh Groceries&nbsp; • &nbsp;Better Life　♡</div>
     </div>
-  </div>
+  </dialog>
 
 </div>
 <button class="clear-btn" onclick="clearCart()">
@@ -5612,40 +5619,57 @@ async function saveVedantOrder(order,customerEmail){
 function showOrderConfirmation(order){
   const modal=document.getElementById("order-confirmation-modal");
   if(!modal || !order) return false;
-  // Detach from hidden/transformed checkout containers so the dialog works on phones.
+  // Move out of checkout/payment page before opening. Native dialog top-layer
+  // avoids mobile stacking contexts, transformed parents and hidden pages.
   if(modal.parentElement!==document.body)document.body.appendChild(modal);
-  modal.hidden=false;
-  modal.setAttribute('role','dialog');
-  modal.setAttribute('aria-modal','true');
-  modal.setAttribute('aria-label','Order confirmation');
-  modal.setAttribute('aria-live','assertive');
   const idNode=document.getElementById("confirmation-order-id");
   const paymentNode=document.getElementById("conf-payment");
   const statusNode=document.getElementById("conf-status");
-  if(idNode)idNode.textContent="Order ID: "+String(order.id||order.order_id||'');
-  if(paymentNode)paymentNode.textContent=String(order.payment||order.payment_method||'Cash on Delivery');
-  if(statusNode)statusNode.textContent=String(order.order_status||'pending');
+  const deliveryNode=document.getElementById("conf-delivery");
+  const placedNode=document.getElementById("conf-placed-time");
+  const orderId=String(order.id||order.order_id||'');
+  const placedAt=order.order_date||order.created_at||order.date||new Date().toISOString();
+  const parsedPlacedAt=new Date(placedAt);
+  const placedText=Number.isNaN(parsedPlacedAt.getTime())?new Date().toLocaleString('en-IN') : parsedPlacedAt.toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});
+  if(idNode)idNode.textContent=orderId ? '#'+orderId : 'Order ID unavailable';
+  if(paymentNode)paymentNode.textContent=String(order.payment_method||order.payment||'Cash on Delivery');
+  if(statusNode)statusNode.textContent=String(order.order_status||'pending').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
+  if(deliveryNode)deliveryNode.textContent=String(order.delivery||'20–25 Minutes');
+  if(placedNode)placedNode.textContent='🕒 Order placed: '+placedText;
   document.body.classList.add('vg-order-confirmation-open');
-  modal.classList.add("show");
-  // Inline important styles win over mobile page-transition/visibility rules.
-  modal.style.setProperty('display','flex','important');
-  modal.style.setProperty('visibility','visible','important');
-  modal.style.setProperty('opacity','1','important');
-  modal.style.setProperty('pointer-events','auto','important');
-  modal.style.setProperty('z-index','2147483000','important');
-  modal.getBoundingClientRect();
+  modal.hidden=false;
+  try{
+    if(typeof modal.showModal==='function'){
+      if(!modal.open)modal.showModal();
+    }else{
+      modal.setAttribute('open','');modal.classList.add('show');
+      modal.style.setProperty('display','flex','important');
+      modal.style.setProperty('visibility','visible','important');
+      modal.style.setProperty('z-index','2147483000','important');
+    }
+  }catch(error){
+    console.warn('Native order confirmation dialog fallback:',error);
+    modal.setAttribute('open','');modal.classList.add('show');
+    modal.style.setProperty('display','flex','important');
+    modal.style.setProperty('visibility','visible','important');
+    modal.style.setProperty('z-index','2147483000','important');
+  }
   return true;
 }
 function hideOrderConfirmationModal(){
   const modal=document.getElementById("order-confirmation-modal");
-  if(modal){modal.classList.remove('show');modal.style.setProperty('display','none','important');modal.style.setProperty('pointer-events','none','important');}
+  if(modal){
+    try{if(typeof modal.close==='function'&&modal.open)modal.close();}catch(_e){}
+    modal.removeAttribute('open');modal.classList.remove('show');
+    modal.style.removeProperty('display');modal.style.removeProperty('visibility');
+    modal.style.removeProperty('z-index');
+  }
   document.body.classList.remove('vg-order-confirmation-open');
 }
 function closeOrderConfirmation(){
   hideOrderConfirmationModal();
   showPage("shop");
 }
-
 function goToTracking(){
   hideOrderConfirmationModal();
   if(typeof window.showPage==="function")window.showPage("track");
@@ -5898,7 +5922,7 @@ box.innerHTML += `
 <p><strong>Grand Total:</strong> ₹${escapeHtml(total)}</p>
 <p><strong>Order Status:</strong> <strong class="${["cancelled","cancelled_by_admin"].includes(orderStatus)?"status-cancelled":""}">${escapeHtml(orderStatus==="cancelled_by_admin"?"CANCELLED BY ADMIN":orderStatus.replaceAll("_"," ").toUpperCase())}</strong></p>
 ${["cancelled","cancelled_by_admin"].includes(orderStatus)?`<div class="vg-customer-cancelled-banner">${orderStatus==="cancelled_by_admin"?"CANCELLED BY ADMIN":"CANCELLED · यह ऑर्डर रद्द हो चुका है"}</div>`:""}
-${orderStatus==="delivered"?'<div class="vg-customer-delivered-banner">✓ DELIVERED · ऑर्डर सफलतापूर्वक डिलीवर हो चुका है। अब इसमें बदलाव या कैंसिलेशन नहीं हो सकता।</div>':""}
+
 
 ${itemsHtml}
 
@@ -12908,6 +12932,34 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 }
 </style>
 
+
+<style id="vg-fresh-grocery-confirmation-style-v1">
+#order-confirmation-modal.vg-fresh-confirm{background:transparent!important;color:#173b28!important}
+#order-confirmation-modal.vg-fresh-confirm .vg-fresh-confirm-card{position:relative;overflow:hidden;width:min(100%,540px)!important;max-width:540px!important;padding:26px 26px 18px!important;border:1px solid #cfe8d4!important;border-radius:26px!important;background:linear-gradient(155deg,#ffffff 0%,#f5fff6 58%,#fffdf3 100%)!important;color:#173b28!important;box-shadow:0 24px 80px rgba(0,0,0,.28)!important;text-align:center!important}
+.vg-confirm-x{position:absolute;right:13px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:#edf7ef;color:#315d3e;font-size:25px;line-height:1;cursor:pointer}
+.vg-confirm-confetti{position:absolute;top:8px;left:12px;right:12px;color:#e5b83f;font-size:17px;letter-spacing:5px;pointer-events:none}
+.vg-confirm-topline{display:flex;justify-content:space-between;align-items:center;min-height:62px;text-align:left;color:#16834a;font-family:Georgia,serif;font-style:italic;font-weight:800;font-size:19px;line-height:1.05}
+.vg-confirm-basket{font-size:32px;letter-spacing:-8px;padding-right:15px;white-space:nowrap}
+.vg-confirm-check{display:grid;place-items:center;width:74px;height:74px;margin:5px auto 12px;border:5px solid #d7f2dd;border-radius:50%;background:linear-gradient(145deg,#26a65b,#08783d);color:white;font-size:48px;font-weight:900;box-shadow:0 8px 20px #16834a35}
+.vg-confirm-ribbon{margin:0 -26px;padding:12px 16px;background:linear-gradient(100deg,#08783d,#1b9b51,#08783d);box-shadow:0 5px 12px #08783d25}
+.vg-confirm-ribbon h2{margin:0;color:#fff;font-size:clamp(23px,5vw,31px);font-weight:950;letter-spacing:.2px}
+.vg-confirm-message{margin:15px 0 3px!important;color:#263d2e!important;font-weight:800}
+.vg-confirm-thanks{margin:0 0 16px;color:#68786d;font-size:13px}.vg-confirm-thanks strong{color:#16834a}
+.vg-confirm-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;text-align:left}
+.vg-confirm-info{display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:8px;align-items:center;padding:12px 11px;border:1px solid #dceee0;border-radius:14px;background:#fff;box-shadow:0 3px 10px #174b2b0b;min-width:0}
+.vg-confirm-info-icon{grid-row:1/3;display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#e9f8ed;font-size:16px}
+.vg-confirm-info small{color:#758278;font-size:11px;font-weight:700}.vg-confirm-info strong{color:#1a4029;font-size:13px;overflow-wrap:anywhere}.vg-confirm-status{display:inline-block;padding:3px 9px;border-radius:30px;background:#e4f8e9;color:#08783d;font-size:11px}
+.vg-confirm-placed{margin:12px 0 0;color:#66776b;font-size:11px;font-weight:700}
+.vg-confirm-actions{display:flex;flex-direction:column;gap:9px;margin:15px 0 12px!important}
+.vg-confirm-actions .order-confirmation-btn{width:100%;min-height:47px;border-radius:13px;font-size:14px;font-weight:900}
+.vg-confirm-actions .order-confirmation-btn.track{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(100deg,#08783d,#15964d)!important;color:white!important;box-shadow:0 7px 16px #16834a30}
+.vg-confirm-actions .order-confirmation-btn.track span{font-size:22px;line-height:12px}
+.vg-confirm-actions .order-confirmation-btn.close{background:#fff!important;color:#176b39!important;border:1px solid #b9ddc1!important}
+.vg-confirm-footer{padding:10px 0 0;border-top:1px solid #e0eee2;color:#16834a;font-family:Georgia,serif;font-style:italic;font-size:13px;font-weight:800}
+@media(max-width:700px){#order-confirmation-modal.vg-fresh-confirm{padding:10px!important}#order-confirmation-modal.vg-fresh-confirm .vg-fresh-confirm-card{width:100%!important;max-width:440px!important;max-height:calc(100dvh - 20px)!important;padding:19px 14px 13px!important;border-radius:20px!important}#order-confirmation-modal .vg-confirm-ribbon{margin-left:-14px;margin-right:-14px;padding:11px 8px}#order-confirmation-modal .vg-confirm-topline{min-height:51px;font-size:17px}#order-confirmation-modal .vg-confirm-basket{font-size:27px}#order-confirmation-modal .vg-confirm-check{width:62px;height:62px;font-size:40px}#order-confirmation-modal .vg-confirm-info{padding:9px 7px;grid-template-columns:25px minmax(0,1fr);column-gap:6px}#order-confirmation-modal .vg-confirm-info-icon{width:24px;height:24px;font-size:14px}#order-confirmation-modal .vg-confirm-info small{font-size:10px}#order-confirmation-modal .vg-confirm-info strong{font-size:12px}#order-confirmation-modal .vg-confirm-message{font-size:13px!important}#order-confirmation-modal .vg-confirm-thanks{font-size:11px;margin-bottom:12px}}
+@media(max-width:360px){#order-confirmation-modal .vg-confirm-info-grid{gap:6px}#order-confirmation-modal .vg-confirm-info{padding:8px 5px}#order-confirmation-modal .vg-confirm-info strong{font-size:11px}}
+</style>
+
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
@@ -16478,10 +16530,11 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 }
 </style>
 
-<style id="vg-order-confirmation-live-current-v3">
-/* Confirmation must sit above every page and remain visible on phones. */
-#order-confirmation-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:2147483000!important;display:none;align-items:center!important;justify-content:center!important;padding:16px!important;box-sizing:border-box!important;overflow-y:auto!important;background:rgba(0,0,0,.72)!important;overscroll-behavior:contain!important;isolation:isolate!important;visibility:visible}
-#order-confirmation-modal.show{display:flex!important}
+<style id="vg-order-confirmation-live-current-v4">
+/* Native dialog top-layer: reliable on mobile browsers inside animated checkout pages. */
+#order-confirmation-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:16px!important;box-sizing:border-box!important;border:0!important;background:transparent!important;color:inherit!important;overflow-y:auto!important;overscroll-behavior:contain!important;align-items:center!important;justify-content:center!important}
+#order-confirmation-modal[open]{display:flex!important;visibility:visible!important}
+#order-confirmation-modal::backdrop{background:rgba(0,0,0,.76)!important}
 #order-confirmation-modal .order-confirmation-content{width:min(100%,500px)!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;box-sizing:border-box!important;margin:auto!important}
 body.vg-order-confirmation-open{overflow:hidden!important}
 @media(max-width:700px){
