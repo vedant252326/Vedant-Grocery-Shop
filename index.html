@@ -5398,7 +5398,10 @@ function isMissingOrderColumn(error,column){
 }
 
 async function placeOrder(){
-  if(cartItems.length===0){ window.stvnAlert("Please add products to your cart first."); return; }
+  if(window.__vgPlaceOrderInFlight){return;}
+  window.__vgPlaceOrderInFlight=true;
+  window.__vgPaymentCheckoutPending=false;
+  if(cartItems.length===0){window.__vgPlaceOrderInFlight=false;window.stvnAlert("Please add products to your cart first.");return;}
   const message=document.getElementById("order-message");
   const button=document.querySelector("#page-payment .place-order") || document.querySelector(".place-order");
   if(button){button.disabled=true;button.textContent="Please wait...";}
@@ -5493,14 +5496,16 @@ async function placeOrder(){
           }catch(err){
             console.error("Razorpay verification/order save error:",err);
             message.innerHTML='<span class="error">❌ Payment हो गया हो सकता है, लेकिन verification/order save में समस्या आई: '+escapeHtml(err.message||"Unknown error")+'. कृपया दोबारा payment न करें; shop से संपर्क करें.</span>';
-          }finally{if(button){button.disabled=false;button.textContent="🛒 Place Order";}}
+          }finally{window.__vgPaymentCheckoutPending=false;window.__vgPlaceOrderInFlight=false;if(button){button.disabled=false;button.textContent="🛒 Place Order";}}
         },
-        modal:{ondismiss:function(){if(button){button.disabled=false;button.textContent="🛒 Place Order";} message.innerHTML='<span class="payment-note">Payment checkout बंद हुआ। आपका order अभी place नहीं हुआ है.</span>';}}
+        modal:{ondismiss:function(){window.__vgPaymentCheckoutPending=false;window.__vgPlaceOrderInFlight=false;if(button){button.disabled=false;button.textContent="🛒 Place Order";} message.innerHTML='<span class="payment-note">Payment checkout बंद हुआ। आपका order अभी place नहीं हुआ है.</span>';}}
       });
       checkout.on("payment.failed",function(response){
         message.innerHTML='<span class="error">❌ Payment failed: '+escapeHtml(response?.error?.description||"Please try again.")+'</span>';
+        window.__vgPaymentCheckoutPending=false;window.__vgPlaceOrderInFlight=false;
         if(button){button.disabled=false;button.textContent="🛒 Place Order";}
       });
+      window.__vgPaymentCheckoutPending=true;
       checkout.open();
       return;
     }
@@ -5509,6 +5514,7 @@ async function placeOrder(){
     console.error("Place order error:",err);
     message.innerHTML='<span class="error">❌ '+escapeHtml(err.message||"कृपया कुछ देर बाद फिर कोशिश करें.")+'</span>';
   }finally{
+    if(!window.__vgPaymentCheckoutPending)window.__vgPlaceOrderInFlight=false;
     if(button && button.textContent!=="Verifying Payment..."){button.disabled=false;button.textContent="🛒 Place Order";}
   }
 }
@@ -6600,7 +6606,8 @@ return;
 ordersBox.innerHTML="";
 
 
-orders.forEach(
+const uniqueAdminOrders=[...new Map((orders||[]).map(order=>[String(order.order_id||order.id||""),order])).values()];
+uniqueAdminOrders.forEach(
 function(order){
 
 const orderId =
@@ -6681,7 +6688,9 @@ Number(order.longitude)
 
 ordersBox.innerHTML += `
 
-<div class="admin-order">
+<div class="admin-order ${orderStatus==="cancelled"?"admin-order-cancelled":""}">
+
+${orderStatus==="cancelled"?'<div class="vg-admin-cancelled-banner">CANCELLED · CUSTOMER ORDER CANCELLED</div>':""}
 
 <div class="admin-grid">
 
@@ -7126,7 +7135,7 @@ async function deleteOrder(orderId){
         const {data,error}=await supabaseClient.from("orders").delete().eq("order_id",cleanOrderId).select("order_id");
         if(error)throw error;
         if(!data||!data.length)throw new Error("कोई order delete नहीं हुआ। Admin login और Supabase DELETE permission/RLS policy जाँचें.");
-        if(Array.isArray(orderHistory))orderHistory=orderHistory.filter(order=>String(order.order_id||order.id||"")!==cleanOrderId);
+        if(Array.isArray(orderHistory)){orderHistory=orderHistory.filter(order=>String(order.order_id||order.id||"")!==cleanOrderId);saveData();}
         await loadAdminOrders();
         if(typeof showOrderHistory==="function")await showOrderHistory();
         if(typeof window.stvnRefreshLiveOrderBar==="function")await window.stvnRefreshLiveOrderBar();
@@ -16033,6 +16042,55 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     }catch(_e){}
     return ids;
   }
+  async function loadMyOrders(){
+    const user=await getSignedInUser();
+    if(!user){activeEmail='';activeUserId='';renderAccountOrders([], '');return [];}
+    activeEmail=String(user.email||'').trim().toLowerCase();
+    activeUserId=String(user.id||'');
+    const [allRows,hiddenIds]=await Promise.all([
+      fetchOrders(activeEmail),
+      fetchHiddenOrderIds(activeUserId,activeEmail).catch(error=>{console.warn('Hidden-order list:',error);return new Set();})
+    ]);
+    // A single database order can be returned through multiple client refreshes.
+    // Keep one row per order_id and prefer the newest row.
+    const unique=new Map();
+    [...allRows].sort((a,b)=>new Date(b.order_date||0)-new Date(a.order_date||0)).forEach(row=>{
+      const id=String(row.order_id||row.id||'').trim();
+      if(id&&!hiddenIds.has(id)&&!unique.has(id))unique.set(id,row);
+    });
+    const rows=[...unique.values()];
+    renderAccountOrders(rows,activeEmail);
+    return rows;
+  }
+  async function cancelTrackedCustomerOrder(orderId,button){
+    const id=String(orderId||'').trim();
+    if(!id)return;
+    if(!(await window.stvnConfirm('क्या आप Order '+id+' cancel करना चाहते हैं?')))return;
+    if(button){button.disabled=true;button.textContent='Cancelling…';}
+    try{
+      const c=client();const user=await getSignedInUser();
+      if(!c||!user?.email)throw new Error('कृपया उसी customer account में login करें।');
+      const email=String(user.email).trim().toLowerCase();
+      const {data:row,error:findError}=await c.from('orders').select('order_status')
+        .eq('order_id',id).eq('customer_email',email).maybeSingle();
+      if(findError)throw findError;
+      if(!row)throw new Error('यह order आपके account में नहीं मिला।');
+      if(!['pending','confirmed'].includes(String(row.order_status||'pending').toLowerCase()))
+        throw new Error('Preparing शुरू होने के बाद order cancel नहीं किया जा सकता।');
+      const {data,error}=await c.from('orders').update({order_status:'cancelled'})
+        .eq('order_id',id).eq('customer_email',email).in('order_status',['pending','confirmed']).select('order_id').maybeSingle();
+      if(error)throw error;
+      if(!data)throw new Error('Order status बदल गया है। Refresh करके फिर कोशिश करें।');
+      await loadMyOrders();
+      if(typeof window.stvnRefreshLiveOrderBar==='function')await window.stvnRefreshLiveOrderBar();
+      window.stvnAlert('✅ आपका order cancel हो गया है।');
+    }catch(error){
+      console.error('Tracking cancellation failed:',error);
+      window.stvnAlert('❌ Order cancel नहीं हुआ: '+String(error.message||error));
+      if(button){button.disabled=false;button.textContent='Cancel Order';}
+    }
+  }
+  window.stvnCancelTrackedCustomerOrder=cancelTrackedCustomerOrder;
   async function hideOrderForSignedInCustomer(orderId,button){
     const id=String(orderId||'').trim();
     if(!id||!activeUserId)throw new Error('Sign in to the customer account first.');
@@ -16088,7 +16146,21 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
         if(event.target.closest('a,button,input,select,textarea'))return;
         window.toggleCustomerOrderTracking(id,null,panel.id);
       });
-      card.append(head,meta,panel);list.appendChild(card);
+      card.append(head,meta);
+      const status=String(order.order_status||'pending').toLowerCase();
+      if(status==='cancelled'){
+        const cancelled=document.createElement('div');
+        cancelled.className='vg-customer-cancelled-banner';
+        cancelled.textContent='CANCELLED · यह ऑर्डर रद्द हो चुका है';
+        card.appendChild(cancelled);
+      }else if(['pending','confirmed'].includes(status)){
+        const cancel=document.createElement('button');
+        cancel.type='button';cancel.className='order-cancel-button remove-btn';
+        cancel.textContent='Cancel Order';
+        cancel.addEventListener('click',event=>{event.stopPropagation();cancelTrackedCustomerOrder(id,cancel);});
+        card.appendChild(cancel);
+      }
+      card.append(panel);list.appendChild(card);
       if(id===String(activeOrder.order_id||activeOrder.id))panel.dataset.autoOpen='true';
     });
     const openId=previouslyOpen||String(activeOrder.order_id||activeOrder.id||'');
@@ -16232,4 +16304,34 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
   background:#402022;color:#ffdede;font-weight:850;cursor:pointer;
 }
 .stvn-customer-order-delete:disabled{opacity:.6;cursor:wait}
+</style>
+
+
+<style id="vedant-order-cancel-dedupe-mobile-final-fix">
+.vg-customer-cancelled-banner,.vg-admin-cancelled-banner{
+  display:block;width:100%;box-sizing:border-box;margin:10px 0;padding:16px 14px;
+  border:2px solid #b42332;border-radius:12px;background:#ffe4e6;color:#a30d20;
+  text-align:center;font-size:clamp(19px,3vw,28px);font-weight:1000;letter-spacing:.04em;
+  box-shadow:0 5px 18px rgba(180,35,50,.12)
+}
+.admin-order-cancelled{border:2px solid #c62838!important;background:#fff5f5!important}
+.admin-order-cancelled .admin-grid,.admin-order-cancelled .payment-box{border-color:#efb2b8}
+.admin-order-cancelled .admin-actions select{border-color:#c62838!important;color:#a30d20!important;font-weight:800}
+#page-track .order-cancel-button{width:100%;margin:7px 0 0}
+@media(max-width:700px){
+  #stvn-live-order-bar{display:none!important}
+  #stvn-live-order-bar.is-visible{display:flex!important;bottom:calc(92px + env(safe-area-inset-bottom))!important;z-index:120000!important}
+  #page-track .admin-order-item,#page-admin .admin-order-item{
+    background:#17231c!important;color:#edf5ef!important;border:1px solid #42614d!important
+  }
+  #page-track .admin-order-item p,#page-admin .admin-order-item p,
+  #page-track .admin-order-item strong,#page-admin .admin-order-item strong{color:#edf5ef!important}
+  #page-track .order-history-items,#page-orders .order-history-items{
+    background:#17231c!important;color:#edf5ef!important;border:1px solid #42614d!important;
+    border-radius:12px!important;padding:12px!important
+  }
+  #page-track .order-history-items li,#page-orders .order-history-items li{
+    display:flex;justify-content:space-between;gap:12px;color:#edf5ef!important;padding:7px 0;border-bottom:1px solid #365141
+  }
+}
 </style>
