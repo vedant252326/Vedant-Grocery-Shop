@@ -2168,6 +2168,12 @@ button,input,select,textarea{font:inherit}
 }
 </style>
 
+
+<style id="stvn-customer-live-tracking-css">
+.stvn-customer-live-tracking{margin:14px 0;padding:14px;border:1px solid #cfe6d6;border-radius:18px;background:linear-gradient(145deg,var(--surface,#fff),var(--primary-soft,#eafaf1));}
+.stvn-customer-live-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.stvn-customer-live-heading strong{display:block;font-size:16px;color:var(--text,#183d2a)}.stvn-customer-live-heading small{display:block;margin-top:4px;color:var(--muted,#66756c)}.stvn-live-pill{font-size:11px;font-weight:900;padding:6px 9px;border-radius:999px;background:#e8f8ee;color:#08783d;white-space:nowrap}.stvn-customer-delivery-map{height:260px;min-height:220px;border-radius:13px;overflow:hidden;background:#e9f1eb;border:1px solid var(--border,#dce8df);z-index:1}.stvn-map-wait{height:100%;display:grid;place-items:center;text-align:center;padding:20px;color:#52685a;font-weight:700;font-size:13px}.stvn-customer-map-note{margin:9px 2px 0;font-size:12px;color:var(--muted,#66756c);line-height:1.45}.stvn-bike-marker{background:transparent;border:0}.stvn-bike-marker span{display:grid;place-items:center;width:40px;height:40px;border:2px solid white;border-radius:50%;background:#16864b;box-shadow:0 3px 12px #0004;font-size:23px}
+</style>
+
 </head>
 
 <body>
@@ -2524,42 +2530,11 @@ placeholder="Enter delivery address"
 <!-- ================= CUSTOMER ORDER TRACKING ================= -->
 
 <div id="customer-tracking-box" class="payment-box">
-
 <strong class="stvn-track-heading">🚚 Track Your Order</strong>
-
-<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;">
-
-<div>
-<label style="display:block;font-size:13px;margin-bottom:4px;">
-Mobile Number
-</label>
-
-<input
-id="track-phone"
-type="tel"
-inputmode="numeric"
-maxlength="10"
-autocomplete="tel"
-onkeydown="if(event.key==='Enter'){event.preventDefault();findCustomerOrders();}"
-placeholder="Enter your 10-digit mobile number">
-</div>
-
-
-<button
-type="button"
-class="admin-btn"
-onclick="findCustomerOrders()">
-🔎 Find My Orders
-</button>
-
-</div>
-
-<input id="track-order-id" type="hidden">
+<p>Your orders are connected to your signed-in Gmail account. Select an order below to open its tracking details.</p>
+<div id="stvn-account-orders-note" class="payment-note" aria-live="polite"></div>
 <div id="customer-tracking-orders" aria-live="polite"></div>
-
-
-<div id="tracking-status" class="payment-note" style="margin-top:8px;">Order tracking details will appear here.</div>
-
+<div id="tracking-status" class="payment-note" style="margin-top:8px;" hidden></div>
 </div>
 
 
@@ -3462,7 +3437,7 @@ function addToCart(name,price,quantityText,noteText,variantLabel){
     normalizeProductName(card.dataset.name||card.querySelector("h3")?.textContent)===normalizeProductName(name)
   );
   if(matchingProductCards.length&&matchingProductCards.every(card=>card.dataset.outOfStock==="true")){
-    alert("यह product अभी out of stock है.");
+    window.stvnAlert("यह product अभी out of stock है.");
     return;
   }
   const text=String(quantityText||"").trim() || "1";
@@ -3857,7 +3832,7 @@ updateOrderSummary();
 
 function continueToDeliveryDetails(){
   if(cartItems.length===0){
-    alert("Please add products to your cart first.");
+    window.stvnAlert("Please add products to your cart first.");
     return;
   }
   showPage("checkout");
@@ -3865,7 +3840,7 @@ function continueToDeliveryDetails(){
 
 async function continueToOrderReview(){
   if(cartItems.length===0){
-    alert("Please add products to your cart first.");
+    window.stvnAlert("Please add products to your cart first.");
     showPage("cart");
     return;
   }
@@ -3873,11 +3848,11 @@ async function continueToOrderReview(){
   const phone=document.getElementById("customer-phone").value.trim();
   const address=document.getElementById("customer-address").value.trim();
   if(!name||!phone||!address){
-    alert("Please enter your name, 10-digit mobile number and full delivery address.");
+    window.stvnAlert("Please enter your name, 10-digit mobile number and full delivery address.");
     return;
   }
   if(!/^[0-9]{10}$/.test(phone)){
-    alert("कृपया सही 10-digit mobile number डालें.");
+    window.stvnAlert("कृपया सही 10-digit mobile number डालें.");
     return;
   }
   const saveBox=document.getElementById('stvnSaveAddressOnOrder');
@@ -3886,12 +3861,12 @@ async function continueToOrderReview(){
   }
   await getCustomerLocationForOrder();
   if(customerLatitude===null||customerLongitude===null){
-    alert("Order total और delivery charge दिखाने के लिए current location की permission दें.");
+    window.stvnAlert("Order total और delivery charge दिखाने के लिए current location की permission दें.");
     return;
   }
   const radiusCheck=checkDeliveryRadius();
   if(!radiusCheck.allowed){
-    alert("आपकी location shop से "+radiusCheck.distance.toFixed(2)+" km दूर है। Delivery सिर्फ 5 km के अंदर उपलब्ध है.");
+    window.stvnAlert("आपकी location shop से "+radiusCheck.distance.toFixed(2)+" km दूर है। Delivery सिर्फ 5 km के अंदर उपलब्ध है.");
     return;
   }
   updateCart();
@@ -3900,13 +3875,13 @@ async function continueToOrderReview(){
 
 function continueToPayment(){
   if(cartItems.length===0){
-    alert("Please add products to your cart first.");
+    window.stvnAlert("Please add products to your cart first.");
     showPage("cart");
     return;
   }
   const selectedPayment=document.getElementById("payment-method")?.value;
   if(selectedPayment==="RAZORPAY" && !window.vedantSelectedRazorpayMethod){
-    alert("कृपया Cards, Net Banking, EMI या Wallets में से Choose an option.");
+    window.stvnAlert("कृपया Cards, Net Banking, EMI या Wallets में से Choose an option.");
     return;
   }
   updateCart();
@@ -3929,14 +3904,14 @@ wishlistItems.push(name);
 
 saveData();
 
-alert(
+window.stvnAlert(
 name +
 " added to Wishlist!"
 );
 
 }else{
 
-alert(
+window.stvnAlert(
 name +
 " is already in Wishlist."
 );
@@ -4226,12 +4201,12 @@ info.innerHTML = `
   </div>`;
 }
 
-function copyVedantUpiId(){
+async function copyVedantUpiId(){
   const id=VEDANT_UPI_ID;
   if(navigator.clipboard){
-    navigator.clipboard.writeText(id).then(()=>alert("UPI ID copied: "+id));
+    navigator.clipboard.writeText(id).then(()=>window.stvnAlert("UPI ID copied: "+id));
   }else{
-    prompt("Copy UPI ID:",id);
+    const copied=await window.stvnPrompt("Copy UPI ID:",id); if(copied!==null) await navigator.clipboard?.writeText(copied);
   }
 }
 
@@ -4493,6 +4468,9 @@ localStorage.getItem(
 "vedantTrackedCustomerPhone"
 ) || "";
 
+let trackedCustomerEmail = "";
+let activeTrackingBoxId = "tracking-status";
+window.stvnCustomerOrdersById = window.stvnCustomerOrdersById || Object.create(null);
 
 let customerOrderRealtimeChannel =
 null;
@@ -4682,17 +4660,14 @@ payload.new;
 
 if(
 updatedOrder &&
-String(
-updatedOrder.customer_phone || ""
-) ===
-String(
-trackedCustomerPhone || ""
+(
+  (trackedCustomerEmail && String(updatedOrder.customer_email || "").trim().toLowerCase() === trackedCustomerEmail) ||
+  (!trackedCustomerEmail && trackedCustomerPhone && String(updatedOrder.customer_phone || "") === String(trackedCustomerPhone))
 )
 ){
 
-renderCustomerTracking(
-updatedOrder
-);
+const trackingTarget = document.getElementById(activeTrackingBoxId) || document.getElementById("tracking-status");
+renderCustomerTracking(updatedOrder, trackingTarget);
 
 
 const indicator =
@@ -4974,6 +4949,60 @@ function openCustomerOrderForTracking(order,phone){
 }
 
 
+async function toggleCustomerOrderTracking(orderId, button, panelId){
+  const panel = document.getElementById(panelId);
+  if(!panel) return;
+
+  if(!panel.hidden){
+    panel.hidden = true;
+    panel.innerHTML = "";
+    if(window.stvnCustomerDeliveryMap){
+      window.stvnCustomerDeliveryMap.remove();
+      window.stvnCustomerDeliveryMap = null;
+    }
+    stopCustomerOrderRealtime();
+    activeTrackingBoxId = "tracking-status";
+    if(button) button.textContent = "Track this order";
+    return;
+  }
+
+  document.querySelectorAll(".stvn-order-tracking-panel").forEach(item=>{
+    if(item.id !== panelId){ item.hidden = true; item.innerHTML = ""; }
+  });
+  panel.hidden = false;
+  panel.innerHTML = '<p class="payment-note">Loading order tracking…</p>';
+
+  const order = window.stvnCustomerOrdersById[String(orderId)];
+  if(!order){
+    panel.innerHTML = '<p class="error">This order could not be loaded. Refresh My Orders and try again.</p>';
+    return;
+  }
+
+  const {data:authData,error:authError} = await supabaseClient.auth.getUser();
+  if(authError || !authData.user?.email){
+    panel.innerHTML = '<p class="error">Please sign in with the Gmail account used to place this order.</p>';
+    return;
+  }
+
+  trackedCustomerEmail = String(authData.user.email).trim().toLowerCase();
+  trackedCustomerPhone = String(order.customer_phone || order.phone || "").trim();
+  trackedOrderId = String(orderId);
+  activeTrackingBoxId = panelId;
+  localStorage.setItem("vedantTrackedOrderId", trackedOrderId);
+
+  if(window.stvnCustomerDeliveryMap){
+    window.stvnCustomerDeliveryMap.remove();
+    window.stvnCustomerDeliveryMap = null;
+  }
+  renderCustomerTracking(order, panel);
+  if(String(order.order_status||"").toLowerCase() !== "delivered"){
+    startCustomerOrderRealtime();
+  }else{
+    stopCustomerOrderRealtime();
+  }
+  if(button) button.textContent = "Close tracking";
+}
+
 /* ================= CUSTOMER LIVE LOCATION ================= */
 
 let customerLocationWatchId =
@@ -5134,7 +5163,7 @@ function startCustomerLiveLocation(){
 
 if(!navigator.geolocation){
 
-alert(
+window.stvnAlert(
 "❌ इस browser में location support नहीं है."
 );
 
@@ -5148,7 +5177,7 @@ if(
 !trackedCustomerPhone
 ){
 
-alert(
+window.stvnAlert(
 "पहले Order ID और mobile number डालकर Track Order करो."
 );
 
@@ -5161,7 +5190,7 @@ if(
 customerLocationWatchId !== null
 ){
 
-alert(
+window.stvnAlert(
 "📍 Live location पहले से share हो रही है."
 );
 
@@ -5279,12 +5308,10 @@ console.log(
 
 /* ================= RENDER CUSTOMER TRACKING ================= */
 
-function renderCustomerTracking(order){
+function renderCustomerTracking(order, targetBox){
 
 const box =
-document.getElementById(
-"tracking-status"
-);
+targetBox || document.getElementById(activeTrackingBoxId) || document.getElementById("tracking-status");
 
 
 if(!box)
@@ -5311,94 +5338,118 @@ order.delivery ||
 );
 
 
+// Five clear customer-facing milestones. Earlier milestones get a small
+// check mark once the admin moves the order to the next stage.
 const steps = [
-  {statuses:["pending"],label:"📝 Order Received"},
-  {statuses:["confirmed","preparing"],label:"⚙️ Processing"},
-  {statuses:["out_for_delivery","delivered"],label:"🚚 Out for Delivery"}
+  {statuses:["pending"],icon:"📝",label:"Order Received",detail:"Your order has been received"},
+  {statuses:["confirmed"],icon:"✓",label:"Order Confirmed",detail:"Your order is confirmed"},
+  {statuses:["preparing","processing"],icon:"⚙️",label:"Processing",detail:"Your items are being prepared"},
+  {statuses:["out_for_delivery","shipped"],icon:"🚚",label:"Out for Delivery",detail:"Your order is on the way"},
+  {statuses:["delivered"],icon:"🏠",label:"Delivered",detail:"Your order has been delivered"}
 ];
 
+const currentIndex = steps.findIndex(step => step.statuses.includes(status));
+const isDelivered = status === "delivered";
+const isCancelled = status === "cancelled";
+let html = "";
 
-const currentIndex =
-steps.findIndex(
-step =>
-step.statuses.includes(status)
-);
-
-
-let html="";
-
-html +=
-'<div class="tracking-estimate">' +
-'<span><span class="tracking-estimate-label">⏱️ Estimated delivery</span><br>' +
-'<span class="tracking-estimate-time">' + escapeHtml(estimatedTime) + '</span></span>' +
-"</div>";
-
-
-steps.forEach(
-(step,index)=>{
-
-const active =
-(
-  index <= currentIndex ||
-  (status==="delivered" && index===steps.length-1)
-) &&
-status !== "cancelled";
-
-
-html +=
-'<div class="tracking-step ' +
-(
-active
-? "tracking-active"
-: ""
-) +
-'">' +
-step.label +
-"</div>";
-
-});
-
-
-const paymentIsConfirmed =
-paymentStatus === "confirmed";
-const paymentLabel =
-paymentIsConfirmed
-? "💳 Payment Received / Confirmed"
-: paymentStatus === "pending_verification"
-? "💳 Payment Awaiting Confirmation"
-: paymentStatus === "failed"
-? "❌ Payment Failed"
-: paymentStatus === "refunded"
-? "↩️ Payment Refunded"
-: "💳 Payment Pending";
-
-html +=
-'<div class="tracking-step ' +
-(paymentIsConfirmed && status !== "cancelled" ? "tracking-active" : "") +
-'">' +
-paymentLabel +
-"</div>";
-
-html +=
-'<div class="tracking-step ' +
-(status === "delivered" ? "tracking-active" : "") +
-'">' +
-"✅ Delivered" +
-"</div>";
-
-
-if(status==="cancelled"){
-
-html +=
-'<div class="tracking-step" style="color:var(--danger);">' +
-"❌ Order Cancelled" +
-"</div>";
-
+if (!isDelivered && !isCancelled) {
+  html += '<div class="tracking-estimate">' +
+    '<span><span class="tracking-estimate-label">⏱️ Estimated delivery</span><br>' +
+    '<span class="tracking-estimate-time">' + escapeHtml(estimatedTime) + '</span></span></div>';
 }
 
+const partnerLat = Number(order.delivery_boy_latitude);
+const partnerLng = Number(order.delivery_boy_longitude);
+const customerLat = Number(order.latitude);
+const customerLng = Number(order.longitude);
+const hasPartnerLocation = Number.isFinite(partnerLat) && Number.isFinite(partnerLng) &&
+  Math.abs(partnerLat) <= 90 && Math.abs(partnerLng) <= 180 &&
+  (partnerLat !== 0 || partnerLng !== 0);
+const hasCustomerLocation = Number.isFinite(customerLat) && Number.isFinite(customerLng) &&
+  Math.abs(customerLat) <= 90 && Math.abs(customerLng) <= 180 &&
+  (customerLat !== 0 || customerLng !== 0);
+const mapId = box.id + "-delivery-map";
+
+if (status === "out_for_delivery") {
+  html += '<section class="stvn-customer-live-tracking">' +
+    '<div class="stvn-customer-live-heading"><div><strong>🚴 Delivery Partner Tracking</strong>' +
+    '<small>Your order is on the way</small></div><span class="stvn-live-pill">' +
+    (hasPartnerLocation ? '🟢 LIVE' : 'WAITING') + '</span></div>' +
+    '<div id="' + mapId + '" class="stvn-customer-delivery-map"></div>' +
+    '<p class="stvn-customer-map-note">' +
+    (hasPartnerLocation ? '📍 Delivery partner location is updating.' :
+      '📍 Live location will appear here when the delivery partner starts sharing it.') +
+    '</p></section>';
+}
+
+if (!isCancelled) {
+  html += '<section class="vg-order-progress" aria-label="Order progress">';
+  html += '<div class="vg-order-progress-heading"><strong>📦 Order Progress</strong>' +
+    '<span class="vg-order-current-pill">' +
+    escapeHtml(currentIndex >= 0 ? steps[currentIndex].label : "Status Updated") +
+    '</span></div>';
+  html += '<div class="vg-order-progress-list">';
+  steps.forEach((step,index)=>{
+    const done = currentIndex >= 0 && index < currentIndex;
+    const active = index === currentIndex;
+    const stateClass = done ? "is-done" : active ? "is-current" : "is-upcoming";
+    const marker = done ? "✓" : active ? '<span class="vg-order-active-dot"></span>' : String(index+1);
+    const detail = done ? "Completed" : active ? step.detail : "Waiting for previous step";
+    html += '<div class="vg-order-progress-step ' + stateClass + '">' +
+      '<div class="vg-order-progress-marker">' + marker + '</div>' +
+      '<div class="vg-order-progress-copy"><strong>' + escapeHtml(step.label) + '</strong>' +
+      '<small>' + escapeHtml(detail) + '</small></div>' +
+      (done ? '<span class="vg-order-tick-label">✓ Done</span>' :
+        active ? '<span class="vg-order-now-label">In Progress</span>' : '') +
+      '</div>';
+  });
+  html += '</div></section>';
+}
+
+const paymentIsConfirmed = paymentStatus === "confirmed";
+const paymentLabel = paymentIsConfirmed ? "💳 Payment Received / Confirmed"
+  : paymentStatus === "pending_verification" ? "💳 Payment Awaiting Confirmation"
+  : paymentStatus === "failed" ? "❌ Payment Failed"
+  : paymentStatus === "refunded" ? "↩️ Payment Refunded" : "💳 Payment Pending";
+
+html += '<div class="tracking-step ' +
+  (paymentIsConfirmed && status !== "cancelled" ? "tracking-active" : "") +
+  '">' + paymentLabel + '</div>';
+html += '<div class="tracking-step ' + (isDelivered ? "tracking-active" : "") + '">' +
+  (isDelivered ? "✅ Delivered" : "Delivery not completed yet") + '</div>';
+
+if (isCancelled) html += '<div class="tracking-step" style="color:var(--danger);">❌ Order Cancelled</div>';
+if (isDelivered) html += '<p class="payment-note">✅ This order has been delivered. Live delivery-partner tracking has been closed.</p>';
 
 box.innerHTML =
 html;
+
+// Draw the delivery partner only while this order is out for delivery.
+try {
+  const mapEl = document.getElementById(mapId);
+  if (window.stvnCustomerDeliveryMap) {
+    window.stvnCustomerDeliveryMap.remove();
+    window.stvnCustomerDeliveryMap = null;
+  }
+  if (mapEl && status === "out_for_delivery" && window.L && hasPartnerLocation) {
+    const map = L.map(mapEl, {scrollWheelZoom:false}).setView([partnerLat, partnerLng], 15);
+    window.stvnCustomerDeliveryMap = map;
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:19, attribution:'&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    const bikeIcon = L.divIcon({className:'stvn-bike-marker',html:'<span>🏍️</span>',iconSize:[42,42],iconAnchor:[21,21]});
+    L.marker([partnerLat,partnerLng],{icon:bikeIcon}).addTo(map).bindPopup('🚴 Delivery Partner');
+    const bounds = [[partnerLat,partnerLng]];
+    if (hasCustomerLocation) {
+      L.marker([customerLat,customerLng]).addTo(map).bindPopup('🏠 Delivery Address');
+      L.polyline([[partnerLat,partnerLng],[customerLat,customerLng]],{color:'#159653',weight:4,dashArray:'8 8'}).addTo(map);
+      bounds.push([customerLat,customerLng]);
+    }
+    if(bounds.length>1) map.fitBounds(bounds,{padding:[28,28],maxZoom:15});
+    setTimeout(()=>{try{map.invalidateSize()}catch(e){}},180);
+  }
+} catch(mapError) { console.warn('Customer delivery map:',mapError); }
 
 }
 
@@ -5416,7 +5467,7 @@ function isMissingOrderColumn(error,column){
 }
 
 async function placeOrder(){
-  if(cartItems.length===0){ alert("Please add products to your cart first."); return; }
+  if(cartItems.length===0){ window.stvnAlert("Please add products to your cart first."); return; }
   const message=document.getElementById("order-message");
   const button=document.querySelector("#page-payment .place-order") || document.querySelector(".place-order");
   if(button){button.disabled=true;button.textContent="Please wait...";}
@@ -5472,8 +5523,7 @@ async function placeOrder(){
       message.innerHTML=`<span class="success">✅ Vedant Wallet payment successful!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: Vedant Wallet<br>💸 ₹${Number(walletData.amount||totalAmount).toFixed(2)} wallet से कटे<br>👛 बचा हुआ balance: ₹${Number(walletData.balance).toFixed(2)}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}<br>📦 Order successfully placed.</span>`;
       cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
       saveData(); updateCart(); showOrderHistory();
-      saveTrackedOrder(order.id,order.phone); setTrackingInputs(order.id,order.phone);
-      renderCustomerTracking(order); startCustomerOrderRealtime(); showOrderConfirmation(order);
+      showOrderConfirmation(order);
       if(typeof window.refreshVedantWalletBalance==="function"){try{await window.refreshVedantWalletBalance();}catch(refreshError){console.warn("Wallet balance refresh after successful payment failed:",refreshError);}}
       return;
     }
@@ -5568,8 +5618,7 @@ async function saveVedantOrder(order,customerEmail){
   message.innerHTML=`<span class="success">✅ Order placed successfully!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: ${escapeHtml(order.payment)}<br>📦 Order Status: ${escapeHtml(order.order_status)}<br>💳 Payment Status: ${escapeHtml(order.payment_status)}${order.razorpay_payment_id?"<br>Razorpay Payment ID: "+escapeHtml(order.razorpay_payment_id):""}${order.latitude!==null&&order.longitude!==null?"<br>📍 Location saved with this order":"<br>📍 Location not available; address saved"}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}${savedWithoutCustomerEmail?"<br>⚠️ Database में customer_email column जोड़ने की जरूरत है.":""}</span>`;
   cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
   saveData(); updateCart(); showOrderHistory();
-  saveTrackedOrder(order.id,order.phone); setTrackingInputs(order.id,order.phone);
-  renderCustomerTracking(order); startCustomerOrderRealtime(); showOrderConfirmation(order);
+  showOrderConfirmation(order);
 }
 
 function showOrderConfirmation(order){
@@ -5777,6 +5826,9 @@ const itemsHtml=orderItems.length
   : '<div class="order-history-items"><strong>🛍️ Items</strong><p>इस पुराने order के item details उपलब्ध नहीं हैं।</p></div>';
 
 
+const trackingPanelId = "customer-order-tracking-" + visibleOrders.indexOf(order);
+window.stvnCustomerOrdersById[String(orderId)] = order;
+
 box.innerHTML += `
 
 <div class="history-item">
@@ -5790,26 +5842,26 @@ ${itemsHtml}
 
 <p><strong>Payment Method:</strong> ${escapeHtml(paymentMethod)}</p>
 
+<button type="button" class="shop-btn stvn-order-track-toggle"
+  onclick="toggleCustomerOrderTracking('${escapeAttribute(orderId)}',this,'${trackingPanelId}')">
+  Track this order
+</button>
+<div id="${trackingPanelId}" class="stvn-order-tracking-panel" hidden aria-live="polite"></div>
+
 ${canCancelOrder?`
-<button
-type="button"
-class="remove-btn order-cancel-button"
+<button type="button" class="remove-btn order-cancel-button"
 onclick="cancelCustomerOrder('${escapeAttribute(orderId)}','${escapeAttribute(order.customer_phone||order.phone||"")}',this)">
 Cancel Order
 </button>
 `:""}
-${canDeleteOrder?`
-<button
-type="button"
-class="remove-btn order-hide-button"
-onclick="hideCustomerOrder('${escapeAttribute(orderId)}','${escapeAttribute(order.customer_phone||order.phone||"")}',this)">
-Hide from History
+<button type="button" class="remove-btn stvn-account-hide-order"
+onclick="stvnHideOrderFromCustomerAccount('${escapeAttribute(orderId)}',this)">
+Delete from My Orders
 </button>
-`:""}
 
 </div>
 
-`;
+`
 
 });
 
@@ -5835,10 +5887,10 @@ async function cancelCustomerOrder(orderId,phone,button){
   const cleanOrderId=String(orderId||"").trim();
   const cleanPhone=String(phone||"").replace(/\D/g,"");
   if(!cleanOrderId||cleanOrderId==="N/A"){
-    alert("❌ इस order का सही ID नहीं मिला।");
+    window.stvnAlert("❌ इस order का सही ID नहीं मिला।");
     return;
   }
-  if(!window.confirm("क्या आप Order "+cleanOrderId+" cancel करना चाहते हैं?"))return;
+  if(!(await window.stvnConfirm("क्या आप Order "+cleanOrderId+" cancel करना चाहते हैं?")))return;
 
   const cancelButton=button||[...document.querySelectorAll(".order-cancel-button")]
     .find(item=>item.getAttribute("onclick")?.includes(cleanOrderId));
@@ -5898,10 +5950,10 @@ async function cancelCustomerOrder(orderId,phone,button){
     }
 
     await showOrderHistory();
-    alert("✅ आपका order cancel हो गया है।");
+    window.stvnAlert("✅ आपका order cancel हो गया है।");
   }catch(error){
     console.error("Customer order cancellation failed:",error);
-    alert("❌ Order cancel नहीं हुआ: "+String(error.message||"कृपया फिर कोशिश करें।"));
+    window.stvnAlert("❌ Order cancel नहीं हुआ: "+String(error.message||"कृपया फिर कोशिश करें।"));
     if(cancelButton){
       cancelButton.disabled=false;
       cancelButton.textContent="Cancel Order";
@@ -5913,10 +5965,10 @@ async function hideCustomerOrder(orderId,phone,button){
   const cleanOrderId=String(orderId||"").trim();
   const customerPhone=String(phone||"").trim();
   if(!cleanOrderId||cleanOrderId==="N/A"){
-    alert("❌ इस order का सही ID नहीं मिला।");
+    window.stvnAlert("❌ इस order का सही ID नहीं मिला।");
     return;
   }
-  if(!window.confirm("क्या आप delivered Order "+cleanOrderId+" को अपनी order history से hide करना चाहते हैं? Order owner की history में बना रहेगा।"))return;
+  if(!(await window.stvnConfirm("क्या आप delivered Order "+cleanOrderId+" को अपनी order history से hide करना चाहते हैं? Order owner की history में बना रहेगा।")))return;
 
   const hideButton=button||[...document.querySelectorAll(".order-hide-button")]
     .find(item=>item.getAttribute("onclick")?.includes(cleanOrderId));
@@ -5960,10 +6012,10 @@ async function hideCustomerOrder(orderId,phone,button){
     saveCustomerHiddenOrderId(customerEmail,cleanOrderId);
 
     await showOrderHistory();
-    alert("✅ Delivered order इस device की आपकी history से hide हो गया है। Owner की history में order मौजूद रहेगा।");
+    window.stvnAlert("✅ Delivered order इस device की आपकी history से hide हो गया है। Owner की history में order मौजूद रहेगा।");
   }catch(error){
     console.error("Customer order history hide failed:",error);
-    alert("❌ Order history से hide नहीं हुआ: "+String(error.message||"कृपया फिर कोशिश करें।"));
+    window.stvnAlert("❌ Order history से hide नहीं हुआ: "+String(error.message||"कृपया फिर कोशिश करें।"));
     if(hideButton){
       hideButton.disabled=false;
       hideButton.textContent="Hide from History";
@@ -6403,13 +6455,13 @@ async function saveAdminChangesForGroup(group,sectionName){
     console.error("Admin session check failed before section save:",error);
     const message="❌ Admin session जाँची नहीं जा सकी: "+(error.message||"फिर कोशिश करें.");
     updateAdminSaveAllStatus(message);
-    alert(message);
+    window.stvnAlert(message);
     return;
   }
   if(sessionError||!sessionData.session){
     const message="❌ Save करने से पहले admin login करें.";
     updateAdminSaveAllStatus(message);
-    alert(message);
+    window.stvnAlert(message);
     return;
   }
   const status=document.getElementById("admin-save-status");
@@ -6451,7 +6503,7 @@ async function saveAdminChangesForGroup(group,sectionName){
   }catch(error){
     console.error(sectionName+" save failed:",error);
     finalStatus="❌ सेव नहीं हुआ: "+(error.message||"कृपया फिर कोशिश करें.");
-    alert(finalStatus);
+    window.stvnAlert(finalStatus);
   }finally{
     adminSavingAll=false;
     updateAdminSaveAllStatus(finalStatus||undefined);
@@ -6474,7 +6526,7 @@ function savePendingCategoryDisplayChanges(){
       console.error("Category Photo Display save failed:",error);
       const message="❌ Category changes सेव नहीं हुए: "+(error.message||"कृपया फिर कोशिश करें.");
       updateAdminSaveAllStatus(message);
-      alert(message);
+      window.stvnAlert(message);
     }).finally(()=>{
       if(saveButton)saveButton.disabled=false;
     });
@@ -6482,7 +6534,7 @@ function savePendingCategoryDisplayChanges(){
     console.error("Category Photo Display save failed:",error);
     const message="❌ Category changes सेव नहीं हुए: "+(error.message||"कृपया फिर कोशिश करें.");
     updateAdminSaveAllStatus(message);
-    alert(message);
+    window.stvnAlert(message);
     if(saveButton)saveButton.disabled=false;
   }
 }
@@ -6882,6 +6934,8 @@ onclick="startDeliveryPartnerLocation('${escapeAttribute(orderId)}','${escapeAtt
 
 </button>
 
+<button class="admin-btn" type="button" onclick="stopDeliveryPartnerLocation()">⛔ Stop Sharing Location</button>
+
 `
 
 :
@@ -7120,15 +7174,15 @@ async function deleteOrder(orderId){
     const cleanOrderId = String(orderId || "").trim();
 
     if(!cleanOrderId){
-        alert("❌ Valid Order ID नहीं मिला.");
+        window.stvnAlert("❌ Valid Order ID नहीं मिला.");
         return;
     }
 
-    if(!confirm(
+    if(!(await window.stvnConfirm(
         "⚠️ क्या आप इस order को permanently delete करना चाहते हैं?\n\n" +
         "Order ID: " + cleanOrderId +
         "\n\nयह order Supabase से भी delete हो जाएगा."
-    )) return;
+    ))) return;
 
     queueAdminSaveAction("Delete order "+cleanOrderId,async function(){
         const {error}=await supabaseClient.from("orders").delete().eq("order_id",cleanOrderId);
@@ -7158,7 +7212,7 @@ if(
 !Number.isFinite(longitude)
 ){
 
-alert(
+window.stvnAlert(
 "❌ Valid location नहीं मिली."
 );
 
@@ -7205,7 +7259,7 @@ if(
 !Number.isFinite(longitude)
 ){
 
-alert(
+window.stvnAlert(
 "❌ Customer की valid location उपलब्ध नहीं है."
 );
 
@@ -7251,7 +7305,7 @@ orderId
 
 if(!select){
 
-alert(
+window.stvnAlert(
 "❌ Order status selector नहीं मिला."
 );
 
@@ -7265,8 +7319,16 @@ select.value;
 
 
 queueAdminSaveAction("Order "+orderId+" status",async function(){
-  const {error}=await supabaseClient.from("orders").update({order_status:newStatus}).eq("order_id",orderId);
+  const updateValues = {order_status:newStatus};
+  if(newStatus === "delivered" || newStatus === "cancelled"){
+    updateValues.delivery_boy_latitude = null;
+    updateValues.delivery_boy_longitude = null;
+  }
+  const {error}=await supabaseClient.from("orders").update(updateValues).eq("order_id",orderId);
   if(error)throw new Error("Order status update नहीं हुआ: "+error.message);
+  if(newStatus === "delivered" || newStatus === "cancelled"){
+    if(typeof window.stopDeliveryPartnerLocation === "function") window.stopDeliveryPartnerLocation(orderId);
+  }
 },"orders");
 
 }
@@ -7293,7 +7355,7 @@ input.value.trim();
 
 if(!delivery){
 
-alert(
+window.stvnAlert(
 "❌ Delivery time डालो."
 );
 
@@ -7412,7 +7474,7 @@ function renderAdminProductPhotoStrip(){
 function handleMultipleProductImages(input){
   const files=Array.from(input?.files||[]);
   const valid=files.filter(file=>file.type&&file.type.startsWith("image/")&&file.size<=15*1024*1024);
-  if(valid.length!==files.length)alert("केवल image files चुनें और हर फोटो 15 MB से छोटी रखें।");
+  if(valid.length!==files.length)window.stvnAlert("केवल image files चुनें और हर फोटो 15 MB से छोटी रखें।");
   selectedProductImageFiles.push(...valid);
   renderAdminProductPhotoStrip();
   const message=document.getElementById("product-image-preview-message");
@@ -7468,12 +7530,12 @@ function processProductImage(input,sourceLabel){
   if(!file) return;
 
   if(!file.type || !file.type.startsWith("image/")){
-    alert("❌ कृपया केवल image चुनें.");
+    window.stvnAlert("❌ कृपया केवल image चुनें.");
     return;
   }
 
   if(file.size > 15 * 1024 * 1024){
-    alert("❌ Photo 15 MB से छोटी होनी चाहिए.");
+    window.stvnAlert("❌ Photo 15 MB से छोटी होनी चाहिए.");
     input.value="";
     return;
   }
@@ -7503,16 +7565,16 @@ function processProductImage(input,sourceLabel){
     if(message) message.textContent=sourceLabel+" image selected";
   }).catch(function(error){
     console.error("Product photo processing failed:",error);
-    alert("❌ Photo process नहीं हुई. दूसरी image चुनें.");
+    window.stvnAlert("❌ Photo process नहीं हुई. दूसरी image चुनें.");
     input.value="";
   });
 }
 
-function useInternetProductImage(){
+async function useInternetProductImage(){
   const imageBox=document.getElementById("product-image");
   if(!imageBox) return;
 
-  const url=prompt("🌐 Internet image का direct image URL डालें:");
+  const url=await window.stvnPrompt("🌐 Internet image का direct image URL डालें:");
   if(url===null) return;
 
   const cleanUrl=url.trim();
@@ -7977,7 +8039,7 @@ Number(id)
 
 if(error){
 
-alert(
+window.stvnAlert(
 "❌ Product load नहीं हुआ: " +
 error.message
 );
@@ -8149,9 +8211,9 @@ queueAdminSaveAction("Product "+id+" availability",async function(){
 async function deleteProduct(id){
 
 if(
-!confirm(
+!(await window.stvnConfirm(
 "क्या यह product delete करना है?"
-)
+))
 )
 return;
 
@@ -8919,7 +8981,7 @@ function modernUIInit(){
     adminBtn.onclick=()=>{
       supabaseClient.auth.getSession().then(({data})=>{
         if(stvnIsOwnerSession(data&&data.session)) showPage("admin");
-        else { window.setAdminButtonVisibility(false); alert("Admin Panel केवल Owner account के लिए है."); }
+        else { window.setAdminButtonVisibility(false); window.stvnAlert("Admin Panel केवल Owner account के लिए है."); }
       });
     };
   }
@@ -8995,7 +9057,7 @@ function modernUIInit(){
             window.showPage("admin");
           }else{
             window.setAdminButtonVisibility(false);
-            alert("Admin Panel केवल Owner account के लिए है.");
+            window.stvnAlert("Admin Panel केवल Owner account के लिए है.");
             window.showPage("shop");
           }
         });
@@ -9108,28 +9170,7 @@ showPaymentInfo();
 showOrderHistory();
 
 
-if(
-trackedOrderId &&
-trackedCustomerPhone
-){
-
-setTrackingInputs(
-trackedOrderId,
-trackedCustomerPhone
-);
-
-trackCustomerOrder();
-
-}
-else if(
-orderHistory.length > 0
-){
-
-renderCustomerTracking(
-orderHistory[0]
-);
-
-}
+// Tracking panels stay closed until the customer selects a specific order.
 
 
 restoreAdminSession();
@@ -9354,12 +9395,14 @@ restoreAdminSession();
 <script id="stvn-live-order-map-js">
 (function(){
   let partnerWatchId=null;
+  let partnerWatchOrderId=null;
 
   window.startDeliveryPartnerLocation=async function(orderId,phone){
-    if(!navigator.geolocation){ alert("इस phone में location support नहीं है."); return; }
-    if(partnerWatchId!==null){ alert("Delivery partner location पहले से share हो रही है."); return; }
+    if(!navigator.geolocation){ window.stvnAlert("इस phone में location support नहीं है."); return; }
+    if(partnerWatchId!==null){ window.stvnAlert("Delivery partner location पहले से share हो रही है."); return; }
     const sessionResult=await supabaseClient.auth.getSession();
-    if(!sessionResult.data.session){ alert("पहले admin login करो."); return; }
+    if(!sessionResult.data.session){ window.stvnAlert("पहले admin login करो."); return; }
+    partnerWatchOrderId=String(orderId);
     partnerWatchId=navigator.geolocation.watchPosition(async position=>{
       const {error}=await supabaseClient.from("orders").update({
         delivery_boy_latitude:position.coords.latitude,
@@ -9367,18 +9410,23 @@ restoreAdminSession();
       }).eq("order_id",String(orderId)).eq("customer_phone",String(phone));
       if(error){
         console.error("Delivery partner location error:",error);
-        alert("Delivery boy location save नहीं हुई. Supabase में delivery_boy_latitude और delivery_boy_longitude columns बनाएं.");
+        window.stvnAlert("Delivery boy location save नहीं हुई. Supabase orders table में delivery_boy_latitude और delivery_boy_longitude columns होने चाहिए.");
         navigator.geolocation.clearWatch(partnerWatchId);
         partnerWatchId=null;
+        partnerWatchOrderId=null;
       }
-    },()=>alert("Delivery partner की location permission Allow करो."),{
-      enableHighAccuracy:false,timeout:5000,maximumAge:10000
+    },()=>window.stvnAlert("Delivery partner की location permission Allow करो."),{
+      enableHighAccuracy:true,timeout:15000,maximumAge:3000
     });
-    alert("🟢 Delivery boy की live location sharing शुरू हो गई.");
+    window.stvnAlert("🟢 Delivery boy की live location sharing शुरू हो गई.");
   };
 
-  window.stopDeliveryPartnerLocation=function(){
-    if(partnerWatchId!==null){ navigator.geolocation.clearWatch(partnerWatchId); partnerWatchId=null; }
+  window.stopDeliveryPartnerLocation=function(orderId){
+    if(partnerWatchId!==null && (!orderId || String(orderId)===partnerWatchOrderId)){
+      navigator.geolocation.clearWatch(partnerWatchId);
+      partnerWatchId=null;
+      partnerWatchOrderId=null;
+    }
   };
 
 })();
@@ -9500,17 +9548,17 @@ function stvnCloseProfile(){document.getElementById('stvnProfileModal').classLis
 function stvnSaveCustomerProfile(){
   const name=document.getElementById('stvnProfileName').value.trim();
   const phone=document.getElementById('stvnProfilePhone').value.trim();
-  try{localStorage.setItem(stvnCustomerStorageKey('profile'),JSON.stringify({name,phone}));alert('Profile save हो गया।');}
-  catch(e){alert('Profile save नहीं हो पाया। Browser storage check करें।');}
+  try{localStorage.setItem(stvnCustomerStorageKey('profile'),JSON.stringify({name,phone}));window.stvnAlert('Profile save हो गया।');}
+  catch(e){window.stvnAlert('Profile save नहीं हो पाया। Browser storage check करें।');}
 }
 function stvnSaveCustomerAddress(){
   const line=document.getElementById('stvnAddressLine').value.trim();
   const city=document.getElementById('stvnAddressCity').value.trim();
   const pincode=document.getElementById('stvnAddressPincode').value.trim();
   const landmark=document.getElementById('stvnAddressLandmark').value.trim();
-  if(!line||!city||!/^\d{6}$/.test(pincode)){alert('कृपया address, city और 6 digit PIN code सही भरें।');return;}
-  try{localStorage.setItem(stvnCustomerStorageKey('address'),JSON.stringify({line,city,pincode,landmark}));alert('आपका address save हो गया।');}
-  catch(e){alert('Address save नहीं हो पाया। Browser storage check करें।');}
+  if(!line||!city||!/^\d{6}$/.test(pincode)){window.stvnAlert('कृपया address, city और 6 digit PIN code सही भरें।');return;}
+  try{localStorage.setItem(stvnCustomerStorageKey('address'),JSON.stringify({line,city,pincode,landmark}));window.stvnAlert('आपका address save हो गया।');}
+  catch(e){window.stvnAlert('Address save नहीं हो पाया। Browser storage check करें।');}
 }
 /* ===== ACCOUNT-SYNCED SAVED DELIVERY ADDRESSES ===== */
 let stvnSavedAddressCache=[];
@@ -9588,7 +9636,7 @@ async function stvnSaveCheckoutAddress(){
     try{localStorage.setItem(stvnCustomerStorageKey('addresses'),JSON.stringify(stvnSavedAddressCache));}catch(_){}
     stvnChooseSavedAddress(data.id);
     stvnAddressMessage('✅ पता आपके अकाउंट में सेव हो गया।');
-  }catch(e){console.error('Save address:',e);stvnAddressMessage(e.message||'Address could not be saved.',true);alert(e.message||'Address could not be saved.');}
+  }catch(e){console.error('Save address:',e);stvnAddressMessage(e.message||'Address could not be saved.',true);window.stvnAlert(e.message||'Address could not be saved.');}
 }
 
 function stvnRenderCustomerOrders(){
@@ -9614,7 +9662,7 @@ function stvnCustomerLogout(){
         const {error}=await supabaseClient.auth.signOut();
         if(error)throw error;
       }
-    }catch(error){console.error('Customer sign out failed:',error);alert('Could not sign out: '+(error.message||'Please try again.'));return;}
+    }catch(error){console.error('Customer sign out failed:',error);window.stvnAlert('Could not sign out: '+(error.message||'Please try again.'));return;}
     try{localStorage.removeItem('vedantCustomerEmail');}catch(e){}
     stvnClearPendingCustomerLoginAction();
     window.__stvnCustomerAuthenticated=false;
@@ -9868,7 +9916,7 @@ document.addEventListener('click',function(e){
     updateAdminSaveAllStatus();
     if(message)message.textContent='⏳ '+nice(category)+' कैटेगरी pending है। सेव करने के लिए Category Photo Display का Save दबाएँ।';
   };
-  window.deleteCategoryDisplayCategory=function(){
+  window.deleteCategoryDisplayCategory=async function(){
     const categoryInput=document.getElementById('category-display-category');
     const message=document.getElementById('category-display-message');
     const category=categoryInput?norm(categoryInput.value):'';
@@ -9877,7 +9925,7 @@ document.addEventListener('click',function(e){
       if(message)message.textContent='❌ यह कैटेगरी आपकी जोड़ी हुई सूची में नहीं है।';
       return;
     }
-    if(!window.confirm('“'+nice(category)+'” कैटेगरी हटाएँ? इसके प्रोडक्ट्स डिलीट नहीं होंगे।'))return;
+    if(!(await window.stvnConfirm('“'+nice(category)+'” कैटेगरी हटाएँ? इसके प्रोडक्ट्स डिलीट नहीं होंगे।')))return;
     pendingCategoryChanges.set(category,false);
     pendingDisplayChanges.set(category,null);
     pendingDisplayImage='';
@@ -10101,6 +10149,11 @@ document.addEventListener('click',function(e){
     background:linear-gradient(135deg,#1a2820 0%,#22372a 62%,#302b1e 100%);
   }
   #customer-tracking-orders{display:grid;gap:10px;margin-top:14px}
+  .stvn-order-track-toggle{margin:10px 0 0;display:inline-flex;align-items:center;justify-content:center}
+  .stvn-order-tracking-panel{margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+  .stvn-order-tracking-panel[hidden]{display:none!important}
+  .stvn-order-tracking-panel .stvn-customer-delivery-map{min-height:230px}
+  
   #customer-tracking-orders h3{margin:4px 0;color:var(--primary-dark)}
   .stvn-track-order-choice{
     display:flex;
@@ -11736,7 +11789,7 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
     }catch(error){
       console.error('Shop status save failed:',error);
       if(msg)msg.textContent='❌ सेव नहीं हुआ: '+(error.message||'कृपया Supabase table/policies जाँचें।');
-      alert('Shop Status सेव नहीं हुआ। '+(error.message||'Supabase shop_settings table और policies जाँचें।'));
+      window.stvnAlert('Shop Status सेव नहीं हुआ। '+(error.message||'Supabase shop_settings table और policies जाँचें।'));
     }finally{if(button)button.disabled=false;}
   };
   // Block cart/order actions while closed, without changing their existing implementations.
@@ -11748,7 +11801,7 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
     const action=target.closest('.cart-btn,.stvn-add-cart-btn,.stvn-qty-control button,#proceed-checkout-btn,.place-order');
     if(action){
       event.preventDefault();event.stopImmediatePropagation();
-      alert(savedStatus==='maintenance'?'दुकान अभी Under Maintenance में है। कृपया थोड़ी देर बाद कोशिश करें।':'अभी दुकान बंद है। दुकान खुलने के बाद आप सामान कार्ट में जोड़ सकते हैं।');
+      window.stvnAlert(savedStatus==='maintenance'?'दुकान अभी Under Maintenance में है। कृपया थोड़ी देर बाद कोशिश करें।':'अभी दुकान बंद है। दुकान खुलने के बाद आप सामान कार्ट में जोड़ सकते हैं।');
     }
   },true);
   const originalReady=()=>{ensureClosedDisplay();fetchRemoteStatus();};
@@ -11875,7 +11928,7 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
   function ensureCard(pageId){const page=$(pageId);if(!page||page.querySelector('.stvn-delivery-location-card'))return;const card=document.createElement('section');card.className='stvn-delivery-location-card';card.innerHTML='<div class="stvn-delivery-location-icon">📍</div><div class="stvn-delivery-location-copy"><h3>आपकी डिलीवरी लोकेशन</h3><p class="stvn-delivery-location-name">अपनी वर्तमान लोकेशन चुनें, ताकि दूरी और अनुमानित डिलीवरी समय दिख सके।</p><div class="stvn-delivery-location-stats"><span class="stvn-delivery-distance">दूरी: अभी पता नहीं</span><span class="stvn-delivery-eta">अनुमानित समय: —</span></div><p class="stvn-delivery-location-note">डिलीवरी अधिकतम 5 km के दायरे में उपलब्ध है।</p></div><button type="button" class="stvn-delivery-location-action">📍 लोकेशन चुनें</button>';card.querySelector('button').addEventListener('click',requestLocation);const anchor=pageId==='page-home'?(page.querySelector('.feature-grid')||page.firstElementChild):page.querySelector('.section-head');if(anchor&&anchor.parentNode===page)anchor.insertAdjacentElement('afterend',card);else page.prepend(card);renderSaved(card);}
   function renderSaved(card){const loc=getSaved();if(!loc)return;const name=card.querySelector('.stvn-delivery-location-name'),dist=card.querySelector('.stvn-delivery-distance'),eta=card.querySelector('.stvn-delivery-eta'),note=card.querySelector('.stvn-delivery-location-note'),btn=card.querySelector('button');if(name)name.textContent=loc.name||'आपकी वर्तमान लोकेशन सेव है';if(dist)dist.textContent='दूरी: '+Number(loc.km).toFixed(2)+' km';if(eta)eta.textContent=Number(loc.km)>5?'डिलीवरी उपलब्ध नहीं':'अनुमानित समय: '+etaFor(Number(loc.km))+' मिनट';if(note)note.textContent=Number(loc.km)>5?'माफ़ कीजिए, आपकी लोकेशन 5 km डिलीवरी क्षेत्र से बाहर है।':'आपकी लोकेशन 5 km डिलीवरी क्षेत्र के अंदर है।';if(btn)btn.textContent='🔄 लोकेशन अपडेट करें';}
   async function reverseName(lat,lng){try{const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lng);const res=await fetch(url,{headers:{'Accept-Language':'hi,en'}});if(!res.ok)throw new Error('reverse geocode');const d=await res.json(),a=d.address||{};return a.village||a.hamlet||a.locality||a.isolated_dwelling||a.suburb||a.neighbourhood||a.residential||a.town||a.city||'वर्तमान लोकेशन';}catch(e){return 'वर्तमान लोकेशन';}}
-  function requestLocation(){if(!navigator.geolocation){alert('इस ब्राउज़र में लोकेशन उपलब्ध नहीं है।');return;}document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='आपकी लोकेशन प्राप्त की जा रही है…');navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lng=pos.coords.longitude,km=distanceKm(SHOP_LAT,SHOP_LNG,lat,lng),name=await reverseName(lat,lng);const loc={lat,lng,km,name,updatedAt:Date.now()};setSaved(loc);window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=km<=5;document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);if(typeof window.check5KmAvailability==='function'){/* location is already checked here; avoid a second permission prompt */} },err=>{document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='लोकेशन नहीं मिल पाई। कृपया browser location permission Allow करें और फिर कोशिश करें।');},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
+  function requestLocation(){if(!navigator.geolocation){window.stvnAlert('इस ब्राउज़र में लोकेशन उपलब्ध नहीं है।');return;}document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='आपकी लोकेशन प्राप्त की जा रही है…');navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lng=pos.coords.longitude,km=distanceKm(SHOP_LAT,SHOP_LNG,lat,lng),name=await reverseName(lat,lng);const loc={lat,lng,km,name,updatedAt:Date.now()};setSaved(loc);window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=km<=5;document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);if(typeof window.check5KmAvailability==='function'){/* location is already checked here; avoid a second permission prompt */} },err=>{document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='लोकेशन नहीं मिल पाई। कृपया browser location permission Allow करें और फिर कोशिश करें।');},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
   function ensureAdminSettings(){const page=$('page-admin'),panel=$('adminPanel');if(!page||!panel||page.querySelector('#stvnDeliveryEtaAdmin'))return;const box=document.createElement('section');box.id='stvnDeliveryEtaAdmin';box.className='stvn-delivery-settings';box.innerHTML='<h3>🚚 Delivery ETA Settings</h3><p class="admin-small">हर दूरी के लिए अनुमानित डिलीवरी मिनट सेट करें। ये सेटिंग इस ब्राउज़र में सेव होगी; सभी ग्राहकों/डिवाइस पर लागू करने के लिए Supabase में सेव करना आवश्यक है।</p><div class="stvn-eta-grid">'+[1,2,3,4,5].map(k=>'<div><label for="stvnEta'+k+'">'+(k-1)+'–'+k+' km ('+k+' km तक)</label><input id="stvnEta'+k+'" type="number" min="1" max="240" step="1" value="'+DEFAULTS[k]+'"></div>').join('')+'</div><button type="button" id="stvnSaveEtaSettings">💾 Save Delivery Time</button><p class="admin-small" id="stvnEtaSaveMessage" role="status"></p>';panel.appendChild(box);const s=readSettings();[1,2,3,4,5].forEach(k=>{const input=$('stvnEta'+k);if(input)input.value=s[k]});$('stvnSaveEtaSettings').addEventListener('click',()=>{const values={};for(let k=1;k<=5;k++){const n=Number($('stvnEta'+k).value);if(!Number.isFinite(n)||n<1||n>240){$('stvnEtaSaveMessage').textContent='हर समय 1 से 240 मिनट के बीच होना चाहिए।';return;}values[k]=Math.round(n)}try{localStorage.setItem(STORE_KEY,JSON.stringify(values));$('stvnEtaSaveMessage').textContent='✅ डिलीवरी समय इस ब्राउज़र में सेव हो गया।';document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);}catch(e){$('stvnEtaSaveMessage').textContent='सेव नहीं हो सका। Browser storage जाँचें।'}});}
   function init(){/* Storefront location cards/prompt are hidden by request; checkout keeps its own location step. */ensureAdminSettings();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
@@ -11983,7 +12036,7 @@ async function saveOffer(){const c=client();if(!c){msg('❌ Supabase client न�
 async function loadAdminOffers(){const c=client(),list=$('stvnOfferAdminList');if(!list)return;if(!c){list.textContent='Supabase client उपलब्ध नहीं है।';return}list.textContent='Offers लोड हो रहे हैं…';try{const {data:sd}=await c.auth.getSession();if(String(sd?.session?.user?.email||'').toLowerCase()!==OWNER_EMAIL){list.textContent='Offers edit करने के लिए owner Admin Login करें।';return}const {data,error}=await c.from(TABLE).select('id,title,description,badge,code,is_active,created_at').order('created_at',{ascending:false}).limit(30);if(error)throw error;if(!data?.length){list.textContent='अभी कोई offer नहीं है। ऊपर से पहला offer जोड़ें।';return}list.innerHTML=data.map(o=>'<div class="stvn-offer-admin-row"><div><strong>'+esc(o.title)+'</strong><small>'+(o.is_active?'🟢 Active · Customer को दिखेगा':'⚪ Hidden · Customer को नहीं दिखेगा')+(o.code?' · Code: '+esc(o.code):'')+'</small></div><div class="stvn-offer-actions" style="margin:0"><button type="button" data-offer-edit="'+esc(o.id)+'" class="stvn-offer-secondary">✎ Edit</button><button type="button" data-offer-toggle="'+esc(o.id)+'" data-active="'+String(!!o.is_active)+'">'+(o.is_active?'Hide':'Show')+'</button><button type="button" data-offer-delete="'+esc(o.id)+'" class="stvn-offer-secondary">Delete</button></div></div>').join('');list.querySelectorAll('[data-offer-edit]').forEach(b=>b.addEventListener('click',()=>editOffer(data.find(o=>String(o.id)===b.dataset.offerEdit))));list.querySelectorAll('[data-offer-toggle]').forEach(b=>b.addEventListener('click',()=>toggleOffer(b.dataset.offerToggle,b.dataset.active==='true')));list.querySelectorAll('[data-offer-delete]').forEach(b=>b.addEventListener('click',()=>deleteOffer(b.dataset.offerDelete)))}catch(e){console.error(e);list.textContent='Offers लोड नहीं हुए: '+(e.message||'Supabase table/RLS जाँचें।')}}
 function editOffer(o){if(!o)return;editingId=o.id;$('stvnOfferTitle').value=o.title||'';$('stvnOfferBadge').value=o.badge||'';$('stvnOfferDescription').value=o.description||'';$('stvnOfferCode').value=o.code||'';$('stvnOfferActive').value=String(!!o.is_active);$('stvnOfferSave').textContent='💾 Changes सेव करें';$('stvnOfferCancel').style.display='';msg('आप offer edit कर रहे हैं।');$('stvnOffersAdmin').scrollIntoView({behavior:'smooth',block:'start'})}
 async function toggleOffer(id,active){const c=client();try{const {error}=await c.from(TABLE).update({is_active:!active,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;msg('✅ Offer status अपडेट हो गया।');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Status update नहीं हुआ: '+e.message)}}
-async function deleteOffer(id){if(!confirm('क्या आप यह offer हमेशा के लिए delete करना चाहते हैं?'))return;const c=client();try{const {error}=await c.from(TABLE).delete().eq('id',id);if(error)throw error;msg('✅ Offer delete हो गया।');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Delete नहीं हुआ: '+e.message)}}
+async function deleteOffer(id){if(!(await window.stvnConfirm('क्या आप यह offer हमेशा के लिए delete करना चाहते हैं?')))return;const c=client();try{const {error}=await c.from(TABLE).delete().eq('id',id);if(error)throw error;msg('✅ Offer delete हो गया।');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Delete नहीं हुआ: '+e.message)}}
 function init(){addCustomerBox('page-home');addCustomerBox('page-shop');adminMarkup();loadOffers()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('focus',()=>{addCustomerBox('page-home');addCustomerBox('page-shop');adminMarkup();loadOffers()});
@@ -12260,7 +12313,7 @@ body > .modern-nav, .modern-nav{display:none!important}
   });
  }
  async function requestHeaderLocation(){
-  if(!navigator.geolocation){labelsUpdate('','Location unavailable');alert('Location is not available in this browser.');return;}
+  if(!navigator.geolocation){labelsUpdate('','Location unavailable');window.stvnAlert('Location is not available in this browser.');return;}
   navigator.geolocation.getCurrentPosition(async position=>{
    const lat=position.coords.latitude,lng=position.coords.longitude;
    const radians=Math.PI/180,shopLat=Number(window.SHOP_LATITUDE??25.3698055556),shopLng=Number(window.SHOP_LONGITUDE??78.5613);
@@ -12278,7 +12331,7 @@ body > .modern-nav, .modern-nav{display:none!important}
   },error=>{
    console.warn('Current location request failed:',error);
    labelsUpdate('','Location unavailable');
-   alert('Please allow location access in your browser settings and try again.');
+   window.stvnAlert('Please allow location access in your browser settings and try again.');
   },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
  }
  window.vgRequestHeaderLocation=requestHeaderLocation;
@@ -12854,8 +12907,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     let hidden=[];try{hidden=JSON.parse(localStorage.getItem(key)||'[]');if(!Array.isArray(hidden))hidden=[];}catch(_){hidden=[];}
     const visible=rows.filter(x=>!hidden.includes(x.table+':'+x.id));
     box.innerHTML='<div class="stvn-wallet-status-tools"><strong>My Request Status</strong><button type="button" class="stvn-wallet-delete-all" id="stvnWalletHideAllStatuses">Delete All</button></div>'+(visible.length?visible.map(x=>'<div class="wallet-history-row stvn-wallet-request-row"><div><strong>'+x.kind+' · '+String(x.status||'pending').toUpperCase()+'</strong><small>'+new Date(x.created_at).toLocaleString('en-IN')+'</small></div><strong>'+money(x.amount)+'</strong><button type="button" class="stvn-wallet-delete-status" data-hide-status="'+x.table+':'+String(x.id).replace(/[^a-zA-Z0-9_-]/g,'')+'" aria-label="Hide this status">✕</button></div>').join(''):'No visible Add Money or Withdraw statuses.');
-    box.querySelectorAll('[data-hide-status]').forEach(b=>b.addEventListener('click',()=>{if(!confirm('Remove this status from your Wallet Status list on this device? Your actual payment/withdrawal record will remain safely stored.'))return;hidden.push(b.dataset.hideStatus);localStorage.setItem(key,JSON.stringify([...new Set(hidden)]));loadRequests(client);}));
-    box.querySelector('#stvnWalletHideAllStatuses')?.addEventListener('click',()=>{if(!confirm('Hide all your Wallet Status entries from this device? Your actual wallet records and balance will not be deleted.'))return;hidden=rows.map(x=>x.table+':'+x.id);localStorage.setItem(key,JSON.stringify([...new Set(hidden)]));loadRequests(client);});
+    box.querySelectorAll('[data-hide-status]').forEach(b=>b.addEventListener('click',async()=>{if(!(await window.stvnConfirm('Remove this status from your Wallet Status list on this device? Your actual payment/withdrawal record will remain safely stored.')))return;hidden.push(b.dataset.hideStatus);localStorage.setItem(key,JSON.stringify([...new Set(hidden)]));loadRequests(client);}));
+    box.querySelector('#stvnWalletHideAllStatuses')?.addEventListener('click',async()=>{if(!(await window.stvnConfirm('Hide all your Wallet Status entries from this device? Your actual wallet records and balance will not be deleted.')))return;hidden=rows.map(x=>x.table+':'+x.id);localStorage.setItem(key,JSON.stringify([...new Set(hidden)]));loadRequests(client);});
   }
   async function loadBalance(){
     const {client}=await requireUser();
@@ -13186,17 +13239,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         return '<article class="stvn-withdraw-admin-row"><div class="stvn-withdraw-card-head"><strong>₹'+Number(r.amount||0).toFixed(2)+'</strong><span class="stvn-withdraw-status stvn-status-'+esc(status)+'">'+esc(status.toUpperCase())+'</span></div><span><b>Customer / Account Holder:</b> '+esc(r.beneficiary_name||'Name not provided')+'</span><span><b>Mobile:</b> '+esc(r.phone)+'</span><span><b>Payment Method:</b> '+esc(String(r.payout_method||'—').toUpperCase())+'</span><span><b>UPI ID / Bank Details:</b> <code>'+esc(bank)+'</code></span><small><b>Request time:</b> '+(r.created_at?new Date(r.created_at).toLocaleString('en-IN'):'—')+'</small><small><b>Customer UID:</b> '+esc(r.user_id)+'</small><small><b>Request ID:</b> '+esc(r.id)+'</small>'+(r.admin_note?'<small><b>Admin note:</b> '+esc(r.admin_note)+'</small>':'')+actions+'</article>';
       }).join('');
       root.querySelectorAll('[data-approve]').forEach(b=>b.addEventListener('click',async()=>{
-        if(!confirm('Approve this withdrawal request? No money will be transferred to the customer at this stage.'))return;
-        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_approve_withdrawal',{p_request_id:b.dataset.approve,p_admin_note:'Approved by shop admin'});if(error)throw error;await loadAdminWithdrawals();}catch(e){alert('Approval failed: '+(e.message||'Database/RLS error'));b.disabled=false;}
+        if(!(await window.stvnConfirm('Approve this withdrawal request? No money will be transferred to the customer at this stage.')))return;
+        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_approve_withdrawal',{p_request_id:b.dataset.approve,p_admin_note:'Approved by shop admin'});if(error)throw error;await loadAdminWithdrawals();}catch(e){window.stvnAlert('Approval failed: '+(e.message||'Database/RLS error'));b.disabled=false;}
       }));
       root.querySelectorAll('[data-paid]').forEach(b=>b.addEventListener('click',async()=>{
         const req=data.find(x=>x.id===b.dataset.paid);
-        if(!confirm('Have you actually transferred ₹'+Number(req?.amount||0).toFixed(2)+' to the customer by UPI or bank? Confirm only after the transfer is complete.'))return;
-        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_mark_withdrawal_paid',{p_request_id:b.dataset.paid,p_admin_note:'Manual bank/UPI transfer completed by shop admin'});if(error)throw error;alert('Withdrawal marked as Paid.');await loadAdminWithdrawals();}catch(e){alert('Could not update Paid status: '+(e.message||'RPC/RLS error'));b.disabled=false;}
+        if(!(await window.stvnConfirm('Have you actually transferred ₹'+Number(req?.amount||0).toFixed(2)+' to the customer by UPI or bank? Confirm only after the transfer is complete.')))return;
+        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_mark_withdrawal_paid',{p_request_id:b.dataset.paid,p_admin_note:'Manual bank/UPI transfer completed by shop admin'});if(error)throw error;window.stvnAlert('Withdrawal marked as Paid.');await loadAdminWithdrawals();}catch(e){window.stvnAlert('Could not update Paid status: '+(e.message||'RPC/RLS error'));b.disabled=false;}
       }));
       root.querySelectorAll('[data-cancel]').forEach(b=>b.addEventListener('click',async()=>{
-        const note=prompt('Enter a reason for cancellation. The request amount will be refunded to the customer wallet:','Cancelled by shop admin');if(note===null)return;
-        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_cancel_withdrawal',{p_request_id:b.dataset.cancel,p_admin_note:note});if(error)throw error;alert('Request cancelled and refund processed.');await loadAdminWithdrawals();}catch(e){alert('Could not cancel/refund: '+(e.message||'RPC/RLS error'));b.disabled=false;}
+        const note=await window.stvnPrompt('Enter a reason for cancellation. The request amount will be refunded to the customer wallet:','Cancelled by shop admin');if(note===null)return;
+        b.disabled=true;try{const {error}=await (await requireUser()).client.rpc('vedant_admin_cancel_withdrawal',{p_request_id:b.dataset.cancel,p_admin_note:note});if(error)throw error;window.stvnAlert('Request cancelled and refund processed.');await loadAdminWithdrawals();}catch(e){window.stvnAlert('Could not cancel/refund: '+(e.message||'RPC/RLS error'));b.disabled=false;}
       }));
     }catch(e){root.innerHTML='<div class="stvn-withdraw-error">Could not load withdrawal requests: '+String(e.message||'Unknown error').replace(/[<>]/g,'')+'<br><small>Check the Supabase table columns, wallet_admins membership, and admin RLS policies.</small></div>';}
   }
@@ -14304,6 +14357,224 @@ body > .modern-nav, .modern-nav{display:none!important}
 }
 </style>
 
+
+<style id="vg-order-progress-timeline-v1">
+/* Clear order milestone tracker for customer phones, tablets and laptops. */
+#page-track .vg-order-progress{
+  margin:14px 0;padding:16px;border:1px solid #dcebe0;border-radius:17px;
+  background:linear-gradient(145deg,#fff 0%,#f5fff7 100%);
+  box-shadow:0 7px 22px rgba(18,66,39,.07);color:#193b27
+}
+#page-track .vg-order-progress-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:0 0 13px;font-size:16px
+}
+#page-track .vg-order-current-pill{
+  display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;
+  background:#e4f8eb;color:#08783d;font-size:12px;font-weight:900
+}
+#page-track .vg-order-progress-list{display:grid;gap:8px}
+#page-track .vg-order-progress-step{
+  position:relative;display:flex;align-items:center;gap:11px;min-height:58px;
+  padding:9px 11px;border:1px solid #e5ece7;border-radius:12px;background:#fff;
+  transition:background .2s,border-color .2s,box-shadow .2s
+}
+#page-track .vg-order-progress-marker{
+  width:31px;height:31px;flex:0 0 31px;display:grid;place-items:center;
+  border-radius:50%;background:#edf1ee;color:#718078;font-size:14px;font-weight:950
+}
+#page-track .vg-order-progress-copy{display:grid;gap:3px;min-width:0;flex:1}
+#page-track .vg-order-progress-copy strong{font-size:14px;color:#34483b}
+#page-track .vg-order-progress-copy small{font-size:12px;color:#718078;line-height:1.35}
+#page-track .vg-order-progress-step.is-done{border-color:#c8e9d2;background:#f4fcf6}
+#page-track .vg-order-progress-step.is-done .vg-order-progress-marker{background:#159653;color:#fff}
+#page-track .vg-order-progress-step.is-done .vg-order-progress-copy strong{color:#167542}
+#page-track .vg-order-tick-label{font-size:11px;font-weight:900;color:#168247;white-space:nowrap}
+#page-track .vg-order-progress-step.is-current{
+  border:2px solid #20a45a;background:linear-gradient(100deg,#e8fff0,#fff);
+  box-shadow:0 5px 15px rgba(32,164,90,.12)
+}
+#page-track .vg-order-progress-step.is-current .vg-order-progress-marker{
+  background:#159653;color:#fff
+}
+#page-track .vg-order-progress-step.is-current .vg-order-progress-copy strong{color:#08783d}
+#page-track .vg-order-now-label{
+  padding:5px 8px;border-radius:999px;background:#dff7e8;color:#08783d;
+  font-size:10px;font-weight:950;white-space:nowrap
+}
+#page-track .vg-order-active-dot{
+  width:10px;height:10px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 5px rgba(255,255,255,.22)
+}
+#page-track .vg-order-progress-step.is-upcoming{opacity:.72}
+body.dark #page-track .vg-order-progress{background:#15251b;border-color:#294b35;color:#edf7f1}
+body.dark #page-track .vg-order-progress-step{background:#19291f;border-color:#31483a}
+body.dark #page-track .vg-order-progress-copy strong{color:#dcebe0}
+body.dark #page-track .vg-order-progress-copy small{color:#a9b9ad}
+body.dark #page-track .vg-order-progress-step.is-done{background:#173323;border-color:#28633e}
+body.dark #page-track .vg-order-progress-step.is-current{background:#173b27;border-color:#36bd70}
+body.dark #page-track .vg-order-current-pill,
+body.dark #page-track .vg-order-now-label{background:#1d5032;color:#9cf0b8}
+@media(max-width:600px){
+  #page-track .vg-order-progress{padding:12px;border-radius:14px}
+  #page-track .vg-order-progress-step{min-height:54px;padding:8px;gap:9px}
+  #page-track .vg-order-progress-copy strong{font-size:13px}
+  #page-track .vg-order-progress-copy small{font-size:11px}
+  #page-track .vg-order-tick-label{font-size:10px}
+  #page-track .vg-order-now-label{font-size:9px;padding:4px 6px}
+}
+</style>
+
+
+<style id="vg-admin-orders-compact-laptop-v1">
+/* Compact order cards: preserve every existing field, ID and update action. */
+@media (min-width: 901px) {
+  #page-admin #adminOrdersSection { max-width:100%; }
+  #page-admin #adminOrders {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+    align-items:start;
+  }
+  #page-admin #adminOrders > .admin-order {
+    min-width:0;
+    margin:0!important;
+    padding:12px!important;
+    border-radius:13px!important;
+    box-shadow:0 3px 12px rgba(25,65,38,.07);
+  }
+  #page-admin .admin-order .admin-grid {
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px 10px!important;
+  }
+  #page-admin .admin-order .admin-grid > div {
+    min-width:0;padding:6px 8px;border:1px solid rgba(70,110,80,.12);
+    border-radius:8px;background:rgba(255,255,255,.55);
+  }
+  #page-admin .admin-order .admin-grid strong {font-size:11px;display:block;color:var(--muted)}
+  #page-admin .admin-order .admin-grid p {
+    margin:3px 0 0!important;font-size:12px;font-weight:750;
+    overflow-wrap:anywhere;line-height:1.3
+  }
+  #page-admin .admin-order > p {margin:7px 0!important;font-size:12px;line-height:1.4}
+  #page-admin .admin-order .payment-box {
+    margin:8px 0!important;padding:9px!important;border-radius:10px!important;
+  }
+  #page-admin .admin-order .payment-box > strong {font-size:12px}
+  #page-admin .admin-order .admin-order-item {
+    display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;
+    width:auto;max-width:100%;box-sizing:border-box;
+    margin:5px 5px 0 0!important;padding:5px 8px!important;
+    border-radius:7px!important;font-size:11px;
+  }
+  #page-admin .admin-order .admin-order-item p {margin:0!important;font-size:11px;line-height:1.3}
+  #page-admin .admin-order .admin-order-item p strong {font-weight:750}
+  #page-admin .admin-order .payment-box button,
+  #page-admin .admin-order .admin-btn,
+  #page-admin .admin-order .navigate-btn,
+  #page-admin .admin-order .order-delete-btn {
+    min-height:30px!important;padding:6px 9px!important;
+    margin:3px 4px 3px 0!important;font-size:11px!important;
+    border-radius:7px!important;white-space:nowrap
+  }
+  #page-admin .admin-order .admin-actions {
+    display:grid!important;
+    grid-template-columns:minmax(130px,1fr) auto minmax(130px,1fr) auto;
+    gap:7px!important;align-items:center;margin-top:9px!important;
+    padding-top:9px;border-top:1px solid rgba(70,110,80,.16)
+  }
+  #page-admin .admin-order .admin-actions select,
+  #page-admin .admin-order .admin-actions input {
+    box-sizing:border-box;width:100%!important;min-width:0!important;
+    max-width:none!important;min-height:34px!important;margin:0!important;
+    padding:6px 8px!important;font-size:11px!important;border-radius:7px!important
+  }
+  #page-admin .admin-order .admin-actions button {
+    min-height:34px!important;margin:0!important;padding:6px 9px!important;
+    font-size:11px!important;white-space:nowrap;border-radius:7px!important
+  }
+  #page-admin .admin-order .admin-actions #payment-status- {max-width:100%}
+}
+@media (min-width:901px) and (max-width:1250px) {
+  #page-admin #adminOrders {grid-template-columns:minmax(0,1fr)}
+  #page-admin .admin-order .admin-actions {
+    grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr) auto
+  }
+}
+@media (max-width:900px) {
+  #page-admin #adminOrders {display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+  #page-admin #adminOrders > .admin-order {margin:0 0 10px!important;padding:12px!important}
+  #page-admin .admin-order .admin-grid {gap:7px!important}
+  #page-admin .admin-order .payment-box {padding:10px!important;margin:8px 0!important}
+  #page-admin .admin-order .admin-actions {gap:7px!important}
+  #page-admin .admin-order .admin-actions select,
+  #page-admin .admin-order .admin-actions input {min-width:0!important}
+}
+@media (max-width:520px) {
+  #page-admin .admin-order .admin-actions {display:flex!important;flex-wrap:wrap}
+  #page-admin .admin-order .admin-actions select,
+  #page-admin .admin-order .admin-actions input {flex:1 1 145px!important;width:auto!important}
+  #page-admin .admin-order .admin-actions button {flex:1 1 auto}
+}
+/* Keep compact card contrast readable in the site's dark theme. */
+body.dark #page-admin .admin-order .admin-grid > div {
+  background:rgba(20,35,25,.45);border-color:#385342
+}
+body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
+</style>
+
+
+
+<!-- Vedant Grocery Shop: responsive, language-aware dialogs for alerts, confirmations and prompts -->
+<style id="stvn-custom-dialog-styles">
+#stvn-dialog-overlay{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(5,12,8,.58);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+#stvn-dialog-overlay.stvn-dialog-open{display:flex}
+#stvn-dialog-card{width:min(100%,430px);max-height:min(86dvh,680px);overflow:auto;background:#fff;color:#17251c;border:1px solid rgba(22,132,74,.18);border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.28);padding:24px;animation:stvnDialogIn .18s ease-out;font-family:inherit}
+#stvn-dialog-mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:#e9f8ef;color:#16864a;font-size:24px;margin-bottom:14px}
+#stvn-dialog-title{font-size:19px;font-weight:850;line-height:1.3;margin:0 0 9px;color:inherit}
+#stvn-dialog-message{font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;color:#526257;margin:0 0 20px}
+#stvn-dialog-input{display:none;width:100%;box-sizing:border-box;min-height:46px;padding:12px 14px;border:1px solid #cbd8cf;border-radius:12px;background:#f8fbf9;color:#17251c;font:inherit;margin:-4px 0 18px;outline:none}
+#stvn-dialog-input:focus{border-color:#16864a;box-shadow:0 0 0 3px rgba(22,134,74,.13)}
+#stvn-dialog-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+#stvn-dialog-actions button{min-width:104px;min-height:44px;padding:11px 18px;border:0;border-radius:12px;font:inherit;font-weight:800;cursor:pointer;transition:transform .15s,filter .15s}
+#stvn-dialog-actions button:active{transform:scale(.98)}
+#stvn-dialog-cancel{background:#edf1ee;color:#34453a}
+#stvn-dialog-ok{background:linear-gradient(135deg,#16864a,#0d6b39);color:#fff;box-shadow:0 5px 14px rgba(22,134,74,.2)}
+@keyframes stvnDialogIn{from{opacity:0;transform:translateY(9px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:600px){#stvn-dialog-overlay{padding:16px;align-items:center}#stvn-dialog-card{width:100%;padding:21px 18px;border-radius:20px;max-height:82dvh}#stvn-dialog-title{font-size:18px}#stvn-dialog-message{font-size:14px}#stvn-dialog-actions{display:grid;grid-template-columns:1fr 1fr}#stvn-dialog-actions button{width:100%;min-width:0;min-height:46px}}
+@media(prefers-color-scheme:dark){#stvn-dialog-card{background:#142019;color:#eef7f0;border-color:#345440}#stvn-dialog-message{color:#c2d2c7}#stvn-dialog-input{background:#0d1711;color:#f3faf5;border-color:#45634f}#stvn-dialog-cancel{background:#29392f;color:#e7f0e9}}
+@media(prefers-reduced-motion:reduce){#stvn-dialog-card{animation:none}}
+</style>
+<div id="stvn-dialog-overlay" aria-hidden="true">
+ <section id="stvn-dialog-card" role="dialog" aria-modal="true" aria-labelledby="stvn-dialog-title" aria-describedby="stvn-dialog-message">
+  <div id="stvn-dialog-mark" aria-hidden="true">✓</div>
+  <h2 id="stvn-dialog-title">Vedant Grocery Shop</h2>
+  <p id="stvn-dialog-message"></p>
+  <input id="stvn-dialog-input" type="text" autocomplete="off">
+  <div id="stvn-dialog-actions"><button id="stvn-dialog-cancel" type="button">Cancel</button><button id="stvn-dialog-ok" type="button">OK</button></div>
+ </section>
+</div>
+<script id="stvn-custom-dialog-engine">
+(function(){
+ 'use strict';
+ if(window.__stvnDialogEngineReady)return;window.__stvnDialogEngineReady=true;
+ const overlay=document.getElementById('stvn-dialog-overlay'),card=document.getElementById('stvn-dialog-card'),title=document.getElementById('stvn-dialog-title'),message=document.getElementById('stvn-dialog-message'),mark=document.getElementById('stvn-dialog-mark'),input=document.getElementById('stvn-dialog-input'),ok=document.getElementById('stvn-dialog-ok'),cancel=document.getElementById('stvn-dialog-cancel');
+ if(!overlay)return;
+ const queue=[];let active=null,previousFocus=null;
+ function language(){let l=document.documentElement.dataset.language||document.documentElement.lang||'en';try{l=localStorage.getItem('vedantLanguagePreference')||l;const email=localStorage.getItem('vedantCustomerEmail')||'guest';l=localStorage.getItem('vedantLanguage:'+email.toLowerCase())||l}catch(_){}return ['hi','bn'].includes(l)?l:'en'}
+ function labels(){const l=language();return l==='hi'?{ok:'ठीक है',cancel:'रद्द करें',notice:'सूचना',confirm:'पुष्टि करें',input:'अपना जवाब लिखें'}:l==='bn'?{ok:'ঠিক আছে',cancel:'বাতিল',notice:'বার্তা',confirm:'নিশ্চিত করুন',input:'আপনার উত্তর লিখুন'}:{ok:'OK',cancel:'Cancel',notice:'Notice',confirm:'Confirm',input:'Enter your response'};}
+ function next(){if(active||!queue.length)return;active=queue.shift();previousFocus=document.activeElement;const t=labels();title.textContent=active.title|| (active.type==='confirm'?t.confirm:active.type==='prompt'?t.input:t.notice);message.textContent=String(active.message??'');mark.textContent=active.type==='confirm'?'?':active.type==='prompt'?'✎':active.type==='error'?'!':'✓';mark.style.background=active.type==='error'?'#fff0ed':'#e9f8ef';mark.style.color=active.type==='error'?'#c33b2d':'#16864a';ok.textContent=active.okText||t.ok;cancel.textContent=active.cancelText||t.cancel;cancel.style.display=active.type==='alert'?'none':'';input.style.display=active.type==='prompt'?'block':'none';input.value=active.defaultValue||'';input.placeholder=t.input;ok.classList.toggle('stvn-dialog-danger',active.danger===true);overlay.classList.add('stvn-dialog-open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(()=>active.type==='prompt'?input.focus():ok.focus());}
+ function finish(value){if(!active)return;const job=active;active=null;overlay.classList.remove('stvn-dialog-open');overlay.setAttribute('aria-hidden','true');document.body.style.overflow='';if(job.resolve)job.resolve(value);if(previousFocus&&typeof previousFocus.focus==='function')setTimeout(()=>previousFocus.focus(),0);setTimeout(next,30);}
+ function show(type,msg,opts){return new Promise(resolve=>{queue.push({type,message:msg,resolve,...(opts||{})});next();});}
+ ok.addEventListener('click',()=>finish(active?.type==='prompt'?input.value:true));cancel.addEventListener('click',()=>finish(active?.type==='alert'?true:active?.type==='prompt'?null:false));
+ overlay.addEventListener('click',e=>{if(e.target===overlay&&active?.type!=='alert')finish(active.type==='prompt'?null:false)});
+ document.addEventListener('keydown',e=>{if(!active)return;if(e.key==='Escape'){e.preventDefault();finish(active.type==='prompt'?null:false)}else if(e.key==='Enter'&&active.type!=='alert'&&document.activeElement!==cancel){e.preventDefault();finish(active.type==='prompt'?input.value:true)}});
+ window.stvnAlert=(msg,opts)=>show('alert',msg,opts);
+ window.stvnConfirm=(msg,opts)=>show('confirm',msg,opts);
+ window.stvnPrompt=(msg,defaultValue='',opts)=>show('prompt',msg,{...(opts||{}),defaultValue});
+})();
+</script>
+
 </body>
 </html>
 
@@ -15173,14 +15444,22 @@ body > .modern-nav, .modern-nav{display:none!important}
       const details=document.createElement('p');
       const date=order.order_date?new Date(order.order_date).toLocaleString():'Date unavailable';
       details.textContent='Status: '+String(order.order_status||'pending')+' · Payment: '+String(order.payment_method||order.payment||'Not specified')+' · Total: ₹'+String(order.total??'—')+' · '+date;
+      window.stvnCustomerOrdersById[String(id)]=order;
+      const panelId='account-order-tracking-'+String(rows.indexOf(order));
       const btn=document.createElement('button');btn.type='button';btn.className='shop-btn';btn.textContent='Track this order →';
       btn.addEventListener('click',()=>{
-        const phone=String(order.customer_phone||order.phone||'');
-        if(typeof window.saveTrackedOrder==='function')window.saveTrackedOrder(id,phone);
-        if(typeof window.setTrackingInputs==='function')window.setTrackingInputs(id,phone);
-        if(typeof window.renderCustomerTracking==='function')window.renderCustomerTracking(order);
-        if(typeof window.startCustomerOrderRealtime==='function')window.startCustomerOrderRealtime();
-        if(status)status.scrollIntoView({behavior:'smooth',block:'center'});
+        let panel=card.querySelector('.stvn-order-tracking-panel');
+        if(!panel){
+          panel=document.createElement('div');
+          panel.id=panelId;
+          panel.className='stvn-order-tracking-panel';
+          panel.hidden=true;
+          panel.setAttribute('aria-live','polite');
+          card.appendChild(panel);
+        }
+        if(typeof window.toggleCustomerOrderTracking==='function'){
+          window.toggleCustomerOrderTracking(id,btn,panelId);
+        }
       });
       card.append(title,details,btn);list.appendChild(card);
     });
@@ -15649,3 +15928,328 @@ body > .modern-nav, .modern-nav{display:none!important}
 }
 </style>
 
+
+
+<!-- Vedant Grocery Shop: click-to-open tracking + Gmail orders + compact live-delivery bar -->
+<style id="vedant-order-tracking-final-polish">
+  /* Tracking details must remain closed until the customer selects an order. */
+  #page-track #tracking-status[hidden],
+  #page-track .stvn-order-tracking-panel[hidden]{display:none!important}
+  #page-track #tracking-status{min-height:0!important}
+  #page-track .stvn-order-tracking-panel{display:block;width:100%;box-sizing:border-box}
+  #page-track #customer-tracking-orders{display:grid;gap:10px}
+  #page-track .stvn-track-order-choice{display:flex;flex-direction:column;align-items:stretch;gap:7px}
+  #page-track .stvn-track-order-choice .stvn-track-order-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  #page-track .stvn-track-order-choice .stvn-track-order-meta{margin:0;font-size:13px;line-height:1.45;color:var(--muted)}
+  #page-track .stvn-track-order-choice .stvn-order-track-toggle{width:100%;margin:4px 0 0}
+  /* Old phone/order-id lookup is not used: orders are identified by signed-in Gmail. */
+  #page-track #track-phone,#page-track #track-order-id,
+  #page-track label[for="track-phone"],#page-track label[for="track-order-id"]{display:none!important}
+  #stvn-live-order-bar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:99999;width:min(560px,calc(100% - 24px));display:none;align-items:center;gap:10px;padding:10px 13px;border:1px solid #b9e2c4;border-radius:16px;background:linear-gradient(115deg,#0c6b35,#178d49);color:#fff;box-shadow:0 12px 34px #082d1a42;cursor:pointer;text-align:left;font:inherit}
+  #stvn-live-order-bar.is-visible{display:flex}
+  #stvn-live-order-bar .stvn-live-order-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:#ffffff24;font-size:22px}
+  #stvn-live-order-bar .stvn-live-order-copy{min-width:0;flex:1}
+  #stvn-live-order-bar strong{display:block;font-size:13px;line-height:1.25}
+  #stvn-live-order-bar small{display:block;margin-top:2px;font-size:11px;opacity:.9}
+  #stvn-live-order-bar .stvn-live-order-arrow{font-size:22px;font-weight:900}
+  @media(max-width:520px){#stvn-live-order-bar{bottom:calc(9px + env(safe-area-inset-bottom));width:calc(100% - 18px);padding:9px 11px;border-radius:14px}#stvn-live-order-bar strong{font-size:12px}#stvn-live-order-bar small{font-size:10px}}
+</style>
+<script id="vedant-customer-order-history-hide-v1">
+(function(){
+  'use strict';
+  const client=()=>window.supabaseClient||((typeof supabaseClient!=='undefined')?supabaseClient:null);
+  async function currentUser(){
+    const c=client(); if(!c?.auth) throw new Error('Please sign in to manage your orders.');
+    const {data,error}=await c.auth.getUser(); if(error) throw error;
+    if(!data?.user?.id) throw new Error('Please sign in with the Gmail account used for this order.');
+    return data.user;
+  }
+  window.stvnHideOrderFromCustomerAccount=async function(orderId,button){
+    const id=String(orderId||'').trim();
+    if(!id) return window.stvnAlert('Order ID is missing.');
+    if(!(await window.stvnConfirm('Remove order '+id+' from your My Orders and tracking history? The shop Admin Panel order will remain unchanged.'))) return;
+    const b=button; if(b){b.disabled=true;b.textContent='Removing…';}
+    try{
+      const user=await currentUser();
+      const c=client();
+      const {error}=await c.from('customer_hidden_orders').upsert(
+        {user_id:user.id,order_id:id},
+        {onConflict:'user_id,order_id',ignoreDuplicates:true}
+      );
+      if(error) throw error;
+      // Keep the hide list account-specific on this device as a quick local fallback.
+      try{
+        const key='vedantHiddenOrders:'+String(user.email||'').trim().toLowerCase();
+        const ids=JSON.parse(localStorage.getItem(key)||'[]');
+        if(!ids.includes(id)){ids.push(id);localStorage.setItem(key,JSON.stringify(ids));}
+      }catch(_e){}
+      if(typeof window.stvnLoadMyOrdersByAccount==='function') await window.stvnLoadMyOrdersByAccount();
+      if(typeof window.showOrderHistory==='function') await window.showOrderHistory();
+    }catch(error){
+      console.error('Customer order hide failed:',error);
+      window.stvnAlert('Could not remove this order from your account: '+String(error.message||error));
+      if(b){b.disabled=false;b.textContent='Delete from My Orders';}
+    }
+  };
+})();
+</script>
+
+<script id="vedant-order-tracking-final-polish-js">
+(function(){
+  'use strict';
+  const byId=id=>document.getElementById(id);
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let activeEmail='';
+  let refreshBusy=false;
+  let refreshChannel=null;
+  let refreshTimer=null;
+  let activeUserId='';
+
+  function client(){return window.supabaseClient||((typeof supabaseClient!=='undefined')?supabaseClient:null)}
+  function ensureBar(){
+    let bar=byId('stvn-live-order-bar');
+    if(!bar){
+      bar=document.createElement('button');bar.type='button';bar.id='stvn-live-order-bar';bar.setAttribute('aria-label','Open live order tracking');
+      bar.innerHTML='<span class="stvn-live-order-icon">🏍️</span><span class="stvn-live-order-copy"><strong>Order is out for delivery</strong><small>Tap to follow your delivery live</small></span><span class="stvn-live-order-arrow">›</span>';
+      bar.addEventListener('click',openLiveOrder);
+      document.body.appendChild(bar);
+    }
+    return bar;
+  }
+  function hideBar(){const bar=ensureBar();bar.classList.remove('is-visible');bar.removeAttribute('data-order-id')}
+  async function getSignedInUser(){
+    const c=client();if(!c?.auth)return null;
+    const {data,error}=await c.auth.getUser();if(error||!data?.user?.email)return null;
+    return data.user;
+  }
+  async function fetchOrders(email){
+    const c=client();if(!c)return [];
+    const {data,error}=await c.from('orders').select('*').eq('customer_email',email).order('order_date',{ascending:false});
+    if(error){console.warn('Account-linked order list:',error.message);return []}
+    return Array.isArray(data)?data:[];
+  }
+  async function fetchHiddenOrderIds(userId,email){
+    const c=client();
+    const ids=new Set();
+    if(c&&userId){
+      const {data,error}=await c.from('customer_hidden_orders').select('order_id').eq('user_id',userId);
+      if(error){
+        console.warn('Customer hidden-order list:',error.message);
+        throw new Error('Customer order-history table is not ready. Run the additional SQL setup shown with this update.');
+      }
+      (data||[]).forEach(row=>ids.add(String(row.order_id)));
+    }
+    try{
+      const local=JSON.parse(localStorage.getItem('vedantHiddenOrders:'+String(email||'').toLowerCase())||'[]');
+      if(Array.isArray(local))local.forEach(id=>ids.add(String(id)));
+    }catch(_e){}
+    return ids;
+  }
+  async function hideOrderForSignedInCustomer(orderId,button){
+    const id=String(orderId||'').trim();
+    if(!id||!activeUserId)throw new Error('Sign in to the customer account first.');
+    if(!(await window.stvnConfirm('Remove order '+id+' from your order history? It will remain visible in the shop Admin Panel.')))return;
+    if(button){button.disabled=true;button.textContent='Removing…';}
+    const c=client();
+    const {error}=await c.from('customer_hidden_orders').upsert(
+      {user_id:activeUserId,order_id:id},
+      {onConflict:'user_id,order_id',ignoreDuplicates:true}
+    );
+    if(error)throw error;
+    try{
+      const key='vedantHiddenOrders:'+String(activeEmail||'').toLowerCase();
+      const local=JSON.parse(localStorage.getItem(key)||'[]');
+      if(!local.includes(id)){local.push(id);localStorage.setItem(key,JSON.stringify(local));}
+    }catch(_e){}
+    await loadMyOrders();
+  }
+  function ensureOrderList(){
+    const box=byId('customer-tracking-box');if(!box)return null;
+    let list=byId('customer-tracking-orders');
+    if(!list){list=document.createElement('div');list.id='customer-tracking-orders';box.appendChild(list)}
+    return list;
+  }
+  function renderAccountOrders(rows,email){
+    const list=ensureOrderList();if(!list)return;
+    const statusBox=byId('tracking-status');
+    if(statusBox){statusBox.hidden=true;statusBox.innerHTML=''}
+    if(!rows.length){list.innerHTML='<div class="history-item"><strong>No orders yet</strong><p>Your orders will appear here after you place an order while signed in.</p></div>';return}
+    list.replaceChildren();
+    const heading=document.createElement('h3');heading.textContent='Your Orders';list.appendChild(heading);
+    rows.forEach((order,index)=>{
+      const id=String(order.order_id||order.id||'').trim();if(!id)return;
+      window.stvnCustomerOrdersById=window.stvnCustomerOrdersById||Object.create(null);
+      window.stvnCustomerOrdersById[id]=order;
+      const card=document.createElement('article');card.className='history-item stvn-track-order-choice';card.dataset.orderId=id;
+      const head=document.createElement('div');head.className='stvn-track-order-head';
+      const title=document.createElement('strong');title.textContent='📦 '+id;
+      const badge=document.createElement('span');badge.className='badge';badge.textContent=String(order.order_status||'pending').replaceAll('_',' ').toUpperCase();
+      head.append(title,badge);
+      const meta=document.createElement('p');meta.className='stvn-track-order-meta';
+      const payment=String(order.payment_method||order.payment||'Not specified');
+      const total=order.total==null?'—':String(order.total);
+      const date=order.order_date?new Date(order.order_date).toLocaleString():'Date unavailable';
+      meta.textContent='Total: ₹'+total+' · Payment: '+payment+' · '+date;
+      const btn=document.createElement('button');btn.type='button';btn.className='shop-btn stvn-order-track-toggle';btn.textContent='Track this order →';
+      const panel=document.createElement('div');panel.id='vg-order-tracking-'+index;panel.className='stvn-order-tracking-panel';panel.hidden=true;panel.setAttribute('aria-live','polite');
+      btn.addEventListener('click',()=>{
+        if(typeof window.toggleCustomerOrderTracking==='function')window.toggleCustomerOrderTracking(id,btn,panel.id);
+      });
+      const del=document.createElement('button');del.type='button';del.className='stvn-customer-order-delete';del.textContent='Delete from My Orders';
+      del.addEventListener('click',async event=>{
+        event.stopPropagation();
+        try{await hideOrderForSignedInCustomer(id,del);}
+        catch(error){console.error('Customer order hide failed:',error);window.stvnAlert('Could not remove this order: '+String(error.message||error));del.disabled=false;del.textContent='Delete from My Orders';}
+      });
+      card.addEventListener('click',event=>{
+        if(event.target.closest('button')||event.target.closest('a'))return;
+        if(panel.hidden)btn.click();
+      });
+      card.append(head,meta,btn,del,panel);list.appendChild(card);
+    });
+  }
+  async function loadMyOrders(){
+    const user=await getSignedInUser();
+    const note=byId('stvn-account-orders-note');
+    if(!user){if(note)note.textContent='Sign in with the Gmail account used for your order to view tracking.';renderAccountOrders([], '');return []}
+    const email=String(user.email).trim().toLowerCase();activeEmail=email;activeUserId=String(user.id||'');
+    if(note)note.textContent='Your orders are linked securely to your signed-in account.';
+    const [rows,hiddenIds]=await Promise.all([fetchOrders(email),fetchHiddenOrderIds(activeUserId,email)]);
+    const visibleRows=rows.filter(order=>!hiddenIds.has(String(order.order_id||order.id||'')));
+    renderAccountOrders(visibleRows,email);return visibleRows;
+  }
+  async function refreshLiveOrderBar(){
+    if(refreshBusy)return;refreshBusy=true;
+    try{
+      const user=await getSignedInUser();
+      if(!user){activeEmail='';hideBar();return}
+      const email=String(user.email).trim().toLowerCase();activeEmail=email;
+      const rows=await fetchOrders(email);
+      const active=rows.find(order=>String(order.order_status||'').toLowerCase()==='out_for_delivery');
+      const bar=ensureBar();
+      if(!active){hideBar();return}
+      bar.dataset.orderId=String(active.order_id||active.id||'');
+      const id=bar.dataset.orderId;
+      bar.querySelector('strong').textContent='Order '+id+' is out for delivery';
+      bar.querySelector('small').textContent='Tap here to open live delivery tracking';
+      bar.classList.add('is-visible');
+    }catch(error){console.warn('Live order bar refresh:',error)}
+    finally{refreshBusy=false}
+  }
+  async function openLiveOrder(){
+    const bar=ensureBar();const orderId=String(bar.dataset.orderId||'');if(!orderId)return;
+    if(typeof window.showPage==='function')window.showPage('track');
+    const rows=await loadMyOrders();
+    const order=rows.find(item=>String(item.order_id||item.id||'')===orderId);
+    if(!order)return;
+    window.stvnCustomerOrdersById=window.stvnCustomerOrdersById||Object.create(null);window.stvnCustomerOrdersById[orderId]=order;
+    let card=document.querySelector('#customer-tracking-orders [data-order-id="'+CSS.escape(orderId)+'"]');
+    if(!card){
+      await new Promise(resolve=>setTimeout(resolve,100));
+      card=document.querySelector('#customer-tracking-orders [data-order-id="'+CSS.escape(orderId)+'"]');
+    }
+    const button=card?.querySelector('.stvn-order-track-toggle');
+    const panel=card?.querySelector('.stvn-order-tracking-panel');
+    if(button&&panel&&panel.hidden){button.click()}
+    else if(card){card.scrollIntoView({behavior:'smooth',block:'center'})}
+  }
+  function bindRealtime(email){
+    const c=client();if(!c||!email||refreshChannel)return;
+    refreshChannel=c.channel('vg-live-delivery-bar-'+email)
+      .on('postgres_changes',{event:'*',schema:'public',table:'orders',filter:'customer_email=eq.'+email},()=>{
+        refreshLiveOrderBar();
+        if(document.getElementById('page-track')?.classList.contains('active'))loadMyOrders();
+      }).subscribe();
+  }
+  function start(){
+    ensureBar();
+    loadMyOrders().catch(()=>{});
+    refreshLiveOrderBar();
+    if(refreshTimer)clearInterval(refreshTimer);
+    refreshTimer=setInterval(refreshLiveOrderBar,15000);
+    const c=client();
+    if(c?.auth){
+      c.auth.onAuthStateChange((_event,session)=>{
+        const email=String(session?.user?.email||'').trim().toLowerCase();
+        if(email){activeEmail=email;bindRealtime(email);loadMyOrders();refreshLiveOrderBar()}
+        else hideBar();
+      });
+      getSignedInUser().then(user=>{if(user){const email=String(user.email).trim().toLowerCase();bindRealtime(email)}}).catch(()=>{});
+    }
+  }
+  window.stvnLoadMyOrdersByAccount=loadMyOrders;
+  window.stvnRefreshLiveOrderBar=refreshLiveOrderBar;
+  // Ensure page navigation only loads the order list; it never opens a tracking panel automatically.
+  const originalShowPage=window.showPage;
+  if(typeof originalShowPage==='function'&&!originalShowPage.__vgTrackingWrapped){
+    const wrapped=function(page){const result=originalShowPage.apply(this,arguments);if(page==='track'){setTimeout(()=>{loadMyOrders();const status=byId('tracking-status');if(status){status.hidden=true;status.innerHTML=''}},120)}return result};
+    wrapped.__vgTrackingWrapped=true;window.showPage=wrapped;
+  }
+  // Keep the floating row synchronized immediately after a customer status changes.
+  start();
+})();
+</script>
+
+
+<style id="vedant-phone-dark-orders-wallet-tracking-v1">
+/* Phone-only dark surfaces for My Orders, Track Order and Vedant Wallet. */
+@media(max-width:700px){
+  :root{color-scheme:dark}
+  #page-orders,#page-track,#page-wallet{
+    background:#090f0c!important;color:#edf5ef!important;
+    padding:14px 12px calc(112px + env(safe-area-inset-bottom))!important;
+  }
+  #page-orders>.section-head,#page-track>.section-head,#page-wallet>.section-head,
+  #page-orders #history,#page-track #customer-tracking-box,
+  #page-wallet .wallet-container,#page-wallet .wallet-card,
+  #page-wallet .wallet-section,#page-wallet .section-head{
+    background:#111b16!important;color:#edf5ef!important;
+    border:1px solid #263a2e!important;border-radius:16px!important;
+    box-shadow:0 8px 24px #0005!important;
+  }
+  #page-orders h1,#page-orders h2,#page-orders h3,
+  #page-track h1,#page-track h2,#page-track h3,
+  #page-wallet h1,#page-wallet h2,#page-wallet h3,
+  #page-orders strong,#page-track strong,#page-wallet strong{
+    color:#f0f7f2!important;
+  }
+  #page-orders p,#page-track p,#page-wallet p,
+  #page-orders label,#page-track label,#page-wallet label,
+  #page-orders small,#page-track small,#page-wallet small{
+    color:#b8c9be!important;
+  }
+  #page-orders .history-item,#page-track .history-item,
+  #page-track .stvn-order-tracking-panel,
+  #page-wallet .history-item,#page-wallet .wallet-transaction,
+  #page-wallet .wallet-balance-card{
+    background:#17231c!important;color:#edf5ef!important;
+    border:1px solid #304638!important;border-radius:14px!important;
+    box-shadow:none!important;
+  }
+  #page-orders input,#page-track input,#page-wallet input,
+  #page-orders select,#page-track select,#page-wallet select,
+  #page-orders textarea,#page-track textarea,#page-wallet textarea{
+    background:#0d1711!important;color:#f4faf5!important;
+    border:1px solid #3a5544!important;
+  }
+  #page-orders button,#page-track button,#page-wallet button{
+    min-height:42px!important;border-radius:11px!important;
+  }
+  #page-track #tracking-status{background:#111b16!important;color:#edf5ef!important;border-color:#304638!important}
+  #page-track .stvn-track-order-choice .badge{background:#214a32!important;color:#d8f6df!important;border:1px solid #39734e!important}
+  #page-orders .remove-btn,#page-track .remove-btn,
+  #page-orders .stvn-customer-order-delete,#page-track .stvn-customer-order-delete,
+  .stvn-customer-order-delete{
+    background:#402022!important;color:#ffdede!important;border:1px solid #814044!important;
+  }
+  #page-orders .stvn-account-hide-order{background:#402022!important;color:#ffdede!important}
+  #page-wallet .wallet-logo{max-width:72px!important}
+}
+.stvn-customer-order-delete{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:100%;margin-top:7px;padding:10px 12px;
+  border:1px solid #814044;border-radius:10px;
+  background:#402022;color:#ffdede;font-weight:850;cursor:pointer;
+}
+.stvn-customer-order-delete:disabled{opacity:.6;cursor:wait}
+</style>
