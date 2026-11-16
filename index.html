@@ -8,7 +8,7 @@
 
 <!-- Primary Meta Tags -->
 <title>Vedant Grocery Shop (वेदांत किराना दुकान)</title>
-<meta name="title" content="Vedant Grocery Shop | वेदांत किराना दुकाaन">
+<meta name="title" content="Vedant Grocery Shop | वेदांत किराना दुकान">
 <meta name="description" content="Vedant Grocery Shop (वेदांत किराना दुकान) से ताज़ा राशन, रोज़मर्रा की ज़रूरी चीज़ें और किराना का सामान सबसे सस्ते दामों पर खरीदें।">
 <meta name="keywords" content="Vedant Grocery Shop, Vedant Grocery, Vedant Kirana Store, Online Grocery Shop, Grocery Shop Near Me">
 <meta name="robots" content="index, follow">
@@ -5291,8 +5291,7 @@ if (status === "out_for_delivery" || status === "shipped") {
   html += '<section class="stvn-customer-live-tracking stvn-zomato-tracking-card">' +
     '<div class="stvn-customer-live-heading"><strong>🚚 Track your order</strong><span class="stvn-live-pill">LIVE</span></div>' +
     '<div id="stvn-customer-delivery-map" class="stvn-customer-delivery-map" role="img" aria-label="Live delivery route map"></div>' +
-    '<div id="stvn-delivery-map-note" class="stvn-customer-map-note" aria-live="polite">Loading delivery route…</div>' +
-    '<div class="stvn-map-legend"><span>🏪 Shop</span><span>🛵 Delivery partner</span><span>🏠 Your location</span></div>' +
+    '<div class="stvn-map-legend"><span>🛵 Shop</span><span>🛵 Delivery partner</span><span>🏠 Your location</span></div>' +
     '</section>';
 }
 
@@ -8855,6 +8854,33 @@ function modernUIInit(){
   if(locationBox && !document.getElementById("stvnSavedAddressEditor")?.contains(locationBox))deliveryCard.appendChild(locationBox);
   if(orderSummaryHeading)reviewCard.appendChild(orderSummaryHeading);
   if(orderSummary)reviewCard.appendChild(orderSummary);
+  const waLocationCard=document.createElement("section");
+  waLocationCard.className="stvn-whatsapp-location-share";
+  waLocationCard.innerHTML='<div class="stvn-wa-location-copy"><strong>📍 Share Current Location</strong><span>on WhatsApp</span></div><button type="button" class="stvn-whatsapp-location-button" id="stvnShareCheckoutLocation">☘ WhatsApp · Send</button>';
+  reviewCard.appendChild(waLocationCard);
+  const waLocationButton=waLocationCard.querySelector("#stvnShareCheckoutLocation");
+  if(waLocationButton)waLocationButton.addEventListener("click",function(){
+    if(!navigator.geolocation){window.stvnAlert("इस browser में GPS location उपलब्ध नहीं है।");return;}
+    if(!window.isSecureContext){window.stvnAlert("Location share करने के लिए वेबसाइट HTTPS पर खुली होनी चाहिए।");return;}
+    const waTab=window.open("about:blank","_blank");
+    waLocationButton.disabled=true;
+    waLocationButton.textContent="⏳ Getting current location…";
+    navigator.geolocation.getCurrentPosition(function(position){
+      const lat=Number(position.coords.latitude),lng=Number(position.coords.longitude);
+      const mapUrl="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lng);
+      const message="Vedant Grocery Shop — मेरी वर्तमान लोकेशन: "+mapUrl;
+      const waNumber=String(window.stvnCustomerCareWhatsApp||"").replace(/\D/g,"");
+      const waUrl="https://wa.me/"+(waNumber||"")+"?text="+encodeURIComponent(message);
+      if(waTab)waTab.location.href=waUrl;else window.location.href=waUrl;
+      waLocationButton.disabled=false;
+      waLocationButton.textContent="☘ WhatsApp · Send";
+    },function(error){
+      if(waTab)waTab.close();
+      waLocationButton.disabled=false;
+      waLocationButton.textContent="☘ WhatsApp · Send";
+      window.stvnAlert(error&&error.code===1?"Location permission Allow करें।":"GPS location नहीं मिली। फिर से कोशिश करें।");
+    },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+  });
   if(paymentBox){
     const paymentHeading=paymentBox.querySelector("h3");
     const paymentNote=paymentBox.querySelector(".payment-note");
@@ -12915,7 +12941,7 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
     const map=L.map(el,{zoomControl:true,scrollWheelZoom:false}).setView(hasCustomer?[customerLat,customerLng]:[SHOP_LAT,SHOP_LNG],hasCustomer?13:14);
     window.stvnCustomerDeliveryMap=map;
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
-    const shopIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:25px;filter:drop-shadow(0 1px 2px #777)'>🏪</div>",iconSize:[30,34],iconAnchor:[15,28]});
+    const shopIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:19px;line-height:1;filter:drop-shadow(0 1px 2px #777)'>🛵</div>",iconSize:[23,25],iconAnchor:[11,21]});
     const homeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:25px;filter:drop-shadow(0 1px 2px #777)'>🏠</div>",iconSize:[30,34],iconAnchor:[15,28]});
     const bikeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:30px;filter:drop-shadow(0 1px 2px #777)'>🛵</div>",iconSize:[36,38],iconAnchor:[18,30]});
     const shop=L.marker([SHOP_LAT,SHOP_LNG],{icon:shopIcon}).addTo(map).bindPopup("Vedant Grocery Shop");
@@ -12924,13 +12950,13 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
       L.marker([customerLat,customerLng],{icon:homeIcon}).addTo(map).bindPopup("Delivery address");
       bounds.push([customerLat,customerLng]);
       const note=document.getElementById("stvn-delivery-map-note");
-      if(note)note.textContent=hasPartner?"Delivery partner की live GPS location map पर update हो रही है.":"Shop से आपके address तक का route दिख रहा है। Delivery partner GPS connect होने का इंतज़ार है.";
+      if(note)note.remove();
       fetch("https://router.project-osrm.org/route/v1/driving/"+SHOP_LNG+","+SHOP_LAT+";"+customerLng+","+customerLat+"?overview=full&geometries=geojson")
         .then(r=>r.ok?r.json():Promise.reject(new Error("Route service unavailable")))
         .then(data=>{if(!window.stvnCustomerDeliveryMap||!data.routes||!data.routes[0])return;const coords=data.routes[0].geometry.coordinates.map(p=>[p[1],p[0]]);L.polyline(coords,{color:"#24965a",weight:5,opacity:.9,dashArray:"9 7"}).addTo(map);map.fitBounds(L.latLngBounds(bounds),{padding:[25,25]});})
         .catch(()=>{if(window.stvnCustomerDeliveryMap){L.polyline([[SHOP_LAT,SHOP_LNG],[customerLat,customerLng]],{color:"#24965a",weight:4,opacity:.85,dashArray:"8 7"}).addTo(map);map.fitBounds(L.latLngBounds(bounds),{padding:[25,25]});}});
     }else{
-      const note=document.getElementById("stvn-delivery-map-note");if(note)note.textContent="Order में customer GPS location उपलब्ध नहीं है; route नहीं दिखाया जा सकता.";
+      const note=document.getElementById("stvn-delivery-map-note");if(note)note.remove();
       map.setView([SHOP_LAT,SHOP_LNG],14);
     }
     if(hasPartner){
@@ -16488,4 +16514,14 @@ body.vg-order-confirmation-open{overflow:hidden!important}
 .stvn-whatsapp-location-button{width:100%;min-height:48px;padding:12px 14px;border:0;border-radius:11px;font-weight:800;cursor:pointer;white-space:normal}
 .stvn-customer-delivery-map{display:block;width:100%;height:260px;min-height:220px;border:0;border-radius:12px;overflow:hidden}
 @media(max-width:700px){.stvn-customer-delivery-map{height:245px;min-height:220px}.stvn-whatsapp-location-button{font-size:14px}.stvn-customer-live-tracking{max-width:100%;overflow:hidden}}
+</style>
+
+
+<style id="stvn-whatsapp-checkout-location-style-v1">
+.stvn-whatsapp-location-share{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0;padding:16px 18px;border:1px solid #cdeed9;border-radius:18px;background:linear-gradient(120deg,#effff4,#e5f8ed);box-shadow:0 7px 20px rgba(18,110,58,.07);color:#145b35}
+.stvn-wa-location-copy{display:flex;flex-direction:column;gap:3px;min-width:0}.stvn-wa-location-copy strong{font-size:17px;font-weight:900}.stvn-wa-location-copy span{font-size:14px;color:#28784b}
+.stvn-whatsapp-location-button{flex:0 0 auto;width:auto;min-height:48px;margin:0;padding:12px 18px;border:0;border-radius:999px;background:#128c4b;color:#fff;font-size:15px;font-weight:900;box-shadow:0 5px 13px rgba(18,140,75,.2)}
+.stvn-whatsapp-location-button:disabled{opacity:.7;cursor:wait}
+.stvn-map-legend{margin-top:10px}
+@media(max-width:520px){.stvn-whatsapp-location-share{align-items:flex-start;flex-direction:column}.stvn-whatsapp-location-button{width:100%}}
 </style>
