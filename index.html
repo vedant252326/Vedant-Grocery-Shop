@@ -8,7 +8,7 @@
 
 <!-- Primary Meta Tags -->
 <title>Vedant Grocery Shop (वेदांत किराना दुकान)</title>
-<meta name="title" content="Vedant Grocery Shop | वेदांत किराना दुकान">
+<meta name="title" content="Vedant Grocery Shop | वेदांत किराना दुकाaन">
 <meta name="description" content="Vedant Grocery Shop (वेदांत किराना दुकान) से ताज़ा राशन, रोज़मर्रा की ज़रूरी चीज़ें और किराना का सामान सबसे सस्ते दामों पर खरीदें।">
 <meta name="keywords" content="Vedant Grocery Shop, Vedant Grocery, Vedant Kirana Store, Online Grocery Shop, Grocery Shop Near Me">
 <meta name="robots" content="index, follow">
@@ -1074,6 +1074,7 @@ body.dark .modern-bottom-nav{background:rgba(21,32,25,.92)}
 .stvn-admin-only{display:none!important}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 <style id="stvn-customer-login-gate-css">
 
 /* ===== CUSTOMER LOGIN GATE: opened only for protected actions ===== */
@@ -4606,6 +4607,7 @@ function startCustomerOrderRealtime(){
     }else{
       renderCustomerTracking(updatedOrder,target);
     }
+    if(document.getElementById("stvn-eta-countdown"))stvnStartEtaCountdown(updatedOrder);
     const indicator=document.getElementById("tracking-live-indicator");
     if(indicator)indicator.innerHTML='<span class="location-success">🟢 Live update received just now</span>';
   };
@@ -5197,6 +5199,43 @@ console.log(
 }
 
 
+/* ===== Vedant delivery ETA helpers (reuse existing orders.delivery text column) ===== */
+const STVN_ETA_PREFIX="__STVN_ETA__|";
+function stvnDecodeDeliveryValue(raw){
+  const value=String(raw||"").trim();
+  if(value.startsWith(STVN_ETA_PREFIX)){
+    const parts=value.split("|");
+    const minutes=Number(parts[1]);
+    const startedAt=parts[2]||"";
+    return {label:(Number.isFinite(minutes)&&minutes>0?minutes+" min":parts[1]||"Delivery time"),minutes:Number.isFinite(minutes)&&minutes>0?minutes:null,startedAt,encoded:true};
+  }
+  const match=value.match(/(\d+(?:\.\d+)?)/);
+  const minutes=match?Number(match[1]):null;
+  return {label:value||"20–25 Minutes",minutes:Number.isFinite(minutes)&&minutes>0?minutes:null,startedAt:"",encoded:false};
+}
+function stvnEncodeDeliveryValue(minutes,startedAt){
+  return STVN_ETA_PREFIX+String(minutes)+"|"+String(startedAt||new Date().toISOString());
+}
+function stvnFormatCountdown(milliseconds){
+  const seconds=Math.max(0,Math.ceil(milliseconds/1000));
+  const mins=Math.floor(seconds/60),secs=seconds%60;
+  return mins>0?(mins+" min "+String(secs).padStart(2,"0")+" sec"):(secs+" sec");
+}
+let stvnEtaInterval=null;
+function stvnStartEtaCountdown(order){
+  if(stvnEtaInterval){clearInterval(stvnEtaInterval);stvnEtaInterval=null;}
+  const el=document.getElementById("stvn-eta-countdown");
+  if(!el)return;
+  const meta=stvnDecodeDeliveryValue(order.delivery||order.estimated_delivery_time||"");
+  if(!meta.startedAt||!meta.minutes){el.textContent=meta.label;return;}
+  const endAt=new Date(meta.startedAt).getTime()+meta.minutes*60000;
+  const update=()=>{
+    const left=endAt-Date.now();
+    el.textContent=left>0?stvnFormatCountdown(left):"Arriving now";
+  };
+  update();stvnEtaInterval=setInterval(update,1000);
+}
+
 /* ================= RENDER CUSTOMER TRACKING ================= */
 
 function renderCustomerTracking(order, targetBox){
@@ -5221,12 +5260,8 @@ order.payment_status ||
 "pending"
 ).toLowerCase();
 
-const estimatedTime =
-String(
-order.estimated_delivery_time ||
-order.delivery ||
-"20–25 Minutes"
-);
+const deliveryEta = stvnDecodeDeliveryValue(order.delivery || order.estimated_delivery_time || "20–25 Minutes");
+const estimatedTime = deliveryEta.label;
 
 
 // Five clear customer-facing milestones. Earlier milestones get a small
@@ -5245,26 +5280,19 @@ const isCancelled = ["cancelled","cancelled_by_admin"].includes(status);
 let html = "";
 
 if (!isDelivered && !isCancelled) {
-  html += '<div class="tracking-estimate">' +
-    '<span><span class="tracking-estimate-label">⏱️ Estimated delivery</span><br>' +
-    '<span class="tracking-estimate-time">' + escapeHtml(estimatedTime) + '</span></span></div>';
+  const isOnWay = status === "out_for_delivery" || status === "shipped";
+  html += '<div class="tracking-estimate stvn-zomato-eta">' +
+    '<span><span class="tracking-estimate-label">' + (isOnWay ? '🛵 Arriving in' : '⏱️ Estimated delivery') + '</span><br>' +
+    '<span class="tracking-estimate-time" id="stvn-eta-countdown">' + escapeHtml(estimatedTime) + '</span></span>' +
+    (isOnWay ? '<span class="stvn-eta-subtext">Delivery partner is on the way</span>' : '') + '</div>';
 }
 
-if (!isDelivered && !isCancelled && status !== "out_for_delivery" && status !== "shipped") {
-  html += '<section class="stvn-customer-live-tracking stvn-whatsapp-location-share">' +
-    '<strong>📍 Share your live location</strong>' +
-    '<p>Pending order में भी location share कर सकते हैं। बटन दबाएँ और GPS permission Allow करें।</p>' +
-    '<button type="button" class="stvn-whatsapp-location-button" onclick="stvnStartCustomerLocationAndWhatsApp()">📍 Share Current Location on WhatsApp</button>' +
-    '<p id="live-location-status" class="stvn-customer-map-note">Location sharing शुरू करने के लिए बटन दबाएँ।</p>' +
-    '</section>';
-}
 if (status === "out_for_delivery" || status === "shipped") {
-  const customerLat = Number(order.latitude), customerLng = Number(order.longitude);
-  const hasCustomerGps = Number.isFinite(customerLat) && Number.isFinite(customerLng) && (customerLat !== 0 || customerLng !== 0);
-  html += '<section class="stvn-customer-live-tracking">' +
-    '<div class="stvn-customer-live-heading"><strong>🚚 Live Order Location</strong><span class="stvn-live-pill">LIVE TRACKING</span></div>' +
-    (hasCustomerGps ? '<iframe title="Customer live location" class="stvn-customer-delivery-map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q='+customerLat+','+customerLng+'&z=16&output=embed"></iframe>' : '<div class="stvn-customer-delivery-map"><div class="stvn-map-wait">📍 Customer की location का इंतज़ार है। कृपया Share Current Location दबाकर sharing चालू रखें।</div></div>') +
-    '<p class="stvn-customer-map-note">Map आपकी आखिरी शेयर की गई GPS location दिखाता है। Live update के लिए यह पेज खुला रखें।</p>' +
+  html += '<section class="stvn-customer-live-tracking stvn-zomato-tracking-card">' +
+    '<div class="stvn-customer-live-heading"><strong>🚚 Track your order</strong><span class="stvn-live-pill">LIVE</span></div>' +
+    '<div id="stvn-customer-delivery-map" class="stvn-customer-delivery-map" role="img" aria-label="Live delivery route map"></div>' +
+    '<div id="stvn-delivery-map-note" class="stvn-customer-map-note" aria-live="polite">Loading delivery route…</div>' +
+    '<div class="stvn-map-legend"><span>🏪 Shop</span><span>🛵 Delivery partner</span><span>🏠 Your location</span></div>' +
     '</section>';
 }
 
@@ -5307,8 +5335,12 @@ if (isCancelled) {
   html += '<div class="vg-customer-cancelled-banner">' + (status === "cancelled_by_admin" ? "CANCELLED BY ADMIN" : "CANCELLED · यह ऑर्डर रद्द हो चुका है") + '</div>';
 }
 
-box.innerHTML =
-html;
+if(window.stvnCustomerDeliveryMap){window.stvnCustomerDeliveryMap.remove();window.stvnCustomerDeliveryMap=null;window.stvnDeliveryBikeMarker=null;}
+box.innerHTML = html;
+if (!isDelivered && !isCancelled) stvnStartEtaCountdown(order);
+if (status === "out_for_delivery" || status === "shipped") {
+  if(typeof window.stvnRenderCustomerDeliveryMap === "function") window.stvnRenderCustomerDeliveryMap(order);
+}
 if (typeof stvnStartCustomerCancelTimers === "function") stvnStartCustomerCancelTimers();
 
 
@@ -5521,7 +5553,7 @@ function showOrderConfirmation(order){
   if(idNode)idNode.textContent=orderId ? '#'+orderId : 'Order ID unavailable';
   if(paymentNode)paymentNode.textContent=String(order.payment_method||order.payment||'Cash on Delivery');
   if(statusNode)statusNode.textContent=String(order.order_status||'pending').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
-  if(deliveryNode)deliveryNode.textContent=String(order.delivery||'20–25 Minutes');
+  if(deliveryNode)deliveryNode.textContent=stvnDecodeDeliveryValue(order.delivery||'20–25 Minutes').label;
   if(placedNode)placedNode.textContent='🕒 Order placed: '+placedText;
   document.body.classList.add('vg-order-confirmation-open');
   modal.hidden=false;
@@ -7029,7 +7061,7 @@ onclick="updateOrderStatus('${escapeAttribute(orderId)}')">
 <input
 id="delivery-time-${escapeAttribute(orderId)}"
 type="text"
-value="${escapeAttribute(order.delivery || "20–25 Minutes")}"
+value="${escapeAttribute(stvnDecodeDeliveryValue(order.delivery || "20–25 Minutes").minutes || stvnDecodeDeliveryValue(order.delivery || "20–25 Minutes").label)}"
 placeholder="Delivery time">
 
 
@@ -7040,6 +7072,8 @@ onclick="updateDeliveryTime('${escapeAttribute(orderId)}')">
 ⏱️ Save Delivery Time
 
 </button>
+
+${orderStatus==="out_for_delivery" ? `<button class="admin-btn stvn-admin-gps-button" type="button" onclick="startDeliveryPartnerLocation('${escapeAttribute(orderId)}','${escapeAttribute(order.phone||order.customer_phone||"")}')">📍 Start Delivery GPS</button><small class="stvn-admin-gps-note" id="delivery-location-status-${escapeAttribute(orderId)}">Delivery partner के phone पर GPS sharing शुरू करें</small>` : ""}
 
 
 <select
@@ -7276,7 +7310,21 @@ async function updateOrderStatus(orderId){
   const oldText=button?.textContent;
   if(button){button.disabled=true;button.textContent="⏳ Updating…";}
   try{
+    const {data:current,error:readError}=await supabaseClient.from("orders").select("order_status,delivery").eq("order_id",String(orderId)).maybeSingle();
+    if(readError)throw new Error(readError.message);
     const updateValues={order_status:newStatus};
+    if(newStatus==="out_for_delivery"){
+      const currentMeta=stvnDecodeDeliveryValue(current?.delivery||"");
+      if(String(current?.order_status||"").toLowerCase()!=="out_for_delivery" || !currentMeta.startedAt){
+        const input=document.getElementById("delivery-time-"+orderId);
+        const entered=String(input?.value||currentMeta.label||"10");
+        const match=entered.match(/(\d+(?:\.\d+)?)/);
+        const minutes=match?Math.max(1,Math.min(240,Math.round(Number(match[1])))):10;
+        updateValues.delivery=stvnEncodeDeliveryValue(minutes,new Date().toISOString());
+      }
+    }else if(current?.delivery){
+      updateValues.delivery=stvnDecodeDeliveryValue(current.delivery).label;
+    }
     if(newStatus==="delivered"||newStatus==="cancelled"||newStatus==="cancelled_by_admin"){
       updateValues.delivery_boy_latitude=null;updateValues.delivery_boy_longitude=null;
     }
@@ -7288,7 +7336,7 @@ async function updateOrderStatus(orderId){
     }
     await Promise.all([loadAdminOrders(),showOrderHistory()]);
     if(typeof window.stvnRefreshLiveOrderBar==="function")window.stvnRefreshLiveOrderBar();
-    window.stvnAlert("✅ Order status updated. Customer tracking will refresh automatically.");
+    window.stvnAlert(newStatus==="out_for_delivery"?"✅ Out for Delivery! Customer tracking में arrival countdown और route map दिखेगा. Delivery partner के phone से Start Delivery GPS दबाएँ.":"✅ Order status updated. Customer tracking will refresh automatically.");
   }catch(error){
     console.error("Order status update failed:",error);
     window.stvnAlert("❌ Order status update नहीं हुआ: "+String(error.message||error));
@@ -7301,13 +7349,18 @@ async function updateOrderStatus(orderId){
 async function updateDeliveryTime(orderId){
   const input=document.getElementById("delivery-time-"+orderId);
   if(!input)return;
-  const delivery=input.value.trim();
-  if(!delivery){window.stvnAlert("❌ Delivery time डालो.");return;}
+  const raw=input.value.trim();
+  const match=raw.match(/(\d+(?:\.\d+)?)/);
+  if(!match){window.stvnAlert("❌ Delivery time minutes में डालें, जैसे 10.");return;}
+  const minutes=Math.max(1,Math.min(240,Math.round(Number(match[1]))));
   try{
-    const {data,error}=await supabaseClient.from("orders").update({delivery:delivery}).eq("order_id",String(orderId)).select("order_id");
+    const {data:current,error:readError}=await supabaseClient.from("orders").select("order_status").eq("order_id",String(orderId)).maybeSingle();
+    if(readError)throw new Error(readError.message);
+    const delivery=String(current?.order_status||"").toLowerCase()==="out_for_delivery"?stvnEncodeDeliveryValue(minutes,new Date().toISOString()):minutes+" Minutes";
+    const {data,error}=await supabaseClient.from("orders").update({delivery}).eq("order_id",String(orderId)).select("order_id");
     if(error)throw new Error(error.message);
     if(!data||!data.length)throw new Error("Delivery time save नहीं हुआ। Admin UPDATE permission/RLS policy जाँचें.");
-    await loadAdminOrders();window.stvnAlert("✅ Delivery time updated.");
+    await loadAdminOrders();window.stvnAlert("✅ Delivery time updated to "+minutes+" minutes.");
   }catch(error){console.error(error);window.stvnAlert("❌ Delivery time update नहीं हुआ: "+String(error.message||error));}
 }
 
@@ -12824,6 +12877,70 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 .stvn-whatsapp-location-button{display:block;width:100%;padding:13px 16px;border:0;border-radius:12px;background:#168443;color:#fff;font:inherit;font-weight:800;cursor:pointer}
 .stvn-whatsapp-location-button:focus-visible{outline:3px solid #94d5a9;outline-offset:2px}
 </style>
+
+
+<style id="stvn-zomato-tracking-mobile-css">
+.stvn-zomato-eta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:#fff8e8;border:1px solid #f2dca9;color:#242424;margin:10px 0 14px}
+.stvn-zomato-eta .tracking-estimate-label{font-size:13px;font-weight:700;color:#5e5e5e}
+.stvn-zomato-eta .tracking-estimate-time{font-size:25px;font-weight:850;letter-spacing:-.4px;color:#18834b;line-height:1.3}
+.stvn-eta-subtext{font-size:12px;color:#666}
+.stvn-zomato-tracking-card{display:block;padding:12px!important;border-radius:18px!important;background:#fff!important;border:1px solid #e9e9e9!important;box-shadow:0 5px 20px rgba(0,0,0,.07)}
+.stvn-zomato-tracking-card .stvn-customer-live-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.stvn-customer-delivery-map{width:100%;height:330px;min-height:260px;border-radius:13px;overflow:hidden;background:#e9eee8;z-index:0}
+.stvn-map-legend{display:flex;flex-wrap:wrap;gap:12px;margin:10px 2px 2px;font-size:12px;color:#444}
+.stvn-customer-map-note{font-size:12px;line-height:1.45;color:#666;margin:9px 2px 4px}
+.stvn-admin-gps-button{margin-top:8px!important;background:#137c45!important;color:#fff!important}
+.stvn-admin-gps-note{display:block;margin:5px 0 10px;color:#16834a;font-size:12px}
+@media(max-width:600px){
+ .stvn-zomato-eta{padding:12px;gap:5px;align-items:flex-start;flex-direction:column}
+ .stvn-zomato-eta .tracking-estimate-time{font-size:24px}
+ .stvn-zomato-tracking-card{padding:9px!important;margin:10px 0!important}
+ .stvn-customer-delivery-map{height:280px;min-height:240px}
+ .stvn-map-legend{gap:8px;font-size:11px}
+}
+</style>
+<script id="stvn-zomato-customer-map-js">
+(function(){
+  const SHOP_LAT=25.3698055556,SHOP_LNG=83.1131388889;
+  const valid=(lat,lng)=>Number.isFinite(lat)&&Number.isFinite(lng)&&(lat!==0||lng!==0);
+  window.stvnRenderCustomerDeliveryMap=function(order){
+    const el=document.getElementById("stvn-customer-delivery-map");
+    if(!el)return;
+    if(!window.L){const note=document.getElementById("stvn-delivery-map-note");if(note)note.textContent="Map load नहीं हुआ। Internet connection check करें.";return;}
+    if(window.stvnCustomerDeliveryMap){window.stvnCustomerDeliveryMap.remove();window.stvnCustomerDeliveryMap=null;window.stvnDeliveryBikeMarker=null;}
+    const customerLat=Number(order.latitude),customerLng=Number(order.longitude);
+    const hasCustomer=valid(customerLat,customerLng);
+    const partnerLat=Number(order.delivery_boy_latitude),partnerLng=Number(order.delivery_boy_longitude);
+    const hasPartner=valid(partnerLat,partnerLng);
+    const map=L.map(el,{zoomControl:true,scrollWheelZoom:false}).setView(hasCustomer?[customerLat,customerLng]:[SHOP_LAT,SHOP_LNG],hasCustomer?13:14);
+    window.stvnCustomerDeliveryMap=map;
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
+    const shopIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:25px;filter:drop-shadow(0 1px 2px #777)'>🏪</div>",iconSize:[30,34],iconAnchor:[15,28]});
+    const homeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:25px;filter:drop-shadow(0 1px 2px #777)'>🏠</div>",iconSize:[30,34],iconAnchor:[15,28]});
+    const bikeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:30px;filter:drop-shadow(0 1px 2px #777)'>🛵</div>",iconSize:[36,38],iconAnchor:[18,30]});
+    const shop=L.marker([SHOP_LAT,SHOP_LNG],{icon:shopIcon}).addTo(map).bindPopup("Vedant Grocery Shop");
+    const bounds=[[SHOP_LAT,SHOP_LNG]];
+    if(hasCustomer){
+      L.marker([customerLat,customerLng],{icon:homeIcon}).addTo(map).bindPopup("Delivery address");
+      bounds.push([customerLat,customerLng]);
+      const note=document.getElementById("stvn-delivery-map-note");
+      if(note)note.textContent=hasPartner?"Delivery partner की live GPS location map पर update हो रही है.":"Shop से आपके address तक का route दिख रहा है। Delivery partner GPS connect होने का इंतज़ार है.";
+      fetch("https://router.project-osrm.org/route/v1/driving/"+SHOP_LNG+","+SHOP_LAT+";"+customerLng+","+customerLat+"?overview=full&geometries=geojson")
+        .then(r=>r.ok?r.json():Promise.reject(new Error("Route service unavailable")))
+        .then(data=>{if(!window.stvnCustomerDeliveryMap||!data.routes||!data.routes[0])return;const coords=data.routes[0].geometry.coordinates.map(p=>[p[1],p[0]]);L.polyline(coords,{color:"#24965a",weight:5,opacity:.9,dashArray:"9 7"}).addTo(map);map.fitBounds(L.latLngBounds(bounds),{padding:[25,25]});})
+        .catch(()=>{if(window.stvnCustomerDeliveryMap){L.polyline([[SHOP_LAT,SHOP_LNG],[customerLat,customerLng]],{color:"#24965a",weight:4,opacity:.85,dashArray:"8 7"}).addTo(map);map.fitBounds(L.latLngBounds(bounds),{padding:[25,25]});}});
+    }else{
+      const note=document.getElementById("stvn-delivery-map-note");if(note)note.textContent="Order में customer GPS location उपलब्ध नहीं है; route नहीं दिखाया जा सकता.";
+      map.setView([SHOP_LAT,SHOP_LNG],14);
+    }
+    if(hasPartner){
+      window.stvnDeliveryBikeMarker=L.marker([partnerLat,partnerLng],{icon:bikeIcon,zIndexOffset:1000}).addTo(map).bindPopup("Delivery partner · Live location");
+      bounds.push([partnerLat,partnerLng]);map.fitBounds(L.latLngBounds(bounds),{padding:[25,25]});
+    }
+    setTimeout(()=>{if(window.stvnCustomerDeliveryMap===map)map.invalidateSize();},250);
+  };
+})();
+</script>
 
 </body>
 <style id="stvn-final-design-status-overrides">
