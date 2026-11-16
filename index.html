@@ -14760,6 +14760,14 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 
 <script id="stvn-pwa-install-prompt">
 (function(){
+  // Show the custom install prompt only for the dedicated QR entry URL.
+  // The existing QR must encode the site URL with ?from=qr.
+  const isQrEntry = new URLSearchParams(window.location.search).get("from") === "qr";
+  // Never show the install prompt inside an already-installed PWA/app.
+  const isAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
+    window.navigator.standalone === true;
+  const shouldShowQrInstall = isQrEntry && !isAlreadyInstalled;
   let installPromptEvent=null;
   const modalId="stvnInstallPromptModal";
   function ensureModal(){
@@ -14774,10 +14782,35 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       else{modal.querySelector("#stvnInstallHelp").style.display="block";}
     };
   }
-  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPromptEvent=e;ensureModal();});
-  window.addEventListener("load",()=>{ensureModal();setTimeout(()=>{const m=document.getElementById(modalId);let dismissed=false;try{dismissed=!!sessionStorage.getItem("stvnInstallPromptDismissed");}catch(e){}if(m&&!dismissed)m.style.display="flex";},1100);},{once:true});
-  window.addEventListener("appinstalled",()=>{const m=document.getElementById(modalId);if(m)m.style.display="none";try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}});
-  window.stvnShowInstallPrompt=function(){ensureModal();const m=document.getElementById(modalId);if(m)m.style.display="flex";};
+  window.addEventListener("beforeinstallprompt",e=>{
+    if(!shouldShowQrInstall) return; // Normal visits and installed-app launches never show it.
+    e.preventDefault();
+    installPromptEvent=e;
+    ensureModal();
+    const m=document.getElementById(modalId);
+    if(m)m.style.display="flex";
+  });
+  function showQrPromptAtStartup(){
+    if(!shouldShowQrInstall) return;
+    ensureModal();
+    const m=document.getElementById(modalId);
+    if(m) m.style.display="flex";
+  }
+  // Put the QR-only install prompt over the first screen, before language selection.
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded",showQrPromptAtStartup,{once:true});
+  } else {
+    showQrPromptAtStartup();
+  }
+  window.addEventListener("appinstalled",()=>{
+    const m=document.getElementById(modalId);if(m)m.style.display="none";
+    try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}
+  });
+  window.stvnShowInstallPrompt=function(){
+    if(!shouldShowQrInstall) return;
+    ensureModal();
+    const m=document.getElementById(modalId);if(m)m.style.display="flex";
+  };
 })();
 </script>
 </body>
