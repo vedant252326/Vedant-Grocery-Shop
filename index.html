@@ -2183,6 +2183,15 @@ button,input,select,textarea{font:inherit}
 .stvn-phonepe-qr-close{position:absolute;right:12px;top:8px;background:#f0f0f0;color:#222;border-radius:50%;font-size:22px;width:36px;height:36px}
 @media(min-width:700px){.stvn-phonepe-qr-card{padding:26px 30px}.stvn-phonepe-qr-image{width:300px}}
 </style>
+<style id="stvn-location-step-admin-call-css">
+.stvn-location-step-card{max-width:560px;margin:14px auto;padding:18px!important;border:1px solid #cce9d6!important;border-radius:22px!important;background:linear-gradient(145deg,#f3fff7,#fff)!important;box-shadow:0 12px 34px rgba(20,110,65,.10)}
+.stvn-location-intro{text-align:center;padding:8px 4px 14px}.stvn-location-pin{width:68px;height:68px;margin:0 auto 12px;display:grid;place-items:center;border-radius:22px;background:#e1f7e9;font-size:34px;box-shadow:inset 0 0 0 1px #bce6ca}.stvn-location-intro h3{margin:5px 0 8px;color:#145c34;font-size:21px}.stvn-location-intro p{margin:0 auto;max-width:440px;color:#607468;line-height:1.55;font-size:14px}
+#page-location #customer-location-box{display:block!important;width:100%!important;max-width:100%!important;margin:8px auto!important;padding:16px!important;border-radius:16px!important;background:#fff!important;border:1px solid #d9eee0!important}
+#page-location #customer-location-box .shop-btn{width:100%!important;min-height:54px!important;border:0!important;border-radius:15px!important;background:linear-gradient(120deg,#087c42,#20ad62)!important;color:#fff!important;font-size:16px!important;font-weight:900!important;box-shadow:0 7px 18px rgba(8,124,66,.2)}
+#page-location .place-order{width:100%;min-height:52px;border-radius:15px;font-weight:900}
+.stvn-admin-customer-phone-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.stvn-admin-call-customer{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 12px;min-height:34px;border-radius:999px;background:#0b8748;color:#fff!important;text-decoration:none!important;font-size:13px;font-weight:900;box-shadow:0 3px 9px #0002}.stvn-admin-call-customer:active{transform:scale(.97)}
+@media(max-width:600px){.stvn-location-step-card{margin:10px 0;padding:14px!important}.stvn-location-intro h3{font-size:19px}#page-location .checkout-title{align-items:flex-start;gap:8px}.stvn-admin-call-customer{padding:7px 10px}}
+</style>
 </head>
 
 <body>
@@ -3834,14 +3843,19 @@ async function continueToOrderReview(){
   if(saveBox?.checked && !document.getElementById('stvnSavedAddressSelect')?.value){
     try{await stvnSaveCheckoutAddress();}catch(e){console.warn('Auto-save address skipped:',e);}
   }
-  await getCustomerLocationForOrder();
+  // Ask the customer to explicitly update GPS on the next dedicated step.
+  showPage("location");
+}
+
+function continueToLocationReview(){
+  syncCustomerLocationFromWindow();
   if(customerLatitude===null||customerLongitude===null){
-    window.stvnAlert("Order total और delivery charge दिखाने के लिए current location की permission दें.");
+    window.stvnAlert("कृपया पहले ‘वर्तमान लोकेशन अपडेट करें’ बटन दबाएँ.");
     return;
   }
   const radiusCheck=checkDeliveryRadius();
   if(!radiusCheck.allowed){
-    window.stvnAlert("आपकी location shop से "+radiusCheck.distance.toFixed(2)+" km दूर है। Delivery सिर्फ 5 km के अंदर उपलब्ध है.");
+    window.stvnAlert("आपकी लोकेशन दुकान से "+radiusCheck.distance.toFixed(2)+" km दूर है। डिलीवरी केवल 5 km के अंदर उपलब्ध है.");
     return;
   }
   updateCart();
@@ -6787,8 +6801,9 @@ ${escapeHtml(customerName)}
 📱 Mobile
 </strong>
 
-<p>
+<p class="stvn-admin-customer-phone-row">
 ${escapeHtml(phone)}
+${phone && phone !== "N/A" ? `<a class="stvn-admin-call-customer" href="tel:${escapeAttribute(String(phone).replace(/[^0-9+]/g,""))}" aria-label="कस्टमर को कॉल करें" title="कस्टमर को कॉल करें">☎ कॉल</a>` : ""}
 </p>
 
 </div>
@@ -8818,9 +8833,18 @@ function modernUIInit(){
   deliveryCard.className="checkout-card checkout-step-card";
   checkout.appendChild(deliveryCard);
 
+  const locationPage=document.createElement("main");
+  locationPage.id="page-location"; locationPage.className="page";
+  locationPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. अपना वर्तमान स्थान अपडेट करें</h2><p style="margin:3px 0;color:var(--muted)">डिलीवरी सही जगह पहुँचाने के लिए GPS लोकेशन चुनें</p></div></div>`;
+  const locationStepCard=document.createElement("div");
+  locationStepCard.className="checkout-card checkout-step-card stvn-location-step-card";
+  locationStepCard.innerHTML=`<div class="stvn-location-intro"><div class="stvn-location-pin">📍</div><h3>अपनी वर्तमान लोकेशन अपडेट करें</h3><p>नीचे बटन दबाएँ। आपकी लोकेशन और दुकान से दूरी दिखेगी। यही लोकेशन आपके ऑर्डर और ट्रैकिंग पेज में सेव होगी।</p></div>`;
+  locationPage.appendChild(locationStepCard);
+  body.appendChild(locationPage);
+
   const review=document.createElement("main");
   review.id="page-order-review"; review.className="page";
-  review.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. Review Your Order</h2><p style="margin:3px 0;color:var(--muted)">Review items, discount, delivery charge and payable total</p></div></div>`;
+  review.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('location')">← लोकेशन</button><div><h2 style="margin:0">3. ऑर्डर की समीक्षा करें</h2><p style="margin:3px 0;color:var(--muted)">Review items, discount, delivery charge and payable total</p></div></div>`;
   const reviewCard=document.createElement("div");
   reviewCard.className="checkout-card checkout-step-card";
   review.appendChild(reviewCard);
@@ -8828,7 +8852,7 @@ function modernUIInit(){
 
   const paymentPage=document.createElement("main");
   paymentPage.id="page-payment"; paymentPage.className="page";
-  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('order-review')">← Review Order</button><div><h2 style="margin:0">3. Payment</h2><p style="margin:3px 0;color:var(--muted)">Complete payment or choose Cash on Delivery</p></div></div>`;
+  paymentPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('order-review')">← Review Order</button><div><h2 style="margin:0">4. भुगतान</h2><p style="margin:3px 0;color:var(--muted)">Complete payment or choose Cash on Delivery</p></div></div>`;
   const paymentCard=document.createElement("div");
   paymentCard.className="checkout-card checkout-step-card";
   paymentPage.appendChild(paymentCard);
@@ -8852,7 +8876,7 @@ function modernUIInit(){
   const confirmationModal=document.getElementById("order-confirmation-modal");
 
   if(primaryCheckout)deliveryCard.appendChild(primaryCheckout);
-  if(locationBox && !document.getElementById("stvnSavedAddressEditor")?.contains(locationBox))deliveryCard.appendChild(locationBox);
+  if(locationBox)locationStepCard.appendChild(locationBox);
   if(orderSummaryHeading)reviewCard.appendChild(orderSummaryHeading);
   if(orderSummary)reviewCard.appendChild(orderSummary);
   if(paymentBox){
@@ -8872,16 +8896,22 @@ function modernUIInit(){
   finalPlaceOrder.onclick=placeOrder;
   paymentCard.appendChild(finalPlaceOrder);
   if(confirmationModal)paymentCard.appendChild(confirmationModal);
+  const locationNext=document.createElement("button");
+  locationNext.type="button";
+  locationNext.className="place-order";
+  locationNext.textContent="लोकेशन सेव करें और आगे बढ़ें →";
+  locationNext.onclick=continueToLocationReview;
+  locationStepCard.appendChild(locationNext);
   const reviewNext=document.createElement("button");
   reviewNext.type="button";
   reviewNext.className="place-order";
-  reviewNext.textContent="Continue to Payment →";
+  reviewNext.textContent="भुगतान के लिए आगे बढ़ें →";
   reviewNext.onclick=continueToPayment;
   reviewCard.appendChild(reviewNext);
   const deliveryNext=document.createElement("button");
   deliveryNext.type="button";
   deliveryNext.className="place-order";
-  deliveryNext.textContent="Continue to Order Review →";
+  deliveryNext.textContent="लोकेशन अपडेट करें →";
   deliveryNext.onclick=continueToOrderReview;
   deliveryCard.appendChild(deliveryNext);
 
@@ -8980,7 +9010,7 @@ function modernUIInit(){
   heroContent.appendChild(radius);
 
   // Page switching
-  const protectedCustomerPages=new Set(["wallet","orders","track","checkout","order-review","payment","wishlist"]);
+  const protectedCustomerPages=new Set(["wallet","orders","track","checkout","location","order-review","payment","wishlist"]);
   const routeHistoryKey="__vedantGroceryPage";
   const overlayHistoryKey="__vedantGroceryOverlay";
   let routeHistoryReady=false;
@@ -14768,6 +14798,37 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 #page-track #tracking-status[data-stvn-slash-only="true"]{display:none!important}
 </style>
 
+
+<script id="stvn-pwa-install-prompt">
+(function(){
+  let installPromptEvent=null;
+  let dismissedThisPage=false;
+  const modalId="stvnInstallPromptModal";
+  // QR poster points to the site with ?from=qr. Ordinary visits never auto-open this prompt.
+  const params=new URLSearchParams(window.location.search);
+  const cameFromShopQr=params.get("from")==="qr";
+  function ensureModal(){
+    if(document.getElementById(modalId))return;
+    const modal=document.createElement("div");modal.id=modalId;modal.style.cssText="display:none;position:fixed;inset:0;z-index:999999;align-items:center;justify-content:center;padding:18px;background:rgba(8,25,15,.68);backdrop-filter:blur(5px)";
+    modal.innerHTML=`<section style="width:min(100%,390px);padding:25px 20px;border-radius:24px;background:linear-gradient(150deg,#fff,#effff4);text-align:center;box-shadow:0 22px 70px #0005;color:#163b27"><div style="font-size:42px">🛍️</div><h2 style="margin:8px 0;color:#087c42">वेदांत ग्रोसरी शॉप ऐप इंस्टॉल करें</h2><p style="margin:0 0 18px;line-height:1.55;color:#52665a">तेज़ और आसान खरीदारी के लिए हमारी दुकान अपने मोबाइल में जोड़ें।</p><button id="stvnInstallNow" style="width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#087c42,#20ad62);color:white;font-size:16px;font-weight:900">📲 अभी इंस्टॉल करें</button><button id="stvnInstallLater" style="margin-top:10px;padding:10px 14px;border:0;background:transparent;color:#607468;font-weight:700">अभी नहीं</button><p id="stvnInstallHelp" style="display:none;margin:12px 0 0;font-size:12px;line-height:1.5;color:#607468">यदि इंस्टॉल विकल्प अपने आप न खुले, तो Chrome के ⋮ मेन्यू में “ऐप इंस्टॉल करें” या “होम स्क्रीन पर जोड़ें” चुनें।</p></section>`;
+    document.body.appendChild(modal);
+    modal.addEventListener("click",e=>{if(e.target===modal){dismissedThisPage=true;modal.style.display="none";}});
+    modal.querySelector("#stvnInstallLater").onclick=()=>{dismissedThisPage=true;modal.style.display="none";};
+    modal.querySelector("#stvnInstallNow").onclick=async()=>{
+      if(installPromptEvent){const promptEvent=installPromptEvent;installPromptEvent=null;try{await promptEvent.prompt();await promptEvent.userChoice;}catch(e){}modal.style.display="none";}
+      else{modal.querySelector("#stvnInstallHelp").style.display="block";}
+    };
+  }
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPromptEvent=e;if(cameFromShopQr)ensureModal();});
+  window.addEventListener("load",()=>{
+    if(!cameFromShopQr)return;
+    ensureModal();
+    setTimeout(()=>{const m=document.getElementById(modalId);if(m&&!dismissedThisPage)m.style.display="flex";},900);
+  },{once:true});
+  window.addEventListener("appinstalled",()=>{const m=document.getElementById(modalId);if(m)m.style.display="none";dismissedThisPage=true;});
+  window.stvnShowInstallPrompt=function(){if(!cameFromShopQr)return;ensureModal();const m=document.getElementById(modalId);if(m&&!dismissedThisPage)m.style.display="flex";};
+})();
+</script>
 </body>
 </html>
 
