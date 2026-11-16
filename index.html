@@ -2531,8 +2531,7 @@ placeholder="Enter delivery address"
 
 <div id="customer-tracking-box" class="payment-box">
 <strong class="stvn-track-heading">🚚 Track Your Order</strong>
-<p>Your orders are connected to your signed-in Gmail account. Select an order below to open its tracking details.</p>
-<div id="stvn-account-orders-note" class="payment-note" aria-live="polite"></div>
+<div id="stvn-account-orders-note" class="payment-note" aria-live="polite" hidden></div>
 <div id="customer-tracking-orders" aria-live="polite"></div>
 <div id="tracking-status" class="payment-note" style="margin-top:8px;" hidden></div>
 </div>
@@ -3020,7 +3019,6 @@ Clear
   <h3 id="admin-orders-heading">📦 Orders / ऑर्डर</h3>
   <div class="admin-section-heading-actions">
     <button type="button" class="admin-refresh admin-section-save-button" onclick="loadAdminOrders()">🔄 Refresh Orders</button>
-    <button id="admin-save-orders" type="button" class="admin-section-save-button" onclick="saveAdminChangesForGroup('orders','Orders')">💾 Save Order Changes</button>
   </div>
 </div>
 <div id="adminOrders">
@@ -4618,118 +4616,48 @@ null;
 }
 
 
+let customerOrderPollTimer=null;
+function stopCustomerOrderRealtime(){
+  if(customerOrderRealtimeChannel){supabaseClient.removeChannel(customerOrderRealtimeChannel);customerOrderRealtimeChannel=null;}
+  if(customerOrderPollTimer){clearInterval(customerOrderPollTimer);customerOrderPollTimer=null;}
+}
 function startCustomerOrderRealtime(){
-
-stopCustomerOrderRealtime();
-
-
-if(!trackedOrderId){
-
-return;
-
+  stopCustomerOrderRealtime();
+  if(!trackedOrderId)return;
+  const applyOrder=updatedOrder=>{
+    if(!updatedOrder||String(updatedOrder.order_id||"")!==String(trackedOrderId))return;
+    const email=String(updatedOrder.customer_email||"").trim().toLowerCase();
+    if(trackedCustomerEmail&&email&&email!==trackedCustomerEmail)return;
+    const target=document.getElementById(activeTrackingBoxId)||document.getElementById("tracking-status");
+    const lat=Number(updatedOrder.delivery_boy_latitude),lng=Number(updatedOrder.delivery_boy_longitude);
+    const stillDelivering=String(updatedOrder.order_status||"").toLowerCase()==="out_for_delivery";
+    if(stillDelivering&&window.stvnCustomerDeliveryMap&&window.stvnDeliveryBikeMarker&&Number.isFinite(lat)&&Number.isFinite(lng)){
+      window.stvnDeliveryBikeMarker.setLatLng([lat,lng]);
+      window.stvnCustomerDeliveryMap.panTo([lat,lng],{animate:true,duration:0.5});
+    }else{
+      renderCustomerTracking(updatedOrder,target);
+    }
+    const indicator=document.getElementById("tracking-live-indicator");
+    if(indicator)indicator.innerHTML='<span class="location-success">🟢 Live update received just now</span>';
+  };
+  customerOrderRealtimeChannel=supabaseClient.channel("customer-order-"+trackedOrderId)
+    .on("postgres_changes",{event:"*",schema:"public",table:"orders",filter:"order_id=eq."+trackedOrderId},payload=>applyOrder(payload.new))
+    .subscribe(status=>{
+      const indicator=document.getElementById("tracking-live-indicator");
+      if(indicator&&status==="SUBSCRIBED")indicator.innerHTML='<span class="location-success">🟢 Live tracking connected</span>';
+      else if(indicator&&status==="CHANNEL_ERROR")indicator.innerHTML='<span class="payment-note">Automatic refresh is active.</span>';
+    });
+  const refresh=async()=>{
+    if(!trackedOrderId)return;
+    try{
+      let query=supabaseClient.from("orders").select("*").eq("order_id",trackedOrderId);
+      if(trackedCustomerEmail)query=query.eq("customer_email",trackedCustomerEmail);
+      const {data,error}=await query.maybeSingle();
+      if(!error&&data)applyOrder(data);
+    }catch(error){console.warn("Customer tracking refresh:",error);}
+  };
+  refresh();customerOrderPollTimer=setInterval(refresh,5000);
 }
-
-
-customerOrderRealtimeChannel =
-supabaseClient
-.channel(
-"customer-order-" +
-trackedOrderId
-)
-.on(
-"postgres_changes",
-{
-event:"*",
-schema:"public",
-table:"orders",
-filter:
-"order_id=eq." +
-trackedOrderId
-},
-async payload => {
-
-console.log(
-"🔴 Order realtime update:",
-payload
-);
-
-
-const updatedOrder =
-payload.new;
-
-
-if(
-updatedOrder &&
-(
-  (trackedCustomerEmail && String(updatedOrder.customer_email || "").trim().toLowerCase() === trackedCustomerEmail) ||
-  (!trackedCustomerEmail && trackedCustomerPhone && String(updatedOrder.customer_phone || "") === String(trackedCustomerPhone))
-)
-){
-
-const trackingTarget = document.getElementById(activeTrackingBoxId) || document.getElementById("tracking-status");
-renderCustomerTracking(updatedOrder, trackingTarget);
-
-
-const indicator =
-document.getElementById(
-"tracking-live-indicator"
-);
-
-
-if(indicator){
-
-indicator.innerHTML =
-'<span class="location-success">' +
-"🟢 Live update received just now" +
-"</span>";
-
-}
-
-}
-
-}
-)
-.subscribe(
-status => {
-
-console.log(
-"Customer order realtime:",
-status
-);
-
-
-const indicator =
-document.getElementById(
-"tracking-live-indicator"
-);
-
-
-if(!indicator)
-return;
-
-
-if(status==="SUBSCRIBED"){
-
-indicator.innerHTML =
-'<span class="location-success">' +
-"🟢 Live tracking connected" +
-"</span>";
-
-}
-else if(status==="CHANNEL_ERROR"){
-
-indicator.innerHTML =
-'<span class="error">' +
-"⚠️ Live tracking connection failed. Refresh करके फिर try करो." +
-"</span>";
-
-}
-
-}
-);
-
-}
-
 
 async function trackCustomerOrder(){
 
@@ -5431,6 +5359,7 @@ try {
   if (window.stvnCustomerDeliveryMap) {
     window.stvnCustomerDeliveryMap.remove();
     window.stvnCustomerDeliveryMap = null;
+    window.stvnDeliveryBikeMarker = null;
   }
   if (mapEl && status === "out_for_delivery" && window.L && hasPartnerLocation) {
     const map = L.map(mapEl, {scrollWheelZoom:false}).setView([partnerLat, partnerLng], 15);
@@ -5439,7 +5368,7 @@ try {
       maxZoom:19, attribution:'&copy; OpenStreetMap contributors'
     }).addTo(map);
     const bikeIcon = L.divIcon({className:'stvn-bike-marker',html:'<span>🏍️</span>',iconSize:[42,42],iconAnchor:[21,21]});
-    L.marker([partnerLat,partnerLng],{icon:bikeIcon}).addTo(map).bindPopup('🚴 Delivery Partner');
+    window.stvnDeliveryBikeMarker=L.marker([partnerLat,partnerLng],{icon:bikeIcon}).addTo(map).bindPopup('🚴 Delivery Partner');
     const bounds = [[partnerLat,partnerLng]];
     if (hasCustomerLocation) {
       L.marker([customerLat,customerLng]).addTo(map).bindPopup('🏠 Delivery Address');
@@ -6934,7 +6863,8 @@ onclick="startDeliveryPartnerLocation('${escapeAttribute(orderId)}','${escapeAtt
 
 </button>
 
-<button class="admin-btn" type="button" onclick="stopDeliveryPartnerLocation()">⛔ Stop Sharing Location</button>
+<button class="admin-btn" type="button" onclick="stopDeliveryPartnerLocation('${escapeAttribute(orderId)}')">⛔ Stop Sharing Location</button>
+<p class="admin-small" id="delivery-location-status-${escapeAttribute(orderId)}" role="status" aria-live="polite">Location sharing is off.</p>
 
 `
 
@@ -7295,112 +7225,57 @@ url,
 /* ================= UPDATE ORDER STATUS ================= */
 
 async function updateOrderStatus(orderId){
-
-const select =
-document.getElementById(
-"order-status-" +
-orderId
-);
-
-
-if(!select){
-
-window.stvnAlert(
-"❌ Order status selector नहीं मिला."
-);
-
-return;
-
-}
-
-
-const newStatus =
-select.value;
-
-
-queueAdminSaveAction("Order "+orderId+" status",async function(){
-  const updateValues = {order_status:newStatus};
-  if(newStatus === "delivered" || newStatus === "cancelled"){
-    updateValues.delivery_boy_latitude = null;
-    updateValues.delivery_boy_longitude = null;
+  const select=document.getElementById("order-status-"+orderId);
+  if(!select){window.stvnAlert("❌ Order status selector नहीं मिला.");return;}
+  const newStatus=String(select.value||"pending");
+  const button=select.parentElement?.querySelector('button[onclick*="updateOrderStatus"]');
+  const oldText=button?.textContent;
+  if(button){button.disabled=true;button.textContent="⏳ Updating…";}
+  try{
+    const updateValues={order_status:newStatus};
+    if(newStatus==="delivered"||newStatus==="cancelled"){
+      updateValues.delivery_boy_latitude=null;updateValues.delivery_boy_longitude=null;
+    }
+    const {error}=await supabaseClient.from("orders").update(updateValues).eq("order_id",String(orderId));
+    if(error)throw new Error(error.message);
+    if(newStatus==="delivered"||newStatus==="cancelled"){
+      if(typeof window.stopDeliveryPartnerLocation==="function")window.stopDeliveryPartnerLocation(orderId);
+    }
+    await Promise.all([loadAdminOrders(),showOrderHistory()]);
+    if(typeof window.stvnRefreshLiveOrderBar==="function")window.stvnRefreshLiveOrderBar();
+    window.stvnAlert("✅ Order status updated. Customer tracking will refresh automatically.");
+  }catch(error){
+    console.error("Order status update failed:",error);
+    window.stvnAlert("❌ Order status update नहीं हुआ: "+String(error.message||error));
+    if(button){button.disabled=false;button.textContent=oldText||"📦 Update Order";}
   }
-  const {error}=await supabaseClient.from("orders").update(updateValues).eq("order_id",orderId);
-  if(error)throw new Error("Order status update नहीं हुआ: "+error.message);
-  if(newStatus === "delivered" || newStatus === "cancelled"){
-    if(typeof window.stopDeliveryPartnerLocation === "function") window.stopDeliveryPartnerLocation(orderId);
-  }
-},"orders");
-
 }
-
 
 /* ================= DELIVERY TIME ================= */
 
 async function updateDeliveryTime(orderId){
-
-const input =
-document.getElementById(
-"delivery-time-" +
-orderId
-);
-
-
-if(!input)
-return;
-
-
-const delivery =
-input.value.trim();
-
-
-if(!delivery){
-
-window.stvnAlert(
-"❌ Delivery time डालो."
-);
-
-return;
-
+  const input=document.getElementById("delivery-time-"+orderId);
+  if(!input)return;
+  const delivery=input.value.trim();
+  if(!delivery){window.stvnAlert("❌ Delivery time डालो.");return;}
+  try{
+    const {error}=await supabaseClient.from("orders").update({delivery:delivery,estimated_delivery_time:delivery}).eq("order_id",String(orderId));
+    if(error)throw new Error(error.message);
+    await loadAdminOrders();window.stvnAlert("✅ Delivery time updated.");
+  }catch(error){console.error(error);window.stvnAlert("❌ Delivery time update नहीं हुआ: "+String(error.message||error));}
 }
-
-
-queueAdminSaveAction("Order "+orderId+" delivery time",async function(){
-  const {error}=await supabaseClient.from("orders").update({
-    delivery:delivery,
-    estimated_delivery_time:delivery
-  }).eq("order_id",orderId);
-  if(error)throw new Error("Delivery time update नहीं हुआ: "+error.message);
-},"orders");
-
-}
-
 
 /* ================= PAYMENT STATUS ================= */
 
 async function updatePaymentStatus(orderId){
-
-const select =
-document.getElementById(
-"payment-status-" +
-orderId
-);
-
-
-if(!select)
-return;
-
-
-const newStatus =
-select.value;
-
-
-queueAdminSaveAction("Order "+orderId+" payment status",async function(){
-  const {error}=await supabaseClient.from("orders").update({payment_status:newStatus}).eq("order_id",orderId);
-  if(error)throw new Error("Payment status update नहीं हुआ: "+error.message);
-},"orders");
-
+  const select=document.getElementById("payment-status-"+orderId);
+  if(!select)return;
+  try{
+    const {error}=await supabaseClient.from("orders").update({payment_status:select.value}).eq("order_id",String(orderId));
+    if(error)throw new Error(error.message);
+    await loadAdminOrders();window.stvnAlert("✅ Payment status updated.");
+  }catch(error){console.error(error);window.stvnAlert("❌ Payment status update नहीं हुआ: "+String(error.message||error));}
 }
-
 
 /* ================= RESTORE ADMIN SESSION ================= */
 
@@ -9394,41 +9269,53 @@ restoreAdminSession();
 
 <script id="stvn-live-order-map-js">
 (function(){
-  let partnerWatchId=null;
-  let partnerWatchOrderId=null;
-
-  window.startDeliveryPartnerLocation=async function(orderId,phone){
-    if(!navigator.geolocation){ window.stvnAlert("इस phone में location support नहीं है."); return; }
-    if(partnerWatchId!==null){ window.stvnAlert("Delivery partner location पहले से share हो रही है."); return; }
-    const sessionResult=await supabaseClient.auth.getSession();
-    if(!sessionResult.data.session){ window.stvnAlert("पहले admin login करो."); return; }
-    partnerWatchOrderId=String(orderId);
-    partnerWatchId=navigator.geolocation.watchPosition(async position=>{
-      const {error}=await supabaseClient.from("orders").update({
-        delivery_boy_latitude:position.coords.latitude,
-        delivery_boy_longitude:position.coords.longitude
-      }).eq("order_id",String(orderId)).eq("customer_phone",String(phone));
-      if(error){
-        console.error("Delivery partner location error:",error);
-        window.stvnAlert("Delivery boy location save नहीं हुई. Supabase orders table में delivery_boy_latitude और delivery_boy_longitude columns होने चाहिए.");
-        navigator.geolocation.clearWatch(partnerWatchId);
-        partnerWatchId=null;
-        partnerWatchOrderId=null;
-      }
-    },()=>window.stvnAlert("Delivery partner की location permission Allow करो."),{
-      enableHighAccuracy:true,timeout:15000,maximumAge:3000
-    });
-    window.stvnAlert("🟢 Delivery boy की live location sharing शुरू हो गई.");
+  let partnerWatchId=null,partnerWatchOrderId=null;
+  const setStatus=(id,message,isError=false)=>{
+    const el=document.getElementById("delivery-location-status-"+id);
+    if(el){el.textContent=message;el.style.color=isError?"#d33":"#16834a";}
   };
-
+  window.startDeliveryPartnerLocation=async function(orderId,phone){
+    const id=String(orderId||"").trim();
+    if(!id){window.stvnAlert("Order ID नहीं मिला.");return;}
+    if(!navigator.geolocation){window.stvnAlert("इस browser में GPS location support नहीं है.");return;}
+    if(!window.isSecureContext){window.stvnAlert("Live location के लिए वेबसाइट HTTPS पर खोलें.");return;}
+    if(partnerWatchId!==null){
+      window.stvnAlert(partnerWatchOrderId===id?"इस order की location पहले से share हो रही है.":"पहले चल रही location sharing बंद करें.");return;
+    }
+    try{
+      const sessionResult=await supabaseClient.auth.getSession();
+      if(sessionResult.error||!sessionResult.data?.session){window.stvnAlert("पहले admin login करो.");return;}
+    }catch(e){window.stvnAlert("Admin session verify नहीं हो सकी.");return;}
+    partnerWatchOrderId=id;setStatus(id,"⏳ Phone GPS permission माँगी जा रही है…");
+    const onPosition=async position=>{
+      if(partnerWatchOrderId!==id)return;
+      try{
+        const {error}=await supabaseClient.from("orders").update({
+          delivery_boy_latitude:position.coords.latitude,delivery_boy_longitude:position.coords.longitude
+        }).eq("order_id",id);
+        if(error)throw error;
+        setStatus(id,"🟢 LIVE — Last update: "+new Date().toLocaleTimeString()+" · GPS accuracy ±"+Math.round(position.coords.accuracy||0)+" m");
+      }catch(error){
+        console.error("Delivery partner location save failed:",error);
+        setStatus(id,"❌ Location save नहीं हुई: "+String(error.message||error),true);
+        window.stopDeliveryPartnerLocation(id);
+      }
+    };
+    const onError=error=>{
+      console.error("Delivery partner GPS error:",error);
+      const message=error.code===1?"Phone/browser Location permission Allow करें.":error.code===2?"GPS location अभी उपलब्ध नहीं है.":"GPS request timeout हुई. फिर से Share दबाएँ.";
+      setStatus(id,"❌ "+message,true);window.stopDeliveryPartnerLocation(id);
+    };
+    partnerWatchId=navigator.geolocation.watchPosition(onPosition,onError,{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+    setStatus(id,"⏳ GPS से पहली location का इंतज़ार… browser खुला रखें.");
+  };
   window.stopDeliveryPartnerLocation=function(orderId){
-    if(partnerWatchId!==null && (!orderId || String(orderId)===partnerWatchOrderId)){
+    if(partnerWatchId!==null&&(!orderId||String(orderId)===partnerWatchOrderId)){
       navigator.geolocation.clearWatch(partnerWatchId);
-      partnerWatchId=null;
-      partnerWatchOrderId=null;
+      const oldId=partnerWatchOrderId;partnerWatchId=null;partnerWatchOrderId=null;
+      if(oldId)setStatus(oldId,"⛔ Location sharing बंद है.");
     }
   };
-
 })();
 </script>
 <script>
@@ -12757,6 +12644,35 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 }
 </style>
 
+<style id="vedant-tracking-admin-live-fix-v2">
+#stvn-account-orders-note[hidden]{display:none!important}
+#customer-tracking-box .stvn-track-order-head{min-width:0;flex-wrap:wrap}
+#customer-tracking-box .stvn-track-order-meta{overflow-wrap:anywhere}
+#customer-tracking-box .stvn-order-tracking-panel{min-width:0;max-width:100%;overflow:hidden}
+.stvn-customer-delivery-map{width:100%;min-height:240px}
+@media(max-width:700px){
+  #page-cart #customer-tracking-box,#page-track #customer-tracking-box{padding:12px!important;margin:10px 0!important;border-radius:16px!important;background:#101a14!important;color:#f1f7f3!important;border:1px solid #2c4435!important}
+  #page-cart #customer-tracking-box .stvn-track-heading,#page-track #customer-tracking-box .stvn-track-heading{font-size:18px!important;color:#f4fff7!important}
+  #page-cart .vg-order-progress,#page-track .vg-order-progress{padding:12px!important;background:#111d16!important;border:1px solid #2b4635!important;color:#eff8f1!important}
+  #page-cart .vg-order-progress-step,#page-track .vg-order-progress-step{display:grid!important;grid-template-columns:30px minmax(0,1fr);gap:8px!important;align-items:center!important;padding:10px!important;background:#17251c!important}
+  #page-cart .vg-order-progress-copy strong,#page-track .vg-order-progress-copy strong{color:#f3fff6!important;font-weight:900!important;font-size:13px!important;overflow-wrap:anywhere}
+  #page-cart .vg-order-progress-copy small,#page-track .vg-order-progress-copy small{color:#c1d1c6!important;font-size:11px!important}
+  #page-cart .vg-order-progress-step.is-upcoming,#page-track .vg-order-progress-step.is-upcoming{opacity:1!important}
+  #page-cart .vg-order-progress-step.is-upcoming .vg-order-progress-copy strong,#page-track .vg-order-progress-step.is-upcoming .vg-order-progress-copy strong{color:#d5e1d9!important}
+  #page-cart .vg-order-now-label,#page-track .vg-order-now-label,#page-cart .vg-order-tick-label,#page-track .vg-order-tick-label{grid-column:2;justify-self:start}
+  .stvn-customer-live-tracking{padding:11px!important;margin:10px 0!important;background:#111d16!important;border-color:#2b4635!important}
+  .stvn-customer-live-heading{align-items:flex-start!important;flex-wrap:wrap}
+  .stvn-customer-live-heading strong{color:#f3fff6!important;font-size:14px!important}
+  .stvn-customer-live-heading small,.stvn-customer-map-note{color:#bfd0c4!important}
+  .stvn-customer-delivery-map{height:245px!important;min-height:220px!important}
+  #page-admin #adminOrdersSection .admin-section-heading-actions{display:flex;flex-wrap:wrap;gap:7px}
+  #page-admin #adminOrdersSection .admin-section-heading-actions button{flex:1 1 145px;min-width:0}
+  #page-admin #adminOrdersSection .admin-order{padding:12px!important;overflow:hidden}
+  #page-admin #adminOrdersSection .admin-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+  #page-admin #adminOrdersSection .admin-actions select,#page-admin #adminOrdersSection .admin-actions input,#page-admin #adminOrdersSection .admin-actions button{width:100%!important;max-width:none!important;min-width:0!important}
+}
+</style>
+
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
@@ -14575,6 +14491,35 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 })();
 </script>
 
+<style id="vedant-tracking-admin-live-fix-v2">
+#stvn-account-orders-note[hidden]{display:none!important}
+#customer-tracking-box .stvn-track-order-head{min-width:0;flex-wrap:wrap}
+#customer-tracking-box .stvn-track-order-meta{overflow-wrap:anywhere}
+#customer-tracking-box .stvn-order-tracking-panel{min-width:0;max-width:100%;overflow:hidden}
+.stvn-customer-delivery-map{width:100%;min-height:240px}
+@media(max-width:700px){
+  #page-cart #customer-tracking-box,#page-track #customer-tracking-box{padding:12px!important;margin:10px 0!important;border-radius:16px!important;background:#101a14!important;color:#f1f7f3!important;border:1px solid #2c4435!important}
+  #page-cart #customer-tracking-box .stvn-track-heading,#page-track #customer-tracking-box .stvn-track-heading{font-size:18px!important;color:#f4fff7!important}
+  #page-cart .vg-order-progress,#page-track .vg-order-progress{padding:12px!important;background:#111d16!important;border:1px solid #2b4635!important;color:#eff8f1!important}
+  #page-cart .vg-order-progress-step,#page-track .vg-order-progress-step{display:grid!important;grid-template-columns:30px minmax(0,1fr);gap:8px!important;align-items:center!important;padding:10px!important;background:#17251c!important}
+  #page-cart .vg-order-progress-copy strong,#page-track .vg-order-progress-copy strong{color:#f3fff6!important;font-weight:900!important;font-size:13px!important;overflow-wrap:anywhere}
+  #page-cart .vg-order-progress-copy small,#page-track .vg-order-progress-copy small{color:#c1d1c6!important;font-size:11px!important}
+  #page-cart .vg-order-progress-step.is-upcoming,#page-track .vg-order-progress-step.is-upcoming{opacity:1!important}
+  #page-cart .vg-order-progress-step.is-upcoming .vg-order-progress-copy strong,#page-track .vg-order-progress-step.is-upcoming .vg-order-progress-copy strong{color:#d5e1d9!important}
+  #page-cart .vg-order-now-label,#page-track .vg-order-now-label,#page-cart .vg-order-tick-label,#page-track .vg-order-tick-label{grid-column:2;justify-self:start}
+  .stvn-customer-live-tracking{padding:11px!important;margin:10px 0!important;background:#111d16!important;border-color:#2b4635!important}
+  .stvn-customer-live-heading{align-items:flex-start!important;flex-wrap:wrap}
+  .stvn-customer-live-heading strong{color:#f3fff6!important;font-size:14px!important}
+  .stvn-customer-live-heading small,.stvn-customer-map-note{color:#bfd0c4!important}
+  .stvn-customer-delivery-map{height:245px!important;min-height:220px!important}
+  #page-admin #adminOrdersSection .admin-section-heading-actions{display:flex;flex-wrap:wrap;gap:7px}
+  #page-admin #adminOrdersSection .admin-section-heading-actions button{flex:1 1 145px;min-width:0}
+  #page-admin #adminOrdersSection .admin-order{padding:12px!important;overflow:hidden}
+  #page-admin #adminOrdersSection .admin-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+  #page-admin #adminOrdersSection .admin-actions select,#page-admin #adminOrdersSection .admin-actions input,#page-admin #adminOrdersSection .admin-actions button{width:100%!important;max-width:none!important;min-width:0!important}
+}
+</style>
+
 </body>
 </html>
 
@@ -15399,7 +15344,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       list.innerHTML='<p class="payment-note">Sign in to see your orders here.</p>';
       return;
     }
-    if(note)note.textContent=(email?'Signed in as '+email:'Signed in')+' · Your orders are linked to this account.';
+    if(note){note.textContent='';note.hidden=true;}
     let rows=null,lookupError=null,missingIdentityColumn=false;
     try{
       let result;
