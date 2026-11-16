@@ -2170,7 +2170,7 @@ button,input,select,textarea{font:inherit}
 
 <style id="stvn-customer-live-tracking-css">
 .stvn-customer-live-tracking{margin:14px 0;padding:14px;border:1px solid #cfe6d6;border-radius:18px;background:linear-gradient(145deg,var(--surface,#fff),var(--primary-soft,#eafaf1));}
-.stvn-customer-live-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.stvn-customer-live-heading strong{display:block;font-size:16px;color:var(--text,#183d2a)}.stvn-customer-live-heading small{display:block;margin-top:4px;color:var(--muted,#66756c)}.stvn-live-pill{font-size:11px;font-weight:900;padding:6px 9px;border-radius:999px;background:#e8f8ee;color:#08783d;white-space:nowrap}.stvn-customer-delivery-map{display:block;width:100%;height:260px;min-height:220px;border-radius:13px;overflow:hidden;background:#e9f1eb;border:1px solid var(--border,#dce8df);z-index:1}.stvn-map-wait{height:100%;display:grid;place-items:center;text-align:center;padding:20px;color:#52685a;font-weight:700;font-size:13px}.stvn-customer-map-note{margin:9px 2px 0;font-size:12px;color:var(--muted,#66756c);line-height:1.45}.stvn-bike-marker{background:transparent;border:0}.stvn-bike-marker span{display:grid;place-items:center;width:40px;height:40px;border:2px solid white;border-radius:50%;background:#16864b;box-shadow:0 3px 12px #0004;font-size:23px}
+.stvn-customer-live-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.stvn-tracking-actions{display:flex;align-items:center;gap:8px}.stvn-call-delivery-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:9px 15px;border-radius:999px;background:#128447;color:#fff!important;text-decoration:none!important;font-size:14px;font-weight:900;box-shadow:0 3px 10px #0002;white-space:nowrap}.stvn-call-delivery-btn span{font-size:18px;line-height:1}.stvn-call-delivery-btn:active{transform:scale(.97)}.stvn-customer-live-heading strong{display:block;font-size:16px;color:var(--text,#183d2a)}.stvn-customer-live-heading small{display:block;margin-top:4px;color:var(--muted,#66756c)}.stvn-live-pill{font-size:11px;font-weight:900;padding:6px 9px;border-radius:999px;background:#e8f8ee;color:#08783d;white-space:nowrap}.stvn-customer-delivery-map{display:block;width:100%;height:260px;min-height:220px;border-radius:13px;overflow:hidden;background:#e9f1eb;border:1px solid var(--border,#dce8df);z-index:1}.stvn-map-wait{height:100%;display:grid;place-items:center;text-align:center;padding:20px;color:#52685a;font-weight:700;font-size:13px}.stvn-customer-map-note{margin:9px 2px 0;font-size:12px;color:var(--muted,#66756c);line-height:1.45}.stvn-bike-marker{background:transparent;border:0}.stvn-bike-marker span{display:grid;place-items:center;width:40px;height:40px;border:2px solid white;border-radius:50%;background:#16864b;box-shadow:0 3px 12px #0004;font-size:23px}
 </style>
 
 <style id="stvn-phonepe-qr-style">
@@ -4407,19 +4407,18 @@ window.stvnStartCustomerLocationAndWhatsApp = function(){
   const statusBox=document.getElementById("live-location-status");
   if(statusBox)statusBox.textContent="⏳ GPS permission माँगी जा रही है…";
   startCustomerLiveLocation();
+  const tab=window.open("about:blank","_blank");
   navigator.geolocation.getCurrentPosition(function(position){
     const lat=Number(position.coords.latitude),lng=Number(position.coords.longitude);
     const mapUrl="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lng);
-    const message="Vedant Grocery order "+trackedOrderId+" — मेरी वर्तमान लोकेशन: "+mapUrl;
+    const message="Vedant Grocery order "+trackedOrderId+" — customer live location sharing started. Current location: "+mapUrl;
     const waNumber=String(window.stvnCustomerCareWhatsApp||"").replace(/\D/g,"");
-    const whatsappUrl=waNumber
-      ? "https://wa.me/"+waNumber+"?text="+encodeURIComponent(message)
-      : "https://wa.me/?text="+encodeURIComponent(message);
+    const whatsappUrl="https://wa.me/"+(waNumber||"")+"?text="+encodeURIComponent(message);
+    if(tab)tab.location.href=whatsappUrl;else window.location.href=whatsappUrl;
     updateCustomerLiveLocation(position);
-    window.location.assign(whatsappUrl);
   },function(error){
+    if(tab)tab.close();
     if(statusBox)statusBox.textContent=error&&error.code===1?"❌ Location permission Allow करें।":"❌ GPS location नहीं मिली। फिर से कोशिश करें।";
-    window.stvnAlert(error&&error.code===1?"Location permission Allow करें।":"GPS location नहीं मिली। फिर से कोशिश करें।");
   },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
 };
 window.stvnShareCurrentLocationOnWhatsApp=window.stvnStartCustomerLocationAndWhatsApp;
@@ -4602,8 +4601,7 @@ function startCustomerOrderRealtime(){
     const target=document.getElementById(activeTrackingBoxId)||document.getElementById("tracking-status");
     const lat=Number(updatedOrder.delivery_boy_latitude),lng=Number(updatedOrder.delivery_boy_longitude);
     const stillDelivering=String(updatedOrder.order_status||"").toLowerCase()==="out_for_delivery";
-    const hasLivePartnerGPS=Number.isFinite(lat)&&Number.isFinite(lng)&&(lat!==0||lng!==0);
-    if(stillDelivering&&window.stvnCustomerDeliveryMap&&window.stvnDeliveryBikeMarker&&hasLivePartnerGPS){
+    if(stillDelivering&&window.stvnCustomerDeliveryMap&&window.stvnDeliveryBikeMarker&&Number.isFinite(lat)&&Number.isFinite(lng)){
       window.stvnDeliveryBikeMarker.setLatLng([lat,lng]);
       window.stvnCustomerDeliveryMap.panTo([lat,lng],{animate:true,duration:0.5});
     }else{
@@ -5291,9 +5289,10 @@ if (!isDelivered && !isCancelled) {
 
 if (status === "out_for_delivery" || status === "shipped") {
   html += '<section class="stvn-customer-live-tracking stvn-zomato-tracking-card">' +
-    '<div class="stvn-customer-live-heading"><strong>🚚 Track your order</strong><span class="stvn-live-pill">LIVE</span></div>' +
+    '<div class="stvn-customer-live-heading"><strong>🚚 Track your order</strong><div class="stvn-tracking-actions"><a class="stvn-call-delivery-btn" href="tel:" onclick="return stvnCallDeliveryBoy(event)" aria-label="Call delivery boy"><span aria-hidden="true">☎</span> Call</a><span class="stvn-live-pill">LIVE</span></div></div>' +
     '<div id="stvn-customer-delivery-map" class="stvn-customer-delivery-map" role="img" aria-label="Live delivery route map"></div>' +
-    '<div class="stvn-map-legend"><span>🛵 Delivery partner</span><span>🏠 Your location</span></div>' +
+    '<div id="stvn-delivery-map-note" class="stvn-customer-map-note" aria-live="polite">Loading delivery route…</div>' +
+    '<div class="stvn-map-legend"><span>🏪 Shop</span><span>🛵 Delivery partner</span><span>🏠 Your location</span></div>' +
     '</section>';
 }
 
@@ -8856,33 +8855,6 @@ function modernUIInit(){
   if(locationBox && !document.getElementById("stvnSavedAddressEditor")?.contains(locationBox))deliveryCard.appendChild(locationBox);
   if(orderSummaryHeading)reviewCard.appendChild(orderSummaryHeading);
   if(orderSummary)reviewCard.appendChild(orderSummary);
-  const waLocationCard=document.createElement("section");
-  waLocationCard.className="stvn-whatsapp-location-share";
-  waLocationCard.innerHTML='<div class="stvn-wa-location-copy"><strong>📍 Share Current Location</strong><span>on WhatsApp</span></div><button type="button" class="stvn-whatsapp-location-button" id="stvnShareCheckoutLocation">☘ WhatsApp · Send</button>';
-  reviewCard.appendChild(waLocationCard);
-  const waLocationButton=waLocationCard.querySelector("#stvnShareCheckoutLocation");
-  if(waLocationButton)waLocationButton.addEventListener("click",function(){
-    if(!navigator.geolocation){window.stvnAlert("इस browser में GPS location उपलब्ध नहीं है।");return;}
-    if(!window.isSecureContext){window.stvnAlert("Location share करने के लिए वेबसाइट HTTPS पर खुली होनी चाहिए।");return;}
-    waLocationButton.disabled=true;
-    waLocationButton.textContent="⏳ Getting current location…";
-    navigator.geolocation.getCurrentPosition(function(position){
-      const lat=Number(position.coords.latitude),lng=Number(position.coords.longitude);
-      const mapUrl="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lng);
-      const message="Vedant Grocery Shop — मेरी वर्तमान लोकेशन: "+mapUrl;
-      const waNumber=String(window.stvnCustomerCareWhatsApp||"").replace(/\D/g,"");
-      const waUrl=waNumber
-        ? "https://wa.me/"+waNumber+"?text="+encodeURIComponent(message)
-        : "https://wa.me/?text="+encodeURIComponent(message);
-      waLocationButton.disabled=false;
-      waLocationButton.textContent="☘ WhatsApp · Send";
-      window.location.assign(waUrl);
-    },function(error){
-      waLocationButton.disabled=false;
-      waLocationButton.textContent="☘ WhatsApp · Send";
-      window.stvnAlert(error&&error.code===1?"Location permission Allow करें।":"GPS location नहीं मिली। फिर से कोशिश करें।");
-    },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
-  });
   if(paymentBox){
     const paymentHeading=paymentBox.querySelector("h3");
     const paymentNote=paymentBox.querySelector(".payment-note");
@@ -11866,6 +11838,32 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
   <div id="stvnCustomerCareActions"></div>
   <button type="button" id="stvnCustomerCareClose">Close</button>
 </section>
+<script id="stvn-delivery-boy-call-feature">
+window.stvnCallDeliveryBoy = async function(event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  try{
+    let phone=String(window.stvnCustomerCarePhone||'').replace(/\D/g,'');
+    if(!phone){
+      const client=(typeof supabaseClient!=='undefined'&&supabaseClient)?supabaseClient:window.supabaseClient;
+      if(client&&typeof client.from==='function'){
+        const result=await client.from('customer_care_settings').select('phone').eq('id',1).maybeSingle();
+        if(!result.error&&result.data)phone=String(result.data.phone||'').replace(/\D/g,'');
+      }
+    }
+    if(!phone){
+      if(typeof window.stvnAlert==='function')window.stvnAlert('Delivery boy का नंबर Customer Care Settings में सेव नहीं है।');
+      else alert('Delivery boy का नंबर Customer Care Settings में सेव नहीं है।');
+      return false;
+    }
+    window.location.href='tel:'+phone;
+  }catch(error){
+    console.warn('Call delivery boy:',error);
+    if(typeof window.stvnAlert==='function')window.stvnAlert('Call शुरू नहीं हो पाई। Customer Care नंबर जाँचें।');
+  }
+  return false;
+};
+</script>
+
 <script id="stvn-customer-care-feature">
 (function(){
   const defaults={id:1,enabled:true,title:'Vedant Customer Care',phone:'',whatsapp:'',email:'',message:'Order में मदद चाहिए? हमसे संपर्क करें।'};
@@ -11888,7 +11886,8 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
     byId('stvnCustomerCareMessage').textContent=data.message||defaults.message;
     actions.replaceChildren();
     const add=(label,href)=>{if(!href)return;const a=document.createElement('a');a.textContent=label;a.href=href;if(href.startsWith('https://')){a.target='_blank';a.rel='noopener noreferrer';}actions.appendChild(a);};
-    const phone=cleanPhone(data.phone),wa=cleanPhone(data.whatsapp).replace(/^\+/,'');
+    const phone=cleanPhone(data.phone),wa=cleanPhone(data.whatsapp).replace(/^\+/,'' );
+    window.stvnCustomerCarePhone=phone;
     window.stvnCustomerCareWhatsApp=wa;
     add('📞 Call Customer Care',phone?'tel:'+phone:'');
     add('💬 WhatsApp',wa?'https://wa.me/'+wa:'');
@@ -12943,20 +12942,22 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
     const map=L.map(el,{zoomControl:true,scrollWheelZoom:false}).setView(hasCustomer?[customerLat,customerLng]:[SHOP_LAT,SHOP_LNG],hasCustomer?13:14);
     window.stvnCustomerDeliveryMap=map;
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
+    const shopIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:25px;filter:drop-shadow(0 1px 2px #777)'>🏪</div>",iconSize:[30,34],iconAnchor:[15,28]});
     const homeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:25px;filter:drop-shadow(0 1px 2px #777)'>🏠</div>",iconSize:[30,34],iconAnchor:[15,28]});
     const bikeIcon=L.divIcon({className:"stvn-map-emoji-marker",html:"<div style='font-size:30px;filter:drop-shadow(0 1px 2px #777)'>🛵</div>",iconSize:[36,38],iconAnchor:[18,30]});
+    const shop=L.marker([SHOP_LAT,SHOP_LNG],{icon:shopIcon}).addTo(map).bindPopup("Vedant Grocery Shop");
     const bounds=[[SHOP_LAT,SHOP_LNG]];
     if(hasCustomer){
       L.marker([customerLat,customerLng],{icon:homeIcon}).addTo(map).bindPopup("Delivery address");
       bounds.push([customerLat,customerLng]);
       const note=document.getElementById("stvn-delivery-map-note");
-      if(note)note.remove();
+      if(note)note.textContent=hasPartner?"Delivery partner की live GPS location map पर update हो रही है.":"Shop से आपके address तक का route दिख रहा है। Delivery partner GPS connect होने का इंतज़ार है.";
       fetch("https://router.project-osrm.org/route/v1/driving/"+SHOP_LNG+","+SHOP_LAT+";"+customerLng+","+customerLat+"?overview=full&geometries=geojson")
         .then(r=>r.ok?r.json():Promise.reject(new Error("Route service unavailable")))
         .then(data=>{if(!window.stvnCustomerDeliveryMap||!data.routes||!data.routes[0])return;const coords=data.routes[0].geometry.coordinates.map(p=>[p[1],p[0]]);L.polyline(coords,{color:"#24965a",weight:5,opacity:.9,dashArray:"9 7"}).addTo(map);map.fitBounds(L.latLngBounds(bounds),{padding:[25,25]});})
         .catch(()=>{if(window.stvnCustomerDeliveryMap){L.polyline([[SHOP_LAT,SHOP_LNG],[customerLat,customerLng]],{color:"#24965a",weight:4,opacity:.85,dashArray:"8 7"}).addTo(map);map.fitBounds(L.latLngBounds(bounds),{padding:[25,25]});}});
     }else{
-      const note=document.getElementById("stvn-delivery-map-note");if(note)note.remove();
+      const note=document.getElementById("stvn-delivery-map-note");if(note)note.textContent="Order में customer GPS location उपलब्ध नहीं है; route नहीं दिखाया जा सकता.";
       map.setView([SHOP_LAT,SHOP_LNG],14);
     }
     if(hasPartner){
@@ -16514,14 +16515,4 @@ body.vg-order-confirmation-open{overflow:hidden!important}
 .stvn-whatsapp-location-button{width:100%;min-height:48px;padding:12px 14px;border:0;border-radius:11px;font-weight:800;cursor:pointer;white-space:normal}
 .stvn-customer-delivery-map{display:block;width:100%;height:260px;min-height:220px;border:0;border-radius:12px;overflow:hidden}
 @media(max-width:700px){.stvn-customer-delivery-map{height:245px;min-height:220px}.stvn-whatsapp-location-button{font-size:14px}.stvn-customer-live-tracking{max-width:100%;overflow:hidden}}
-</style>
-
-
-<style id="stvn-whatsapp-checkout-location-style-v1">
-.stvn-whatsapp-location-share{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0;padding:16px 18px;border:1px solid #cdeed9;border-radius:18px;background:linear-gradient(120deg,#effff4,#e5f8ed);box-shadow:0 7px 20px rgba(18,110,58,.07);color:#145b35}
-.stvn-wa-location-copy{display:flex;flex-direction:column;gap:3px;min-width:0}.stvn-wa-location-copy strong{font-size:17px;font-weight:900}.stvn-wa-location-copy span{font-size:14px;color:#28784b}
-.stvn-whatsapp-location-button{flex:0 0 auto;width:auto;min-height:48px;margin:0;padding:12px 18px;border:0;border-radius:999px;background:#128c4b;color:#fff;font-size:15px;font-weight:900;box-shadow:0 5px 13px rgba(18,140,75,.2)}
-.stvn-whatsapp-location-button:disabled{opacity:.7;cursor:wait}
-.stvn-map-legend{margin-top:10px}
-@media(max-width:520px){.stvn-whatsapp-location-share{align-items:flex-start;flex-direction:column}.stvn-whatsapp-location-button{width:100%}}
 </style>
