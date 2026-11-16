@@ -5157,14 +5157,28 @@ function stvnStartEtaCountdown(order){
   if(stvnEtaInterval){clearInterval(stvnEtaInterval);stvnEtaInterval=null;}
   const el=document.getElementById("stvn-eta-countdown");
   if(!el)return;
-  const meta=stvnDecodeDeliveryValue(order.delivery||order.estimated_delivery_time||"");
-  if(!meta.startedAt||!meta.minutes){el.textContent=meta.label;return;}
-  const endAt=new Date(meta.startedAt).getTime()+meta.minutes*60000;
+  const raw=String(order.delivery||order.estimated_delivery_time||"").trim();
+  const meta=stvnDecodeDeliveryValue(raw);
+  let endAt=0;
+  if(meta.startedAt&&meta.minutes){
+    endAt=new Date(meta.startedAt).getTime()+meta.minutes*60000;
+  }else{
+    // Plain admin ETA such as "20–25 Minutes" has no stored start time.
+    // Anchor the countdown to the database order timestamp, using the upper
+    // end of the stated range so the customer sees a useful live countdown.
+    const placedAt=Date.parse(String(order.order_date||order.created_at||""));
+    const values=(raw.match(/\d+(?:\.\d+)?/g)||[]).map(Number).filter(Number.isFinite);
+    const fallbackMinutes=values.length?Math.max(...values):25;
+    if(Number.isFinite(placedAt))endAt=placedAt+fallbackMinutes*60000;
+  }
   const update=()=>{
+    if(!el.isConnected){if(stvnEtaInterval)clearInterval(stvnEtaInterval);stvnEtaInterval=null;return;}
+    if(!endAt){el.textContent=meta.label||"20–25 Minutes";return;}
     const left=endAt-Date.now();
-    el.textContent=left>0?stvnFormatCountdown(left):"Arriving now";
+    el.textContent=left>0?stvnFormatCountdown(left)+" remaining":"Estimated time reached · order is still in progress";
   };
-  update();stvnEtaInterval=setInterval(update,1000);
+  update();
+  if(endAt> Date.now())stvnEtaInterval=setInterval(update,1000);
 }
 
 /* ================= RENDER CUSTOMER TRACKING ================= */
@@ -5260,14 +5274,36 @@ if (paymentIsConfirmed && !isCancelled) {
 if (isCancelled) html += '<div class="tracking-step" style="color:#ffb9b9;background:#3b2022;border-color:#824448;">❌ Order Cancelled</div>';
 if (isDelivered) html += '<p class="payment-note">✅ This order has been delivered. Live delivery-partner tracking has been closed.</p>';
 
-// Cancellation status is shown in tracking; the single cancel action stays
-// on the upper order card (not duplicated again at the bottom of this panel).
+// Keep the cancellation window visible directly on the Track page.
+// Customer cancellation is available for 2 minutes after order placement,
+// only while the order is pending/confirmed.
+const trackingOrderId=String(order.order_id||order.id||"");
+const trackingPhone=String(order.customer_phone||order.phone||"");
+const cancelRemaining=stvnCustomerCancelTimeRemaining(order.order_date||order.created_at);
+if(!isCancelled && !isDelivered && ["pending","confirmed"].includes(status) && cancelRemaining>0 && trackingOrderId){
+  html += '<div class="stvn-track-cancel-row stvn-track-live-cancel-row">' +
+    '<span>Cancel window · <strong>02:00</strong> left</span>' +
+    '<button type="button" class="order-cancel-button stvn-track-inline-cancel" data-order-created-at="' + escapeAttribute(order.order_date||order.created_at||"") + '" data-order-id="' + escapeAttribute(trackingOrderId) + '">Cancel Order · 02:00</button>' +
+    '</div>';
+}
 if (isCancelled) {
   html += '<div class="vg-customer-cancelled-banner">' + (status === "cancelled_by_admin" ? "CANCELLED BY ADMIN" : "CANCELLED · यह ऑर्डर रद्द हो चुका है") + '</div>';
 }
 
 if(window.stvnCustomerDeliveryMap){window.stvnCustomerDeliveryMap.remove();window.stvnCustomerDeliveryMap=null;window.stvnDeliveryBikeMarker=null;}
 box.innerHTML = html;
+const liveCancelButton=box.querySelector('.stvn-track-live-cancel-row .order-cancel-button');
+if(liveCancelButton){
+  liveCancelButton.addEventListener('click',event=>{
+    event.preventDefault();event.stopPropagation();
+    const id=String(order.order_id||order.id||"");
+    if(typeof window.stvnCancelTrackedCustomerOrder==="function"){
+      window.stvnCancelTrackedCustomerOrder(id,liveCancelButton);
+    }else if(typeof cancelCustomerOrder==="function"){
+      cancelCustomerOrder(id,trackingPhone,liveCancelButton);
+    }
+  });
+}
 if (!isDelivered && !isCancelled) stvnStartEtaCountdown(order);
 if (status === "out_for_delivery" || status === "shipped") {
   if(typeof window.stvnRenderCustomerDeliveryMap === "function") window.stvnRenderCustomerDeliveryMap(order);
@@ -5588,7 +5624,13 @@ function stvnStartCustomerCancelTimers(){
       const cachedOrder=window.stvnCustomerOrdersById?.[orderId];
       if(cachedOrder && !["pending","confirmed"].includes(String(cachedOrder.order_status||"").toLowerCase())){button.remove();return;}
       const remaining=stvnCustomerCancelTimeRemaining(button.dataset.orderCreatedAt);
-      if(remaining<=0){button.remove();return;}
+      if(remaining<=0){
+        const row=button.closest('.stvn-track-cancel-row');
+        if(row && row.classList.contains('stvn-track-live-cancel-row')){
+          row.innerHTML='<span>Cancellation window closed</span><span class="stvn-cancel-expired">00:00</span>';
+        }else button.remove();
+        return;
+      }
       const seconds=Math.ceil(remaining/1000);
       const minutes=String(Math.floor(seconds/60)).padStart(2,"0");
       const rest=String(seconds%60).padStart(2,"0");
@@ -14826,6 +14868,52 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 
 
 
+
+<style id="vedant-mobile-checkout-location-tracking-fix-20261116">
+/* Location screen: keep the detected GPS details readable on narrow phones. */
+#page-location .stvn-location-step-card{display:flex;flex-direction:column;gap:12px}
+#page-location #customer-location-box{width:100%;max-width:100%;min-width:0}
+#page-location #stvnGpsCoordinates{
+  display:block;max-width:100%;min-width:0;margin:12px 0!important;
+  padding:13px!important;border-radius:13px!important;line-height:1.65!important;
+  overflow-wrap:anywhere!important;word-break:break-word!important;
+}
+#page-location #location-status{display:block!important;margin:12px 0!important;line-height:1.55!important;overflow-wrap:anywhere!important}
+#page-location #stvnGpsUpdateButton,#page-location #stvnLocationContinue{
+  width:100%!important;min-height:52px!important;margin:10px 0 0!important;
+  border-radius:14px!important;touch-action:manipulation
+}
+#page-location #stvnLocationContinue[hidden]{display:none!important}
+@media(max-width:600px){
+  #page-location{padding:12px 8px!important}
+  #page-location .checkout-card{padding:16px 13px!important}
+  #page-location .checkout-title{gap:9px;align-items:center;flex-wrap:wrap}
+  #page-location .checkout-title h2{font-size:23px!important}
+  #page-location #stvnGpsCoordinates{font-size:12px!important}
+}
+/* Checkout saved-order notice: separate it from Place Order and prevent clipping/overlap. */
+#page-payment #order-message,#page-payment #order-message *,
+#page-payment #order-message .success,#page-payment #order-message .error{
+  display:block;position:relative;clear:both;float:none;max-width:100%;
+  box-sizing:border-box;white-space:normal;overflow-wrap:anywhere;word-break:break-word;
+  line-height:1.55
+}
+#page-payment #order-message{margin:14px 0 18px!important;padding:0 2px!important;min-height:0!important}
+#page-payment #stvnFinalPlaceOrderButton{display:block;position:relative;clear:both;width:100%;margin:16px 0 8px!important;min-height:54px;z-index:1}
+@media(max-width:600px){
+  #page-payment #order-message{font-size:13px!important;margin:12px 0 20px!important;padding:4px 2px!important}
+  #page-payment #stvnFinalPlaceOrderButton{margin-top:18px!important;min-height:52px!important}
+}
+/* Keep order cards stable while the live GPS values change in the background. */
+#page-track #customer-tracking-orders{min-width:0;contain:layout style}
+#page-track .stvn-track-order-choice{min-width:0;overflow:hidden}
+#page-track .stvn-order-tracking-panel[hidden]{display:none!important}
+@media(max-width:600px){
+  #page-track .stvn-track-order-choice{padding:12px!important;gap:8px!important}
+  #page-track .stvn-order-tracking-panel{padding:10px!important;overflow:hidden!important}
+}
+</style>
+
 </body>
 </html>
 
@@ -16145,7 +16233,9 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     }catch(_e){}
     return ids;
   }
+  let loadMyOrdersSequence=0;
   async function loadMyOrders(){
+    const thisRequest=++loadMyOrdersSequence;
     const user=await getSignedInUser();
     if(!user){activeEmail='';activeUserId='';renderAccountOrders([], '');return [];}
     activeEmail=String(user.email||'').trim().toLowerCase();
@@ -16161,6 +16251,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       const id=String(row.order_id||row.id||'').trim();
       if(id&&!hiddenIds.has(id)&&!unique.has(id))unique.set(id,row);
     });
+    if(thisRequest!==loadMyOrdersSequence)return [];
     const rows=[...unique.values()].filter(row=>!['cancelled','cancelled_by_admin','delivered'].includes(String(row.order_status||'').toLowerCase()));
     renderAccountOrders(rows,activeEmail);
     return rows;
@@ -16257,7 +16348,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     const statusBox=byId('tracking-status');
     if(statusBox){statusBox.hidden=true;statusBox.innerHTML=''}
     if(!rows.length){lastRenderedSignature='';list.innerHTML='<div class="history-item"><strong>No orders yet</strong><p>Your orders will appear here after you place an order while signed in.</p></div>';return}
-    const signature=rows.map(o=>[o.order_id||o.id,o.order_status,o.payment_status,o.latitude,o.longitude,o.delivery_boy_latitude,o.delivery_boy_longitude,o.delivery,o.total].join(':')).join('|');
+    const signature=rows.map(o=>[o.order_id||o.id,o.order_status,o.payment_status,o.delivery,o.total].join(':')).join('|');
     if(signature===lastRenderedSignature)return;
     const previouslyOpen=list.querySelector('.stvn-order-tracking-panel:not([hidden])')?.dataset.orderId||'';
     list.replaceChildren();lastRenderedSignature=signature;
@@ -16698,16 +16789,16 @@ window.requestCustomerLocation=function(){
    if(a)a.textContent='Latitude: '+lat.toFixed(6);
    if(b)b.textContent='Longitude: '+lng.toFixed(6);
    if(c)c.textContent='आपके घर से दुकान की दूरी: '+distance.toFixed(2)+' km  |  GPS accuracy: लगभग '+Math.round(accuracy)+' m';
-   if(details){details.hidden=false;details.style.display='block';}
+   if(details){details.hidden=false;details.style.setProperty('display','block','important');details.style.setProperty('visibility','visible','important');details.style.setProperty('opacity','1','important');}
    if(status){status.textContent=allowed?'✅ लोकेशन अपडेट हो गई। आपके घर से दुकान की दूरी '+distance.toFixed(2)+' km है। डिलीवरी उपलब्ध है।':'❌ आपके घर से दुकान की दूरी '+distance.toFixed(2)+' km है। डिलीवरी केवल 5 km के अंदर उपलब्ध है।';status.className=allowed?'location-success':'error';}
-   if(next){next.hidden=!allowed;next.style.display=allowed?'block':'none';}
-   if(btn){btn.disabled=false;btn.textContent='↻ Update Location';}
+   if(next){next.hidden=!allowed;next.style.setProperty('display',allowed?'block':'none','important');next.textContent='Continue';}
+   if(btn){btn.disabled=false;if(allowed){btn.hidden=true;btn.style.setProperty('display','none','important');}else{btn.hidden=false;btn.style.setProperty('display','block','important');btn.textContent='↻ Update Location';}}
    if(typeof updateCart==='function')updateCart();
  },err=>{
    console.warn('Checkout GPS error',err);
    if(status){status.textContent=err.code===1?'लोकेशन की अनुमति नहीं मिली। iPhone/Browser Settings में Location Allow करके फिर कोशिश करें।':'लोकेशन नहीं मिल सकी। GPS चालू करके दोबारा Update Location दबाएँ।';status.className='error';}
-   if(btn){btn.disabled=false;btn.textContent='↻ Update Location';}
-   if(details){details.hidden=true;details.style.display='none';}
+   if(btn){btn.disabled=false;btn.hidden=false;btn.style.setProperty('display','block','important');btn.textContent='↻ Update Location';}
+   if(details){details.hidden=true;details.style.setProperty('display','none','important');}
    if(next){next.hidden=true;next.style.display='none';}
  },{enableHighAccuracy:true,timeout:25000,maximumAge:0});
 };
@@ -16743,3 +16834,13 @@ function init(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
+
+
+<style id="vg-tracking-timer-cancel-visible-mobile-fix-20261116">
+/* Restore the cancellation strip on Track page; an older mobile rule hid it. */
+#page-track .stvn-track-cancel-row.stvn-track-live-cancel-row{display:flex!important;visibility:visible!important;opacity:1!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex-wrap:wrap!important;width:100%!important;box-sizing:border-box!important;margin:12px 0!important;padding:11px 12px!important;border:1px solid #d58b91!important;border-radius:12px!important;background:#fff0f1!important;color:#78242c!important;font-size:13px!important;font-weight:850!important}
+#page-track .stvn-track-live-cancel-row .order-cancel-button{display:inline-flex!important;visibility:visible!important;align-items:center!important;justify-content:center!important;min-width:116px!important;min-height:40px!important;padding:8px 12px!important;border:0!important;border-radius:9px!important;background:#b42332!important;color:#fff!important;font-size:12px!important;font-weight:900!important;white-space:nowrap!important;touch-action:manipulation}
+#page-track .stvn-track-live-cancel-row .stvn-cancel-expired{font-weight:950!important}
+#page-track #stvn-eta-countdown{display:inline-block!important;min-width:100px!important;font-variant-numeric:tabular-nums!important}
+@media(max-width:600px){#page-track .stvn-track-cancel-row.stvn-track-live-cancel-row{align-items:stretch!important;flex-direction:column!important;font-size:12px!important;padding:10px!important}#page-track .stvn-track-live-cancel-row .order-cancel-button{width:100%!important;min-height:42px!important;font-size:13px!important}}
+</style>
