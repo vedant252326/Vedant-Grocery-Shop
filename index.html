@@ -5345,16 +5345,10 @@ if (paymentIsConfirmed && !isCancelled) {
 if (isCancelled) html += '<div class="tracking-step" style="color:#ffb9b9;background:#3b2022;border-color:#824448;">❌ Order Cancelled</div>';
 if (isDelivered) html += '<p class="payment-note">✅ This order has been delivered. Live delivery-partner tracking has been closed.</p>';
 
-// Keep the compact cancel control visible inside the expanded Track Order panel.
-const trackingOrderId = String(order.order_id || order.id || "").trim();
-const canCancelFromTracking = !isDelivered && !isCancelled &&
-  ["pending", "confirmed"].includes(status) &&
-  typeof stvnCustomerCancelTimeRemaining === "function" &&
-  stvnCustomerCancelTimeRemaining(order.order_date) > 0;
+// Cancellation status is shown in tracking; the single cancel action stays
+// on the upper order card (not duplicated again at the bottom of this panel).
 if (isCancelled) {
   html += '<div class="vg-customer-cancelled-banner">' + (status === "cancelled_by_admin" ? "CANCELLED BY ADMIN" : "CANCELLED · यह ऑर्डर रद्द हो चुका है") + '</div>';
-} else if (canCancelFromTracking && trackingOrderId) {
-  html += `<div class="stvn-track-cancel-row"><span>Cancel available</span><button type="button" class="order-cancel-button stvn-track-inline-cancel" data-order-created-at="${escapeAttribute(order.order_date || "")}" onclick="event.stopPropagation();window.stvnCancelTrackedCustomerOrder('${escapeAttribute(trackingOrderId)}',this)">Cancel · 02:00</button></div>`;
 }
 
 box.innerHTML =
@@ -5484,7 +5478,6 @@ async function placeOrder(){
       cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
       saveData(); updateCart(); showOrderHistory();
       showOrderConfirmation(order);
-      setTimeout(openNewestOrderTrackingAfterCheckout,500);
       if(typeof window.refreshVedantWalletBalance==="function"){try{await window.refreshVedantWalletBalance();}catch(refreshError){console.warn("Wallet balance refresh after successful payment failed:",refreshError);}}
       return;
     }
@@ -5589,7 +5582,6 @@ async function saveVedantOrder(order,customerEmail){
       message.innerHTML=`<span class="success">✅ यह order पहले से save है। Duplicate entry नहीं बनाई गई।<br>🧾 Order ID: ${escapeHtml(order.id)}</span>`;
       cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
       saveData(); updateCart(); showOrderHistory(); showOrderConfirmation(order);
-      setTimeout(openNewestOrderTrackingAfterCheckout,500);
       return;
     }
   }catch(duplicateLookupError){console.warn("Order duplicate pre-check skipped:",duplicateLookupError);}
@@ -5616,13 +5608,17 @@ async function saveVedantOrder(order,customerEmail){
   cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
   saveData(); updateCart(); showOrderHistory();
   showOrderConfirmation(order);
-  setTimeout(openNewestOrderTrackingAfterCheckout,500);
 }
 
 function showOrderConfirmation(order){
   const modal=document.getElementById("order-confirmation-modal");
   if(!modal) return;
-  
+  // Keep the confirmation dialog attached to body, not the payment page that gets hidden.
+  if(modal.parentElement!==document.body)document.body.appendChild(modal);
+  modal.setAttribute('role','dialog');
+  modal.setAttribute('aria-modal','true');
+  modal.setAttribute('aria-label','Order confirmation');
+  document.body.classList.add('vg-order-confirmation-open');
   document.getElementById("confirmation-order-id").textContent="Order ID: "+order.id;
   document.getElementById("conf-payment").textContent=order.payment;
   document.getElementById("conf-status").textContent=order.order_status;
@@ -5633,12 +5629,14 @@ function showOrderConfirmation(order){
 function closeOrderConfirmation(){
   const modal=document.getElementById("order-confirmation-modal");
   if(modal) modal.classList.remove("show");
+  document.body.classList.remove('vg-order-confirmation-open');
   showPage("shop");
 }
 
 function goToTracking(){
   const modal=document.getElementById("order-confirmation-modal");
   if(modal) modal.classList.remove("show");
+  document.body.classList.remove('vg-order-confirmation-open');
   if(typeof window.showPage==="function")window.showPage("track");
   setTimeout(()=>{document.getElementById("tracking-status")?.scrollIntoView({behavior:"smooth",block:"nearest"});},120);
 }
@@ -5990,7 +5988,13 @@ async function cancelCustomerOrder(orderId,phone,button){
       .select("order_id")
       .maybeSingle();
     if(updateError)throw updateError;
-    if(!updatedOrder)throw new Error("Order status बदल गया है। Orders refresh करके फिर कोशिश करें।");
+    if(!updatedOrder){
+      const {data:verifyOrder,error:verifyError}=await supabaseClient.from("orders")
+        .select("order_status").eq("order_id",cleanOrderId).eq(identityColumn,identityValue).maybeSingle();
+      if(verifyError)throw verifyError;
+      if(String(verifyOrder?.order_status||"").toLowerCase()!=="cancelled")
+        throw new Error("Order is still active. Please refresh and try again.");
+    }
 
     document.querySelectorAll(".order-cancel-button").forEach(el=>{const card=el.closest("[data-order-id]");if(card?.dataset.orderId===cleanOrderId)el.remove();});
     const localOrder=orderHistory.find(item=>String(item.order_id||item.id||"")===cleanOrderId);
@@ -6002,7 +6006,7 @@ async function cancelCustomerOrder(orderId,phone,button){
     }
 
     try{await showOrderHistory();}catch(refreshError){console.warn("Order cancelled; history refresh will retry:",refreshError);}
-    window.stvnAlert("✅ आपका order cancel हो गया है।");
+    window.stvnAlert("Order cancelled successfully.");
   }catch(error){
     console.error("Customer order cancellation failed:",error);
     window.stvnAlert("❌ Order cancel नहीं हुआ: "+String(error.message||"कृपया फिर कोशिश करें।"));
@@ -12877,6 +12881,22 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
 })();
 </script>
 
+
+<style id="vg-final-mobile-orders-cancel-fix">
+@media(max-width:700px){
+  #page-orders,#page-track{width:100%;max-width:100%;overflow-x:hidden;padding-left:10px!important;padding-right:10px!important;box-sizing:border-box}
+  #page-orders .history-item,#page-track .stvn-track-order-choice{width:100%;max-width:100%;min-width:0!important;box-sizing:border-box;margin:9px 0!important;padding:12px!important;border-radius:14px!important}
+  #page-orders .history-item *,#page-track .stvn-track-order-choice *{max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+  #page-orders .stvn-track-order-head,#page-track .stvn-track-order-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  #page-orders .stvn-track-order-meta,#page-track .stvn-track-order-meta{line-height:1.5;font-size:12px!important}
+  #page-orders .order-cancel-button,#page-track .order-cancel-button{min-height:42px!important;padding:9px 14px!important;font-size:13px!important;touch-action:manipulation}
+  #page-orders .stvn-track-cancel-row,#page-track .stvn-track-cancel-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap}
+  #page-orders .stvn-order-tracking-panel,#page-track .stvn-order-tracking-panel{width:100%;min-width:0;overflow:hidden}
+  #order-confirmation-modal{padding:10px!important;align-items:center!important}
+  #order-confirmation-modal .order-confirmation-content{width:100%!important;max-width:460px!important;max-height:calc(100dvh - 20px)!important;padding:18px!important;border-radius:18px!important}
+}
+</style>
+
 </body>
 <style id="stvn-final-design-status-overrides">
 .stvn-delivery-location-card{background:linear-gradient(125deg,#c9f7e3 0%,#cfe8ff 52%,#e7d8ff 100%)!important;border:1px solid #83bce5!important;color:#153e63!important;box-shadow:0 14px 34px rgba(32,70,120,.2)!important}
@@ -13432,6 +13452,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   'Enter your name':'अपना नाम दर्ज करें','Enter mobile number':'मोबाइल नंबर दर्ज करें','Enter delivery address':'डिलीवरी का पता दर्ज करें',
   'Your Name':'आपका नाम','Mobile Number':'मोबाइल नंबर','Delivery Address':'डिलीवरी का पता','Delivery Location':'डिलीवरी लोकेशन',
   'Sign in to view your orders automatically.':'ट्रैकिंग देखने के लिए अपना मोबाइल नंबर दर्ज करें और ऑर्डर चुनें।',
+  'Order Confirmed!':'ऑर्डर की पुष्टि हो गई!','Your order has been received successfully':'आपका ऑर्डर सफलतापूर्वक प्राप्त हो गया है',
+  'Continue Shopping':'खरीदारी जारी रखें','Track Order':'ऑर्डर ट्रैक करें','Order ID:':'ऑर्डर आईडी:','Payment:':'भुगतान:','Status:':'स्थिति:',
+  'Current Order':'मौजूदा ऑर्डर','Current & Recent Orders':'सिर्फ लाइव ऑर्डर','Previous Order':'पिछला ऑर्डर','No orders yet':'अभी कोई लाइव ऑर्डर नहीं है',
+  'Your orders will appear here after you place an order while signed in.':'लॉगिन करके ऑर्डर करने के बाद आपका लाइव ऑर्डर यहाँ दिखेगा।',
+  'Cancel window':'कैंसल करने का समय','Cancel · 02:00':'कैंसल · 02:00','Cancelling…':'कैंसल हो रहा है…',
+  'CANCELLED BY ADMIN':'एडमिन द्वारा कैंसल','CANCELLED · यह ऑर्डर रद्द हो चुका है':'ऑर्डर कैंसल हो गया है',
+  'Total:':'कुल:','Payment:':'भुगतान:','Not specified':'उल्लेख नहीं है','Date unavailable':'तारीख उपलब्ध नहीं',
   'Enter your 10-digit mobile number':'अपना 10 अंकों का मोबाइल नंबर दर्ज करें','Find My Orders':'मेरे ऑर्डर खोजें',
   'No Orders':'कोई ऑर्डर नहीं','Your Orders':'आपके ऑर्डर','Track this order':'इस ऑर्डर को ट्रैक करें',
   'Proceed to Delivery Details':'डिलीवरी विवरण पर जाएँ','Choose your groceries and add them to your cart.':'अपना किराना चुनें और कार्ट में जोड़ें।'
@@ -13468,6 +13495,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  'Saved Addresses':'सेव किए गए पते','Add New Address':'नया पता जोड़ें','Delivery Details':'डिलीवरी विवरण','Use Current Location':'वर्तमान लोकेशन इस्तेमाल करें'
  };
  Object.assign(dict,walletDict);
+ Object.assign(dict,{'Order cancelled successfully.':'ऑर्डर सफलतापूर्वक कैंसल हो गया है।','Order is still active. Please refresh and try again.':'ऑर्डर अभी सक्रिय है। रीफ्रेश करके फिर कोशिश करें।'});
  const bnDict={
   'My Account':'আমার অ্যাকাউন্ট','My Profile':'আমার প্রোফাইল','My Orders':'আমার অর্ডার','My Address':'আমার ঠিকানা','Customer Care':'গ্রাহক সহায়তা','Log out':'লগ আউট','Shop':'দোকান','Home':'হোম','Cart':'কার্ট','Wishlist':'পছন্দের তালিকা','Search':'খুঁজুন','Add to Cart':'কার্টে যোগ করুন','Buy Now':'এখনই কিনুন','Checkout':'চেকআউট','Delivery Details':'ডেলিভারির বিবরণ','Review Your Order':'আপনার অর্ডার যাচাই করুন','Place Order':'অর্ডার করুন','Order History':'অর্ডারের ইতিহাস','Payment Method':'পেমেন্টের পদ্ধতি','Cash on Delivery':'ক্যাশ অন ডেলিভারি','UPI Payment':'UPI পেমেন্ট','Saved Addresses':'সংরক্ষিত ঠিকানা','Add New Address':'নতুন ঠিকানা যোগ করুন','Save This Address':'এই ঠিকানা সংরক্ষণ করুন','Save this address to my account':'এই ঠিকানা আমার অ্যাকাউন্টে সংরক্ষণ করুন','Select Address':'ঠিকানা নির্বাচন করুন','Continue':'চালিয়ে যান','Continue Shopping':'কেনাকাটা চালিয়ে যান','Apply':'প্রয়োগ করুন','Remove':'সরান','Total':'মোট','Subtotal':'সাবটোটাল','Delivery Charge':'ডেলিভারি চার্জ','My Wallet':'আমার ওয়ালেট','Withdrawal Status':'টাকা তোলার অবস্থা','Available Balance':'উপলব্ধ ব্যালেন্স','Your Name':'আপনার নাম','Mobile Number':'মোবাইল নম্বর','Full Address':'সম্পূর্ণ ঠিকানা','Pincode':'পিনকোড','Landmark':'ল্যান্ডমার্ক','Current Location':'বর্তমান অবস্থান','Use Current Location':'বর্তমান অবস্থান ব্যবহার করুন','Save':'সংরক্ষণ করুন','Cancel':'বাতিল','Close':'বন্ধ করুন','Refresh':'রিফ্রেশ','All Products':'সব পণ্য','Categories':'বিভাগ','Offers':'অফার','Terms & Conditions':'শর্তাবলী','Privacy Policy':'গোপনীয়তা নীতি','Under 10 Minutes':'১০ মিনিটের মধ্যে','Order Placed':'অর্ডার সম্পন্ন','Track Order':'অর্ডার ট্র্যাক করুন','Account Balance':'অ্যাকাউন্ট ব্যালেন্স','Vedant Wallet':'বেদান্ত ওয়ালেট','A secure wallet for your grocery orders':'আপনার মুদি অর্ডারের জন্য নিরাপদ ওয়ালেট','Available Wallet Balance':'উপলব্ধ ওয়ালেট ব্যালেন্স','Your verified balance will appear here':'আপনার যাচাই করা ব্যালেন্স এখানে দেখা যাবে','Add Money':'টাকা যোগ করুন','Withdraw Money':'টাকা তুলুন','Wallet Status':'ওয়ালেটের অবস্থা','Save for Future':'ভবিষ্যতের জন্য সংরক্ষণ করুন','Add New UPI':'নতুন UPI যোগ করুন','Add New Bank':'নতুন ব্যাংক অ্যাকাউন্ট যোগ করুন','Saved Payment Accounts':'সংরক্ষিত পেমেন্ট অ্যাকাউন্ট','Account Holder Name':'অ্যাকাউন্টধারীর নাম','Amount (₹)':'পরিমাণ (₹)','Bank Account':'ব্যাংক অ্যাকাউন্ট','Bank Account Number':'ব্যাংক অ্যাকাউন্ট নম্বর','IFSC Code':'IFSC কোড','Submit Withdrawal Request':'টাকা তোলার অনুরোধ জমা দিন','Transaction History':'লেনদেনের ইতিহাস','Refresh Status':'অবস্থা রিফ্রেশ করুন','No verified transactions yet.':'এখনও যাচাই করা কোনো লেনদেন নেই।','Money Added':'টাকা যোগ হয়েছে','Money Debited':'টাকা কাটা হয়েছে','Shop Now':'এখনই কিনুন','View All':'সব দেখুন','View All Products':'সব পণ্য দেখুন','Fresh & Local Groceries':'তাজা স্থানীয় মুদি পণ্য','at Your Doorstep':'আপনার দোরগোড়ায়','Delivering to':'ডেলিভারি হবে','Update location':'অবস্থান আপডেট করুন','Search for products...':'পণ্য খুঁজুন...','Choose your groceries and add them to your cart.':'আপনার পছন্দের মুদি পণ্য কার্টে যোগ করুন।','Review items before checkout.':'চেকআউটের আগে পণ্য যাচাই করুন।','Back':'ফিরে যান'
  };
@@ -13477,6 +13505,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 Object.assign(enDict, {'डिलीवरी का पता': 'Delivery Address', 'डिलीवरी लोकेशन': 'Delivery Location', 'वर्तमान लोकेशन': 'Current Location', 'वर्तमान लोकेशन इस्तेमाल करें': 'Use Current Location', 'अपना नाम दर्ज करें': 'Enter your name', 'मोबाइल नंबर दर्ज करें': 'Enter your mobile number', 'डिलीवरी का पता दर्ज करें': 'Enter delivery address', 'अपना पूरा डिलीवरी पता दर्ज करें': 'Enter your complete delivery address', 'आपका नाम': 'Your Name', 'पूरा नाम': 'Full Name', 'मोबाइल नंबर': 'Mobile Number', 'पूरा पता': 'Full Address', 'पता चुनें': 'Select Address', 'सेव किए गए पते': 'Saved Addresses', 'नया पता जोड़ें': 'Add New Address', 'पता सेव करें': 'Save Address', 'सेव करें': 'Save', 'रद्द करें': 'Cancel', 'जारी रखें': 'Continue', 'वर्तमान लोकेशन ली जा रही है...': 'Getting current location...', 'इस browser में location support नहीं है।': 'This browser does not support location.', 'Current location मिल गई।': 'Current location received.', 'Shop से दूरी:': 'Distance from shop:', 'आपकी location shop से ': 'Your location is ', 'दूर है.': 'away.', 'Delivery radius सिर्फ 5 km है.': 'Delivery radius is only 5 km.', 'Location नहीं मिली। Address से order continue किया जा सकता है.': 'Location not received. You can continue your order using your address.', 'Order total और delivery charge दिखाने के लिए current location की permission दें.': 'Allow location access to show the order total and delivery charge.', 'Current location order के साथ save होगी.': 'Current location will be saved with your order.', 'डिलीवरी विवरण': 'Delivery Details', 'डिलीवरी विवरण पर जाएँ': 'Proceed to Delivery Details', 'सेव्ड पता चुन लिया गया है।': 'Saved address selected.', 'आपका पूरा डिलीवरी पता दर्ज करें': 'Enter your complete delivery address', '📍 Delivery Location': '📍 Delivery Location'});
  
+ Object.assign(bnDict,{'Order cancelled successfully.':'অর্ডার সফলভাবে বাতিল হয়েছে।','Order is still active. Please refresh and try again.':'অর্ডারটি এখনও সক্রিয়। রিফ্রেশ করে আবার চেষ্টা করুন।'});
  Object.assign(bnDict,{
   'Enter your name':'আপনার নাম লিখুন','Enter mobile number':'মোবাইল নম্বর লিখুন','Enter delivery address':'ডেলিভারির ঠিকানা লিখুন',
   'Your Name':'আপনার নাম','Mobile Number':'মোবাইল নম্বর','Delivery Address':'ডেলিভারির ঠিকানা','Delivery Location':'ডেলিভারির অবস্থান',
@@ -13485,6 +13514,7 @@ Object.assign(enDict, {'डिलीवरी का पता': 'Delivery Addre
   'No Orders':'কোনো অর্ডার নেই','Your Orders':'আপনার অর্ডার','Track this order':'এই অর্ডার ট্র্যাক করুন',
   'Proceed to Delivery Details':'ডেলিভারির বিবরণে যান'
  });
+ Object.assign(enDict,{'ऑर्डर सफलतापूर्वक कैंसल हो गया है।':'Order cancelled successfully.','ऑर्डर अभी सक्रिय है। रीफ्रेश करके फिर कोशिश करें।':'Order is still active. Please refresh and try again.'});
  Object.assign(enDict,{
   'अपना नाम दर्ज करें':'Enter your name','मोबाइल नंबर दर्ज करें':'Enter mobile number','डिलीवरी का पता दर्ज करें':'Enter delivery address',
   'आपका नाम':'Your Name','मोबाइल नंबर':'Mobile Number','डिलीवरी का पता':'Delivery Address','डिलीवरी लोकेशन':'Delivery Location',
@@ -16056,7 +16086,10 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     const c=client();if(!c)return [];
     const {data,error}=await c.from('orders').select('*').eq('customer_email',email).order('order_date',{ascending:false});
     if(error){console.warn('Account-linked order list:',error.message);return []}
-    return stvnUniqueOrdersById(Array.isArray(data)?data:[]);
+    const terminalStatuses=new Set(['cancelled','cancelled_by_admin','delivered','completed','complete','fulfilled','rejected','refunded','returned']);
+    return stvnUniqueOrdersById(Array.isArray(data)?data:[]).filter(row=>
+      !terminalStatuses.has(String(row.order_status||'pending').trim().toLowerCase().replace(/[\s-]+/g,'_'))
+    );
   }
   async function fetchHiddenOrderIds(userId,email){
     const c=client();
@@ -16091,7 +16124,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       const id=String(row.order_id||row.id||'').trim();
       if(id&&!hiddenIds.has(id)&&!unique.has(id))unique.set(id,row);
     });
-    const rows=[...unique.values()];
+    const rows=[...unique.values()].filter(row=>!['cancelled','cancelled_by_admin','delivered'].includes(String(row.order_status||'').toLowerCase()));
     renderAccountOrders(rows,activeEmail);
     return rows;
   }
@@ -16119,7 +16152,13 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       const {data,error}=await c.from('orders').update({order_status:'cancelled'})
         .eq('order_id',id).eq('customer_email',email).in('order_status',['pending','confirmed']).select('order_id');
       if(error)throw error;
-      if(!Array.isArray(data)||!data.length)throw new Error('Order status बदल गया है। Refresh करके फिर कोशिश करें।');
+      if(!Array.isArray(data)||!data.length){
+        const {data:verifyRows,error:verifyError}=await c.from('orders').select('order_status')
+          .eq('order_id',id).eq('customer_email',email).limit(20);
+        if(verifyError)throw verifyError;
+        if(!verifyRows?.length||!verifyRows.every(row=>String(row.order_status||'').toLowerCase()==='cancelled'))
+          throw new Error('Order is still active. Please refresh and try again.');
+      }
       // Stop every copy of this order's countdown immediately after confirmed cancellation.
       document.querySelectorAll('.order-cancel-button').forEach(el=>{
         const card=el.closest('[data-order-id]');
@@ -16128,7 +16167,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
       const cached=window.stvnCustomerOrdersById?.[id];if(cached)cached.order_status='cancelled';
       try{await loadMyOrders();}catch(refreshError){console.warn('Order cancelled; list refresh will retry:',refreshError);}
       try{if(typeof window.stvnRefreshLiveOrderBar==='function')await window.stvnRefreshLiveOrderBar();}catch(refreshError){console.warn('Live bar refresh after cancellation:',refreshError);}
-      window.stvnAlert('✅ आपका order cancel हो गया है।');
+      window.stvnAlert('Order cancelled successfully.');
     }catch(error){
       console.error('Tracking cancellation failed:',error);
       window.stvnAlert('❌ Order cancel नहीं हुआ: '+String(error.message||error));
@@ -16176,6 +16215,8 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
   let lastRenderedSignature='';
   function renderAccountOrders(rows,email){
     const list=ensureOrderList();if(!list)return;
+    const terminalStatuses=new Set(['cancelled','cancelled_by_admin','delivered','completed','complete','fulfilled','rejected','refunded','returned']);
+    rows=(Array.isArray(rows)?rows:[]).filter(order=>!terminalStatuses.has(String(order.order_status||'pending').trim().toLowerCase().replace(/[\s-]+/g,'_')));
     const statusBox=byId('tracking-status');
     if(statusBox){statusBox.hidden=true;statusBox.innerHTML=''}
     if(!rows.length){lastRenderedSignature='';list.innerHTML='<div class="history-item"><strong>No orders yet</strong><p>Your orders will appear here after you place an order while signed in.</p></div>';return}
@@ -16423,3 +16464,28 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
  #page-orders .stvn-my-orders-delete{display:inline-flex!important}
 }
 </style>
+
+<style id="vg-order-confirmation-live-current-v3">
+/* Confirmation must sit above every page and remain visible on phones. */
+#order-confirmation-modal{position:fixed!important;inset:0!important;z-index:2147483000!important;display:none;align-items:center!important;justify-content:center!important;padding:16px!important;box-sizing:border-box!important;overflow-y:auto!important;background:rgba(0,0,0,.72)!important;overscroll-behavior:contain!important}
+#order-confirmation-modal.show{display:flex!important}
+#order-confirmation-modal .order-confirmation-content{width:min(100%,500px)!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;box-sizing:border-box!important;margin:auto!important}
+body.vg-order-confirmation-open{overflow:hidden!important}
+@media(max-width:700px){
+ #order-confirmation-modal{padding:12px!important;align-items:center!important}
+ #order-confirmation-modal .order-confirmation-content{width:100%!important;max-width:440px!important;max-height:calc(100dvh - 24px)!important;padding:22px 16px!important;border-radius:18px!important}
+ #order-confirmation-modal .order-confirmation-icon{font-size:56px!important;margin:0 0 8px!important}
+ #order-confirmation-modal .order-confirmation-title{font-size:clamp(22px,6vw,30px)!important;margin:8px 0!important}
+ #order-confirmation-modal .order-confirmation-message{font-size:14px!important}
+ #order-confirmation-modal .order-confirmation-id{font-size:15px!important;padding:12px 8px!important}
+ #order-confirmation-modal .order-confirmation-buttons{display:flex!important;flex-direction:column!important;gap:9px!important;margin-top:16px!important}
+ #order-confirmation-modal .order-confirmation-btn{width:100%!important;min-height:46px!important;padding:12px!important;font-size:15px!important}
+}
+</style>
+<script id="vg-order-confirmation-body-mount-v3">
+(function(){
+ const mount=()=>{const modal=document.getElementById('order-confirmation-modal');if(modal&&modal.parentElement!==document.body)document.body.appendChild(modal);};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+
