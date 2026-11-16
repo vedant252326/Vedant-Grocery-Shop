@@ -4199,60 +4199,38 @@ function requestCustomerLocation(){
   const status=document.getElementById("location-status");
   const details=document.getElementById("stvnGpsCoordinates");
   const continueButton=document.getElementById("stvnLocationContinue");
-  const updateButton=document.getElementById("stvnGpsUpdateButton");
-  if(continueButton){continueButton.hidden=true;continueButton.style.display="none";continueButton.disabled=true;}
-  if(details){details.style.display="block";details.innerHTML='<strong>Location details</strong><div class="stvn-location-loading">Getting your current location… Please allow GPS access.</div>';}
-  if(status){status.textContent="Getting your current location… Please allow GPS access.";status.className="payment-note";}
-  if(updateButton){updateButton.disabled=true;updateButton.textContent="Getting location…";}
+  if(continueButton){continueButton.hidden=true;continueButton.style.display="none";}
+  if(details)details.style.display="none";
   if(!navigator.geolocation){
-    if(status){status.textContent="GPS is not supported by this browser. Please use a GPS-enabled browser.";status.className="error";}
-    if(details)details.innerHTML='<strong>Location unavailable</strong><p>GPS is not supported by this browser.</p>';
-    if(updateButton){updateButton.disabled=false;updateButton.textContent="Update Location";}
+    if(status){status.textContent="GPS location is not supported by this browser.";status.className="error";}
     return;
   }
+  if(status){status.textContent="Getting your current location… Please allow location access.";status.className="payment-note";}
   navigator.geolocation.getCurrentPosition(position=>{
     customerLatitude=Number(position.coords.latitude);
     customerLongitude=Number(position.coords.longitude);
-    if(typeof syncCustomerLocationToWindow==='function')syncCustomerLocationToWindow();
     const radiusCheck=checkDeliveryRadius();
-    const distance=Number(radiusCheck.distance);
-    const inside=Boolean(radiusCheck.allowed)&&Number.isFinite(distance)&&distance<=5;
-    const lat=customerLatitude.toFixed(6),lng=customerLongitude.toFixed(6);
-    const shopDistance=Number.isFinite(distance)?distance.toFixed(2)+" km":"Unavailable";
-    if(details){
-      details.innerHTML='<strong>Delivery Location Details</strong>'+
-        '<div><b>Latitude:</b> '+lat+'</div><div><b>Longitude:</b> '+lng+'</div>'+
-        '<div><b>Distance from shop:</b> '+shopDistance+'</div>'+
-        '<div class="stvn-radius-result '+(inside?'is-available':'is-unavailable')+'">'+
-        (inside?'✓ Delivery Available — within 5 km':'✕ Out of Range — delivery is not available beyond 5 km')+'</div>';
-      details.style.display="block";
+    const lat=document.getElementById("stvnGpsLat");
+    const lng=document.getElementById("stvnGpsLng");
+    const distance=document.getElementById("stvnGpsDistance");
+    if(lat)lat.textContent="Latitude: "+customerLatitude.toFixed(6);
+    if(lng)lng.textContent="Longitude: "+customerLongitude.toFixed(6);
+    if(distance)distance.textContent="Distance from shop: "+radiusCheck.distance.toFixed(2)+" km";
+    if(details)details.style.display="block";
+    if(radiusCheck.allowed){
+      if(status){status.textContent="Location updated successfully. Your delivery location is within the 5 km service area.";status.className="location-success";}
+      if(continueButton){continueButton.hidden=false;continueButton.style.display="block";}
+    }else{
+      if(status){status.textContent="Delivery is currently unavailable at this location. The shop delivers within a 5 km radius.";status.className="error";}
     }
-    if(status){
-      status.textContent=inside
-        ? "Location updated successfully. Delivery is available at your location."
-        : "Out of Range. Delivery is available only within 5 km of the shop.";
-      status.className=inside?"location-success":"error";
-    }
-    if(continueButton){
-      continueButton.hidden=!inside;
-      continueButton.style.display=inside?"block":"none";
-      continueButton.disabled=!inside;
-    }
-    if(updateButton){updateButton.disabled=false;updateButton.textContent="Update Location";}
-    if(typeof updateCart==='function')updateCart();
+    updateCart();
   },error=>{
     console.warn("GPS location error:",error);
     customerLatitude=null;customerLongitude=null;
-    if(status){
-      status.textContent=error&&error.code===1
-        ? "Location permission denied. Please allow location access and try again."
-        : "Unable to get your location. Turn on GPS and try again.";
-      status.className="error";
-    }
-    if(details){details.innerHTML='<strong>Location not available</strong><p>Please enable GPS/location permission and tap Update Location again.</p>';details.style.display="block";}
-    if(continueButton){continueButton.hidden=true;continueButton.style.display="none";continueButton.disabled=true;}
-    if(updateButton){updateButton.disabled=false;updateButton.textContent="Try Again — Update Location";}
-  },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+    if(status){status.textContent="Unable to get your location. Please enable GPS/location permission and try again.";status.className="error";}
+    if(details)details.style.display="none";
+    if(continueButton){continueButton.hidden=true;continueButton.style.display="none";}
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 
 async function getCustomerLocationForOrder(){
@@ -5179,12 +5157,9 @@ function stvnStartEtaCountdown(order){
   if(stvnEtaInterval){clearInterval(stvnEtaInterval);stvnEtaInterval=null;}
   const el=document.getElementById("stvn-eta-countdown");
   if(!el)return;
-  const meta=stvnDecodeDeliveryValue(order.delivery||order.estimated_delivery_time||"20–25 Minutes");
-  const minutes=meta.minutes||20;
-  const anchor=meta.startedAt||order.order_date||order.created_at||order.date||"";
-  const started=Date.parse(String(anchor));
-  if(!Number.isFinite(started)){el.textContent=meta.label||"20–25 Minutes";return;}
-  const endAt=started+minutes*60000;
+  const meta=stvnDecodeDeliveryValue(order.delivery||order.estimated_delivery_time||"");
+  if(!meta.startedAt||!meta.minutes){el.textContent=meta.label;return;}
+  const endAt=new Date(meta.startedAt).getTime()+meta.minutes*60000;
   const update=()=>{
     const left=endAt-Date.now();
     el.textContent=left>0?stvnFormatCountdown(left):"Arriving now";
@@ -16282,7 +16257,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
     const statusBox=byId('tracking-status');
     if(statusBox){statusBox.hidden=true;statusBox.innerHTML=''}
     if(!rows.length){lastRenderedSignature='';list.innerHTML='<div class="history-item"><strong>No orders yet</strong><p>Your orders will appear here after you place an order while signed in.</p></div>';return}
-    const signature=rows.map(o=>[o.order_id||o.id,o.order_status,o.payment_status,o.payment_method,o.total,o.order_date].join(':')).join('|');
+    const signature=rows.map(o=>[o.order_id||o.id,o.order_status,o.payment_status,o.latitude,o.longitude,o.delivery_boy_latitude,o.delivery_boy_longitude,o.delivery,o.total].join(':')).join('|');
     if(signature===lastRenderedSignature)return;
     const previouslyOpen=list.querySelector('.stvn-order-tracking-panel:not([hidden])')?.dataset.orderId||'';
     list.replaceChildren();lastRenderedSignature=signature;
@@ -16770,48 +16745,102 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<!-- Vedant Grocery Shop: mobile radius details + stable tracking panel improvements -->
-<style id="vedant-mobile-radius-tracking-final-20261116">
-#page-location .stvn-location-step-card{width:100%;box-sizing:border-box;}
-#page-location #customer-location-box{display:block!important;width:100%!important;box-sizing:border-box;margin-top:14px!important;padding:14px!important;border-radius:15px!important;}
-#page-location #location-status{display:block!important;white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.5!important;margin:8px 0!important;}
-#page-location #stvnGpsCoordinates{display:none;margin-top:12px!important;padding:14px!important;border:1px solid #cbded1!important;border-radius:14px!important;background:#f5fbf6!important;color:#173c27!important;line-height:1.7!important;font-size:14px!important;overflow-wrap:anywhere!important;}
-#page-location #stvnGpsCoordinates .stvn-radius-result{display:block;margin-top:10px;padding:11px;border-radius:10px;font-weight:900;}
-#page-location #stvnGpsCoordinates .is-available{background:#e2f8e9;color:#126337;border:1px solid #70c58b;}
-#page-location #stvnGpsCoordinates .is-unavailable{background:#fff0f0;color:#a21d2b;border:1px solid #e5a0a6;}
-#page-location #stvnGpsUpdateButton{width:100%!important;min-height:50px!important;touch-action:manipulation;}
-#page-location #stvnLocationContinue{width:100%!important;min-height:52px!important;margin-top:14px!important;}
-#page-location #stvnLocationContinue[hidden]{display:none!important;}
-#page-track .stvn-customer-delivery-map,#page-track .stvn-order-tracking-panel .stvn-customer-delivery-map{width:100%!important;height: min(62vh,460px)!important;min-height:360px!important;border-radius:14px!important;}
-#page-track .stvn-order-tracking-panel{min-width:0!important;width:100%!important;}
-#page-track .vg-order-progress,#page-track .vg-order-progress-step{touch-action:pan-y;}
-#page-track .vg-order-progress-step{cursor:default!important;}
+<!-- FINAL MOBILE LOCATION + TRACKING CLEANUP -->
+<style id="vedant-final-location-tracking-mobile-fix">
+#page-location .stvn-location-step-card{display:block!important;width:100%!important;box-sizing:border-box!important;padding:18px!important}
+#page-location .stvn-location-intro{display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;text-align:center!important}
+#page-location .stvn-location-intro h3{margin:4px 0 8px!important}
+#page-location #stvnGpsUpdateButton{width:100%!important;max-width:100%!important;min-height:52px!important;margin:10px 0!important}
+#page-location #stvnLocationContinue{width:100%!important;min-height:54px!important;margin:14px 0 0!important}
+#page-location #stvnLocationResultCard[hidden]{display:none!important}
+#page-location #stvnLocationResultCard{display:block!important;width:100%!important;box-sizing:border-box!important;margin:12px 0!important;padding:15px!important;border:1px solid #cfe3d5!important;border-radius:16px!important;background:#f5fbf6!important;color:#173c27!important;text-align:left!important;overflow-wrap:anywhere!important;line-height:1.6!important}
+#page-location #stvnLocationResultCard .stvn-loc-result-title{font-weight:900;font-size:16px;margin-bottom:8px}
+#page-location #stvnLocationResultCard .stvn-loc-result-status{font-weight:800;margin:8px 0}
+#page-location #stvnLocationResultCard .stvn-loc-result-grid{display:grid;grid-template-columns:1fr;gap:5px;font-size:14px}
+#page-location #stvnLocationResultCard .stvn-loc-result-grid span{overflow-wrap:anywhere}
+#page-location #location-status{display:none!important}
+#page-track #stvn-delivery-map-note{display:none!important}
+#page-track .stvn-customer-delivery-map{height:390px!important;min-height:350px!important;width:100%!important;border-radius:14px!important}
 @media(max-width:700px){
- #page-location .checkout-title{align-items:center!important;gap:10px!important;flex-wrap:wrap!important;}
- #page-location .checkout-title h2{font-size:clamp(22px,6vw,30px)!important;}
- #page-location .checkout-card{padding:14px!important;}
- #page-location #stvnGpsCoordinates{font-size:13px!important;padding:12px!important;}
- #page-track .stvn-customer-delivery-map,#page-track .stvn-order-tracking-panel .stvn-customer-delivery-map{height: min(60vh,430px)!important;min-height:340px!important;}
- #page-track .stvn-customer-live-tracking{width:100%!important;box-sizing:border-box!important;}
- #page-track .stvn-order-tracking-panel{overflow:visible!important;}
+ #page-location .stvn-location-step-card{padding:14px!important;border-radius:18px!important}
+ #page-location #stvnLocationResultCard{padding:13px!important;font-size:14px!important}
+ #page-location #stvnLocationResultCard .stvn-loc-result-grid{font-size:13px!important}
+ #page-track .stvn-customer-delivery-map{height:390px!important;min-height:350px!important;max-height:58vh!important}
+ #page-track .stvn-customer-live-tracking{width:100%!important;max-width:100%!important;box-sizing:border-box!important;overflow:hidden!important}
 }
 </style>
-<script id="vedant-tracking-tap-stability-20261116">
+<script id="vedant-final-location-behavior-mobile-fix">
 (function(){
-  'use strict';
-  // Prevent progress/map taps from bubbling into an order-card toggle.
-  document.addEventListener('click',function(event){
-    const inside=event.target&&event.target.closest&&event.target.closest('#page-track .vg-order-progress, #page-track .stvn-customer-live-tracking, #page-track .stvn-customer-map-note, #page-track .stvn-map-legend');
-    if(inside)event.stopPropagation();
-  },true);
-  // If the map is created after a panel opens, ask Leaflet to recalculate its viewport.
-  const refreshMapSize=()=>{
-    const map=window.stvnCustomerDeliveryMap;
-    if(map&&typeof map.invalidateSize==='function')setTimeout(()=>{try{map.invalidateSize({pan:false});}catch(_e){}},180);
-  };
-  document.addEventListener('click',event=>{
-    if(event.target&&event.target.closest&&event.target.closest('#page-track'))refreshMapSize();
-  },true);
-  window.addEventListener('resize',refreshMapSize,{passive:true});
+ 'use strict';
+ const SHOP_LAT=25.3698055556, SHOP_LNG=83.1131388889, RADIUS_KM=5;
+ const $=id=>document.getElementById(id);
+ function kmBetween(a,b,c,d){const r=Math.PI/180,da=(c-a)*r,db=(d-b)*r,x=Math.sin(da/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(db/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+ function ensureResultCard(){
+   const page=$('page-location'); if(!page)return null;
+   let card=$('stvnLocationResultCard');
+   if(!card){
+     card=document.createElement('section');card.id='stvnLocationResultCard';card.hidden=true;
+     card.innerHTML='<div class="stvn-loc-result-title">📍 Delivery Location Details</div><div class="stvn-loc-result-status" id="stvnLocationResultStatus"></div><div class="stvn-loc-result-grid"><span id="stvnLocationCustomerName"></span><span id="stvnLocationCustomerPhone"></span><span id="stvnLocationDeliveryAddress"></span><span id="stvnLocationAddress"></span><span id="stvnLocationLatitude"></span><span id="stvnLocationLongitude"></span><span id="stvnLocationDistance"></span><span id="stvnLocationAccuracy"></span><span id="stvnLocationAvailability"></span></div>';
+     const intro=page.querySelector('.stvn-location-intro');
+     const next=$('stvnLocationContinue');
+     if(intro&&next)intro.insertBefore(card,next); else if(intro)intro.appendChild(card); else page.appendChild(card);
+   }
+   return card;
+ }
+ async function reverseAddress(lat,lng){
+   try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lng),{headers:{'Accept-Language':'en'}});if(!r.ok)return 'Current GPS location';const j=await r.json();return j.display_name||'Current GPS location';}catch(e){return 'Current GPS location';}
+ }
+ function showSavedLocation(loc){
+   const card=ensureResultCard();if(!card||!loc)return;
+   const allowed=Number(loc.km)<=RADIUS_KM;
+   card.hidden=false;
+   $('stvnLocationResultStatus').textContent=allowed?'✓ Delivery is available at your location.':'✕ Out of Range — delivery is available only within 5 km.';
+   $('stvnLocationAddress').textContent='GPS area: '+(loc.address||loc.name||'Current GPS location');
+   const customerName=document.getElementById('customer-name')?.value||'';
+   const customerPhone=document.getElementById('customer-phone')?.value||'';
+   const customerAddress=document.getElementById('customer-address')?.value||'';
+   $('stvnLocationCustomerName').textContent=customerName?'Customer name: '+customerName:'';
+   $('stvnLocationCustomerPhone').textContent=customerPhone?'Mobile number: '+customerPhone:'';
+   $('stvnLocationDeliveryAddress').textContent=customerAddress?'Delivery address: '+customerAddress:'';
+   $('stvnLocationLatitude').textContent='Latitude: '+Number(loc.lat).toFixed(6);
+   $('stvnLocationLongitude').textContent='Longitude: '+Number(loc.lng).toFixed(6);
+   $('stvnLocationDistance').textContent='Distance from shop: '+Number(loc.km).toFixed(2)+' km';
+   $('stvnLocationAccuracy').textContent='GPS accuracy: ±'+Math.round(Number(loc.accuracy)||0)+' m';
+   $('stvnLocationAvailability').textContent='Delivery availability: '+(allowed?'Available':'Not available');
+   const next=$('stvnLocationContinue'),btn=$('stvnGpsUpdateButton');
+   if(next){next.hidden=!allowed;next.style.display=allowed?'block':'none';}
+   if(btn){btn.disabled=false;btn.style.display=allowed?'none':'block';btn.textContent=allowed?'Update Location':'Try Again';}
+ }
+ window.requestCustomerLocation=function(){
+   const btn=$('stvnGpsUpdateButton'),next=$('stvnLocationContinue'),card=ensureResultCard();
+   if(next){next.hidden=true;next.style.display='none';}
+   if(card){card.hidden=false;$('stvnLocationResultStatus').textContent='Getting your current location… Please allow GPS access.';$('stvnLocationAddress').textContent='';$('stvnLocationCustomerName').textContent='';$('stvnLocationCustomerPhone').textContent='';$('stvnLocationDeliveryAddress').textContent='';$('stvnLocationLatitude').textContent='';$('stvnLocationLongitude').textContent='';$('stvnLocationDistance').textContent='';$('stvnLocationAccuracy').textContent='';$('stvnLocationAvailability').textContent='';}
+   if(btn){btn.disabled=true;btn.style.display='block';btn.textContent='Getting location…';}
+   if(!navigator.geolocation){if(card)$('stvnLocationResultStatus').textContent='GPS is not supported by this browser.';if(btn){btn.disabled=false;btn.textContent='Try Again';}return;}
+   navigator.geolocation.getCurrentPosition(async pos=>{
+     const lat=Number(pos.coords.latitude),lng=Number(pos.coords.longitude),accuracy=Number(pos.coords.accuracy)||0;
+     if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat < -90||lat > 90||lng < -180||lng > 180){if(card)$('stvnLocationResultStatus').textContent='Unable to read valid GPS coordinates. Please try again.';if(btn){btn.disabled=false;btn.textContent='Try Again';}return;}
+     const km=kmBetween(lat,lng,SHOP_LAT,SHOP_LNG),allowed=km<=RADIUS_KM,address=await reverseAddress(lat,lng);
+     const loc={lat,lng,km,accuracy,address,name:address,updatedAt:Date.now()};
+     try{localStorage.setItem('vedantCustomerDeliveryLocationV1',JSON.stringify(loc));}catch(e){}
+     window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=allowed;
+     try{customerLatitude=lat;customerLongitude=lng;}catch(e){}
+     showSavedLocation(loc);
+     if(typeof window.updateCart==='function')window.updateCart();
+   },err=>{
+     const msg=err.code===1?'Location permission was denied. Allow location access in your browser settings and try again.':'Unable to get your location. Turn on GPS and try again.';
+     if(card){card.hidden=false;$('stvnLocationResultStatus').textContent=msg;}
+     if(btn){btn.disabled=false;btn.style.display='block';btn.textContent='Try Again';}
+   },{enableHighAccuracy:true,timeout:25000,maximumAge:0});
+ };
+ function init(){
+   ensureResultCard();
+   let loc=null;try{loc=JSON.parse(localStorage.getItem('vedantCustomerDeliveryLocationV1')||'null')}catch(e){}
+   if(loc&&Number.isFinite(Number(loc.lat))&&Number.isFinite(Number(loc.lng))){
+     const km=kmBetween(Number(loc.lat),Number(loc.lng),SHOP_LAT,SHOP_LNG);
+     loc.km=km;showSavedLocation(loc);
+   }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
