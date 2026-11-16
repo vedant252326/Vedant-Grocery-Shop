@@ -5547,8 +5547,7 @@ async function placeOrder(){
 
 async function openNewestOrderTrackingAfterCheckout(){
   try{
-    const modal=document.getElementById("order-confirmation-modal");
-    if(modal)modal.classList.remove("show");
+    hideOrderConfirmationModal();
     if(typeof window.showPage==="function")window.showPage("track");
     await new Promise(resolve=>setTimeout(resolve,350));
     if(typeof window.stvnLoadMyOrdersByAccount==="function")await window.stvnLoadMyOrdersByAccount();
@@ -5612,31 +5611,43 @@ async function saveVedantOrder(order,customerEmail){
 
 function showOrderConfirmation(order){
   const modal=document.getElementById("order-confirmation-modal");
-  if(!modal) return;
-  // Keep the confirmation dialog attached to body, not the payment page that gets hidden.
+  if(!modal || !order) return false;
+  // Detach from hidden/transformed checkout containers so the dialog works on phones.
   if(modal.parentElement!==document.body)document.body.appendChild(modal);
+  modal.hidden=false;
   modal.setAttribute('role','dialog');
   modal.setAttribute('aria-modal','true');
   modal.setAttribute('aria-label','Order confirmation');
+  modal.setAttribute('aria-live','assertive');
+  const idNode=document.getElementById("confirmation-order-id");
+  const paymentNode=document.getElementById("conf-payment");
+  const statusNode=document.getElementById("conf-status");
+  if(idNode)idNode.textContent="Order ID: "+String(order.id||order.order_id||'');
+  if(paymentNode)paymentNode.textContent=String(order.payment||order.payment_method||'Cash on Delivery');
+  if(statusNode)statusNode.textContent=String(order.order_status||'pending');
   document.body.classList.add('vg-order-confirmation-open');
-  document.getElementById("confirmation-order-id").textContent="Order ID: "+order.id;
-  document.getElementById("conf-payment").textContent=order.payment;
-  document.getElementById("conf-status").textContent=order.order_status;
-  
   modal.classList.add("show");
+  // Inline important styles win over mobile page-transition/visibility rules.
+  modal.style.setProperty('display','flex','important');
+  modal.style.setProperty('visibility','visible','important');
+  modal.style.setProperty('opacity','1','important');
+  modal.style.setProperty('pointer-events','auto','important');
+  modal.style.setProperty('z-index','2147483000','important');
+  modal.getBoundingClientRect();
+  return true;
 }
-
-function closeOrderConfirmation(){
+function hideOrderConfirmationModal(){
   const modal=document.getElementById("order-confirmation-modal");
-  if(modal) modal.classList.remove("show");
+  if(modal){modal.classList.remove('show');modal.style.setProperty('display','none','important');modal.style.setProperty('pointer-events','none','important');}
   document.body.classList.remove('vg-order-confirmation-open');
+}
+function closeOrderConfirmation(){
+  hideOrderConfirmationModal();
   showPage("shop");
 }
 
 function goToTracking(){
-  const modal=document.getElementById("order-confirmation-modal");
-  if(modal) modal.classList.remove("show");
-  document.body.classList.remove('vg-order-confirmation-open');
+  hideOrderConfirmationModal();
   if(typeof window.showPage==="function")window.showPage("track");
   setTimeout(()=>{document.getElementById("tracking-status")?.scrollIntoView({behavior:"smooth",block:"nearest"});},120);
 }
@@ -13495,7 +13506,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  'Saved Addresses':'सेव किए गए पते','Add New Address':'नया पता जोड़ें','Delivery Details':'डिलीवरी विवरण','Use Current Location':'वर्तमान लोकेशन इस्तेमाल करें'
  };
  Object.assign(dict,walletDict);
- Object.assign(dict,{'Order cancelled successfully.':'ऑर्डर सफलतापूर्वक कैंसल हो गया है।','Order is still active. Please refresh and try again.':'ऑर्डर अभी सक्रिय है। रीफ्रेश करके फिर कोशिश करें।'});
+ Object.assign(dict,{'Order cancelled successfully.':'ऑर्डर सफलतापूर्वक रद्द हो गया है।','Order cancelled':'ऑर्डर रद्द हो गया है','CANCELLED · यह ऑर्डर रद्द हो चुका है':'ऑर्डर रद्द हो चुका है'});
+ Object.assign(dict,{'Order cancelled successfully.':'ऑर्डर सफलतापूर्वक रद्द हो गया है।','Order is still active. Please refresh and try again.':'ऑर्डर अभी सक्रिय है। रीफ्रेश करके फिर कोशिश करें।'});
  const bnDict={
   'My Account':'আমার অ্যাকাউন্ট','My Profile':'আমার প্রোফাইল','My Orders':'আমার অর্ডার','My Address':'আমার ঠিকানা','Customer Care':'গ্রাহক সহায়তা','Log out':'লগ আউট','Shop':'দোকান','Home':'হোম','Cart':'কার্ট','Wishlist':'পছন্দের তালিকা','Search':'খুঁজুন','Add to Cart':'কার্টে যোগ করুন','Buy Now':'এখনই কিনুন','Checkout':'চেকআউট','Delivery Details':'ডেলিভারির বিবরণ','Review Your Order':'আপনার অর্ডার যাচাই করুন','Place Order':'অর্ডার করুন','Order History':'অর্ডারের ইতিহাস','Payment Method':'পেমেন্টের পদ্ধতি','Cash on Delivery':'ক্যাশ অন ডেলিভারি','UPI Payment':'UPI পেমেন্ট','Saved Addresses':'সংরক্ষিত ঠিকানা','Add New Address':'নতুন ঠিকানা যোগ করুন','Save This Address':'এই ঠিকানা সংরক্ষণ করুন','Save this address to my account':'এই ঠিকানা আমার অ্যাকাউন্টে সংরক্ষণ করুন','Select Address':'ঠিকানা নির্বাচন করুন','Continue':'চালিয়ে যান','Continue Shopping':'কেনাকাটা চালিয়ে যান','Apply':'প্রয়োগ করুন','Remove':'সরান','Total':'মোট','Subtotal':'সাবটোটাল','Delivery Charge':'ডেলিভারি চার্জ','My Wallet':'আমার ওয়ালেট','Withdrawal Status':'টাকা তোলার অবস্থা','Available Balance':'উপলব্ধ ব্যালেন্স','Your Name':'আপনার নাম','Mobile Number':'মোবাইল নম্বর','Full Address':'সম্পূর্ণ ঠিকানা','Pincode':'পিনকোড','Landmark':'ল্যান্ডমার্ক','Current Location':'বর্তমান অবস্থান','Use Current Location':'বর্তমান অবস্থান ব্যবহার করুন','Save':'সংরক্ষণ করুন','Cancel':'বাতিল','Close':'বন্ধ করুন','Refresh':'রিফ্রেশ','All Products':'সব পণ্য','Categories':'বিভাগ','Offers':'অফার','Terms & Conditions':'শর্তাবলী','Privacy Policy':'গোপনীয়তা নীতি','Under 10 Minutes':'১০ মিনিটের মধ্যে','Order Placed':'অর্ডার সম্পন্ন','Track Order':'অর্ডার ট্র্যাক করুন','Account Balance':'অ্যাকাউন্ট ব্যালেন্স','Vedant Wallet':'বেদান্ত ওয়ালেট','A secure wallet for your grocery orders':'আপনার মুদি অর্ডারের জন্য নিরাপদ ওয়ালেট','Available Wallet Balance':'উপলব্ধ ওয়ালেট ব্যালেন্স','Your verified balance will appear here':'আপনার যাচাই করা ব্যালেন্স এখানে দেখা যাবে','Add Money':'টাকা যোগ করুন','Withdraw Money':'টাকা তুলুন','Wallet Status':'ওয়ালেটের অবস্থা','Save for Future':'ভবিষ্যতের জন্য সংরক্ষণ করুন','Add New UPI':'নতুন UPI যোগ করুন','Add New Bank':'নতুন ব্যাংক অ্যাকাউন্ট যোগ করুন','Saved Payment Accounts':'সংরক্ষিত পেমেন্ট অ্যাকাউন্ট','Account Holder Name':'অ্যাকাউন্টধারীর নাম','Amount (₹)':'পরিমাণ (₹)','Bank Account':'ব্যাংক অ্যাকাউন্ট','Bank Account Number':'ব্যাংক অ্যাকাউন্ট নম্বর','IFSC Code':'IFSC কোড','Submit Withdrawal Request':'টাকা তোলার অনুরোধ জমা দিন','Transaction History':'লেনদেনের ইতিহাস','Refresh Status':'অবস্থা রিফ্রেশ করুন','No verified transactions yet.':'এখনও যাচাই করা কোনো লেনদেন নেই।','Money Added':'টাকা যোগ হয়েছে','Money Debited':'টাকা কাটা হয়েছে','Shop Now':'এখনই কিনুন','View All':'সব দেখুন','View All Products':'সব পণ্য দেখুন','Fresh & Local Groceries':'তাজা স্থানীয় মুদি পণ্য','at Your Doorstep':'আপনার দোরগোড়ায়','Delivering to':'ডেলিভারি হবে','Update location':'অবস্থান আপডেট করুন','Search for products...':'পণ্য খুঁজুন...','Choose your groceries and add them to your cart.':'আপনার পছন্দের মুদি পণ্য কার্টে যোগ করুন।','Review items before checkout.':'চেকআউটের আগে পণ্য যাচাই করুন।','Back':'ফিরে যান'
  };
@@ -13515,6 +13527,7 @@ Object.assign(enDict, {'डिलीवरी का पता': 'Delivery Addre
   'Proceed to Delivery Details':'ডেলিভারির বিবরণে যান'
  });
  Object.assign(enDict,{'ऑर्डर सफलतापूर्वक कैंसल हो गया है।':'Order cancelled successfully.','ऑर्डर अभी सक्रिय है। रीफ्रेश करके फिर कोशिश करें।':'Order is still active. Please refresh and try again.'});
+ Object.assign(enDict,{'CANCELLED · यह ऑर्डर रद्द हो चुका है':'CANCELLED','ऑर्डर कैंसल हो गया है':'Order cancelled','ऑर्डर रद्द हो चुका है':'Order has been cancelled','यह ऑर्डर रद्द हो चुका है':'This order has been cancelled','ऑर्डर सफलतापूर्वक रद्द हो गया है।':'Order cancelled successfully.','ऑर्डर आईडी:':'Order ID:','भुगतान:':'Payment:','स्थिति:':'Status:'});
  Object.assign(enDict,{
   'अपना नाम दर्ज करें':'Enter your name','मोबाइल नंबर दर्ज करें':'Enter mobile number','डिलीवरी का पता दर्ज करें':'Enter delivery address',
   'आपका नाम':'Your Name','मोबाइल नंबर':'Mobile Number','डिलीवरी का पता':'Delivery Address','डिलीवरी लोकेशन':'Delivery Location',
@@ -16467,12 +16480,12 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 
 <style id="vg-order-confirmation-live-current-v3">
 /* Confirmation must sit above every page and remain visible on phones. */
-#order-confirmation-modal{position:fixed!important;inset:0!important;z-index:2147483000!important;display:none;align-items:center!important;justify-content:center!important;padding:16px!important;box-sizing:border-box!important;overflow-y:auto!important;background:rgba(0,0,0,.72)!important;overscroll-behavior:contain!important}
+#order-confirmation-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:2147483000!important;display:none;align-items:center!important;justify-content:center!important;padding:16px!important;box-sizing:border-box!important;overflow-y:auto!important;background:rgba(0,0,0,.72)!important;overscroll-behavior:contain!important;isolation:isolate!important;visibility:visible}
 #order-confirmation-modal.show{display:flex!important}
 #order-confirmation-modal .order-confirmation-content{width:min(100%,500px)!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;box-sizing:border-box!important;margin:auto!important}
 body.vg-order-confirmation-open{overflow:hidden!important}
 @media(max-width:700px){
- #order-confirmation-modal{padding:12px!important;align-items:center!important}
+ #order-confirmation-modal{width:100vw!important;height:100vh!important;height:100dvh!important;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom))!important;align-items:center!important;overflow-x:hidden!important}
  #order-confirmation-modal .order-confirmation-content{width:100%!important;max-width:440px!important;max-height:calc(100dvh - 24px)!important;padding:22px 16px!important;border-radius:18px!important}
  #order-confirmation-modal .order-confirmation-icon{font-size:56px!important;margin:0 0 8px!important}
  #order-confirmation-modal .order-confirmation-title{font-size:clamp(22px,6vw,30px)!important;margin:8px 0!important}
