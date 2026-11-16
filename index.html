@@ -8780,7 +8780,7 @@ function modernUIInit(){
   locationPage.innerHTML=`<div class="checkout-title"><button class="back-btn" type="button" onclick="showPage('checkout')">← Delivery Details</button><div><h2 style="margin:0">2. Update Your Current Location</h2><p style="margin:3px 0;color:var(--muted)">Choose your GPS location to ensure accurate delivery</p></div></div>`;
   const locationStepCard=document.createElement("div");
   locationStepCard.className="checkout-card checkout-step-card stvn-location-step-card";
-  locationStepCard.innerHTML=`<div class="stvn-location-intro"><div class="stvn-location-pin">📍</div><h3>Update Your Current Location</h3><p>Tap the button below to get your GPS coordinates and distance from the shop. This location will be saved with your order and shown on the tracking page.</p></div>`;
+  locationStepCard.innerHTML=`<div class="stvn-location-intro"><div class="stvn-location-pin">📍</div><h3>Update Your Current Location</h3><p>Tap the button below to get your GPS coordinates and distance from the shop. This location will be saved with your order and shown on the tracking page.</p><button type="button" id="stvnGpsUpdateButton" class="place-order" style="display:block!important;width:100%;min-height:52px;margin:14px 0 10px;font-size:15px;font-weight:900" onclick="requestCustomerLocation()">📍 Update Current Location &amp; Get GPS Coordinates</button></div>`;
   locationPage.appendChild(locationStepCard);
   body.appendChild(locationPage);
 
@@ -8818,7 +8818,7 @@ function modernUIInit(){
   const confirmationModal=document.getElementById("order-confirmation-modal");
 
   if(primaryCheckout)deliveryCard.appendChild(primaryCheckout);
-  if(locationBox)locationStepCard.appendChild(locationBox);
+  if(locationBox){const oldGpsButton=locationBox.querySelector("button[onclick*=requestCustomerLocation]");if(oldGpsButton)oldGpsButton.style.display="none";locationStepCard.appendChild(locationBox);}
   if(locationBox && !document.getElementById("stvnGpsCoordinates")){const gps=document.createElement("div");gps.id="stvnGpsCoordinates";gps.className="payment-note";gps.style.cssText="margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:12px;display:none;overflow-wrap:anywhere";gps.setAttribute("aria-live","polite");gps.innerHTML="<strong>GPS Coordinates</strong><br><span id=\"stvnGpsLat\"></span><br><span id=\"stvnGpsLng\"></span><br><span id=\"stvnGpsDistance\"></span>";locationBox.appendChild(gps);}
   if(orderSummaryHeading)reviewCard.appendChild(orderSummaryHeading);
   if(orderSummary)reviewCard.appendChild(orderSummary);
@@ -9077,33 +9077,7 @@ function modernUIInit(){
     };
   }
 
-  // Better location status: do not overwrite an out-of-radius error.
-  if(typeof window.requestCustomerLocation==="function"){
-    window.requestCustomerLocation=function(){
-      const status=document.getElementById("location-status");
-      if(!navigator.geolocation){
-        if(status){status.textContent="❌ इस browser में location support नहीं है।";status.className="error";}
-        return;
-      }
-      if(status){status.textContent="⏳ Current location ली जा रही है...";status.className="payment-note";}
-      navigator.geolocation.getCurrentPosition(position=>{
-        customerLatitude=position.coords.latitude;
-        customerLongitude=position.coords.longitude;
-        updateCart();
-        const r=typeof checkDeliveryRadius==="function" ? checkDeliveryRadius() : {allowed:true,distance:null};
-        if(!status) return;
-        if(r.allowed){
-          status.innerHTML=`✅ Current location मिल गई।<br>📏 Shop से दूरी: <strong>${r.distance.toFixed(2)} km</strong><br>🟢 Delivery available`;
-          status.className="location-success";
-        }else{
-          status.innerHTML=`❌ Sorry! Currently not available.<br>📏 आपकी location shop से <strong>${r.distance.toFixed(2)} km</strong> दूर है.<br>🚚 Delivery radius सिर्फ 5 km है.`;
-          status.className="error";
-        }
-      },()=>{
-        if(status){status.textContent="⚠️ Location नहीं मिली। Browser में Location Permission Allow करें.";status.className="error";}
-      },{enableHighAccuracy:false,timeout:5000,maximumAge:60000});
-    };
-  }
+  // Keep the primary GPS handler: it displays coordinates, shop distance and Continue.
 
   showPage("home");
   if(typeof updateCart==="function") updateCart();
@@ -13400,6 +13374,62 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
+<script id="stvn-pwa-install-prompt">
+(function(){
+  // Show the custom install prompt only for the dedicated QR entry URL.
+  // The existing QR must encode the site URL with ?from=qr.
+  const isQrEntry = new URLSearchParams(window.location.search).get("from") === "qr";
+  // Never show the install prompt inside an already-installed PWA/app.
+  const isAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
+    window.navigator.standalone === true;
+  const shouldShowQrInstall = isQrEntry && !isAlreadyInstalled;
+  let installPromptEvent=null;
+  const modalId="stvnInstallPromptModal";
+  function ensureModal(){
+    if(document.getElementById(modalId))return;
+    const modal=document.createElement("div");modal.id=modalId;modal.style.cssText="display:none;position:fixed;inset:0;z-index:2147483647;align-items:center;justify-content:center;padding:18px;background:rgba(8,25,15,.68);backdrop-filter:blur(5px)";
+    modal.innerHTML=`<section style="width:min(100%,390px);padding:25px 20px;border-radius:24px;background:linear-gradient(150deg,#fff,#effff4);text-align:center;box-shadow:0 22px 70px #0005;color:#163b27"><div style="font-size:42px">🛍️</div><h2 style="margin:8px 0;color:#087c42">Install Vedant Grocery Shop App</h2><p style="margin:0 0 18px;line-height:1.55;color:#52665a">Add our store to your phone for fast and easy shopping.</p><button id="stvnInstallNow" style="width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#087c42,#20ad62);color:white;font-size:16px;font-weight:900">📲 Install Now</button><button id="stvnInstallLater" style="margin-top:10px;padding:10px 14px;border:0;background:transparent;color:#607468;font-weight:700">Not Now</button><p id="stvnInstallHelp" style="display:none;margin:12px 0 0;font-size:12px;line-height:1.5;color:#607468">Open the Chrome ⋮ menu and select “Install app” or “Add to Home screen”.</p></section>`;
+    document.body.appendChild(modal);
+    modal.addEventListener("click",e=>{if(e.target===modal)modal.style.display="none";});
+    modal.querySelector("#stvnInstallLater").onclick=()=>{modal.style.display="none";try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}};
+    modal.querySelector("#stvnInstallNow").onclick=async()=>{
+      if(installPromptEvent){installPromptEvent.prompt();try{await installPromptEvent.userChoice;}catch(e){}installPromptEvent=null;modal.style.display="none";}
+      else{modal.querySelector("#stvnInstallHelp").style.display="block";}
+    };
+  }
+  window.addEventListener("beforeinstallprompt",e=>{
+    if(!shouldShowQrInstall) return; // Normal visits and installed-app launches never show it.
+    e.preventDefault();
+    installPromptEvent=e;
+    ensureModal();
+    const m=document.getElementById(modalId);
+    if(m)m.style.display="flex";
+  });
+  function showQrPromptAtStartup(){
+    if(!shouldShowQrInstall) return;
+    ensureModal();
+    const m=document.getElementById(modalId);
+    if(m) m.style.display="flex";
+  }
+  // Display the QR-only prompt immediately, before the language chooser is parsed.
+  showQrPromptAtStartup();
+  window.addEventListener("appinstalled",()=>{
+    const m=document.getElementById(modalId);if(m)m.style.display="none";
+    try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}
+  });
+  window.stvnShowInstallPrompt=function(){
+    if(!shouldShowQrInstall) return;
+    ensureModal();
+    const m=document.getElementById(modalId);if(m)m.style.display="flex";
+  };
+})();
+</script>
+
+<style id="stvn-gps-qr-final-fix">
+#stvnGpsUpdateButton{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:5!important;cursor:pointer!important}
+#stvnInstallPromptModal{z-index:2147483647!important}
+</style>
 <!-- Vedant language preference gate -->
 <style>
 #vLangGate{position:fixed;inset:0;z-index:300000;display:flex;visibility:visible;align-items:center;justify-content:center;padding:20px;background:linear-gradient(145deg,#07351f,#071b12 75%);font-family:Arial,sans-serif}
@@ -14758,61 +14788,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
 </style>
 
 
-<script id="stvn-pwa-install-prompt">
-(function(){
-  // Show the custom install prompt only for the dedicated QR entry URL.
-  // The existing QR must encode the site URL with ?from=qr.
-  const isQrEntry = new URLSearchParams(window.location.search).get("from") === "qr";
-  // Never show the install prompt inside an already-installed PWA/app.
-  const isAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches ||
-    window.matchMedia("(display-mode: fullscreen)").matches ||
-    window.navigator.standalone === true;
-  const shouldShowQrInstall = isQrEntry && !isAlreadyInstalled;
-  let installPromptEvent=null;
-  const modalId="stvnInstallPromptModal";
-  function ensureModal(){
-    if(document.getElementById(modalId))return;
-    const modal=document.createElement("div");modal.id=modalId;modal.style.cssText="display:none;position:fixed;inset:0;z-index:999999;align-items:center;justify-content:center;padding:18px;background:rgba(8,25,15,.68);backdrop-filter:blur(5px)";
-    modal.innerHTML=`<section style="width:min(100%,390px);padding:25px 20px;border-radius:24px;background:linear-gradient(150deg,#fff,#effff4);text-align:center;box-shadow:0 22px 70px #0005;color:#163b27"><div style="font-size:42px">🛍️</div><h2 style="margin:8px 0;color:#087c42">Install Vedant Grocery Shop App</h2><p style="margin:0 0 18px;line-height:1.55;color:#52665a">Add our store to your phone for fast and easy shopping.</p><button id="stvnInstallNow" style="width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#087c42,#20ad62);color:white;font-size:16px;font-weight:900">📲 Install Now</button><button id="stvnInstallLater" style="margin-top:10px;padding:10px 14px;border:0;background:transparent;color:#607468;font-weight:700">Not Now</button><p id="stvnInstallHelp" style="display:none;margin:12px 0 0;font-size:12px;line-height:1.5;color:#607468">Open the Chrome ⋮ menu and select “Install app” or “Add to Home screen”.</p></section>`;
-    document.body.appendChild(modal);
-    modal.addEventListener("click",e=>{if(e.target===modal)modal.style.display="none";});
-    modal.querySelector("#stvnInstallLater").onclick=()=>{modal.style.display="none";try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}};
-    modal.querySelector("#stvnInstallNow").onclick=async()=>{
-      if(installPromptEvent){installPromptEvent.prompt();try{await installPromptEvent.userChoice;}catch(e){}installPromptEvent=null;modal.style.display="none";}
-      else{modal.querySelector("#stvnInstallHelp").style.display="block";}
-    };
-  }
-  window.addEventListener("beforeinstallprompt",e=>{
-    if(!shouldShowQrInstall) return; // Normal visits and installed-app launches never show it.
-    e.preventDefault();
-    installPromptEvent=e;
-    ensureModal();
-    const m=document.getElementById(modalId);
-    if(m)m.style.display="flex";
-  });
-  function showQrPromptAtStartup(){
-    if(!shouldShowQrInstall) return;
-    ensureModal();
-    const m=document.getElementById(modalId);
-    if(m) m.style.display="flex";
-  }
-  // Put the QR-only install prompt over the first screen, before language selection.
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded",showQrPromptAtStartup,{once:true});
-  } else {
-    showQrPromptAtStartup();
-  }
-  window.addEventListener("appinstalled",()=>{
-    const m=document.getElementById(modalId);if(m)m.style.display="none";
-    try{sessionStorage.setItem("stvnInstallPromptDismissed","1");}catch(e){}
-  });
-  window.stvnShowInstallPrompt=function(){
-    if(!shouldShowQrInstall) return;
-    ensureModal();
-    const m=document.getElementById(modalId);if(m)m.style.display="flex";
-  };
-})();
-</script>
+
 </body>
 </html>
 
