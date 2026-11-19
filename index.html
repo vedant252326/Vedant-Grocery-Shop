@@ -2209,7 +2209,7 @@ button,input,select,textarea{font:inherit}
 .admin-order .stvn-order-whatsapp-btn{min-height:42px}
 @media(max-width:700px){.admin-order .admin-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}.admin-order .admin-actions button,.admin-order .admin-actions select,.admin-order .admin-actions input{width:100%!important;min-width:0!important;min-height:44px!important;box-sizing:border-box!important}.admin-order .stvn-order-whatsapp-btn{font-size:14px!important}.admin-order .admin-grid{grid-template-columns:1fr!important}.admin-order{overflow-wrap:anywhere!important}}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" defer referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
@@ -2417,7 +2417,7 @@ Grand Total: ₹<span id="cart-total">0</span>
 
     <div class="stvn-payment-accordion" aria-label="Choose a payment method">
       <div class="stvn-payment-accordion-item" data-payment-card="COD">
-        <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" onclick="toggleVedantPayment('COD')">
+        <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-cod" onclick="toggleVedantPayment('COD')">
           <span class="stvn-payment-icon stvn-cod-icon" aria-hidden="true">🫴💵</span>
           <span class="stvn-payment-card-copy"><strong>Pay by cash</strong></span>
           
@@ -2426,7 +2426,7 @@ Grand Total: ₹<span id="cart-total">0</span>
       </div>
 
       <div class="stvn-payment-accordion-item" data-payment-card="UPI">
-        <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" onclick="toggleVedantPayment('UPI')">
+        <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-upi" onclick="toggleVedantPayment('UPI')">
           <span class="stvn-payment-icon stvn-online-icon" aria-hidden="true">📱</span>
           <span class="stvn-payment-card-copy"><strong>Online Payment</strong></span>
           
@@ -2501,6 +2501,7 @@ Apply Coupon
 <p id="coupon-message"></p>
 
 
+
 <p id="delivery">
 🚚 Delivery time updates are available in Order Tracking.
 </p>
@@ -2533,8 +2534,6 @@ onclick="placeOrder()">
 Place Order
 
 </button>
-
-
 
 </div>
 
@@ -13066,7 +13065,7 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){
     #page-checkout #customer-name,#page-checkout #customer-phone,#page-checkout #customer-address{width:100%!important;box-sizing:border-box!important}
   }
 </style>
-<script id="vg-delivery-details-location-separation-20261116-script2">
+<script id="vg-delivery-details-location-separation-20261116-script">
 (function(){
  'use strict';
  const SHOP_LAT=25.3698055556, SHOP_LNG=83.1131388889, RADIUS_KM=5;
@@ -14004,7 +14003,7 @@ Object.assign(enDict,{
  function addLanguageButton(){const menu=document.getElementById('stvnProfileMenu');if(!menu)return false;if(!document.getElementById('vLangMenuButton')){const b=document.createElement('button');b.id='vLangMenuButton';b.type='button';b.textContent='🌐 Change Language';b.onclick=()=>open(true);menu.insertBefore(b,menu.querySelector('.stvn-logout')||null);}return true;}
  if(!addLanguageButton()){const menuObserver=new MutationObserver(()=>{if(addLanguageButton())menuObserver.disconnect()});menuObserver.observe(document.body,{childList:true,subtree:true});}
  function startLanguage(){const email=currentEmail();let saved='';try{saved=email?localStorage.getItem('vedantLanguage:'+email):''}catch(_){}if(saved==='en'||saved==='hi'){chosen=saved;gate.style.display='none';gate.style.visibility='hidden';document.documentElement.style.visibility='visible';document.body.style.overflow='';apply();}else{open(true)}}
- // Never wait for Supabase/network before showing the language and storefront UI.
+ // Show the language/storefront immediately; restore the optional account session in the background.
  startLanguage();
  if(window.supabaseClient?.auth){
    Promise.resolve().then(()=>supabaseClient.auth.getSession()).then(({data})=>{
@@ -14111,7 +14110,7 @@ Object.assign(enDict,{
 
 
 
-<script id="vedant-final-header-actions-fix-script2">
+<script id="vedant-final-header-actions-fix-v2">
 (function(){
  'use strict';
  function pageClick(name){const b=document.querySelector('[data-page="'+name+'"]');if(b)b.click();else if(typeof window.showPage==='function')window.showPage(name);}
@@ -16822,7 +16821,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     #page-checkout #customer-name,#page-checkout #customer-phone,#page-checkout #customer-address{width:100%!important;box-sizing:border-box!important}
   }
 </style>
-<script id="vg-final-delivery-location-separation-mobile-20261116-script2">
+<script id="vg-final-delivery-location-separation-mobile-20261116-script">
 (function(){
  'use strict';
  const SHOP_LAT=25.3698055556, SHOP_LNG=83.1131388889, RADIUS_KM=5;
@@ -17218,8 +17217,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(!loc||!Number.isFinite(Number(loc.lat))||!Number.isFinite(Number(loc.lng)))return;
    const km=Number(loc.km);
    const current=String(loc.currentName||loc.name||'Current location');
-   document.querySelectorAll('.vg-current-location-name').forEach(el=>{el.textContent=current+(Number.isFinite(km)?' · '+km.toFixed(2)+' km from shop':'');el.title=el.textContent;});
-   document.querySelectorAll('.vg-location-label').forEach(el=>{el.textContent=Number.isFinite(km)?(km<=5?'Delivery available · '+km.toFixed(2)+' km':'Outside delivery area · '+km.toFixed(2)+' km'):'Current location';el.title=el.textContent;});
+   const currentText=current+(Number.isFinite(km)?' · '+km.toFixed(2)+' km from shop':'');
+   document.querySelectorAll('.vg-current-location-name').forEach(el=>{if(el.textContent!==currentText)el.textContent=currentText;if(el.title!==currentText)el.title=currentText;});
+   const locationText=Number.isFinite(km)?(km<=5?'Delivery available · '+km.toFixed(2)+' km':'Outside delivery area · '+km.toFixed(2)+' km'):'Current location';
+   document.querySelectorAll('.vg-location-label').forEach(el=>{if(el.textContent!==locationText)el.textContent=locationText;if(el.title!==locationText)el.title=locationText;});
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',paintLocation,{once:true});else paintLocation();
  window.addEventListener('storage',paintLocation);
