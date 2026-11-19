@@ -15933,6 +15933,8 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
    raf=requestAnimationFrame(tick);
  }
  function sync(){
+   // This animation is mobile-only. Avoid running an endless animation on desktop.
+   if(!window.matchMedia('(max-width:700px)').matches){stop();return;}
    var next=findRoad();
    if(!next||!isVisible(next)){stop();return;}
    if(road!==next){stop();road=next;}
@@ -15946,9 +15948,15 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#385342}
  function init(){
    sync();
    if(observer)return;
+   // Watch structural changes only. The truck's own left/transform style changes
+   // every animation frame; observing all style attributes caused sync() to run
+   // on every frame and needlessly overloaded the main thread.
    observer=new MutationObserver(sync);
-   observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
-   timer=setInterval(sync,500);
+   observer.observe(document.body,{subtree:true,childList:true});
+   timer=setInterval(sync,1000);
+   var mobileQuery=window.matchMedia('(max-width:700px)');
+   if(mobileQuery.addEventListener)mobileQuery.addEventListener('change',sync);
+   else if(mobileQuery.addListener)mobileQuery.addListener(sync);
    addEventListener('resize',sync,{passive:true});
    addEventListener('orientationchange',()=>setTimeout(sync,180),{passive:true});
    document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else sync();});
@@ -17224,7 +17232,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',paintLocation,{once:true});else paintLocation();
  window.addEventListener('storage',paintLocation);
- const obs=new MutationObserver(()=>paintLocation());
+ const obs=new MutationObserver(records=>{
+   // Ignore the text-node replacements performed by paintLocation itself.
+   const relevant=records.some(record=>{
+     const target=record.target.nodeType===Node.ELEMENT_NODE?record.target:record.target.parentElement;
+     return !target?.closest?.('.vg-current-location-name,.vg-location-label');
+   });
+   if(relevant)paintLocation();
+ });
  if(document.body)obs.observe(document.body,{childList:true,subtree:true});
 })();
 </script>
