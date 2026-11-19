@@ -2767,7 +2767,7 @@ Logout
   <input type="checkbox" id="admin-order-email-enabled" checked hidden aria-hidden="true">
   
   <label for="admin-order-email-recipient" style="display:block;margin-top:12px">Email कहाँ भेजना है?</label>
-  <input id="admin-order-email-recipient" type="email" maxlength="200" placeholder="vedant898989gupta@gmail.com" style="width:100%;max-width:520px">
+  <input id="admin-order-email-recipient" type="email" maxlength="200" placeholder="vedansh2811111@gmail.com" style="width:100%;max-width:520px">
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="admin-btn" onclick="testAdminOrderSound()">🔊 Test Sound</button><button type="button" class="admin-btn" onclick="loadOrderNotificationSettings()">🔄 Reload</button></div>
   <p id="admin-order-notification-message" class="admin-small" role="status" aria-live="polite"></p>
   
@@ -3261,7 +3261,7 @@ async function stvnRestoreCustomerSession(){
 document.addEventListener("DOMContentLoaded",stvnRestoreCustomerSession);
 function stvnIsOwnerSession(session){
   const user=session&&session.user;
-  return !!user && String(user.email||"").trim().toLowerCase()==="vedant898989gupta@gmail.com" && String(user.id||"")==="554777a2-e360-4870-91a1-a41deb04e694";
+  return !!user && ["vedansh2811111@gmail.com"].includes(String(user.email||"").trim().toLowerCase()) && String(user.id||"")==="554777a2-e360-4870-91a1-a41deb04e694";
 }
 function stvnApplyAdminAccess(session){
   const owner=stvnIsOwnerSession(session);
@@ -6046,11 +6046,11 @@ async function loadOrderNotificationSettings(){
   const recipient=document.getElementById("admin-order-email-recipient");
   if(sound){sound.checked=localStorage.getItem("vedantAdminOrderSoundEnabled")!=="false";}
   if(email)email.checked=true;
-  if(recipient && !recipient.value)recipient.value="vedant898989gupta@gmail.com";
+  if(recipient && !recipient.value)recipient.value="vedansh2811111@gmail.com";
   try{
     const {data,error}=await supabaseClient.from(ORDER_NOTIFY_TABLE).select("id,email_enabled,recipient_email").eq("id",1).maybeSingle();
     if(error)throw error;
-    if(data){if(email)email.checked=!!data.email_enabled;if(recipient)recipient.value=data.recipient_email||"vedant898989gupta@gmail.com";}
+    if(data){if(email)email.checked=!!data.email_enabled;if(recipient)recipient.value=data.recipient_email||"vedansh2811111@gmail.com";}
     setOrderNotifyMessage("✅ Settings load हो गईं। Save Settings दबाकर बदलाव सेव करें।");
   }catch(error){setOrderNotifyMessage("⚠️ Email settings table अभी सेट नहीं है या load नहीं हुई। SQL setup चलाने के बाद Reload करें। Admin sound toggle इस browser में काम करेगा।");}
 }
@@ -6126,12 +6126,12 @@ if(typeof window.showPage === "function"){
 
 // Email OTP admin login. Only the store owner's email may use this UI.
 // IMPORTANT: secure database/API access must also be restricted with Supabase RLS.
-const ADMIN_OWNER_EMAIL = "vedant898989gupta@gmail.com";
+const ADMIN_OWNER_EMAILS = ["vedansh2811111@gmail.com"];
 const ADMIN_OWNER_UID = "554777a2-e360-4870-91a1-a41deb04e694";
 let adminOtpSentForEmail = "";
 
 function isOwnerAdminEmail(email){
-  return String(email || "").trim().toLowerCase() === ADMIN_OWNER_EMAIL;
+  return ADMIN_OWNER_EMAILS.includes(String(email || "").trim().toLowerCase());
 }
 
 function adminLoginAction(){
@@ -12008,7 +12008,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
 'use strict';
 const TABLE='store_offers';
-const OWNER_EMAIL='vedant898989gupta@gmail.com';
+const OWNER_EMAIL='vedansh2811111@gmail.com';
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function client(){return window.supabaseClient|| (typeof supabaseClient!=='undefined'?supabaseClient:null)}
