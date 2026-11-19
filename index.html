@@ -3702,7 +3702,7 @@ onclick="decreaseQuantity(${index})">
 -
 </button>
 
-${item.quantity}
+${escapeHtml(formatQuantity(item))}
 
 <button
 class="quantity-btn"
@@ -4083,7 +4083,7 @@ function updateOrderSummary(){
   cartItems.forEach(item=>{
     const quantity = Number(item.quantity)||0;
     const price = Number(item.price)||0;
-    html += `<div class="stvn-order-summary-row"><span>${escapeHtml(item.name)} × ${quantity}</span><strong>₹${(price*quantity).toFixed(2)}</strong></div>`;
+    html += `<div class="stvn-order-summary-row"><span>${escapeHtml(item.name)} × ${escapeHtml(formatQuantity(item))}</span><strong>₹${(price*quantity).toFixed(2)}</strong></div>`;
   });
   html += '</div>';
   html += `<div class="stvn-order-summary-totals">
@@ -5476,17 +5476,19 @@ function vgInvoiceMarkup(order,language){
   const hi=language==='hi';
   const t=hi?{title:'खरीदारी की रसीद',invoice:'इनवॉइस',order:'ऑर्डर आईडी',date:'तारीख',customer:'ग्राहक का नाम',phone:'मोबाइल नंबर',address:'डिलीवरी पता',product:'उत्पाद',qty:'मात्रा',price:'कीमत',amount:'राशि',subtotal:'उप-योग',delivery:'डिलीवरी शुल्क',total:'कुल राशि',payment:'भुगतान का तरीका',thanks:'Vedant Grocery Shop से खरीदारी करने के लिए धन्यवाद!'}:{title:'Purchase Receipt',invoice:'INVOICE',order:'Order ID',date:'Date',customer:'Customer Name',phone:'Mobile Number',address:'Delivery Address',product:'Product',qty:'Quantity',price:'Price',amount:'Amount',subtotal:'Subtotal',delivery:'Delivery Charge',total:'Grand Total',payment:'Payment Method',thanks:'Thank you for shopping with Vedant Grocery Shop!'};
   const items=vgInvoiceItems(order);
-  const rows=items.map(item=>{const name=item.name||item.product||'Item';const qty=Number(item.quantity??item.qty??1)||1;const qtyLabel=String(item.quantityText||item.quantity_text||qty);const price=Number(String(item.price??item.unit_price??0).replace(/[^0-9.]/g,''))||0;return `<tr><td>${vgInvoiceEscape(name)}</td><td>${vgInvoiceEscape(qtyLabel)}</td><td>${vgInvoiceMoney(price)}</td><td>${vgInvoiceMoney(price*qty)}</td></tr>`}).join('');
+  const normalizedItems=items.map(item=>{const qty=Number(item.quantity??item.qty??1)||1;const raw=String(item.quantityText||item.quantity_text||'').trim();const unitMatch=raw.match(/^[0-9\s.,]+(.*)$/);const unit=unitMatch?unitMatch[1].trim():'';const qtyLabel=unit?(String(qty)+' '+unit):String(qty);const price=Number(String(item.price??item.unit_price??0).replace(/[^0-9.]/g,''))||0;return {item,qty,qtyLabel,price};});
+  const rows=normalizedItems.map(({item,qty,qtyLabel,price})=>{const name=item.name||item.product||'Item';return `<tr><td>${vgInvoiceEscape(name)}</td><td>${vgInvoiceEscape(qtyLabel)}</td><td>${vgInvoiceMoney(price)}</td><td>${vgInvoiceMoney(price*qty)}</td></tr>`}).join('');
   const total=Number(String(order.total??0).replace(/[^0-9.]/g,''))||0;
   const delivery=Number(order.delivery_charge)||0;
-  const subtotal=Math.max(0,total-delivery);
+  const subtotal=normalizedItems.reduce((sum,row)=>sum+(row.price*row.qty),0);
+  const discount=Math.max(0,subtotal+delivery-total);
   const dateValue=order.order_date||order.date||new Date().toISOString();
   const dateText=new Date(dateValue).toLocaleString(hi?'hi-IN':'en-IN');
   return `<div style="width:760px;padding:34px;background:#fff;color:#17251c;font-family:Arial,'Noto Sans Devanagari',sans-serif;box-sizing:border-box">
     <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #168447;padding-bottom:18px;margin-bottom:22px"><div><div style="font-size:28px;font-weight:900;color:#147a40">Vedant Grocery Shop</div><div style="font-size:15px;color:#64736a">${vgInvoiceEscape(t.title)}</div></div><div style="text-align:right"><div style="font-size:24px;font-weight:900;color:#147a40">${t.invoice}</div><div style="font-size:13px;color:#59665e">#${vgInvoiceEscape(order.id||order.order_id||'')}</div></div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px;line-height:1.7;margin-bottom:18px"><div><b>${t.order}:</b> ${vgInvoiceEscape(order.id||order.order_id||'')}</div><div><b>${t.date}:</b> ${vgInvoiceEscape(dateText)}</div><div><b>${t.customer}:</b> ${vgInvoiceEscape(order.name||order.customer_name||'')}</div><div><b>${t.phone}:</b> ${vgInvoiceEscape(order.phone||order.customer_phone||'')}</div><div style="grid-column:1/-1"><b>${t.address}:</b> ${vgInvoiceEscape(order.address||order.customer_address||'')}</div></div>
     <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#eaf6ee"><th style="text-align:left;padding:11px;border:1px solid #d8e6dc">${t.product}</th><th style="text-align:left;padding:11px;border:1px solid #d8e6dc">${t.qty}</th><th style="text-align:right;padding:11px;border:1px solid #d8e6dc">${t.price}</th><th style="text-align:right;padding:11px;border:1px solid #d8e6dc">${t.amount}</th></tr></thead><tbody>${rows||`<tr><td colspan="4" style="padding:12px;border:1px solid #d8e6dc">${hi?'उत्पाद विवरण उपलब्ध नहीं है':'Item details unavailable'}</td></tr>`}</tbody></table>
-    <div style="width:330px;margin:20px 0 0 auto;font-size:14px;line-height:2"><div style="display:flex;justify-content:space-between"><span>${t.subtotal}</span><b>${vgInvoiceMoney(subtotal)}</b></div><div style="display:flex;justify-content:space-between"><span>${t.delivery}</span><b>${vgInvoiceMoney(delivery)}</b></div><div style="display:flex;justify-content:space-between;border-top:2px solid #168447;padding-top:8px;font-size:19px;color:#147a40"><b>${t.total}</b><b>${vgInvoiceMoney(total)}</b></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span>${t.payment}</span><b>${vgInvoiceEscape(order.payment||order.payment_method||'')}</b></div></div>
+    <div style="width:330px;margin:20px 0 0 auto;font-size:14px;line-height:2"><div style="display:flex;justify-content:space-between"><span>${t.subtotal}</span><b>${vgInvoiceMoney(subtotal)}</b></div>${discount>0?`<div style="display:flex;justify-content:space-between"><span>${hi?'छूट':'Discount'}</span><b>− ${vgInvoiceMoney(discount)}</b></div>`:''}<div style="display:flex;justify-content:space-between"><span>${t.delivery}</span><b>${vgInvoiceMoney(delivery)}</b></div><div style="display:flex;justify-content:space-between;border-top:2px solid #168447;padding-top:8px;font-size:19px;color:#147a40"><b>${t.total}</b><b>${vgInvoiceMoney(total)}</b></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span>${t.payment}</span><b>${vgInvoiceEscape(order.payment||order.payment_method||'')}</b></div></div>
     <div style="margin-top:28px;padding:15px;background:#eff8f1;border-radius:10px;text-align:center;color:#176b3a;font-weight:700">${t.thanks}</div></div>`;
 }
 async function vgCreateInvoicePdf(order,language){
@@ -17330,27 +17332,32 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const id=clean(orderId); if(!id){window.stvnAlert('Order ID नहीं मिला।');return;}
    const button=[...document.querySelectorAll('button')].find(b=>b.getAttribute('onclick')?.includes('sendAdminInvoiceWhatsApp')&&b.getAttribute('onclick').includes(id));
    const old=button?.innerHTML; if(button){button.disabled=true;button.textContent='⏳ Preparing PDF…';}
-   let waTab=null;
+   let blobUrl='';
    try{
      if(typeof html2pdf!=='function')throw new Error('PDF library load नहीं हुई। Internet connection जाँचें।');
-     waTab=window.open('about:blank','_blank');
      const {data:order,error}=await supabaseClient.from('orders').select('*').eq('order_id',id).maybeSingle();
      if(error)throw error; if(!order)throw new Error('Supabase में यह order नहीं मिला।');
      const invoiceOrder={...order,id:order.order_id||id,name:order.customer_name||order.name,phone:order.customer_phone||order.phone,address:order.customer_address||order.address,payment:order.payment_method||order.payment,total:order.total};
      const blob=await vgCreateInvoicePdf(invoiceOrder,vgInvoiceLanguage());
+     if(!(blob instanceof Blob)||blob.size<1000)throw new Error('PDF खाली बन रही है। कृपया दोबारा कोशिश करें।');
      const fileName='Vedant-Invoice-'+id.replace(/[^a-z0-9_-]/gi,'')+'.pdf';
-     const blobUrl=URL.createObjectURL(blob);
-     const a=document.createElement('a');a.href=blobUrl;a.download=fileName;document.body.appendChild(a);a.click();a.remove();
-     setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+     blobUrl=URL.createObjectURL(blob);
+     const a=document.createElement('a');a.href=blobUrl;a.download=fileName;a.style.display='none';document.body.appendChild(a);a.click();a.remove();
      const digits=clean(order.customer_phone||order.phone).replace(/\D/g,'');
      if(!digits)throw new Error('Customer mobile number order में उपलब्ध नहीं है। PDF डाउनलोड हो गई है।');
      const number=digits.length===10?'91'+digits:digits;
      const customer=clean(order.customer_name||order.name)||'Customer';
-     const message='📄 Hi '+customer+'! Your order invoice is ready. 🧾 Order ID: '+id+' — Please find the PDF attached.';
+     const message='📄 Hi '+customer+'! Your Vedant Grocery Shop invoice is ready. Order ID: '+id+'. Please attach the downloaded PDF and tap Send.';
      const url='https://wa.me/'+number+'?text='+encodeURIComponent(message);
-     if(waTab&&!waTab.closed)waTab.location.href=url;else window.open(url,'_blank');
-     window.stvnAlert('✅ Invoice PDF डाउनलोड हो गई है। WhatsApp chat खुलने पर PDF attach करके Send दबाएँ।');
-   }catch(err){if(waTab&&!waTab.closed)waTab.close();console.error('Invoice WhatsApp error:',err);window.stvnAlert('❌ Invoice तैयार नहीं हुई: '+clean(err?.message||err));}
+     window.stvnAlert('✅ Invoice PDF डाउनलोड शुरू हो गई है। अब WhatsApp chat खुलेगी। चैट में 📎 Attach दबाकर Downloads से PDF चुनें और Send करें।');
+     // Let the browser start the file download before navigating. No about:blank tab is ever created.
+     const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.matchMedia('(max-width: 700px)').matches;
+     setTimeout(()=>{
+       try{if(isMobile){window.location.assign(url);}else{const opened=window.open(url,'_blank');if(!opened)window.location.assign(url);}}
+       catch(_navError){window.location.href=url;}
+       setTimeout(()=>{if(blobUrl)URL.revokeObjectURL(blobUrl);},120000);
+     },isMobile?1100:700);
+   }catch(err){console.error('Invoice WhatsApp error:',err);window.stvnAlert('❌ Invoice तैयार नहीं हुई: '+clean(err?.message||err));if(blobUrl)URL.revokeObjectURL(blobUrl);}
    finally{if(button){button.disabled=false;button.innerHTML=old||'📄 Send Invoice on WhatsApp';}}
  };
 
@@ -17366,7 +17373,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      window.customerLatitude=customerLatitude;window.customerLongitude=customerLongitude;
      const check=checkDeliveryRadius();
      const lat=document.getElementById('stvnGpsLat'),lng=document.getElementById('stvnGpsLng'),dist=document.getElementById('stvnGpsDistance');
-     if(lat)lat.textContent=''; if(lng)lng.textContent='';
+     if(lat)lat.textContent='Latitude: '+customerLatitude.toFixed(6); if(lng)lng.textContent='Longitude: '+customerLongitude.toFixed(6);
      if(dist)dist.textContent='📏 Distance from Vedant Grocery Shop: '+check.distance.toFixed(2)+' km';
      const mapEl=document.getElementById('vedantGpsMap');
      if(mapEl&&window.L){
@@ -17474,3 +17481,47 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+
+<!-- Vedant final mobile compatibility + invoice flow + location visibility patch -->
+<style id="vedant-final-mobile-fix-20261119">
+/* Stop the artificial blur during page changes; retain instant, clean navigation. */
+.page.active{animation:none!important;filter:none!important;backdrop-filter:none!important;}
+.page,.page *{scroll-behavior:auto;}
+@media(max-width:700px){
+  #page-track,#page-orders{padding-left:12px!important;padding-right:12px!important;}
+  #page-track .stvn-order-tracking-panel,#page-orders .history-item,#page-orders #history,#page-orders #order-history{width:100%!important;max-width:100%!important;box-sizing:border-box!important;}
+  #page-track .stvn-order-tracking-panel{padding:16px!important;margin:12px 0 18px!important;}
+  #page-orders .history-item{padding:16px!important;margin:12px 0!important;}
+  .vg-store-header .vg-action,.vg-store-header .vg-orders-action{min-height:48px!important;height:auto!important;padding:10px 14px!important;font-size:13px!important;}
+  .vg-store-header .vg-action{min-width:0!important;}
+  .vg-store-header .vg-orders-action{min-width:0!important;}
+  #page-location #customer-location-box{padding:16px!important;}
+  #page-location #stvnGpsCoordinates{display:block!important;visibility:visible!important;opacity:1!important;overflow-wrap:anywhere!important;}
+  #page-location #stvnGpsCoordinates #stvnGpsLat,#page-location #stvnGpsCoordinates #stvnGpsLng{display:block!important;margin-top:5px!important;font-weight:700!important;}
+  #page-location #stvnGpsCoordinates #stvnGpsDistance{display:block!important;padding:9px 10px!important;border-radius:10px!important;background:#e8f7ed!important;color:#145b32!important;}
+  #page-location #stvnLocationContinue{min-height:52px!important;width:100%!important;}
+}
+/* Balanced Track Order / My Orders buttons in the home header. */
+.vg-store-header .vg-action,.vg-store-header .vg-orders-action{flex:1 1 0!important;}
+.vg-store-header .vg-action{margin-right:6px!important;}
+.vg-store-header .vg-orders-action{margin-left:6px!important;}
+</style>
+<script id="vedant-location-distance-header-final-20261119">
+(function(){
+ 'use strict';
+ function paintLocation(){
+   let loc=null;
+   try{loc=JSON.parse(localStorage.getItem('vedantCustomerDeliveryLocationV1')||'null')||JSON.parse(localStorage.getItem('vedantCustomerLocationV1')||'null');}catch(_e){}
+   if(!loc||!Number.isFinite(Number(loc.lat))||!Number.isFinite(Number(loc.lng)))return;
+   const km=Number(loc.km);
+   const current=String(loc.currentName||loc.name||'Current location');
+   document.querySelectorAll('.vg-current-location-name').forEach(el=>{el.textContent=current+(Number.isFinite(km)?' · '+km.toFixed(2)+' km from shop':'');el.title=el.textContent;});
+   document.querySelectorAll('.vg-location-label').forEach(el=>{el.textContent=Number.isFinite(km)?(km<=5?'Delivery available · '+km.toFixed(2)+' km':'Outside delivery area · '+km.toFixed(2)+' km'):'Current location';el.title=el.textContent;});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',paintLocation,{once:true});else paintLocation();
+ window.addEventListener('storage',paintLocation);
+ const obs=new MutationObserver(()=>paintLocation());
+ if(document.body)obs.observe(document.body,{childList:true,subtree:true});
+})();
+</script>
