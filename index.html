@@ -16,7 +16,7 @@
 
 <!-- Open Graph / WhatsApp / Facebook Share Tags -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://vedant252326.github.io/Vedant-Grocery-Shop/">
+<meta property="og:url" content="https://vedantgrocery.shop/">
 <meta property="og:title" content="Vedant Grocery Shop | वेदांत किराना दुकान">
 <meta property="og:description" content="Aapki apni kirana dukan ab online! Khareedein taaza samaan sabse kam daam par.">
 
@@ -26,16 +26,16 @@
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Vedant Grocery Shop",
-  "url": "https://vedant252326.github.io/Vedant-Grocery-Shop/"
+  "url": "https://vedantgrocery.shop/"
 }
 </script>
 
 <!-- Canonical Link -->
-<link rel="canonical" href="https://vedant252326.github.io/Vedant-Grocery-Shop/">
+<link rel="canonical" href="https://vedantgrocery.shop/">
 
 <!-- Browser tab, supported search previews, and Apple touch icon -->
-<link rel="icon" type="image/png" sizes="32x32" href="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png">
-<link rel="apple-touch-icon" href="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://vedantgrocery.shop/logo.png">
+<link rel="apple-touch-icon" href="https://vedantgrocery.shop/logo.png">
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#145c31">
 <meta name="application-name" content="Vedant Grocery Shop">
@@ -47,13 +47,13 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Vedant Grocery Shop",
-  "url": "https://vedant252326.github.io/Vedant-Grocery-Shop/",
-  "logo": "https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png"
+  "url": "https://vedantgrocery.shop/",
+  "logo": "https://vedantgrocery.shop/logo.png"
 }
 </script>
 
 <!-- WhatsApp share par photo dikhane ke liye -->
-<meta property="og:image" content="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png">
+<meta property="og:image" content="https://vedantgrocery.shop/logo.png">
 
 <style>
 :root{
@@ -2738,7 +2738,8 @@ Logout
     <input id="cc-email" type="email" maxlength="160" placeholder="Customer Care ईमेल">
   </div>
   <label for="cc-message" style="display:block;margin-top:12px;font-weight:800">📝 Customer Care Description / ग्राहकों के लिए विवरण</label>
-  <textarea id="cc-message" rows="4" maxlength="600" placeholder="ग्राहकों को बताएं कि ऑर्डर, पेमेंट, डिलीवरी या शिकायत में कैसे मदद मिलेगी…" style="width:100%;margin-top:6px"></textarea>
+  <textarea id="cc-message" rows="12" maxlength="10000" placeholder="ग्राहकों को बताएं कि ऑर्डर, पेमेंट, डिलीवरी या शिकायत में कैसे मदद मिलेगी… (100 lines तक)" style="width:100%;min-height:260px;margin-top:6px;line-height:1.55;white-space:pre-wrap;resize:vertical"></textarea>
+  <small id="cc-message-count" class="admin-small">0 / 100 lines · अधिकतम 10,000 characters</small>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
     <button type="button" class="admin-btn" onclick="loadCustomerCareSettings()">🔄 Load Settings</button>
     <button type="button" class="admin-btn" onclick="previewCustomerCare()">👁️ Preview</button>
@@ -5369,6 +5370,7 @@ async function placeOrder(){
       order.payment_status="paid";
       const walletPayload={
         order_id:order.id, name:order.name, phone:order.phone, address:order.address,
+        customer_email:customerEmail, user_id:authData.user.id,
         latitude:order.latitude, longitude:order.longitude,
         total:Number(String(order.total).replace(/[^0-9.]/g,""))||0,
         delivery_charge:order.delivery_charge, delivery_distance_km:order.delivery_distance_km, items:order.items,
@@ -5386,6 +5388,7 @@ async function placeOrder(){
       cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
       saveData(); updateCart(); showOrderHistory();
       showOrderConfirmation(order);
+      await vgSendOrderInvoiceEmail(order,customerEmail);
       if(typeof window.refreshVedantWalletBalance==="function"){try{await window.refreshVedantWalletBalance();}catch(refreshError){console.warn("Wallet balance refresh after successful payment failed:",refreshError);}}
       return;
     }
@@ -5409,8 +5412,6 @@ async function placeOrder(){
       });
       return;
     }
-    await saveVedantOrder(order,customerEmail);
-
     await saveVedantOrder(order,customerEmail);
   }catch(err){
     console.error("Place order error:",err);
@@ -5454,22 +5455,33 @@ function vgInvoiceItems(order){
 }
 function vgInvoiceMarkup(order,language){
   const hi=language==='hi';
-  const t=hi?{title:'खरीदारी की रसीद',invoice:'इनवॉइस',order:'ऑर्डर आईडी',date:'तारीख',customer:'ग्राहक का नाम',phone:'मोबाइल नंबर',address:'डिलीवरी पता',product:'उत्पाद',qty:'मात्रा',price:'कीमत',amount:'राशि',subtotal:'उप-योग',delivery:'डिलीवरी शुल्क',total:'कुल राशि',payment:'भुगतान का तरीका',thanks:'Vedant Grocery Shop से खरीदारी करने के लिए धन्यवाद!'}:{title:'Purchase Receipt',invoice:'INVOICE',order:'Order ID',date:'Date',customer:'Customer Name',phone:'Mobile Number',address:'Delivery Address',product:'Product',qty:'Quantity',price:'Price',amount:'Amount',subtotal:'Subtotal',delivery:'Delivery Charge',total:'Grand Total',payment:'Payment Method',thanks:'Thank you for shopping with Vedant Grocery Shop!'};
+  const t=hi?{title:'खरीदारी की रसीद',invoice:'इनवॉइस',order:'ऑर्डर आईडी',date:'तारीख',customer:'ग्राहक का नाम',phone:'मोबाइल नंबर',address:'डिलीवरी पता',product:'उत्पाद का नाम',qty:'मात्रा',price:'प्रति इकाई कीमत',amount:'कुल राशि',subtotal:'उप-योग',delivery:'डिलीवरी शुल्क',total:'कुल देय राशि',payment:'भुगतान का तरीका',thanks:'Vedant Grocery Shop से खरीदारी करने के लिए धन्यवाद!',website:'वेबसाइट',status:'ऑर्डर की रसीद'}:{title:'Purchase Receipt',invoice:'TAX INVOICE / RECEIPT',order:'Order ID',date:'Invoice Date',customer:'Customer Name',phone:'Mobile Number',address:'Delivery Address',product:'Product Name',qty:'Quantity',price:'Unit Price',amount:'Line Total',subtotal:'Subtotal',delivery:'Delivery Charge',total:'Grand Total',payment:'Payment Method',thanks:'Thank you for choosing Vedant Grocery Shop!',website:'Website',status:'ORDER RECEIPT'};
   const items=vgInvoiceItems(order);
-  const normalizedItems=items.map(item=>{const qty=Number(item.quantity??item.qty??1)||1;const raw=String(item.quantityText||item.quantity_text||'').trim();const unitMatch=raw.match(/^[0-9\s.,]+(.*)$/);const unit=unitMatch?unitMatch[1].trim():'';const qtyLabel=unit?(String(qty)+' '+unit):String(qty);const price=Number(String(item.price??item.unit_price??0).replace(/[^0-9.]/g,''))||0;return {item,qty,qtyLabel,price};});
-  const rows=normalizedItems.map(({item,qty,qtyLabel,price})=>{const name=item.name||item.product||'Item';return `<tr><td>${vgInvoiceEscape(name)}</td><td>${vgInvoiceEscape(qtyLabel)}</td><td>${vgInvoiceMoney(price)}</td><td>${vgInvoiceMoney(price*qty)}</td></tr>`}).join('');
+  const normalizedItems=items.map(item=>{const qty=Number(item.quantity??item.qty??1)||1;const raw=String(item.quantityText||item.quantity_text||'').trim();const unitMatch=raw.match(/^[0-9\\s.,]+(.*)$/);const unit=unitMatch?unitMatch[1].trim():'';const qtyLabel=unit?(String(qty)+' '+unit):String(qty);const price=Number(String(item.price??item.unit_price??0).replace(/[^0-9.]/g,''))||0;return {item,qty,qtyLabel,price};});
+  const rows=normalizedItems.map(({item,qty,qtyLabel,price},index)=>{const name=item.name||item.product||'Item';return `<tr><td style="width:6%;text-align:center;color:#64736a">${index+1}</td><td>${vgInvoiceEscape(name)}</td><td style="text-align:center">${vgInvoiceEscape(qtyLabel)}</td><td style="text-align:right">${vgInvoiceMoney(price)}</td><td style="text-align:right;font-weight:700">${vgInvoiceMoney(price*qty)}</td></tr>`}).join('');
   const total=Number(String(order.total??0).replace(/[^0-9.]/g,''))||0;
   const delivery=Number(order.delivery_charge)||0;
   const subtotal=normalizedItems.reduce((sum,row)=>sum+(row.price*row.qty),0);
   const discount=Math.max(0,subtotal+delivery-total);
   const dateValue=order.order_date||order.date||new Date().toISOString();
   const dateText=new Date(dateValue).toLocaleString(hi?'hi-IN':'en-IN');
-  return `<div style="width:760px;padding:34px;background:#fff;color:#17251c;font-family:Arial,'Noto Sans Devanagari',sans-serif;box-sizing:border-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #168447;padding-bottom:18px;margin-bottom:22px"><div><div style="font-size:28px;font-weight:900;color:#147a40">Vedant Grocery Shop</div><div style="font-size:15px;color:#64736a">${vgInvoiceEscape(t.title)}</div></div><div style="text-align:right"><div style="font-size:24px;font-weight:900;color:#147a40">${t.invoice}</div><div style="font-size:13px;color:#59665e">#${vgInvoiceEscape(order.id||order.order_id||'')}</div></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px;line-height:1.7;margin-bottom:18px"><div><b>${t.order}:</b> ${vgInvoiceEscape(order.id||order.order_id||'')}</div><div><b>${t.date}:</b> ${vgInvoiceEscape(dateText)}</div><div><b>${t.customer}:</b> ${vgInvoiceEscape(order.name||order.customer_name||'')}</div><div><b>${t.phone}:</b> ${vgInvoiceEscape(order.phone||order.customer_phone||'')}</div><div style="grid-column:1/-1"><b>${t.address}:</b> ${vgInvoiceEscape(order.address||order.customer_address||'')}</div></div>
-    <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#eaf6ee"><th style="text-align:left;padding:11px;border:1px solid #d8e6dc">${t.product}</th><th style="text-align:left;padding:11px;border:1px solid #d8e6dc">${t.qty}</th><th style="text-align:right;padding:11px;border:1px solid #d8e6dc">${t.price}</th><th style="text-align:right;padding:11px;border:1px solid #d8e6dc">${t.amount}</th></tr></thead><tbody>${rows||`<tr><td colspan="4" style="padding:12px;border:1px solid #d8e6dc">${hi?'उत्पाद विवरण उपलब्ध नहीं है':'Item details unavailable'}</td></tr>`}</tbody></table>
-    <div style="width:330px;margin:20px 0 0 auto;font-size:14px;line-height:2"><div style="display:flex;justify-content:space-between"><span>${t.subtotal}</span><b>${vgInvoiceMoney(subtotal)}</b></div>${discount>0?`<div style="display:flex;justify-content:space-between"><span>${hi?'छूट':'Discount'}</span><b>− ${vgInvoiceMoney(discount)}</b></div>`:''}<div style="display:flex;justify-content:space-between"><span>${t.delivery}</span><b>${vgInvoiceMoney(delivery)}</b></div><div style="display:flex;justify-content:space-between;border-top:2px solid #168447;padding-top:8px;font-size:19px;color:#147a40"><b>${t.total}</b><b>${vgInvoiceMoney(total)}</b></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span>${t.payment}</span><b>${vgInvoiceEscape(order.payment||order.payment_method||'')}</b></div></div>
-    <div style="margin-top:28px;padding:15px;background:#eff8f1;border-radius:10px;text-align:center;color:#176b3a;font-weight:700">${t.thanks}</div></div>`;
+  const customerName=order.name||order.customer_name||'Customer';
+  const logo='https://vedantgrocery.shop/logo.png';
+  const website='https://vedantgrocery.shop/';
+  return `<div style="position:relative;isolation:isolate;width:760px;min-height:980px;padding:34px 38px;background:#fff;color:#17251c;font-family:Arial,'Noto Sans Devanagari',sans-serif;box-sizing:border-box;overflow:hidden">
+    <div style="position:absolute;z-index:0;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none"><img src="${logo}" crossorigin="anonymous" style="width:440px;height:440px;object-fit:contain;opacity:.075" alt=""></div>
+    <div style="position:relative;z-index:1">
+    <div style="display:flex;align-items:center;justify-content:center;gap:17px;text-align:center;padding:8px 0 20px;border-bottom:4px solid #168447">
+      <img src="${logo}" crossorigin="anonymous" alt="Vedant Grocery Shop Logo" style="width:78px;height:78px;object-fit:contain;border-radius:14px">
+      <div><div style="font-size:31px;line-height:1.2;font-weight:900;letter-spacing:.3px;color:#116b38">VEDANT GROCERY SHOP</div><div style="font-size:13px;letter-spacing:2px;font-weight:700;color:#718078;margin-top:5px">FRESHNESS AT YOUR DOORSTEP</div><div style="font-size:12px;color:#64736a;margin-top:5px">${vgInvoiceEscape(t.title)}</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:22px 0 16px"><div style="font-size:13px;font-weight:800;letter-spacing:1.5px;color:#168447">${t.status}</div><div style="text-align:right"><div style="font-size:23px;font-weight:900;color:#116b38">${t.invoice}</div><div style="font-size:13px;color:#59665e;margin-top:4px">#${vgInvoiceEscape(order.id||order.order_id||'')}</div></div></div>
+    <div style="border:1px solid #dce9df;border-radius:10px;padding:15px 17px;background:#fbfefc;margin-bottom:20px"><div style="font-size:15px;font-weight:800;color:#116b38;margin-bottom:9px">${hi?'ग्राहक का विवरण':'CUSTOMER DETAILS'}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;font-size:13px;line-height:1.65"><div><b>${t.customer}:</b><br>${vgInvoiceEscape(customerName)}</div><div><b>${t.phone}:</b><br>${vgInvoiceEscape(order.phone||order.customer_phone||'—')}</div><div><b>${t.order}:</b><br>${vgInvoiceEscape(order.id||order.order_id||'')}</div><div><b>${t.date}:</b><br>${vgInvoiceEscape(dateText)}</div><div style="grid-column:1/-1"><b>${t.address}:</b><br>${vgInvoiceEscape(order.address||order.customer_address||'—')}</div></div></div>
+    <div style="font-size:15px;font-weight:800;color:#116b38;margin:0 0 9px">${hi?'खरीदे गए उत्पाद':'PURCHASED ITEMS'}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;background:#ffffffd9"><thead><tr style="background:#e8f5ec;color:#155d34"><th style="padding:11px 8px;border:1px solid #d5e5d9">#</th><th style="text-align:left;padding:11px 8px;border:1px solid #d5e5d9">${t.product}</th><th style="padding:11px 8px;border:1px solid #d5e5d9">${t.qty}</th><th style="text-align:right;padding:11px 8px;border:1px solid #d5e5d9">${t.price}</th><th style="text-align:right;padding:11px 8px;border:1px solid #d5e5d9">${t.amount}</th></tr></thead><tbody>${rows||`<tr><td colspan="5" style="padding:14px;border:1px solid #d5e5d9">${hi?'उत्पाद विवरण उपलब्ध नहीं है':'Item details unavailable'}</td></tr>`}</tbody></table>
+    <div style="width:340px;margin:22px 0 0 auto;padding:15px 17px;border:1px solid #dce9df;border-radius:10px;background:#fbfefc;font-size:13px;line-height:2"><div style="display:flex;justify-content:space-between"><span>${t.subtotal}</span><b>${vgInvoiceMoney(subtotal)}</b></div>${discount>0?`<div style="display:flex;justify-content:space-between;color:#168447"><span>${hi?'छूट':'Discount'}</span><b>− ${vgInvoiceMoney(discount)}</b></div>`:''}<div style="display:flex;justify-content:space-between"><span>${t.delivery}</span><b>${vgInvoiceMoney(delivery)}</b></div><div style="display:flex;justify-content:space-between;border-top:2px solid #168447;padding-top:9px;margin-top:5px;font-size:19px;color:#116b38"><b>${t.total}</b><b>${vgInvoiceMoney(total)}</b></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span>${t.payment}</span><b>${vgInvoiceEscape(order.payment||order.payment_method||'—')}</b></div></div>
+    <div style="margin-top:35px;padding:17px 12px;border-top:2px dashed #a9cbb4;text-align:center;color:#176b3a"><div style="font-size:16px;font-weight:800">${t.thanks}</div><div style="font-size:12px;color:#64736a;margin-top:8px">${t.website}: ${website}</div><div style="font-size:11px;color:#8a968e;margin-top:12px">${hi?'यह कंप्यूटर द्वारा बनाई गई रसीद है।':'This is a computer-generated receipt.'}</div></div>
+  </div></div>`;
 }
 async function vgCreateInvoicePdf(order,language){
   if(typeof html2pdf!=='function')throw new Error('PDF library load नहीं हुई। Internet connection जाँचें और दोबारा कोशिश करें।');
@@ -5503,6 +5515,54 @@ async function vgCreateInvoicePdf(order,language){
   }finally{holder.remove();}
 }
 
+
+/* ===== AUTOMATIC CUSTOMER INVOICE EMAIL ===== */
+async function vgSendOrderInvoiceEmail(order, customerEmail){
+  try{
+    const {data:authData,error:authError}=await supabaseClient.auth.getUser();
+    const user=authData?.user;
+    if(authError||!user?.id||!user?.email)throw new Error("Customer login could not be verified.");
+    if(String(user.email).trim().toLowerCase()!==String(customerEmail||user.email).trim().toLowerCase())
+      throw new Error("Logged-in email does not match this order.");
+
+    const invoiceOrder={
+      ...order,
+      id:order.id||order.order_id,
+      name:order.name||order.customer_name,
+      phone:order.phone||order.customer_phone,
+      address:order.address||order.customer_address,
+      payment:order.payment||order.payment_method,
+      total:order.total,
+      delivery_charge:order.delivery_charge||0
+    };
+    const pdfBlob=await vgCreateInvoicePdf(invoiceOrder,vgInvoiceLanguage());
+    const bytes=new Uint8Array(await pdfBlob.arrayBuffer());
+    let binary="";
+    const chunkSize=0x8000;
+    for(let i=0;i<bytes.length;i+=chunkSize){
+      binary+=String.fromCharCode(...bytes.subarray(i,i+chunkSize));
+    }
+    const invoicePdfBase64=btoa(binary);
+    const {data,error}=await supabaseClient.functions.invoke("send-order-invoice",{
+      body:{
+        orderId:String(invoiceOrder.id),
+        invoicePdfBase64,
+        language:vgInvoiceLanguage()
+      }
+    });
+    if(error)throw error;
+    if(!data?.success)throw new Error(data?.error||"Invoice email was not confirmed.");
+    const message=document.getElementById("order-message");
+    if(message)message.insertAdjacentHTML("beforeend",'<div class="success">📧 Invoice PDF automatically sent to your registered email.</div>');
+    return true;
+  }catch(error){
+    console.error("Automatic invoice email failed:",error);
+    const message=document.getElementById("order-message");
+    if(message)message.insertAdjacentHTML("beforeend",'<div class="payment-note">⚠️ Order saved successfully, but invoice email could not be sent. Please contact the shop.</div>');
+    return false;
+  }
+}
+
 async function saveVedantOrder(order,customerEmail){
   const message=document.getElementById("order-message");
   let savedWithoutCustomerEmail=false;
@@ -5527,6 +5587,7 @@ async function saveVedantOrder(order,customerEmail){
       message.innerHTML=`<span class="success">✅ यह order पहले से save है। Duplicate entry नहीं बनाई गई।<br>🧾 Order ID: ${escapeHtml(order.id)}</span>`;
       cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
       saveData(); updateCart(); showOrderHistory(); showOrderConfirmation(order);
+      await vgSendOrderInvoiceEmail(order,customerEmail);
       return;
     }
   }catch(duplicateLookupError){console.warn("Order duplicate pre-check skipped:",duplicateLookupError);}
@@ -5552,6 +5613,7 @@ async function saveVedantOrder(order,customerEmail){
   cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
   saveData(); updateCart(); showOrderHistory();
   showOrderConfirmation(order);
+  await vgSendOrderInvoiceEmail(order,customerEmail);
 }
 
 function showOrderConfirmation(order){
@@ -7367,7 +7429,7 @@ function openOrderWhatsAppUpdate(orderId, phone){
     cancelled_by_admin:{text:"Your order has been cancelled. Please contact us for help.",emoji:"ℹ️"}
   };
   const info=statusCopy[status]||statusCopy.pending;
-  const trackingUrl="https://vedant252326.github.io/Vedant-Grocery-Shop/#track";
+  const trackingUrl="https://vedantgrocery.shop/#track";
   let message=`${info.emoji} Hi ${name}! ${info.text} Order ID: ${cleanId}`;
   if(total) message+=` | Total: ${total}`;
   if(payment) message+=` | Payment: ${payment}`;
@@ -8834,7 +8896,7 @@ function modernUIInit(){
   nav.innerHTML=`
     <div class="brand" style="display:flex;align-items:center;gap:12px;">
       <div class="brand-logo stvn-leaf-brand" role="img" aria-label="Vedant Grocery Shop leaf and basket logo" title="Vedant Grocery Shop" style="flex:0 0 50px;width:50px;height:50px;border-radius:15px;font-size:27px;background:linear-gradient(145deg,#f4fff6,#dff7e5);box-shadow:0 7px 18px rgba(18,80,48,.14);border:1px solid #ccebd4;color:#08783d;">
-        <img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="" width="42" height="42" decoding="async">
+        <img src="https://vedantgrocery.shop/logo.png" alt="" width="42" height="42" decoding="async">
       </div>
       <h1 class="stvn-brand-wordmark" style="margin:0;font-size:18px;line-height:1.12;color:#145b32;">Vedant <span>Grocery Shop</span></h1>
     </div>
@@ -9618,7 +9680,15 @@ function stvnOpenProfileSection(section){
   document.getElementById('stvnProfileTitle').textContent=titles[section]||'My Profile';
   stvnRefreshCustomerProfile();
   if(section==='orders')stvnRenderCustomerOrders();
-  if(section==='customerCare'){const careButton=document.getElementById('stvnCustomerCareLauncher');if(careButton){careButton.hidden=false;careButton.click();}setTimeout(()=>{const card=document.getElementById('stvnCustomerCareCard');if(card)card.hidden=true;const title=document.getElementById('stvnAccountCareTitle');const msg=document.getElementById('stvnAccountCareMessage');const srcTitle=document.getElementById('stvnCustomerCareTitle');const srcMsg=document.getElementById('stvnCustomerCareMessage');if(title&&srcTitle)title.textContent=srcTitle.textContent;if(msg&&srcMsg)msg.textContent=srcMsg.textContent;const dest=document.getElementById('stvnAccountCareActions'),src=document.getElementById('stvnCustomerCareActions');if(dest&&src){dest.replaceChildren();src.querySelectorAll('a').forEach(a=>dest.appendChild(a.cloneNode(true)));if(!dest.children.length)dest.textContent='Contact details अभी उपलब्ध नहीं हैं।';}},100);}
+  if(section==='customerCare'){
+    const title=document.getElementById('stvnAccountCareTitle');
+    const msg=document.getElementById('stvnAccountCareMessage');
+    const actions=document.getElementById('stvnAccountCareActions');
+    if(title)title.textContent='Vedant Customer Care';
+    if(msg)msg.textContent='Customer Care details लोड हो रही हैं…';
+    if(actions)actions.textContent='कृपया प्रतीक्षा करें…';
+    if(typeof window.refreshCustomerCareDisplay==='function')window.refreshCustomerCareDisplay();
+  }
   document.getElementById('stvnProfileModal').classList.add('open');
 }
 function stvnCloseProfile(){document.getElementById('stvnProfileModal').classList.remove('open');}
@@ -11944,6 +12014,13 @@ window.stvnCallDeliveryBoy = async function(event){
 (function(){
   const defaults={id:1,enabled:true,title:'Vedant Customer Care',phone:'',whatsapp:'',email:'',message:'Order में मदद चाहिए? हमसे संपर्क करें।'};
   const byId=id=>document.getElementById(id);
+  function updateDescriptionCount(){
+    const field=byId('cc-message');if(!field)return;
+    const lines=field.value.split('\n');
+    if(lines.length>100){field.value=lines.slice(0,100).join('\n');}
+    const count=byId('cc-message-count');if(count)count.textContent=field.value.split('\n').length+' / 100 lines · '+field.value.length.toLocaleString('en-IN')+' / 10,000 characters';
+  }
+  byId('cc-message')?.addEventListener('input',updateDescriptionCount);
   function cleanPhone(v){return String(v||'').replace(/[^0-9+]/g,'');}
   function setAdminMessage(msg){const el=byId('cc-admin-message');if(el)el.textContent=msg;}
   function getClient(){if(typeof supabaseClient!=='undefined'&&supabaseClient)return supabaseClient;return window.supabaseClient||null;}
@@ -11970,10 +12047,21 @@ window.stvnCallDeliveryBoy = async function(event){
     add('✉️ Email',data.email?'mailto:'+String(data.email).trim():'');
     if(!actions.children.length){const p=document.createElement('p');p.textContent='Contact details अभी उपलब्ध नहीं हैं।';actions.appendChild(p);}
     const accountTitle=byId('stvnAccountCareTitle'),accountMessage=byId('stvnAccountCareMessage'),accountActions=byId('stvnAccountCareActions');
-    if(accountTitle)accountTitle.textContent=data.title||'Vedant Customer Care';
-    if(accountMessage)accountMessage.textContent=data.message||defaults.message;
-    if(accountActions){accountActions.replaceChildren();actions.querySelectorAll('a').forEach(a=>accountActions.appendChild(a.cloneNode(true)));if(!accountActions.children.length){const p=document.createElement('p');p.textContent='Contact details अभी उपलब्ध नहीं हैं।';accountActions.appendChild(p);}}
+    if(accountTitle)accountTitle.textContent=data.enabled?(data.title||'Vedant Customer Care'):'Customer Care फिलहाल उपलब्ध नहीं है';
+    if(accountMessage)accountMessage.textContent=data.enabled?(data.message||defaults.message):'दुकान की Customer Care सेवा अभी बंद है। कृपया बाद में संपर्क करें।';
+    if(accountActions){
+      accountActions.replaceChildren();
+      if(data.enabled){
+        actions.querySelectorAll('a').forEach(a=>accountActions.appendChild(a.cloneNode(true)));
+        if(!accountActions.children.length){const p=document.createElement('p');p.textContent='अभी फोन, WhatsApp या ईमेल विवरण उपलब्ध नहीं हैं।';accountActions.appendChild(p);}
+      }else{const p=document.createElement('p');p.textContent='Customer Care को Admin Panel से चालू किया जा सकता है।';accountActions.appendChild(p);}
+    }
   }
+  window.refreshCustomerCareDisplay=async function(){
+    const d=await fetchSettings();
+    renderCustomerCare(d);
+    return d;
+  };
   window.loadCustomerCareSettings=async function(){
     setAdminMessage('Settings लोड हो रही हैं…');
     const d=await fetchSettings();
@@ -11983,12 +12071,13 @@ window.stvnCallDeliveryBoy = async function(event){
     if(byId('cc-whatsapp'))byId('cc-whatsapp').value=d.whatsapp||'';
     if(byId('cc-email'))byId('cc-email').value=d.email||'';
     if(byId('cc-message'))byId('cc-message').value=d.message||'';
+    updateDescriptionCount();
     renderCustomerCare(d);setAdminMessage('Settings लोड हो गईं। Save करने के लिए Supabase table/policies सही होने चाहिए।');
   };
   window.saveCustomerCareSettings=async function(){
     const client=getClient();if(!client||typeof client.from!=='function'){setAdminMessage('❌ Supabase client नहीं मिला।');return;}
     const button=document.querySelector('#adminCustomerCareSection .admin-section-save-button');if(button)button.disabled=true;
-    const d={id:1,enabled:!!byId('cc-enabled')?.checked,title:String(byId('cc-title')?.value||'Vedant Customer Care').trim().slice(0,80),phone:String(byId('cc-phone')?.value||'').trim().slice(0,25),whatsapp:String(byId('cc-whatsapp')?.value||'').trim().slice(0,25),email:String(byId('cc-email')?.value||'').trim().slice(0,160),message:String(byId('cc-message')?.value||defaults.message).trim().slice(0,600),updated_at:new Date().toISOString()};
+    const d={id:1,enabled:!!byId('cc-enabled')?.checked,title:String(byId('cc-title')?.value||'Vedant Customer Care').trim().slice(0,80),phone:String(byId('cc-phone')?.value||'').trim().slice(0,25),whatsapp:String(byId('cc-whatsapp')?.value||'').trim().slice(0,25),email:String(byId('cc-email')?.value||'').trim().slice(0,160),message:String(byId('cc-message')?.value||defaults.message).trim().slice(0,10000),updated_at:new Date().toISOString()};
     try{let result=await client.from('customer_care_settings').update(d).eq('id',1).select().maybeSingle();if(result.error)throw result.error;let saved=result.data;if(!saved){result=await client.from('customer_care_settings').insert(d).select().single();if(result.error)throw result.error;saved=result.data||d;}renderCustomerCare(saved);setAdminMessage('✅ Customer Care अपडेट सेव हो गया। दूसरे ग्राहकों की स्क्रीन पर दिखने के लिए Supabase table और RLS policies सही होनी चाहिए।');}
     catch(e){console.error('Save customer care failed:',e);setAdminMessage('❌ सेव नहीं हुआ: '+(e.message||'Supabase customer_care_settings table/RLS policies जाँचें।')+' — Supabase में customer_care_settings table, id=1 और Admin के लिए INSERT/UPDATE policy जरूरी है।');}
     finally{if(button)button.disabled=false;}
@@ -13299,7 +13388,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     if(document.getElementById('page-wallet'))return;
     const page=document.createElement('main');page.id='page-wallet';page.className='page';
     page.innerHTML=`
-      <div class="section-head"><div><h2>Vedant Wallet</h2><p>A secure wallet for your grocery orders</p></div><img class="wallet-logo" src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo"></div>
+      <div class="section-head"><div><h2>Vedant Wallet</h2><p>A secure wallet for your grocery orders</p></div><img class="wallet-logo" src="https://vedantgrocery.shop/logo.png" alt="Vedant Grocery Shop logo"></div>
       <section class="wallet-hero"><div style="font-weight:800;opacity:.92">Available Wallet Balance</div><div class="wallet-balance">Loading…</div><p>Your verified balance will appear here</p></section>
       <div class="wallet-actions wallet-main-actions">
         <button type="button" data-wallet-action="add">➕ Add Money</button>
@@ -13681,7 +13770,7 @@ body.stvn-qr-flow-ended>*{display:none!important}
 @media(max-width:600px){#vLangGate{padding:14px}#vLangGate .vlang-card{max-height:calc(100vh - 28px);overflow-y:auto;padding:22px;border-radius:21px}.vlang-choice{gap:11px;padding:13px;margin:9px 0}}
 #stvnLocationContinue[hidden]{display:none!important}
 </style>
-<div id="vLangGate" role="dialog" aria-modal="true" aria-labelledby="vLangTitle"><div class="vlang-card"><div class="vlang-logo"><img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop logo" width="66" height="66" decoding="async"></div><div style="font-size:12px;letter-spacing:2px;font-weight:900;color:#16864a">VEDANT GROCERY SHOP</div><h1 id="vLangTitle">Choose your language</h1><p>Prefer your language. You can change it anytime from My Account.</p>
+<div id="vLangGate" role="dialog" aria-modal="true" aria-labelledby="vLangTitle"><div class="vlang-card"><div class="vlang-logo"><img src="https://vedantgrocery.shop/logo.png" alt="Vedant Grocery Shop logo" width="66" height="66" decoding="async"></div><div style="font-size:12px;letter-spacing:2px;font-weight:900;color:#16864a">VEDANT GROCERY SHOP</div><h1 id="vLangTitle">Choose your language</h1><p>Prefer your language. You can change it anytime from My Account.</p>
 <label class="vlang-choice selected" data-lang-choice="en"><input type="radio" name="vlang" value="en" checked><span>🇬🇧 <strong>English</strong><small>Continue shopping in English</small></span></label>
 <label class="vlang-choice" data-lang-choice="hi"><input type="radio" name="vlang" value="hi"><span>🇮🇳 <strong>हिन्दी</strong><small>हिंदी में खरीदारी जारी रखें</small></span></label>
 
@@ -14022,14 +14111,14 @@ Object.assign(enDict,{
    }catch(error){console.warn('Auth state listener unavailable:',error);}
  }
  // A compact animated brand intro, shown before the language/shop screen.
- const splash=document.createElement('div');splash.id='vedantBrandSplash';splash.innerHTML='<div class="vbs-orbit"><img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop"></div><strong>VEDANT GROCERY SHOP</strong><span>Freshness at your doorstep</span>';document.body.appendChild(splash);const css=document.createElement('style');css.textContent='#vedantBrandSplash{position:fixed;inset:0;z-index:400000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:radial-gradient(circle at 50% 38%,#1b9c55 0,#07512e 48%,#062719 100%);color:#fff;font-family:Arial,sans-serif;animation:vbsFade .55s ease both}#vedantBrandSplash .vbs-orbit{width:112px;height:112px;border-radius:32px;padding:12px;background:linear-gradient(145deg,#fff,#dff8e8);box-shadow:0 0 0 9px #ffffff18,0 0 45px #8bffb477;animation:vbsPop 1s cubic-bezier(.2,.9,.2,1) both}#vedantBrandSplash img{width:100%;height:100%;object-fit:contain;animation:vbsFloat 1.8s ease-in-out infinite}#vedantBrandSplash strong{font-size:clamp(18px,4vw,25px);letter-spacing:2px;text-align:center}#vedantBrandSplash span{font-size:13px;opacity:.85;letter-spacing:.5px}@keyframes vbsPop{0%{transform:scale(.45) rotate(-18deg);opacity:0}70%{transform:scale(1.08) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}@keyframes vbsFloat{50%{transform:translateY(-5px)}}@keyframes vbsFade{from{opacity:0}to{opacity:1}}';document.head.appendChild(css);setTimeout(()=>{splash.style.transition='opacity .45s ease';splash.style.opacity='0';setTimeout(()=>splash.remove(),480)},1750);
+ const splash=document.createElement('div');splash.id='vedantBrandSplash';splash.innerHTML='<div class="vbs-orbit"><img src="https://vedantgrocery.shop/logo.png" alt="Vedant Grocery Shop"></div><strong>VEDANT GROCERY SHOP</strong><span>Freshness at your doorstep</span>';document.body.appendChild(splash);const css=document.createElement('style');css.textContent='#vedantBrandSplash{position:fixed;inset:0;z-index:400000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:radial-gradient(circle at 50% 38%,#1b9c55 0,#07512e 48%,#062719 100%);color:#fff;font-family:Arial,sans-serif;animation:vbsFade .55s ease both}#vedantBrandSplash .vbs-orbit{width:112px;height:112px;border-radius:32px;padding:12px;background:linear-gradient(145deg,#fff,#dff8e8);box-shadow:0 0 0 9px #ffffff18,0 0 45px #8bffb477;animation:vbsPop 1s cubic-bezier(.2,.9,.2,1) both}#vedantBrandSplash img{width:100%;height:100%;object-fit:contain;animation:vbsFloat 1.8s ease-in-out infinite}#vedantBrandSplash strong{font-size:clamp(18px,4vw,25px);letter-spacing:2px;text-align:center}#vedantBrandSplash span{font-size:13px;opacity:.85;letter-spacing:.5px}@keyframes vbsPop{0%{transform:scale(.45) rotate(-18deg);opacity:0}70%{transform:scale(1.08) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}@keyframes vbsFloat{50%{transform:translateY(-5px)}}@keyframes vbsFade{from{opacity:0}to{opacity:1}}';document.head.appendChild(css);setTimeout(()=>{splash.style.transition='opacity .45s ease';splash.style.opacity='0';setTimeout(()=>splash.remove(),480)},1750);
 })();
 </script>
 
 
 <script id="vedant-reference-shop-header">
 (function(){
-  const brandMark='<span class="vg-brand-mark" aria-hidden="true"><img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="" width="46" height="46" decoding="async"></span>';
+  const brandMark='<span class="vg-brand-mark" aria-hidden="true"><img src="https://vedantgrocery.shop/logo.png" alt="" width="46" height="46" decoding="async"></span>';
   function makeHeader(){
     const header=document.createElement('div');
     header.className='vg-store-header';
@@ -16983,7 +17072,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    let msg=`${emoji} *Hi ${name&&name!=='N/A'?name:'there'}!* ${line} 🛍️  |  *Order ID:* ${cleanId}`;
    if(total)msg+=`  |  *Total: ${total}*`;
    if(payment)msg+=`  |  *Payment: ${payment}*`;
-   if(status==='out_for_delivery'||status==='shipped')msg+=`  |  📍 Track: https://vedant252326.github.io/Vedant-Grocery-Shop/#track`;
+   if(status==='out_for_delivery'||status==='shipped')msg+=`  |  📍 Track: https://vedantgrocery.shop/#track`;
    const url='https://wa.me/'+n+'?text='+encodeURIComponent(msg);
    const win=window.open(url,'_blank','noopener,noreferrer');if(!win)window.location.href=url;
  };
@@ -17243,5 +17332,26 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(document.body)obs.observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+
+<style id="vedant-customer-care-and-header-spacing-fix-20261120">
+/* Customer Care: show every contact detail and preserve line breaks in long descriptions. */
+#stvnProfileSectionCustomerCare{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+#stvnProfileSectionCustomerCare #stvnAccountCareTitle{margin:10px 0 8px!important;color:#145b30!important;font-size:20px!important;font-weight:900!important}
+#stvnProfileSectionCustomerCare #stvnAccountCareMessage{display:block!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;word-break:break-word!important;line-height:1.65!important;color:#34483a!important;background:#f5faf5!important;border:1px solid #e0eee2!important;border-radius:13px!important;padding:13px!important;margin:8px 0 14px!important;min-height:44px!important}
+#stvnProfileSectionCustomerCare .stvn-account-care-actions{display:flex!important;flex-direction:column!important;gap:9px!important;width:100%!important}
+#stvnProfileSectionCustomerCare .stvn-account-care-actions a{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;min-height:46px!important;padding:11px 14px!important;border:1px solid #d7e9da!important;border-radius:12px!important;background:#fff!important;color:#126332!important;font-weight:850!important;text-decoration:none!important;overflow-wrap:anywhere!important;box-shadow:0 4px 12px rgba(20,80,35,.06)!important}
+#stvnProfileSectionCustomerCare .stvn-account-care-actions a:hover{background:#f0faf1!important}
+#adminCustomerCareSection #cc-message{box-sizing:border-box!important;width:100%!important;min-height:260px!important;max-height:70vh!important;overflow:auto!important;white-space:pre-wrap!important;line-height:1.55!important}
+/* Desktop: exactly eight occupied columns, so the final account control no longer wraps and leaves a blank strip. */
+@media(min-width:901px){
+ .vg-store-header{width:100%!important;max-width:100%!important;box-sizing:border-box!important;grid-template-columns:max-content max-content minmax(160px,1fr) max-content minmax(100px,max-content) max-content max-content max-content!important;gap:clamp(5px,.65vw,10px)!important;padding-left:clamp(10px,1.2vw,18px)!important;padding-right:clamp(10px,1.2vw,18px)!important}
+ .vg-store-header .vg-brand{min-width:0!important}
+ .vg-store-header .vg-location-button{min-width:0!important;max-width:230px!important;padding-left:8px!important;padding-right:8px!important}
+ .vg-store-header .vg-action,.vg-store-header .vg-wallet-action,.vg-store-header .vg-orders-action{min-width:0!important;padding-left:9px!important;padding-right:9px!important}
+ .vg-store-header .vg-orders-action{font-size:12px!important}
+ .vg-store-header #stvnProfileBar{justify-self:end!important;min-width:0!important}
+ .vg-store-header #stvnProfileToggle{padding-left:8px!important;padding-right:8px!important}
+}
+</style>
 </body>
 </html>
