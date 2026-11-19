@@ -5839,6 +5839,12 @@ const canDeleteOrder=orderStatus==="delivered";
 let total =
 order.total ?? 0;
 
+const orderDateRaw=order.order_date||order.created_at||order.date||null;
+const orderDateValue=orderDateRaw?new Date(orderDateRaw):null;
+const orderDateText=orderDateValue&&!Number.isNaN(orderDateValue.getTime())
+  ? orderDateValue.toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})
+  : "Date not available";
+
 const deliveryCharge=getOrderDeliveryCharge(order);
 
 
@@ -5880,6 +5886,7 @@ box.innerHTML += `
 <div class="history-item">
 
 <p><strong>Order ID:</strong> ${escapeHtml(orderId)}</p>
+<p class="stvn-my-order-date"><strong>🕒 Order Time:</strong> ${escapeHtml(orderDateText)}</p>
 <p><strong>Delivery Charge:</strong> ${deliveryCharge===null?"Not available":"₹"+deliveryCharge.toFixed(2)}</p>
 <p><strong>Grand Total:</strong> ₹${escapeHtml(total)}</p>
 <p><strong>Order Status:</strong> <strong class="${["cancelled","cancelled_by_admin"].includes(orderStatus)?"status-cancelled":""}">${escapeHtml(orderStatus==="cancelled_by_admin"?"CANCELLED BY ADMIN":orderStatus.replaceAll("_"," ").toUpperCase())}</strong></p>
@@ -17271,3 +17278,199 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  };
 })();
 </script>
+
+
+<!-- Vedant final mobile + WhatsApp + GPS + invoice repair -->
+<style id="vedant-final-mobile-repair-20261119">
+@media(max-width:700px){
+ .admin-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
+ .admin-actions button,.admin-actions select,.admin-actions input{width:100%!important;min-width:0!important;min-height:46px!important;box-sizing:border-box!important}
+ .stvn-admin-gps-note{font-size:12px!important;line-height:1.4!important;overflow-wrap:anywhere!important}
+ #page-location #customer-location-box{padding:14px!important;border-radius:16px!important}
+ #page-location #stvnGpsCoordinates{padding:12px!important}
+ #page-location #stvnLocationContinue{width:100%!important;min-height:50px!important;font-size:16px!important}
+ #page-track .stvn-customer-map-note,#page-track #stvn-delivery-map-note{display:none!important}
+ #page-track .stvn-customer-delivery-map{height:260px!important;min-height:230px!important}
+}
+#page-track .stvn-customer-map-note,#page-track #stvn-delivery-map-note{display:none!important}
+.stvn-gps-pin-arrival{animation:vedantPinDrop .85s cubic-bezier(.2,.8,.25,1) both}
+@keyframes vedantPinDrop{0%{transform:translateY(-90px) scale(.7);opacity:0}70%{transform:translateY(5px) scale(1.08);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+</style>
+<script id="vedant-final-whatsapp-invoice-gps-repair-20261119">
+(function(){
+ 'use strict';
+ const SHOP_LAT=25.3698055556, SHOP_LNG=83.1131388889;
+ const clean=v=>String(v??'').trim();
+ const money=v=>'₹'+(Number(String(v??0).replace(/[^0-9.]/g,''))||0).toLocaleString('en-IN');
+ const emoji={pending:'🛒',confirmed:'✅',preparing:'🥬',processing:'🔄',out_for_delivery:'🚚',shipped:'🚚',delivered:'🎉',cancelled:'❌',cancelled_by_admin:'❌'};
+ const copy={pending:'Your order is pending confirmation.',confirmed:'Your order is confirmed.',preparing:'Your order is being prepared.',processing:'Your order is being processed.',out_for_delivery:'Your order is out for delivery.',shipped:'Your order is out for delivery.',delivered:'Your order has been delivered. Thank you!',cancelled:'Your order has been cancelled.',cancelled_by_admin:'Your order has been cancelled.'};
+ window.openOrderWhatsAppUpdate=function(orderId,phone){
+   const id=clean(orderId), digits=clean(phone).replace(/\D/g,'');
+   if(!id||!digits||digits==='N/A'){window.stvnAlert('Customer WhatsApp number is not available for this order.');return;}
+   const status=clean(document.getElementById('order-status-'+id)?.value||'pending').toLowerCase();
+   const card=[...document.querySelectorAll('.admin-order')].find(el=>el.innerText.includes(id));
+   const lines=card?card.innerText.split('\n').map(x=>x.trim()).filter(Boolean):[];
+   const lineAfter=label=>{const i=lines.findIndex(x=>x.toLowerCase().startsWith(label.toLowerCase()));return i>=0?(lines[i+1]||''):''};
+   const customer=clean(lineAfter('Customer')).replace(/^Name\s*:?\s*/i,'');
+   const name=customer&&customer!=='N/A'?customer:'there';
+   const totalMatch=card?.innerText.match(/Total\s*₹?\s*([0-9,.]+)/i);
+   const total=totalMatch?money(totalMatch[1]):'';
+   const payRaw=lineAfter('Payment');
+   const payment=/cash|cod/i.test(payRaw)?'Cash on Delivery':payRaw;
+   // Keep one single line, one Order ID only, no tracking URL, Unicode emoji only.
+   let msg=(emoji[status]||'📦')+' Hi '+name+'! '+(copy[status]||copy.pending)+' 🧾 Order ID: '+id;
+   if(total)msg+=' | 💰 '+total;
+   if(payment)msg+=' | 💳 '+payment;
+   const wa='https://wa.me/'+(digits.length===10?'91':'')+digits+'?text='+encodeURIComponent(msg);
+   const win=window.open(wa,'_blank'); if(!win)window.location.href=wa;
+ };
+
+ // Invoice: read the exact order from Supabase, create a real PDF, download it, then open WhatsApp.
+ window.sendAdminInvoiceWhatsApp=async function(orderId){
+   const id=clean(orderId); if(!id){window.stvnAlert('Order ID नहीं मिला।');return;}
+   const button=[...document.querySelectorAll('button')].find(b=>b.getAttribute('onclick')?.includes('sendAdminInvoiceWhatsApp')&&b.getAttribute('onclick').includes(id));
+   const old=button?.innerHTML; if(button){button.disabled=true;button.textContent='⏳ Preparing PDF…';}
+   let waTab=null;
+   try{
+     if(typeof html2pdf!=='function')throw new Error('PDF library load नहीं हुई। Internet connection जाँचें।');
+     waTab=window.open('about:blank','_blank');
+     const {data:order,error}=await supabaseClient.from('orders').select('*').eq('order_id',id).maybeSingle();
+     if(error)throw error; if(!order)throw new Error('Supabase में यह order नहीं मिला।');
+     const invoiceOrder={...order,id:order.order_id||id,name:order.customer_name||order.name,phone:order.customer_phone||order.phone,address:order.customer_address||order.address,payment:order.payment_method||order.payment,total:order.total};
+     const blob=await vgCreateInvoicePdf(invoiceOrder,vgInvoiceLanguage());
+     const fileName='Vedant-Invoice-'+id.replace(/[^a-z0-9_-]/gi,'')+'.pdf';
+     const blobUrl=URL.createObjectURL(blob);
+     const a=document.createElement('a');a.href=blobUrl;a.download=fileName;document.body.appendChild(a);a.click();a.remove();
+     setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+     const digits=clean(order.customer_phone||order.phone).replace(/\D/g,'');
+     if(!digits)throw new Error('Customer mobile number order में उपलब्ध नहीं है। PDF डाउनलोड हो गई है।');
+     const number=digits.length===10?'91'+digits:digits;
+     const customer=clean(order.customer_name||order.name)||'Customer';
+     const message='📄 Hi '+customer+'! Your order invoice is ready. 🧾 Order ID: '+id+' — Please find the PDF attached.';
+     const url='https://wa.me/'+number+'?text='+encodeURIComponent(message);
+     if(waTab&&!waTab.closed)waTab.location.href=url;else window.open(url,'_blank');
+     window.stvnAlert('✅ Invoice PDF डाउनलोड हो गई है। WhatsApp chat खुलने पर PDF attach करके Send दबाएँ।');
+   }catch(err){if(waTab&&!waTab.closed)waTab.close();console.error('Invoice WhatsApp error:',err);window.stvnAlert('❌ Invoice तैयार नहीं हुई: '+clean(err?.message||err));}
+   finally{if(button){button.disabled=false;button.innerHTML=old||'📄 Send Invoice on WhatsApp';}}
+ };
+
+ // Location page: show result only after GPS success, add an animated red pin and distance/shop marker.
+ window.requestCustomerLocation=function(){
+   const status=document.getElementById('location-status'), details=document.getElementById('stvnGpsCoordinates'), next=document.getElementById('stvnLocationContinue');
+   if(next){next.hidden=true;next.style.display='none';}
+   if(details){details.style.display='block';details.classList.add('vg-location-result-visible');details.innerHTML='<div style="text-align:center;padding:8px"><div class="stvn-gps-pin-arrival" style="font-size:42px;display:inline-block">📍</div><div style="font-weight:800;margin-top:5px">Finding your location…</div></div><div id="vedantGpsMap" style="height:210px;border-radius:12px;overflow:hidden;margin-top:10px;background:#edf5ef"></div><div id="stvnGpsLat"></div><div id="stvnGpsLng"></div><div id="stvnGpsDistance" style="font-weight:800;margin-top:8px"></div>';}
+   if(!navigator.geolocation){if(status){status.textContent='GPS is not supported by this browser.';status.className='error';}return;}
+   if(status){status.textContent='📡 Finding your current location… Please allow GPS access.';status.className='payment-note';}
+   navigator.geolocation.getCurrentPosition(position=>{
+     customerLatitude=Number(position.coords.latitude);customerLongitude=Number(position.coords.longitude);
+     window.customerLatitude=customerLatitude;window.customerLongitude=customerLongitude;
+     const check=checkDeliveryRadius();
+     const lat=document.getElementById('stvnGpsLat'),lng=document.getElementById('stvnGpsLng'),dist=document.getElementById('stvnGpsDistance');
+     if(lat)lat.textContent=''; if(lng)lng.textContent='';
+     if(dist)dist.textContent='📏 Distance from Vedant Grocery Shop: '+check.distance.toFixed(2)+' km';
+     const mapEl=document.getElementById('vedantGpsMap');
+     if(mapEl&&window.L){
+       try{if(window.vedantCheckoutMap){window.vedantCheckoutMap.remove();window.vedantCheckoutMap=null;}
+         const map=L.map(mapEl,{zoomControl:false,scrollWheelZoom:false}).setView([customerLatitude,customerLongitude],15);window.vedantCheckoutMap=map;
+         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+         const red=L.divIcon({className:'',html:'<div class="stvn-gps-pin-arrival" style="font-size:38px;filter:drop-shadow(0 2px 3px #555)">📍</div>',iconSize:[40,42],iconAnchor:[20,40]});
+         const shop=L.divIcon({className:'',html:'<div style="font-size:27px">🏪</div>',iconSize:[30,32],iconAnchor:[15,28]});
+         L.marker([customerLatitude,customerLongitude],{icon:red}).addTo(map).bindPopup('Your current location').openPopup();
+         L.marker([SHOP_LAT,SHOP_LNG],{icon:shop}).addTo(map).bindPopup('Vedant Grocery Shop');
+         map.fitBounds([[customerLatitude,customerLongitude],[SHOP_LAT,SHOP_LNG]],{padding:[24,24]});setTimeout(()=>map.invalidateSize(),250);
+       }catch(e){console.warn('Checkout map:',e);}
+     }
+     if(status){status.textContent=check.allowed?'✅ Location captured successfully. You are within our delivery area.':'❌ Your location is outside our 5 km delivery area.';status.className=check.allowed?'location-success':'error';}
+     if(next){next.hidden=!check.allowed;next.style.display=check.allowed?'block':'none';}
+     updateCart();
+   },error=>{console.warn('GPS error',error);customerLatitude=null;customerLongitude=null;if(status){status.textContent=error.code===1?'❌ Please allow location permission and try again.':'❌ GPS location could not be found. Turn on Location/GPS and try again.';status.className='error';}if(next){next.hidden=true;next.style.display='none';}}, {enableHighAccuracy:true,timeout:30000,maximumAge:0});
+ };
+ window.continueToLocationReview=function(){
+   if(typeof syncCustomerLocationFromWindow==='function')syncCustomerLocationFromWindow();
+   if(customerLatitude===null||customerLongitude===null){window.stvnAlert('Please tap Update Location and wait for GPS to finish.');return;}
+   const check=checkDeliveryRadius(); if(!check.allowed){window.stvnAlert('Delivery is available within 5 km. Your distance is '+check.distance.toFixed(2)+' km.');return;}
+   updateCart();showPaymentInfo();if(typeof showPage==='function')showPage('payment');
+ };
+ // Explicitly remove the long route/GPS explanation from customer tracking UI.
+ const hideNotes=()=>{document.querySelectorAll('#stvn-delivery-map-note,.stvn-customer-map-note').forEach(el=>{el.textContent='';el.style.display='none';});};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hideNotes,{once:true});else hideNotes();
+ const observer=new MutationObserver(hideNotes);if(document.body)observer.observe(document.body,{subtree:true,childList:true});
+})();
+</script>
+
+<!-- Mobile visual refinement only: order history readability, track notes and page transitions. -->
+<style id="vedant-mobile-track-orders-premium-polish-20261119">
+@media(max-width:700px){
+  /* Give Track and My Orders fuller, balanced cards without changing the wallet. */
+  #page-track,#page-orders{padding:16px 13px calc(118px + env(safe-area-inset-bottom))!important;}
+  #page-track>.section-head,#page-orders>.section-head{min-height:76px!important;padding:16px 15px!important;margin:8px 0 16px!important;}
+  #page-track #customer-tracking-box,#page-orders #history,#page-orders #order-history{
+    width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+    margin:14px 0 20px!important;padding:14px!important;
+    border-radius:18px!important;background:linear-gradient(145deg,#111d16,#17271e)!important;
+    border:1px solid #34513d!important;box-shadow:0 12px 28px rgba(0,0,0,.22)!important;
+  }
+  #page-orders .history-item{
+    width:100%!important;box-sizing:border-box!important;margin:13px 0!important;
+    padding:15px!important;border-radius:16px!important;
+    background:linear-gradient(145deg,#1a2b21,#203529)!important;
+    border:1px solid #45634d!important;color:#f4fff6!important;
+    box-shadow:0 8px 20px rgba(0,0,0,.18)!important;
+  }
+  #page-orders .history-item p,#page-orders .history-item strong,
+  #page-orders .history-item span,#page-orders .history-item small,
+  #page-orders .order-history-items,#page-orders .order-history-items li{
+    color:#edf8ef!important;
+  }
+  #page-orders .stvn-my-order-date{
+    display:block!important;margin:9px 0 12px!important;padding:10px 11px!important;
+    border:1px solid #52735b!important;border-radius:11px!important;
+    background:#0d1a12!important;color:#f7fff8!important;
+    font-size:13px!important;line-height:1.5!important;
+  }
+  #page-orders .order-history-items{
+    background:#102017!important;border:1px solid #3a5943!important;
+    border-radius:13px!important;padding:12px!important;margin:12px 0!important;
+  }
+  #page-orders .order-history-items li{border-top:1px solid #38513f!important;}
+  #page-orders #order-history:after{content:none!important;display:none!important;}
+  #page-track .stvn-order-tracking-panel{margin:13px 0!important;padding:14px!important;min-height:0!important;}
+  /* Remove the persistent GPS/remaining-road explanation, not the map or route. */
+  #page-track #stvn-delivery-map-note,
+  #page-track .stvn-customer-map-note,
+  #page-track .stvn-map-note,
+  #page-track .stvn-remaining-road-note,
+  #page-track [id*="remaining-road-note"]{display:none!important;visibility:hidden!important;height:0!important;margin:0!important;padding:0!important;}
+  /* A little more visual weight to the two requested destinations in navigation. */
+  .modern-nav button[data-page="track"],.modern-nav button[data-page="orders"],
+  .modern-bottom-nav button[data-page="track"],.modern-bottom-nav button[data-page="orders"]{
+    min-height:52px!important;padding:9px 12px!important;font-weight:900!important;
+  }
+}
+@keyframes vedantPageReveal2026{0%{opacity:0;transform:translateY(13px) scale(.992);filter:blur(2px)}65%{opacity:1;filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes vedantCardGlow2026{0%{box-shadow:0 0 0 rgba(67,190,111,0)}45%{box-shadow:0 12px 32px rgba(67,190,111,.14)}100%{box-shadow:0 8px 24px rgba(0,0,0,.12)}}
+@media(prefers-reduced-motion:no-preference){
+  .page.active{animation:vedantPageReveal2026 .48s cubic-bezier(.2,.75,.25,1) both;}
+  #page-track .stvn-order-tracking-panel,#page-orders .history-item{animation:vedantCardGlow2026 .7s ease both;}
+}
+</style>
+<script id="vedant-page-transition-premium-20261119">
+(function(){
+  const pages=[...document.querySelectorAll('.page')];
+  if(!pages.length)return;
+  let lastActive='';
+  const animateActive=()=>{
+    const active=document.querySelector('.page.active');
+    if(!active||active.id===lastActive)return;
+    lastActive=active.id;
+    active.style.animation='none';
+    void active.offsetWidth;
+    active.style.animation='';
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',animateActive,{once:true});
+  else animateActive();
+  const observer=new MutationObserver(animateActive);
+  pages.forEach(page=>observer.observe(page,{attributes:true,attributeFilter:['class']}));
+})();
+</script>
+
