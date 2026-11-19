@@ -6017,9 +6017,11 @@ async function hideCustomerOrder(orderId,phone,button){
 
 let adminOrderNotificationChannel=null;
 let adminAudioContext=null;
+window.__vedantVerifiedOwnerAdmin = false;
 
 function playNewOrderSound(){
   try{
+    if(window.__vedantVerifiedOwnerAdmin !== true) return;
     if(localStorage.getItem("vedantAdminOrderSoundEnabled")==="false") return;
     // Prefer a feminine English voice to announce each new order; browser voice availability varies.
     if ("speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined") {
@@ -6088,8 +6090,18 @@ function showNewOrderAlert(order){
   window.stvnOrderAlertTimer=setTimeout(()=>alertBox.classList.remove("show"),8000);
 }
 
-function startAdminOrderNotifications(){
+async function startAdminOrderNotifications(){
   if(adminOrderNotificationChannel) return;
+  try{
+    const {data,error}=await supabaseClient.auth.getUser();
+    const user=data?.user;
+    if(error || !user || !isOwnerAdminEmail(user.email) || String(user.id||"")!==ADMIN_OWNER_UID){
+      window.__vedantVerifiedOwnerAdmin=false;
+      stopAdminOrderNotifications();
+      return;
+    }
+    window.__vedantVerifiedOwnerAdmin=true;
+  }catch(authError){window.__vedantVerifiedOwnerAdmin=false;return;}
   adminAudioContext=adminAudioContext || (window.AudioContext ? new AudioContext() : null);
   adminOrderNotificationChannel=supabaseClient
     .channel("admin-new-orders")
@@ -6102,6 +6114,7 @@ function startAdminOrderNotifications(){
 }
 
 function stopAdminOrderNotifications(){
+  window.__vedantVerifiedOwnerAdmin=false;
   if(adminOrderNotificationChannel){
     supabaseClient.removeChannel(adminOrderNotificationChannel);
     adminOrderNotificationChannel=null;
@@ -6281,6 +6294,7 @@ async function adminVerifyOtp(){
     document.getElementById("adminOtpEmail").readOnly = false;
     document.getElementById("adminLoginBox").style.display = "none";
     document.getElementById("adminContent").style.display = "grid";
+    window.__vedantVerifiedOwnerAdmin = true;
     window.dispatchEvent(new Event("vedant-owner-admin-ready"));
     if (typeof window.setAdminButtonVisibility === "function") {
       window.setAdminButtonVisibility(true);
@@ -6298,6 +6312,7 @@ async function adminVerifyOtp(){
 
 async function adminLogout(){
 
+window.__vedantVerifiedOwnerAdmin=false;
 await supabaseClient.auth.signOut();
 stopAdminOrderNotifications();
 
@@ -7427,6 +7442,19 @@ await supabaseClient.auth.getSession();
 
 
 if(data.session){
+  const {data:authData,error:authError}=await supabaseClient.auth.getUser();
+  const restoredUser=authData?.user;
+  if(authError || !restoredUser || !isOwnerAdminEmail(restoredUser.email) || String(restoredUser.id||"")!==ADMIN_OWNER_UID){
+    window.__vedantVerifiedOwnerAdmin=false;
+    stopAdminOrderNotifications();
+    const loginBox=document.getElementById("adminLoginBox");
+    const adminContent=document.getElementById("adminContent");
+    if(loginBox)loginBox.style.display="block";
+    if(adminContent)adminContent.style.display="none";
+    if(typeof window.setAdminButtonVisibility==="function")window.setAdminButtonVisibility(false);
+    return;
+  }
+  window.__vedantVerifiedOwnerAdmin=true;
 
 adminOtpSentForEmail = "";
 document.getElementById("adminOtpEmail").readOnly = false;
