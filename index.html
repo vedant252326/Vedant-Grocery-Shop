@@ -3003,10 +3003,10 @@ Login करके orders load करो.
 <script>
 
 const SUPABASE_URL =
-"https://wkqptavikimtzvwzdhal.supabase.co";
+"https://dpkffmprgqaadlpkoiqd.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_94808b2y4z8h7wGGRw5fOg_jlmxSA84";
+"sb_publishable_TNWFpjsV6iyiIZE_bsijfg_gjbqUZLi";
 
 const supabaseClient =
 window.supabase.createClient(
@@ -3261,7 +3261,7 @@ async function stvnRestoreCustomerSession(){
 document.addEventListener("DOMContentLoaded",stvnRestoreCustomerSession);
 function stvnIsOwnerSession(session){
   const user=session&&session.user;
-  return !!user && String(user.email||"").trim().toLowerCase()==="vedant898989gupta@gmail.com" && String(user.id||"")==="522e04e8-67ef-4ad7-a1cb-b2757c37b4d0";
+  return !!user && String(user.email||"").trim().toLowerCase()==="vedant898989gupta@gmail.com" && String(user.id||"")==="554777a2-e360-4870-91a1-a41deb04e694";
 }
 function stvnApplyAdminAccess(session){
   const owner=stvnIsOwnerSession(session);
@@ -6127,7 +6127,7 @@ if(typeof window.showPage === "function"){
 // Email OTP admin login. Only the store owner's email may use this UI.
 // IMPORTANT: secure database/API access must also be restricted with Supabase RLS.
 const ADMIN_OWNER_EMAIL = "vedant898989gupta@gmail.com";
-const ADMIN_OWNER_UID = "522e04e8-67ef-4ad7-a1cb-b2757c37b4d0";
+const ADMIN_OWNER_UID = "554777a2-e360-4870-91a1-a41deb04e694";
 let adminOtpSentForEmail = "";
 
 function isOwnerAdminEmail(email){
