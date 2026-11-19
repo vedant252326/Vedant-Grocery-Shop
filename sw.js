@@ -1,53 +1,129 @@
 
-const CACHE_NAME = "vedant-grocery-pwa-v2";
+'use strict';
+
+/* Vedant Grocery Shop - PWA Service Worker */
+
+const CACHE_NAME = 'vedant-grocery-pwa-v5';
+const APP_ROOT = new URL('./', self.registration.scope);
+
+const OFFLINE_PAGE = new URL('index.html', APP_ROOT).href;
 
 const APP_FILES = [
-  "/",
-  "/index.html",
-  "/manifest.webmanifest"
+  APP_ROOT.href,
+  OFFLINE_PAGE,
+  new URL('manifest.webmanifest', APP_ROOT).href,
+  new URL('app-icon-192.png', APP_ROOT).href,
+  new URL('app-icon-512.png', APP_ROOT).href
 ];
 
-self.addEventListener("install", event => {
+/* INSTALL */
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_FILES))
-      .then(() => self.skipWaiting())
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+
+      await cache.addAll(APP_FILES);
+
+      await self.skipWaiting();
+    })()
   );
 });
 
-self.addEventListener("activate", event => {
+/* ACTIVATE */
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
+    (async () => {
+      const keys = await caches.keys();
+
+      await Promise.all(
         keys
-          .filter(key => key !== CACHE_NAME)
+          .filter(key =>
+            key.startsWith('vedant-grocery-pwa-') &&
+            key !== CACHE_NAME
+          )
           .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
+      );
+
+      await self.clients.claim();
+    })()
   );
 });
 
-self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
+/* FETCH */
+self.addEventListener('fetch', event => {
+  const request = event.request;
 
-  const url = new URL(event.request.url);
+  if (request.method !== 'GET') return;
 
+  const url = new URL(request.url);
+
+  // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  if (event.request.mode === "navigate") {
+  // Do not cache backend or authentication requests
+  if (
+    /\/(rest\/v1|auth|functions|storage\/v1)\//.test(url.pathname)
+  ) {
+    return;
+  }
+
+  // Do not cache non-HTTP requests
+  if (!['http:', 'https:'].includes(url.protocol)) return;
+
+  // Navigation: Network First
+  if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache =>
-            cache.put("/index.html", copy)
-          );
+      (async () => {
+        try {
+          const response = await fetch(request);
+
+          if (response && response.ok) {
+            const cache = await caches.open(CACHE_NAME);
+
+            await cache.put(OFFLINE_PAGE, response.clone());
+          }
+
           return response;
-        })
-        .catch(async () => {
-          return await caches.match(event.request) ||
-                 await caches.match("/index.html");
-        })
+        } catch (error) {
+          const cache = await caches.open(CACHE_NAME);
+
+          return (
+            await cache.match(OFFLINE_PAGE) ||
+            await cache.match(APP_ROOT.href) ||
+            Response.error()
+          );
+        }
+      })()
+    );
+
+    return;
+  }
+
+  // Static files: Cache First, then Network
+  if (
+    ['style', 'script', 'image', 'font'].includes(
+      request.destination
+    )
+  ) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(request);
+
+        if (cached) return cached;
+
+        try {
+          const response = await fetch(request);
+
+          if (response && response.ok) {
+            await cache.put(request, response.clone());
+          }
+
+          return response;
+        } catch (error) {
+          return Response.error();
+        }
+      })()
     );
   }
 });
