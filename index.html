@@ -2210,6 +2210,41 @@ button,input,select,textarea{font:inherit}
 @media(max-width:700px){.admin-order .admin-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}.admin-order .admin-actions button,.admin-order .admin-actions select,.admin-order .admin-actions input{width:100%!important;min-width:0!important;min-height:44px!important;box-sizing:border-box!important}.admin-order .stvn-order-whatsapp-btn{font-size:14px!important}.admin-order .admin-grid{grid-template-columns:1fr!important}.admin-order{overflow-wrap:anywhere!important}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" referrerpolicy="no-referrer"></script>
+
+<style id="vedant-mobile-header-autosave-layout-v1">
+@media(max-width:600px){
+  .vg-store-header{
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,auto)!important;
+    grid-template-rows:auto auto auto auto!important;
+    gap:7px!important;padding:9px!important;margin:0 0 10px!important;
+    border-radius:0 0 16px 16px!important;overflow:visible!important;
+  }
+  .vg-store-header .vg-brand{grid-column:1!important;grid-row:1!important;min-width:0!important;gap:7px!important}
+  .vg-store-header .vg-brand-mark{width:42px!important;height:42px!important;flex-basis:42px!important;border-radius:12px!important}
+  .vg-store-header .vg-brand-mark svg{width:36px!important;height:36px!important}
+  .vg-store-header .vg-brand-name{font-size:17px!important;line-height:1!important;letter-spacing:-.4px!important}
+  .vg-store-header .vg-brand-name small{font-size:10px!important;margin-top:3px!important}
+  .vg-store-header .vg-cart-action{grid-column:2!important;grid-row:1!important;justify-self:end!important;width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;padding:4px!important}
+  .vg-store-header #stvnProfileBar{grid-column:3!important;grid-row:1!important;justify-self:end!important;min-width:0!important;margin:0!important}
+  .vg-store-header #stvnProfileToggle{height:42px!important;min-height:42px!important;padding:4px 8px!important;font-size:10px!important;border-radius:12px!important}
+  .vg-store-header .vg-location-button{grid-column:1/3!important;grid-row:2!important;min-width:0!important;min-height:42px!important;padding:5px 8px!important;border-radius:12px!important}
+  .vg-store-header .vg-action:not(.vg-wallet-action):not(.vg-orders-action){grid-column:3!important;grid-row:2!important;min-width:0!important;min-height:42px!important;padding:4px 7px!important;font-size:10px!important;border-radius:12px!important;white-space:normal!important}
+  .vg-store-header .vg-wallet-action{grid-column:1!important;grid-row:3!important;min-width:0!important;min-height:38px!important;padding:4px 6px!important;font-size:10px!important;border-radius:11px!important}
+  .vg-store-header .vg-orders-action{grid-column:2/4!important;grid-row:3!important;min-width:0!important;min-height:38px!important;padding:4px 7px!important;font-size:10px!important;border-radius:11px!important}
+  .vg-store-header .vg-search{grid-column:1/-1!important;grid-row:4!important;width:100%!important;min-width:0!important;height:43px!important;min-height:43px!important;margin:0!important;padding:0 12px!important;border-radius:13px!important}
+  .vg-store-header .vg-search input{width:100%!important;min-width:0!important;height:41px!important;min-height:41px!important;padding:0!important;font-size:14px!important}
+}
+@media(max-width:380px){
+  .vg-store-header{gap:5px!important;padding:7px!important}
+  .vg-store-header .vg-brand-name{font-size:15px!important}
+  .vg-store-header #stvnProfileToggle{padding:3px 6px!important;font-size:9px!important}
+  .vg-store-header .vg-location-button{font-size:10px!important}
+  .vg-store-header .vg-action{font-size:9px!important}
+}
+</style>
+
 </head>
 
 <body>
@@ -2786,11 +2821,11 @@ Logout
 
 <div class="admin-section-heading-row">
 <h3 id="admin-product-management-heading">🛍️ Product / Material Management</h3>
-<button type="button" class="admin-section-save-button" onclick="saveAdminChangesForGroup('product-management','Product Management')">💾 Save</button>
+
 </div>
 
 <p class="admin-small">
-यहाँ से product details, price, stock और photo बदलें। बदलाव लागू करने के लिए Save दबाएँ.
+यहाँ product details, price, stock और photos बदलें। Add / Update दबाते ही बदलाव अपने-आप Supabase में सेव होंगे।
 </p>
 
 <p id="product-form-mode" class="admin-small" role="status" aria-live="polite">➕ Add a product</p>
@@ -2887,7 +2922,7 @@ type="submit"
 class="product-save-btn"
 id="product-submit-button">
 
-➕ Add / Queue Product Change
+➕ Add Product
 
 </button>
 
@@ -2910,9 +2945,9 @@ Clear
 <section id="adminCategoryDisplaySection" aria-labelledby="category-display-title" hidden>
   <div class="admin-section-heading-row">
     <h3 id="category-display-title">🖼️ Category Photo Display</h3>
-    <button type="button" class="admin-section-save-button" onclick="savePendingCategoryDisplayChanges()">💾 Save</button>
+
   </div>
-  <p class="admin-small">कैटेगरी चुनें, फोटो अपलोड करें और Add Photo to Display दबाएँ। फिर Save दबाएँ: फोटो Supabase पर सेव होकर सभी visitors को दिखेगी।</p>
+  <p class="admin-small">कैटेगरी का नाम लिखकर Add Category दबाएँ। फिर फोटो चुनें और Add Photo to Display दबाएँ। दोनों actions अपने-आप Supabase में सेव होंगे।</p>
   <label for="category-display-category">Category / कैटेगरी</label>
   <input id="category-display-category" type="text" list="category-display-options" placeholder="अपनी कैटेगरी का नाम लिखें" autocomplete="off" onchange="onCategoryDisplayCategoryChange()">
   <datalist id="category-display-options"></datalist>
@@ -8011,143 +8046,51 @@ function filterAdminProducts(){
 
 
 async function saveProduct(event){
+  event.preventDefault();
+  const button=document.getElementById("product-submit-button");
+  if(button?.disabled)return;
+  const id=document.getElementById("product-id").value.trim();
+  const payload={
+    name:document.getElementById("product-name").value.trim(),
+    category:document.getElementById("product-category").value.trim(),
+    price:Number(document.getElementById("product-price").value),
+    stock:Number(document.getElementById("product-stock").value),
+    unit:document.getElementById("product-unit").value.trim()||"piece",
+    image_url:document.getElementById("product-image").value.trim()||null,
+    description:document.getElementById("product-description").value.trim()||null,
+    available:document.getElementById("product-available").checked
+  };
+  if(!payload.name||!payload.category){showProductMessage("❌ Name और category जरूरी हैं.",true);return;}
+  if(!Number.isFinite(payload.price)||payload.price<0){showProductMessage("❌ Price सही डालो.",true);return;}
+  if(!Number.isInteger(payload.stock)||payload.stock<0){showProductMessage("❌ Stock 0 या उससे ज्यादा integer होना चाहिए.",true);return;}
+  if(payload.stock===0)payload.available=false;
 
-event.preventDefault();
-
-
-const id =
-document.getElementById(
-"product-id"
-).value.trim();
-
-
-const payload = {
-
-name:
-document.getElementById(
-"product-name"
-).value.trim(),
-
-category:
-document.getElementById(
-"product-category"
-).value.trim(),
-
-price:
-Number(
-document.getElementById(
-"product-price"
-).value
-),
-
-stock:
-Number(
-document.getElementById(
-"product-stock"
-).value
-),
-
-unit:
-document.getElementById(
-"product-unit"
-).value.trim()
-||
-"piece",
-
-image_url:
-document.getElementById(
-"product-image"
-).value.trim()
-||
-null,
-
-description:
-document.getElementById(
-"product-description"
-).value.trim()
-||
-null,
-
-available:
-document.getElementById(
-"product-available"
-).checked
-
-};
-
-
-if(
-!payload.name ||
-!payload.category
-){
-
-showProductMessage(
-"❌ Name और category जरूरी हैं.",
-true
-);
-
-return;
-
+  const filesToUpload=[...selectedProductImageFiles];
+  const existingPhotoUrls=[...productImageUrlsBeingEdited];
+  if(button){button.disabled=true;button.textContent="⏳ Saving...";}
+  showProductMessage("⏳ Product और photos Supabase में सेव हो रहे हैं...",false);
+  try{
+    const uploadedUrls=await uploadSelectedProductPhotos(filesToUpload);
+    const mergedUrls=[...new Set([...existingPhotoUrls,...uploadedUrls])];
+    if(payload.image_url&&!mergedUrls.includes(payload.image_url))mergedUrls.unshift(payload.image_url);
+    payload.product_images=mergedUrls;
+    if(mergedUrls.length)payload.image_url=mergedUrls[0];
+    const result=id
+      ?await supabaseClient.from("products").update(payload).eq("id",Number(id))
+      :await supabaseClient.from("products").insert([payload]);
+    if(result.error)throw new Error(result.error.message);
+    if(id)pendingAdminProductChanges.delete(String(id));
+    resetProductForm();
+    showProductMessage(id?"✅ Product update अपने-आप सेव हो गया।":"✅ Product अपने-आप सेव हो गया।",false);
+    await Promise.all([loadAdminProducts(),loadCustomerProducts()]);
+    if(typeof window.refreshStoreCategories==="function")window.refreshStoreCategories();
+  }catch(error){
+    console.error("Instant product save failed:",error);
+    showProductMessage("❌ Product सेव नहीं हुआ: "+(error.message||"कृपया फिर कोशिश करें."),true);
+  }finally{
+    if(button)button.disabled=false;
+  }
 }
-
-
-if(
-!Number.isFinite(payload.price) ||
-payload.price < 0
-){
-
-showProductMessage(
-"❌ Price सही डालो.",
-true
-);
-
-return;
-
-}
-
-
-if(
-!Number.isInteger(payload.stock) ||
-payload.stock < 0
-){
-
-showProductMessage(
-"❌ Stock 0 या उससे ज्यादा integer होना चाहिए.",
-true
-);
-
-return;
-
-}
-
-
-if(payload.stock===0){
-
-payload.available=false;
-
-}
-
-
-const filesToUpload=[...selectedProductImageFiles];
-const existingPhotoUrls=[...productImageUrlsBeingEdited];
-queueAdminSaveAction(id?"Update product "+payload.name:"Add product "+payload.name,async function(){
-  const uploadedUrls=await uploadSelectedProductPhotos(filesToUpload);
-  const mergedUrls=[...new Set([...existingPhotoUrls,...uploadedUrls])];
-  if(payload.image_url&&!mergedUrls.includes(payload.image_url))mergedUrls.unshift(payload.image_url);
-  payload.product_images=mergedUrls;
-  if(mergedUrls.length)payload.image_url=mergedUrls[0];
-  const result=id
-    ?await supabaseClient.from("products").update(payload).eq("id",Number(id))
-    :await supabaseClient.from("products").insert([payload]);
-  if(result.error)throw new Error("Product save नहीं हुआ: "+result.error.message);
-},"product-management");
-
-if(id)updatePendingAdminProductCard(id,payload);
-resetProductForm();
-showProductMessage("⏳ बदलाव pending हैं। लागू करने के लिए Product Management का Save दबाएँ.",false);
-
-}
-
 
 async function editProduct(id){
 
@@ -8252,7 +8195,7 @@ if(productManagementSection && productManagementSection.hidden){
 
 document.getElementById("product-form-mode").textContent=
   "✏️ Editing product: "+(productForEdit.name||"Product")+" — price, stock और photo बदलें";
-document.getElementById("product-submit-button").textContent="✏️ Queue Product Update";
+document.getElementById("product-submit-button").textContent="✏️ Update Product";
 
 document.getElementById(
 "adminProductsSection"
@@ -8298,7 +8241,7 @@ selectedProductImageFiles=[];
 productImageUrlsBeingEdited=[];
 renderAdminProductPhotoStrip();
 document.getElementById("product-form-mode").textContent="➕ Add a product";
-document.getElementById("product-submit-button").textContent="➕ Add / Queue Product Change";
+document.getElementById("product-submit-button").textContent="➕ Add Product";
 
 }
 
@@ -10046,22 +9989,26 @@ document.addEventListener('click',function(e){
     updateCategoryDisplayPreview();
   }
   window.onCategoryDisplayCategoryChange=function(){pendingDisplayImage='';updateCategoryDisplayPreview();};
-  window.addCategoryDisplayCategory=function(){
-    loadCategoryDisplays();
+  window.addCategoryDisplayCategory=async function(){
     const categoryInput=document.getElementById('category-display-category');
     const message=document.getElementById('category-display-message');
     const category=categoryInput?norm(categoryInput.value):'';
     if(!category){if(message)message.textContent='❌ पहले अपनी कैटेगरी का नाम लिखें।';return;}
-    const categories=readManualCategories();
-    if(categories.includes(category)){
-      if(message)message.textContent='यह कैटेगरी पहले से जोड़ी गई है।';
-      return;
+    try{
+      await loadCategoryDisplays();
+      if(readManualCategories().includes(category)){
+        if(message)message.textContent='यह कैटेगरी पहले से सेव है।';
+        return;
+      }
+      pendingCategoryChanges.set(category,true);
+      refreshCategoryDisplayAdmin();buildCategoryCards();
+      if(message)message.textContent='⏳ '+nice(category)+' सेव हो रही है...';
+      await window.commitCategoryDisplayChanges();
+      if(message)message.textContent='✅ '+nice(category)+' कैटेगरी अपने-आप सेव हो गई। अब फोटो चुनकर Add Photo to Display दबाएँ।';
+    }catch(error){
+      console.error('Category auto-save failed:',error);
+      if(message)message.textContent='❌ Category सेव नहीं हुई: '+(error.message||'फिर कोशिश करें।');
     }
-    pendingCategoryChanges.set(category,true);
-    refreshCategoryDisplayAdmin();
-    buildCategoryCards();
-    updateAdminSaveAllStatus();
-    if(message)message.textContent='⏳ '+nice(category)+' कैटेगरी pending है। सेव करने के लिए Category Photo Display का Save दबाएँ।';
   };
   window.deleteCategoryDisplayCategory=async function(){
     const categoryInput=document.getElementById('category-display-category');
@@ -10079,10 +10026,15 @@ document.addEventListener('click',function(e){
     categoryInput.value='';
     const photoInput=document.getElementById('category-display-photo-input');
     if(photoInput)photoInput.value='';
-    refreshCategoryDisplayAdmin();
-    buildCategoryCards();
-    updateAdminSaveAllStatus();
-    if(message)message.textContent='⏳ '+nice(category)+' हटाना pending है। सेव करने के लिए Category Photo Display का Save दबाएँ।';
+    refreshCategoryDisplayAdmin();buildCategoryCards();
+    if(message)message.textContent='⏳ '+nice(category)+' हटाई जा रही है...';
+    try{
+      await window.commitCategoryDisplayChanges();
+      if(message)message.textContent='✅ '+nice(category)+' category अपने-आप हट गई।';
+    }catch(error){
+      console.error('Category delete failed:',error);
+      if(message)message.textContent='❌ Category नहीं हटाई गई: '+(error.message||'फिर कोशिश करें।');
+    }
   };
   window.handleCategoryDisplayPhoto=function(input){
     const file=input&&input.files?input.files[0]:null;
@@ -10122,52 +10074,52 @@ document.addEventListener('click',function(e){
       input.value='';
     });
   };
-  window.saveCategoryDisplayPhoto=function(){
+  window.saveCategoryDisplayPhoto=async function(){
     const categoryInput=document.getElementById('category-display-category');
     const message=document.getElementById('category-display-message');
     const category=categoryInput?norm(categoryInput.value):'';
-    if(!category){
-      if(message)message.textContent='❌ अपनी कैटेगरी का नाम लिखें।';
-      return;
-    }
+    if(!category){if(message)message.textContent='❌ अपनी कैटेगरी का नाम लिखें।';return;}
     if(!readManualCategories().includes(category)){
-      if(message)message.textContent='❌ पहले Add Category दबाकर कैटेगरी जोड़ें।';
+      if(message)message.textContent='❌ पहले Add Category दबाकर कैटेगरी सेव करें।';
       return;
     }
-    if(!pendingDisplayImage){
-      if(message)message.textContent='❌ पहले डिस्प्ले के लिए फोटो चुनें।';
-      return;
-    }
+    if(!pendingDisplayImage){if(message)message.textContent='❌ पहले डिस्प्ले के लिए फोटो चुनें।';return;}
     pendingDisplayChanges.set(category,pendingDisplayImage);
     pendingDisplayImage='';
-    buildCategoryCards();
-    refreshCategoryDisplayAdmin();
-    updateAdminSaveAllStatus();
-    if(message)message.textContent='⏳ '+nice(category)+' की फोटो pending है। सेव करने के लिए Category Photo Display का Save दबाएँ।';
+    buildCategoryCards();refreshCategoryDisplayAdmin();
+    if(message)message.textContent='⏳ '+nice(category)+' की फोटो सेव हो रही है...';
+    try{
+      await window.commitCategoryDisplayChanges();
+      if(message)message.textContent='✅ '+nice(category)+' की फोटो अपने-आप सेव हो गई और सभी visitors को दिखेगी।';
+    }catch(error){
+      console.error('Category photo auto-save failed:',error);
+      if(message)message.textContent='❌ फोटो सेव नहीं हुई: '+(error.message||'फिर कोशिश करें।');
+    }
   };
-  window.removeCategoryDisplayPhoto=function(){
+  window.removeCategoryDisplayPhoto=async function(){
     const categoryInput=document.getElementById('category-display-category');
     const message=document.getElementById('category-display-message');
     const category=categoryInput?norm(categoryInput.value):'';
     if(!category)return;
     if(!remoteCategoryDisplays[category]){
       if(pendingDisplayChanges.has(category)){
-        pendingDisplayChanges.delete(category);
-        buildCategoryCards();
-        refreshCategoryDisplayAdmin();
-        updateAdminSaveAllStatus();
+        pendingDisplayChanges.delete(category);buildCategoryCards();refreshCategoryDisplayAdmin();
         if(message)message.textContent='⏳ Pending photo हटाई गई।';
         return;
       }
       if(message)message.textContent='❌ इस category की shared photo नहीं मिली।';
       return;
     }
-    pendingDisplayChanges.set(category,null);
-    pendingDisplayImage='';
-    buildCategoryCards();
-    refreshCategoryDisplayAdmin();
-    updateAdminSaveAllStatus();
-    if(message)message.textContent='⏳ फोटो हटाना pending है। सेव करने के लिए Category Photo Display का Save दबाएँ।';
+    pendingDisplayChanges.set(category,null);pendingDisplayImage='';
+    buildCategoryCards();refreshCategoryDisplayAdmin();
+    if(message)message.textContent='⏳ फोटो हटाई जा रही है...';
+    try{
+      await window.commitCategoryDisplayChanges();
+      if(message)message.textContent='✅ Category photo अपने-आप हटा दी गई।';
+    }catch(error){
+      console.error('Category photo removal failed:',error);
+      if(message)message.textContent='❌ फोटो नहीं हटाई गई: '+(error.message||'फिर कोशिश करें।');
+    }
   };
   window.refreshCategoryDisplayAdmin=refreshCategoryDisplayAdmin;
   function applyProductVisibility(){
