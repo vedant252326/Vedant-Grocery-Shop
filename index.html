@@ -14023,7 +14023,22 @@ Object.assign(enDict,{
  function addLanguageButton(){const menu=document.getElementById('stvnProfileMenu');if(!menu)return false;if(!document.getElementById('vLangMenuButton')){const b=document.createElement('button');b.id='vLangMenuButton';b.type='button';b.textContent='🌐 Change Language';b.onclick=()=>open(true);menu.insertBefore(b,menu.querySelector('.stvn-logout')||null);}return true;}
  if(!addLanguageButton()){const menuObserver=new MutationObserver(()=>{if(addLanguageButton())menuObserver.disconnect()});menuObserver.observe(document.body,{childList:true,subtree:true});}
  function startLanguage(){const email=currentEmail();let saved='';try{saved=email?localStorage.getItem('vedantLanguage:'+email):''}catch(_){}if(saved==='en'||saved==='hi'){chosen=saved;gate.style.display='none';gate.style.visibility='hidden';document.documentElement.style.visibility='visible';document.body.style.overflow='';apply();}else{open(true)}}
- if(window.supabaseClient?.auth){supabaseClient.auth.getSession().then(({data})=>{const email=String(data?.session?.user?.email||'').trim().toLowerCase();if(email){try{localStorage.setItem('vedantCustomerEmail',email)}catch(_){} }startLanguage()}).catch(startLanguage);supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session?.user){const email=String(session.user.email||'').trim().toLowerCase();if(email){try{localStorage.setItem('vedantCustomerEmail',email)}catch(_){}}const saved=email?localStorage.getItem('vedantLanguage:'+email):'';if(saved==='en'||saved==='hi'){chosen=saved;close()}else open(true);}});}else startLanguage();
+ // Show the language/shop UI immediately; never keep the whole document hidden while waiting for a network auth request.
+ startLanguage();
+ if(window.supabaseClient?.auth){
+   supabaseClient.auth.getSession().then(({data})=>{
+     const email=String(data?.session?.user?.email||'').trim().toLowerCase();
+     if(email){try{localStorage.setItem('vedantCustomerEmail',email)}catch(_){}}
+   }).catch(error=>console.warn('Optional session restore skipped:',error));
+   supabaseClient.auth.onAuthStateChange((event,session)=>{
+     if(event==='SIGNED_IN'&&session?.user){
+       const email=String(session.user.email||'').trim().toLowerCase();
+       if(email){try{localStorage.setItem('vedantCustomerEmail',email)}catch(_){}}
+       const saved=email?localStorage.getItem('vedantLanguage:'+email):'';
+       if(saved==='en'||saved==='hi'){chosen=saved;close()}else open(true);
+     }
+   });
+ }
  // A compact animated brand intro, shown before the language/shop screen.
  const splash=document.createElement('div');splash.id='vedantBrandSplash';splash.innerHTML='<div class="vbs-orbit"><img src="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png" alt="Vedant Grocery Shop"></div><strong>VEDANT GROCERY SHOP</strong><span>Freshness at your doorstep</span>';document.body.appendChild(splash);const css=document.createElement('style');css.textContent='#vedantBrandSplash{position:fixed;inset:0;z-index:400000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:radial-gradient(circle at 50% 38%,#1b9c55 0,#07512e 48%,#062719 100%);color:#fff;font-family:Arial,sans-serif;animation:vbsFade .55s ease both}#vedantBrandSplash .vbs-orbit{width:112px;height:112px;border-radius:32px;padding:12px;background:linear-gradient(145deg,#fff,#dff8e8);box-shadow:0 0 0 9px #ffffff18,0 0 45px #8bffb477;animation:vbsPop 1s cubic-bezier(.2,.9,.2,1) both}#vedantBrandSplash img{width:100%;height:100%;object-fit:contain;animation:vbsFloat 1.8s ease-in-out infinite}#vedantBrandSplash strong{font-size:clamp(18px,4vw,25px);letter-spacing:2px;text-align:center}#vedantBrandSplash span{font-size:13px;opacity:.85;letter-spacing:.5px}@keyframes vbsPop{0%{transform:scale(.45) rotate(-18deg);opacity:0}70%{transform:scale(1.08) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}@keyframes vbsFloat{50%{transform:translateY(-5px)}}@keyframes vbsFade{from{opacity:0}to{opacity:1}}';document.head.appendChild(css);setTimeout(()=>{splash.style.transition='opacity .45s ease';splash.style.opacity='0';setTimeout(()=>splash.remove(),480)},1750);
 })();
