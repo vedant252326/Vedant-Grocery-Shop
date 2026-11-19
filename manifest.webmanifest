@@ -1,27 +1,23 @@
 {
-  "id": "/Vedant-Grocery-Shop/",
+  "id": "https://vedantgrocery.shop/",
   "name": "Vedant Grocery Shop",
   "short_name": "Vedant Grocery",
-  "description": "Order groceries from Vedant Grocery Shop.",
-  "start_url": "/Vedant-Grocery-Shop/",
-  "scope": "/Vedant-Grocery-Shop/",
+  "start_url": "https://vedantgrocery.shop/",
+  "scope": "https://vedantgrocery.shop/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#f4f7f5",
+  "orientation": "portrait",
   "theme_color": "#145c31",
-  "categories": ["shopping", "food"],
+  "background_color": "#f4f8f5",
   "icons": [
     {
-      "src": "/Vedant-Grocery-Shop/icons/app-icon-192.png",
+      "src": "https://vedantgrocery.shop/icons/app-icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "/Vedant-Grocery-Shop/icons/app-icon-512.png",
+      "src": "https://vedantgrocery.shop/icons/app-icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     }
   ]
 }
