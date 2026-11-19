@@ -36,7 +36,7 @@
 <!-- Browser tab, supported search previews, and Apple touch icon -->
 <link rel="icon" type="image/png" sizes="32x32" href="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png">
 <link rel="apple-touch-icon" href="https://vedant252326.github.io/Vedant-Grocery-Shop/logo.png">
-<script>(function(){if(location.protocol==="http:"||location.protocol==="https:"){var l=document.createElement("link");l.rel="manifest";l.href="/Vedant-Grocery-Shop/manifest.webmanifest";document.head.appendChild(l);}})();</script>
+<link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#145c31">
 <meta name="application-name" content="Vedant Grocery Shop">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12600,19 +12600,19 @@ body > .modern-nav, .modern-nav{display:none!important}
 </style>
 
 <script id="stvn-pwa-service-worker">
-if("serviceWorker" in navigator&&location.protocol==="https:"){
-  const manifestLink=document.querySelector('link[rel="manifest"]');
-  const appPath=manifestLink
-    ?new URL(manifestLink.href,location.href).pathname.replace(/manifest\.webmanifest$/,"")
-    :"";
-  if(appPath&&location.pathname.startsWith(appPath)){
-    window.addEventListener("load",()=>{
-      navigator.serviceWorker.register(appPath+"sw.js",{scope:appPath}).catch(error=>{
-        console.error("PWA service worker registration failed:",error);
-      });
-    },{once:true});
-  }
-}
+// GitHub Pages project-site safe: resolve sw.js and scope relative to this app folder.
+(function(){
+  if (!('serviceWorker' in navigator) || location.protocol !== 'https:') return;
+  const manifest = document.querySelector('link[rel="manifest"]');
+  if (!manifest) return;
+  const appBase = new URL('./', manifest.href);
+  const workerUrl = new URL('sw.js', appBase);
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register(workerUrl.href, { scope: appBase.pathname })
+      .then(function(registration){ console.info('Vedant PWA service worker ready:', registration.scope); })
+      .catch(function(error){ console.error('PWA service worker registration failed:', error); });
+  }, { once: true });
+})();
 </script>
 
 <style id="vedant-mobile-cart-checkout-product-premium-v2">
