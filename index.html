@@ -3003,6 +3003,7 @@ Login करके orders load करो.
 
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
@@ -5400,6 +5401,7 @@ async function placeOrder(){
       order.wallet_balance_after=Number(walletData.balance);
       order.payment="Vedant Wallet";
       order.payment_status="paid";
+      try{await vgSendInvoiceEmail(order,customerEmail);}catch(invoiceError){console.error('Automatic wallet order invoice email failed:',invoiceError);}
       orderHistory.unshift(order); saveData();
       message.innerHTML=`<span class="success">✅ Vedant Wallet payment successful!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: Vedant Wallet<br>💸 ₹${Number(walletData.amount||totalAmount).toFixed(2)} wallet से कटे<br>👛 बचा हुआ balance: ₹${Number(walletData.balance).toFixed(2)}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}<br>📦 Order successfully placed.</span>`;
       cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
@@ -5457,6 +5459,73 @@ async function openNewestOrderTrackingAfterCheckout(){
   }catch(error){console.warn("Could not open current order tracking automatically:",error);}
 }
 
+/* ================= VEDANT INVOICE PDF + EMAIL ================= */
+function vgInvoiceLanguage(){
+  const value=document.documentElement.dataset.language||document.documentElement.lang||'en';
+  return value==='hi'?'hi':'en';
+}
+function vgInvoiceEscape(value){
+  return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function vgInvoiceMoney(value){return '₹'+(Number(value)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function vgInvoiceItems(order){
+  let items=order?.items;
+  try{if(typeof items==='string')items=JSON.parse(items)}catch(_e){items=[]}
+  return Array.isArray(items)?items:[];
+}
+function vgInvoiceMarkup(order,language){
+  const hi=language==='hi';
+  const t=hi?{title:'खरीदारी की रसीद',invoice:'इनवॉइस',order:'ऑर्डर आईडी',date:'तारीख',customer:'ग्राहक का नाम',phone:'मोबाइल नंबर',address:'डिलीवरी पता',product:'उत्पाद',qty:'मात्रा',price:'कीमत',amount:'राशि',subtotal:'उप-योग',delivery:'डिलीवरी शुल्क',total:'कुल राशि',payment:'भुगतान का तरीका',thanks:'Vedant Grocery Shop से खरीदारी करने के लिए धन्यवाद!'}:{title:'Purchase Receipt',invoice:'INVOICE',order:'Order ID',date:'Date',customer:'Customer Name',phone:'Mobile Number',address:'Delivery Address',product:'Product',qty:'Quantity',price:'Price',amount:'Amount',subtotal:'Subtotal',delivery:'Delivery Charge',total:'Grand Total',payment:'Payment Method',thanks:'Thank you for shopping with Vedant Grocery Shop!'};
+  const items=vgInvoiceItems(order);
+  const rows=items.map(item=>{const name=item.name||item.product||'Item';const qty=Number(item.quantity??item.qty??1)||1;const qtyLabel=String(item.quantityText||item.quantity_text||qty);const price=Number(String(item.price??item.unit_price??0).replace(/[^0-9.]/g,''))||0;return `<tr><td>${vgInvoiceEscape(name)}</td><td>${vgInvoiceEscape(qtyLabel)}</td><td>${vgInvoiceMoney(price)}</td><td>${vgInvoiceMoney(price*qty)}</td></tr>`}).join('');
+  const total=Number(String(order.total??0).replace(/[^0-9.]/g,''))||0;
+  const delivery=Number(order.delivery_charge)||0;
+  const subtotal=Math.max(0,total-delivery);
+  const dateValue=order.order_date||order.date||new Date().toISOString();
+  const dateText=new Date(dateValue).toLocaleString(hi?'hi-IN':'en-IN');
+  return `<div style="width:760px;padding:34px;background:#fff;color:#17251c;font-family:Arial,'Noto Sans Devanagari',sans-serif;box-sizing:border-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #168447;padding-bottom:18px;margin-bottom:22px"><div><div style="font-size:28px;font-weight:900;color:#147a40">Vedant Grocery Shop</div><div style="font-size:15px;color:#64736a">${vgInvoiceEscape(t.title)}</div></div><div style="text-align:right"><div style="font-size:24px;font-weight:900;color:#147a40">${t.invoice}</div><div style="font-size:13px;color:#59665e">#${vgInvoiceEscape(order.id||order.order_id||'')}</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px;line-height:1.7;margin-bottom:18px"><div><b>${t.order}:</b> ${vgInvoiceEscape(order.id||order.order_id||'')}</div><div><b>${t.date}:</b> ${vgInvoiceEscape(dateText)}</div><div><b>${t.customer}:</b> ${vgInvoiceEscape(order.name||order.customer_name||'')}</div><div><b>${t.phone}:</b> ${vgInvoiceEscape(order.phone||order.customer_phone||'')}</div><div style="grid-column:1/-1"><b>${t.address}:</b> ${vgInvoiceEscape(order.address||order.customer_address||'')}</div></div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#eaf6ee"><th style="text-align:left;padding:11px;border:1px solid #d8e6dc">${t.product}</th><th style="text-align:left;padding:11px;border:1px solid #d8e6dc">${t.qty}</th><th style="text-align:right;padding:11px;border:1px solid #d8e6dc">${t.price}</th><th style="text-align:right;padding:11px;border:1px solid #d8e6dc">${t.amount}</th></tr></thead><tbody>${rows||`<tr><td colspan="4" style="padding:12px;border:1px solid #d8e6dc">${hi?'उत्पाद विवरण उपलब्ध नहीं है':'Item details unavailable'}</td></tr>`}</tbody></table>
+    <div style="width:330px;margin:20px 0 0 auto;font-size:14px;line-height:2"><div style="display:flex;justify-content:space-between"><span>${t.subtotal}</span><b>${vgInvoiceMoney(subtotal)}</b></div><div style="display:flex;justify-content:space-between"><span>${t.delivery}</span><b>${vgInvoiceMoney(delivery)}</b></div><div style="display:flex;justify-content:space-between;border-top:2px solid #168447;padding-top:8px;font-size:19px;color:#147a40"><b>${t.total}</b><b>${vgInvoiceMoney(total)}</b></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span>${t.payment}</span><b>${vgInvoiceEscape(order.payment||order.payment_method||'')}</b></div></div>
+    <div style="margin-top:28px;padding:15px;background:#eff8f1;border-radius:10px;text-align:center;color:#176b3a;font-weight:700">${t.thanks}</div></div>`;
+}
+async function vgCreateInvoicePdf(order,language){
+  if(typeof html2pdf!=='function')throw new Error('PDF library load नहीं हुई। Internet connection जाँचें और दोबारा कोशिश करें।');
+  const holder=document.createElement('div');holder.innerHTML=vgInvoiceMarkup(order,language||vgInvoiceLanguage());
+  holder.style.position='fixed';holder.style.left='-10000px';holder.style.top='0';holder.style.zIndex='-1';document.body.appendChild(holder);
+  try{return await html2pdf().set({margin:0,filename:'Vedant-Invoice-'+String(order.id||order.order_id||'Order').replace(/[^a-z0-9_-]/gi,'')+'.pdf',image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'pt',format:'a4',orientation:'portrait'}}).from(holder.firstElementChild).outputPdf('blob');}
+  finally{holder.remove();}
+}
+function vgBlobToBase64(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||'').split(',')[1]||'');reader.onerror=reject;reader.readAsDataURL(blob);});}
+async function vgSendInvoiceEmail(order,customerEmail){
+  const blob=await vgCreateInvoicePdf(order,vgInvoiceLanguage());
+  const base64=await vgBlobToBase64(blob);
+  const {data,error}=await supabaseClient.functions.invoke('send-order-invoice',{body:{orderId:String(order.id||order.order_id||''),customerName:String(order.name||order.customer_name||''),invoicePdfBase64:base64,language:vgInvoiceLanguage()}});
+  if(error)throw error;
+  if(data?.error)throw new Error(data.error);
+  return true;
+}
+async function sendAdminInvoiceWhatsApp(orderId){
+  const order=window.stvnAdminOrdersById?.[String(orderId)];
+  if(!order){window.stvnAlert('Order details नहीं मिले। Orders को Refresh करके दोबारा कोशिश करें।');return;}
+  const phone=String(order.customer_phone||order.phone||'').replace(/\D/g,'');
+  if(!phone){window.stvnAlert('Customer WhatsApp number उपलब्ध नहीं है।');return;}
+  const waNumber=phone.length===10?'91'+phone:phone;
+  const chat=window.open('about:blank','_blank');
+  try{
+    const blob=await vgCreateInvoicePdf(order,vgInvoiceLanguage());
+    const fileName='Vedant-Invoice-'+String(order.order_id||order.id||'Order').replace(/[^a-z0-9_-]/gi,'')+'.pdf';
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fileName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+    const hi=vgInvoiceLanguage()==='hi';
+    const msg=hi?`नमस्ते ${order.customer_name||order.name||''},\nआपके Vedant Grocery Shop ऑर्डर की Invoice PDF इस चैट में भेज रहा हूँ। कृपया PDF देखें।\nऑर्डर आईडी: ${order.order_id||order.id}`:`Hello ${order.customer_name||order.name||''},\nPlease find your Vedant Grocery Shop invoice PDF attached.\nOrder ID: ${order.order_id||order.id}\nThank you for shopping with us!`;
+    const target='https://wa.me/'+waNumber+'?text='+encodeURIComponent(msg);
+    if(chat)chat.location.href=target;else window.open(target,'_blank','noopener');
+    window.stvnAlert(hi?'Invoice PDF डाउनलोड हो गई है। WhatsApp चैट में PDF attach करके Send करें।':'Invoice PDF downloaded. Attach the PDF in the opened WhatsApp chat and press Send.');
+  }catch(error){if(chat)chat.close();console.error('Invoice WhatsApp preparation failed:',error);window.stvnAlert(error.message||'Invoice PDF तैयार नहीं हो सकी।');}
+}
+window.sendAdminInvoiceWhatsApp=sendAdminInvoiceWhatsApp;
+
 async function saveVedantOrder(order,customerEmail){
   const message=document.getElementById("order-message");
   let savedWithoutCustomerEmail=false;
@@ -5500,9 +5569,12 @@ async function saveVedantOrder(order,customerEmail){
     message.innerHTML='<span class="error">❌ Payment verification सफल है, लेकिन order database में save नहीं हुआ: '+escapeHtml(supabaseError.message||"Please contact the shop.")+'. कृपया दोबारा payment न करें.</span>';
     return;
   }
+  let invoiceEmailNotice='';
+  try{await vgSendInvoiceEmail(order,customerEmail);invoiceEmailNotice='<br>📧 Invoice PDF आपके email पर भेज दी गई है।';}
+  catch(invoiceError){console.error('Automatic invoice email failed:',invoiceError);invoiceEmailNotice='<br>⚠️ Order save हो गया, लेकिन invoice email नहीं भेजी जा सकी। Admin/Edge Function setup जाँचें।';}
   orderHistory=Array.isArray(orderHistory)?orderHistory.filter(existing=>String(existing.order_id||existing.id||'')!==String(order.id)):[];
   orderHistory.unshift(order); saveData();
-  message.innerHTML=`<span class="success">✅ Order placed successfully!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: ${escapeHtml(order.payment)}<br>📦 Order Status: ${escapeHtml(order.order_status)}<br>💳 Payment Status: ${escapeHtml(order.payment_status)}${order.latitude!==null&&order.longitude!==null?"<br>📍 Location saved with this order":"<br>📍 Location not available; address saved"}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}${savedWithoutCustomerEmail?"<br>⚠️ Database में customer_email column जोड़ने की जरूरत है.":""}</span>`;
+  message.innerHTML=`<span class="success">✅ Order placed successfully!<br>🧾 Order ID: ${escapeHtml(order.id)}<br>💳 Payment: ${escapeHtml(order.payment)}<br>📦 Order Status: ${escapeHtml(order.order_status)}<br>💳 Payment Status: ${escapeHtml(order.payment_status)}${order.latitude!==null&&order.longitude!==null?"<br>📍 Location saved with this order":"<br>📍 Location not available; address saved"}<br>📍 Distance: ${order.delivery_distance_km.toFixed(2)} km · delivery charge ₹${order.delivery_charge}${savedWithoutCustomerEmail?"<br>⚠️ Database में customer_email column जोड़ने की जरूरत है.":""}${invoiceEmailNotice}</span>`;
   cartItems=[]; discountAmount=0; customerLatitude=null; customerLongitude=null;
   saveData(); updateCart(); showOrderHistory();
   showOrderConfirmation(order);
@@ -6662,6 +6734,7 @@ ordersBox.innerHTML="";
 
 
 const uniqueAdminOrders=[...new Map((orders||[]).map(order=>[String(order.order_id||order.id||""),order])).values()];
+window.stvnAdminOrdersById=Object.fromEntries(uniqueAdminOrders.map(order=>[String(order.order_id||order.id||""),order]));
 uniqueAdminOrders.forEach(
 function(order){
 
@@ -7061,6 +7134,7 @@ onclick="openOrderWhatsAppUpdate('${escapeAttribute(orderId)}','${escapeAttribut
 
 </button>
 
+<button class="admin-btn stvn-send-invoice-btn" type="button" onclick="sendAdminInvoiceWhatsApp('${escapeAttribute(orderId)}')">📄 Send Invoice on WhatsApp</button>
 
 <input
 id="delivery-time-${escapeAttribute(orderId)}"
@@ -17133,3 +17207,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+<style id="vg-invoice-admin-button-style">
+.stvn-send-invoice-btn{background:#087d43!important;color:#fff!important;border-radius:11px!important;font-weight:850!important}
+@media(max-width:700px){.stvn-send-invoice-btn{width:100%;min-height:46px}}
+</style>
