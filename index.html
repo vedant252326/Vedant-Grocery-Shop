@@ -17713,6 +17713,244 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+
+<style id="vedant-blinkit-inspired-color-theme">
+/* Vedant Grocery Shop — color-only refresh.
+   Existing HTML, controls, links, JavaScript and layout dimensions are unchanged. */
+:root{
+  --bg:#fffdf3 !important;
+  --surface:#ffffff !important;
+  --surface-2:#fff7d6 !important;
+  --card:#ffffff !important;
+  --text:#17251b !important;
+  --muted:#687469 !important;
+  --primary:#16883f !important;
+  --primary-dark:#08652f !important;
+  --primary-soft:#e9f8dc !important;
+  --accent:#f8d43a !important;
+  --gold:#f8d43a !important;
+  --blue:#16883f !important;
+  --border:#e8e5cc !important;
+  --shadow:0 10px 28px rgba(31,73,30,.10) !important;
+}
+html,body{
+  background-color:#fffdf3 !important;
+  color:#17251b !important;
+}
+body{
+  background-image:
+    radial-gradient(circle at 8% 0%,rgba(255,220,61,.16),transparent 25%),
+    radial-gradient(circle at 100% 12%,rgba(105,190,57,.10),transparent 23%) !important;
+}
+body.dark{
+  --bg:#111b13 !important;
+  --surface:#1b291d !important;
+  --surface-2:#26391f !important;
+  --card:#1b291d !important;
+  --text:#f4f8ed !important;
+  --muted:#b9c5b5 !important;
+  --border:#3b4b35 !important;
+  --primary:#55b94c !important;
+  --primary-dark:#2e8738 !important;
+  background-color:#111b13 !important;
+  color:#f4f8ed !important;
+}
+button,.shop-btn,.place-order,.cart-btn,.navigate-btn,
+.stvn-copy-upi,.stvn-profile-save,.stvn-customer-login-action{
+  background:linear-gradient(135deg,#16883f 0%,#08712f 100%) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+}
+button:hover,.shop-btn:hover,.place-order:hover,.cart-btn:hover{
+  filter:brightness(1.06) saturate(1.04);
+}
+.dark-btn,.admin-btn{background:#263d2a !important;color:#fff !important}
+.remove-btn,.clear-btn,.product-delete-btn,.order-delete-btn,
+.admin-logout,.error{background:#d93636 !important;color:#fff !important}
+.stock-out-btn,.status-pending{
+  background:#ffe28a !important;color:#493900 !important;
+}
+.admin-refresh,.quantity-btn,.stock-in-btn,.product-save-btn{
+  background:#16883f !important;color:#fff !important;
+}
+#searchBox,input,textarea,select{
+  background:#fff !important;
+  color:#17251b !important;
+  border-color:#e6e1c5 !important;
+}
+#searchBox:focus,input:focus,textarea:focus,select:focus{
+  border-color:#e6bd19 !important;
+  box-shadow:0 0 0 3px rgba(248,212,58,.20) !important;
+}
+.categories button,.back-btn{
+  background:#fff9df !important;
+  color:#31552d !important;
+  border-color:#eadb8b !important;
+}
+.categories button:hover,.categories button.active{
+  background:#f8d43a !important;
+  color:#173e22 !important;
+  border-color:#e6bd19 !important;
+}
+.product,.vg-home-featured-grid .product{
+  background:#fff !important;
+  border-color:#e9e6d5 !important;
+  box-shadow:0 7px 20px rgba(37,68,31,.09) !important;
+}
+.product::before{
+  background:linear-gradient(90deg,#f8d43a 0%,#b7df48 48%,#16883f 100%) !important;
+}
+.product-icon,.vg-home-featured-grid .product-icon{
+  background:linear-gradient(145deg,#fff9dc 0%,#f4fbe9 100%) !important;
+  border-color:#f0e8bd !important;
+}
+.product .price,.price{
+  color:#087b37 !important;
+}
+.product .price{
+  background:#eaf7df !important;
+}
+.product .rating,.rating{color:#d59b00 !important}
+.wish-btn{
+  background:#fff !important;
+  color:#d93636 !important;
+  border-color:#f0d9d9 !important;
+}
+.modern-nav{
+  background:linear-gradient(100deg,#087333 0%,#12883d 48%,#176b31 100%) !important;
+  border-bottom-color:#0b672f !important;
+}
+.modern-nav,.modern-nav .brand,.modern-nav .brand small,
+.modern-nav .nav-links button{color:#fff !important}
+.modern-nav .brand-logo{
+  background:linear-gradient(135deg,#ffe45b,#f6c928) !important;
+  color:#155b2c !important;
+  box-shadow:0 8px 20px rgba(0,0,0,.13) !important;
+}
+.nav-links button.active,.nav-links button:hover{
+  background:rgba(255,255,255,.16) !important;
+  color:#fff !important;
+}
+.nav-cart{
+  background:#f8d43a !important;
+  color:#145b2d !important;
+}
+.nav-cart .cart-dot{background:#e93232 !important;color:#fff !important}
+.promo-strip{
+  background:linear-gradient(90deg,#fff3a8 0%,#fff9d9 52%,#e9f7d7 100%) !important;
+  color:#23572d !important;
+  border-color:#f0df8a !important;
+}
+.promo-strip strong{color:#087333 !important}
+.hero{
+  background:linear-gradient(115deg,#f8d43a 0%,#ffe76a 45%,#a8d84b 100%) !important;
+  color:#174522 !important;
+}
+.hero .hero-kicker{
+  background:rgba(255,255,255,.48) !important;
+  color:#17562b !important;
+}
+.hero p,.hero .front-hindi,.hero-hindi-title{color:#315b2d !important;opacity:1 !important}
+.hero-main{
+  background:#087b37 !important;
+  color:#fff !important;
+}
+.hero-secondary{
+  background:rgba(255,255,255,.35) !important;
+  color:#174522 !important;
+  border-color:rgba(23,69,34,.25) !important;
+}
+.section-head h2{color:#17251b !important}
+.feature-card,.section-card,.feature-store-card,.checkout-card,
+.cart-item,.history-item,.summary,.payment-box,
+.admin-order,.product-admin-card,#adminOrdersSection,
+#adminProductsSection,#page-admin #adminProductListSection{
+  background:#fff !important;
+  border-color:#e9e5d1 !important;
+}
+.feature-store-action,.location-success,.success{color:#087b37 !important}
+.feature-store-card:hover{border-color:#b5d77c !important}
+.modern-bottom-nav{
+  background:rgba(255,255,255,.96) !important;
+  border-color:#e7e3cd !important;
+}
+.modern-bottom-nav button{color:#687469 !important}
+.modern-bottom-nav button.active{
+  background:#f8efb9 !important;
+  color:#087333 !important;
+}
+.tracking-estimate{
+  background:linear-gradient(110deg,#fff5bd,#eff8df) !important;
+  border-color:#e8d979 !important;
+}
+.tracking-estimate-time,#delivery{color:#087b37 !important}
+.tracking-active,.status-confirmed,.badge,.stvn-order-confirmed-badge{
+  background:#16883f !important;color:#fff !important;
+}
+#cart{border-top-color:#16883f !important}
+#history{border-top-color:#e4bd21 !important}
+#adminPanel{border-top-color:#16883f !important}
+#radius-availability{background:#fff9dc !important;border-bottom-color:#eadb8b !important}
+#radius-availability.available{color:#087b37 !important}
+.stvn-qty-control{
+  background:#16883f !important;border-color:#0e7134 !important;
+}
+.stvn-category-intro{
+  background:linear-gradient(120deg,#fff5b9 0%,#fffdf1 52%,#eaf7dc 100%) !important;
+  border-color:#ebdf9d !important;
+}
+.stvn-category-intro h2,.stvn-category-name{color:#176b35 !important}
+.stvn-category-list{
+  background:linear-gradient(135deg,#fff9dc 0%,#f7fbea 100%) !important;
+  border-color:#eadf9f !important;
+}
+.stvn-category-card{
+  background:linear-gradient(145deg,#fff4b5 0%,#fff 52%,#edf8df 100%) !important;
+  color:#174522 !important;
+  border-color:#e9dfaa !important;
+}
+.stvn-category-card.active{
+  background:linear-gradient(115deg,#ffed83,#fff 50%,#e8f6d8) !important;
+  border-color:#16883f !important;
+}
+.stvn-category-side{
+  background:linear-gradient(145deg,#fff0a0,#eaf7dc) !important;
+  border-color:#e9dc91 !important;
+}
+#stvnProfileToggle{
+  background:#fff8d9 !important;
+  color:#145b2d !important;
+  border-color:#e9dc9a !important;
+}
+#stvnProfileToggle .stvn-avatar{
+  background:linear-gradient(135deg,#16883f,#075e2d) !important;
+}
+#stvnProfileMenu{border-color:#e9e2c8 !important}
+#stvnProfileMenu button:hover{background:#fff6d4 !important}
+.stvn-payment-choice,.stvn-upi-payment{
+  background:#fff9df !important;border-color:#e9dfad !important;
+}
+.stvn-login-logo{
+  background:linear-gradient(135deg,#f8d43a 0%,#b5db47 45%,#16883f 100%) !important;
+}
+@media(max-width:700px){
+  .modern-nav{
+    background:linear-gradient(105deg,#087333 0%,#16883f 100%) !important;
+  }
+  .promo-strip{
+    background:linear-gradient(90deg,#fff1a0,#fff9d9 58%,#eaf6dc) !important;
+  }
+}
+@media(max-width:600px){
+  body{background-color:#fffdf3 !important}
+  .modern-bottom-nav{
+    background:rgba(255,255,255,.98) !important;
+    box-shadow:0 8px 26px rgba(35,64,28,.15) !important;
+  }
+}
+</style>
+
 </body>
 </html>
 
@@ -17831,5 +18069,104 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <style id="vedant-mobile-remove-duplicate-account-v8">
 @media (max-width:700px){
   .vg-store-header > .vg-account-action{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+}
+</style>
+
+
+<!-- Vedant Smart Header: Blinkit-inspired warm yellow + fresh green color grading.
+     Keeps existing header structure, location capture logic, account, cart and navigation intact. -->
+<style id="vedant-smart-header-color-grade">
+:root{
+  --vg-header-yellow:#fff6d7;
+  --vg-header-yellow-deep:#f5df9b;
+  --vg-header-green:#0b7a3b;
+  --vg-header-ink:#173b2b;
+}
+.vg-store-header{
+  background:linear-gradient(105deg,#fffdf5 0%,#fff8df 48%,#f4faed 100%)!important;
+  border-color:#eadfae!important;
+  box-shadow:0 7px 22px rgba(65,83,35,.10)!important;
+}
+.vg-store-header .vg-brand{color:#08763b!important}
+.vg-store-header .vg-brand-name small{color:#617568!important}
+.vg-store-header .vg-location-button{
+  background:linear-gradient(105deg,#fff4cc 0%,#fff9e8 58%,#f0f8e9 100%)!important;
+  border:1px solid #eadb9e!important;
+  border-radius:15px!important;
+  box-shadow:0 3px 10px rgba(110,92,31,.08)!important;
+  color:var(--vg-header-ink)!important;
+  transition:background .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.vg-store-header .vg-location-button:hover{
+  background:linear-gradient(105deg,#ffefb8,#f3f9e9)!important;
+  border-color:#d9c66f!important;
+  box-shadow:0 5px 14px rgba(110,92,31,.13)!important;
+}
+.vg-store-header .vg-location-button .pin{
+  display:grid;place-items:center;
+  width:32px;height:32px;flex:0 0 32px;
+  border-radius:11px;
+  background:#fff0b9;
+  font-size:19px!important;
+}
+.vg-store-header .vg-location-button .vg-location-delivery small:first-child{
+  color:#71806e!important;font-weight:750!important;letter-spacing:.15px;
+}
+.vg-store-header .vg-location-button .vg-location-label{
+  color:#176b39!important;font-weight:950!important;
+}
+.vg-store-header .vg-location-button .vg-update-location{
+  color:#39784a!important;text-decoration:underline!important;
+}
+.vg-store-header .vg-location-button .vg-location-current{
+  border-left:1px solid #e4d9a8!important;
+}
+.vg-store-header .vg-location-button .vg-location-current small{
+  color:#78816d!important;font-weight:750!important;
+}
+.vg-store-header .vg-location-button .vg-location-current b{
+  color:#145f35!important;font-weight:950!important;
+}
+.vg-store-header .vg-search{
+  background:#fff!important;border-color:#e7e6d8!important;
+  box-shadow:0 2px 8px rgba(35,65,40,.045)!important;
+}
+.vg-store-header .vg-search span{color:#19804a!important}
+.vg-store-header .vg-action{
+  background:linear-gradient(135deg,#fffdf5,#f1f8e9)!important;
+  border-color:#d8e5c7!important;color:#155c34!important;
+}
+.vg-store-header .vg-cart-action,
+.vg-store-header .vg-account-action{
+  background:#fff!important;border-color:#e3e5d5!important;
+  color:#155c34!important;
+}
+@media(max-width:700px){
+  .vg-store-header{
+    background:linear-gradient(115deg,#fffdf5 0%,#fff8df 55%,#f3f9eb 100%)!important;
+    border-bottom:1px solid #eadfae!important;
+    box-shadow:0 5px 16px rgba(65,83,35,.09)!important;
+  }
+  .vg-store-header .vg-location-button{
+    min-height:48px!important;
+    padding:6px 9px!important;
+    border-radius:13px!important;
+  }
+  .vg-store-header .vg-location-button .pin{
+    width:29px;height:29px;flex-basis:29px;font-size:17px!important;
+  }
+  .vg-store-header .vg-location-button .vg-location-current{
+    flex-basis:78px!important;min-width:0!important;padding-left:7px!important;
+  }
+  .vg-store-header .vg-location-button .vg-location-current b{
+    max-width:112px!important;font-size:10px!important;
+  }
+  .vg-store-header .vg-location-button .vg-location-current small{
+    font-size:8px!important;
+  }
+}
+@media(max-width:380px){
+  .vg-store-header .vg-location-button .vg-location-current{flex-basis:65px!important}
+  .vg-store-header .vg-location-button .vg-location-current b{max-width:88px!important;font-size:9px!important}
 }
 </style>
