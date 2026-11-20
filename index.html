@@ -17825,3 +17825,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 }
 @media(max-width:380px){.vg-store-header{grid-template-columns:minmax(0,1fr) 42px 112px!important;gap:5px!important;padding-left:7px!important;padding-right:7px!important}.vg-store-header>#stvnProfileBar,.vg-store-header #stvnProfileToggle{width:112px!important;min-width:112px!important;max-width:112px!important}.vg-store-header #stvnProfileToggle>span:last-child{font-size:9px!important}}
 </style>
+
+
+<!-- Mobile-only: remove the duplicate lower My Account shortcut. Keep the top profile dropdown and its My Orders menu item. -->
+<style id="vedant-mobile-remove-duplicate-account-v8">
+@media (max-width:700px){
+  .vg-store-header > .vg-account-action{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+}
+</style>
