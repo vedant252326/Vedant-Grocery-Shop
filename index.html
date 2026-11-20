@@ -2245,6 +2245,220 @@ button,input,select,textarea{font:inherit}
 }
 </style>
 
+
+<style id="vedant-mobile-three-column-account-fix-v4">
+/* Mobile-only correction: keep all existing shop and account functionality. */
+@media (max-width: 700px) {
+  #page-shop #products {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 4px !important;
+    margin: 10px 0 18px !important;
+    box-sizing: border-box !important;
+  }
+  #page-shop #products > .product {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 5px !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  #page-shop #products > .product .product-icon,
+  #page-shop #products > .product img,
+  #page-shop #products > .product .product-image,
+  #page-shop #products > .product .product-image-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    object-fit: contain !important;
+    box-sizing: border-box !important;
+  }
+  #page-shop #products > .product h3,
+  #page-shop #products > .product .product-name {
+    min-width: 0 !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    overflow-wrap: anywhere !important;
+    margin: 3px 0 !important;
+  }
+  #page-shop #products > .product .price {
+    min-width: 0 !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    padding: 4px !important;
+    margin: 2px 0 !important;
+  }
+  #page-shop #products > .product p,
+  #page-shop #products > .product .stock-status {
+    font-size: 9px !important;
+    line-height: 1.15 !important;
+    margin: 2px 0 !important;
+  }
+  #page-shop #products > .product button,
+  #page-shop #products > .product .cart-btn,
+  #page-shop #products > .product .stvn-add-cart-btn,
+  #page-shop #products > .product .stvn-qty-control,
+  #page-shop #products > .product .stvn-product-view-btn {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 27px !important;
+    height: auto !important;
+    padding: 4px 3px !important;
+    font-size: 9px !important;
+    line-height: 1.15 !important;
+    box-sizing: border-box !important;
+  }
+  #page-shop #products > .product .stvn-product-note,
+  #page-shop #products > .product .product-note,
+  #page-shop #products > .product .note-box {
+    display: none !important;
+  }
+  /* Restore the My Account control beside the cart in the top header. */
+  .vg-store-header .vg-account-action {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 92px !important;
+    max-width: 112px !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 4px 7px !important;
+    border: 1px solid #d7e7d9 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    color: #174a2b !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    z-index: 5 !important;
+  }
+  .vg-store-header .vg-account-action span {
+    display: inline !important;
+    visibility: visible !important;
+    font-size: 10px !important;
+  }
+  .vg-store-header {
+    grid-template-columns: minmax(0,1fr) 44px minmax(92px,auto) !important;
+    grid-template-rows: auto auto auto auto !important;
+    gap: 7px !important;
+    overflow: visible !important;
+  }
+  .vg-store-header > .vg-brand { grid-column: 1 !important; grid-row: 1 !important; min-width: 0 !important; }
+  .vg-store-header > .vg-cart-action { grid-column: 2 !important; grid-row: 1 !important; justify-self: center !important; }
+  .vg-store-header > .vg-location-button { grid-column: 1 / 3 !important; grid-row: 2 !important; min-width: 0 !important; }
+  .vg-store-header > .vg-action:not(.vg-wallet-action):not(.vg-orders-action) { grid-column: 3 !important; grid-row: 2 !important; min-width: 0 !important; }
+  .vg-store-header > .vg-search { grid-column: 1 / 4 !important; grid-row: 3 !important; min-width: 0 !important; }
+  .vg-store-header > .vg-wallet-action { grid-column: 1 !important; grid-row: 4 !important; }
+  .vg-store-header > .vg-orders-action { grid-column: 2 / 4 !important; grid-row: 4 !important; }
+}
+@media (max-width: 380px) {
+  #page-shop #products { gap: 5px !important; padding: 0 2px !important; }
+  #page-shop #products > .product { padding: 4px !important; }
+  #page-shop #products > .product .product-icon,
+  #page-shop #products > .product img,
+  #page-shop #products > .product .product-image,
+  #page-shop #products > .product .product-image-wrap { height: 66px !important; min-height: 66px !important; }
+  .vg-store-header .vg-account-action { min-width: 86px !important; padding: 3px 5px !important; }
+  .vg-store-header .vg-account-action span { font-size: 9px !important; }
+}
+</style>
+
+
+
+<style id="vedant-mobile-fullscreen-layout-v5">
+/* Full-bleed mobile layout: keep the original app features and page structure. */
+@media (max-width: 600px) {
+  html, body { width:100%!important; max-width:100%!important; margin:0!important; padding:0!important; overflow-x:hidden!important; }
+  body { padding-bottom:calc(82px + env(safe-area-inset-bottom))!important; }
+  .modern-nav {
+    position:sticky!important; top:0!important; left:0!important; right:0!important;
+    z-index:3000!important; width:100%!important; max-width:none!important;
+    box-sizing:border-box!important; margin:0!important; padding:9px 12px 7px!important;
+    display:grid!important; grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important; gap:7px 10px!important;
+    border:0!important; border-bottom:1px solid rgba(18,105,48,.12)!important;
+    border-radius:0!important; box-shadow:0 3px 12px rgba(16,70,35,.08)!important;
+    background:rgba(255,255,255,.97)!important; backdrop-filter:blur(16px)!important;
+  }
+  .modern-nav > .brand { grid-column:1!important; grid-row:1!important; min-width:0!important; gap:8px!important; }
+  .modern-nav .brand-logo { width:39px!important; height:39px!important; flex:0 0 39px!important; border-radius:11px!important; }
+  .modern-nav .stvn-brand-wordmark { font-size:17px!important; line-height:1.05!important; white-space:normal!important; }
+  .modern-nav .stvn-brand-wordmark span { display:block!important; font-size:11px!important; }
+  .modern-nav > .nav-cart { grid-column:2!important; grid-row:1!important; justify-self:end!important; margin:0!important; min-height:39px!important; padding:7px 12px!important; border-radius:12px!important; white-space:nowrap!important; }
+  .modern-nav > .nav-links {
+    grid-column:1/-1!important; grid-row:2!important; order:initial!important;
+    display:flex!important; width:100%!important; max-width:100%!important; min-width:0!important;
+    margin:0!important; padding:2px 0 0!important; gap:5px!important;
+    overflow-x:auto!important; overflow-y:hidden!important; white-space:nowrap!important;
+    scrollbar-width:none!important; -webkit-overflow-scrolling:touch!important;
+  }
+  .modern-nav > .nav-links::-webkit-scrollbar { display:none!important; }
+  .modern-nav .nav-links button { flex:0 0 auto!important; min-height:32px!important; margin:0!important; padding:6px 9px!important; border-radius:9px!important; font-size:11px!important; }
+  .modern-nav .nav-links button small { display:none!important; }
+  /* Keep account/login control visible and easy to reach in the header. */
+  .modern-nav .nav-links #stvnProfileBar,
+  .modern-nav .nav-links #stvnProfileToggle,
+  .modern-nav #stvnProfileBar { display:flex!important; visibility:visible!important; opacity:1!important; }
+  .promo-strip {
+    position:sticky!important; top:93px!important; z-index:2500!important;
+    width:100%!important; max-width:none!important; box-sizing:border-box!important;
+    margin:0!important; padding:8px 10px!important; border-left:0!important; border-right:0!important;
+    border-radius:0!important; box-shadow:none!important; font-size:11px!important;
+  }
+  #page-home, #page-shop, #page-cart, #page-checkout, #page-orders, #page-track {
+    width:100%!important; max-width:none!important; box-sizing:border-box!important;
+    margin:0!important; padding:12px 12px 28px!important; overflow:visible!important;
+  }
+  #page-home .hero, #page-home .vg-hero, #page-shop .section-head,
+  #page-shop .vg-shop-products-head, #page-shop .vg-section-title,
+  #page-shop .categories, #page-shop .stvn-category-list,
+  #page-shop #products, #page-home #products {
+    max-width:100%!important; box-sizing:border-box!important; margin-left:0!important; margin-right:0!important;
+  }
+  #page-home .hero, #page-home .vg-hero { width:100%!important; border-radius:16px!important; }
+  #page-shop .section-head { width:100%!important; }
+  #page-shop .stvn-category-list { width:100%!important; padding:8px 0!important; }
+  #page-shop .stvn-category-card { min-width:0!important; max-width:100%!important; }
+  #page-shop #products, #page-home #products { width:100%!important; min-width:0!important; }
+  /* Avoid clipping long category names such as Grocery. */
+  #page-shop .stvn-category-name { display:block!important; min-width:0!important; max-width:100%!important; overflow:visible!important; white-space:normal!important; overflow-wrap:anywhere!important; text-align:center!important; font-weight:900!important; }
+  .modern-bottom-nav {
+    position:fixed!important; left:0!important; right:0!important; bottom:0!important;
+    transform:none!important; width:100%!important; max-width:none!important;
+    box-sizing:border-box!important; z-index:5000!important;
+    display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:0!important; margin:0!important; padding:7px 10px calc(7px + env(safe-area-inset-bottom))!important;
+    border:0!important; border-top:1px solid rgba(20,90,45,.12)!important;
+    border-radius:17px 17px 0 0!important; box-shadow:0 -5px 18px rgba(20,60,35,.10)!important;
+    background:rgba(255,255,255,.98)!important; backdrop-filter:blur(16px)!important;
+  }
+  .modern-bottom-nav button { min-width:0!important; width:100%!important; margin:0!important; padding:7px 3px!important; border-radius:11px!important; font-size:12px!important; }
+  .modern-bottom-nav button span { font-size:21px!important; }
+  .modern-bottom-nav button small { display:none!important; }
+}
+@media (min-width:601px) {
+  .modern-bottom-nav { width:min(100%,1180px)!important; }
+}
+</style>
 </head>
 
 <body>
@@ -17451,30 +17665,52 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<style id="vedant-all-category-names-bold-mobile-v3">
-/* Make every category label consistently larger, bold and centered on mobile. */
-@media (max-width: 700px) {
-  #page-shop .categories.stvn-category-list .stvn-category-copy {
-    text-align: center !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  #page-shop .categories.stvn-category-list .stvn-category-name {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    text-align: center !important;
-    font-size: clamp(17px, 4.6vw, 20px) !important;
-    line-height: 1.22 !important;
-    font-weight: 900 !important;
-    letter-spacing: .01em !important;
-    color: #176b3c !important;
-    text-transform: none !important;
-    overflow-wrap: anywhere !important;
-  }
-}
+<!-- Vedant Grocery Shop: interactive mobile delivery-location map (2026-11-20) -->
+<style id="vedant-interactive-location-map-v3">
+#page-location .stvn-location-step-card{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+@media(max-width:700px){#page-shop .stvn-category-name{font-weight:900!important}}
+#page-location .vg-location-map-panel{width:100%;box-sizing:border-box;margin:14px 0 12px;padding:12px;border:1px solid #cfe4d5;border-radius:18px;background:linear-gradient(145deg,#f7fff8,#fffdf2);box-shadow:0 8px 22px rgba(18,88,48,.09)}
+#page-location .vg-location-map-title{margin:0 0 5px;color:#155d35;font-size:17px;font-weight:900;line-height:1.3}
+#page-location .vg-location-map-help{margin:0 0 10px;color:#52665a;font-size:12px;line-height:1.45}
+#page-location #vedantInteractiveLocationMap{width:100%;height:270px;min-height:230px;border:1px solid #c9dfd0;border-radius:14px;overflow:hidden;background:#eaf3ec;z-index:1}
+#page-location .vg-location-map-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:9px;color:#315641;font-size:11px;font-weight:750}
+#page-location .vg-location-map-legend span{display:inline-flex;align-items:center;gap:5px}
+#page-location .vg-location-map-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+#page-location .vg-location-distance{margin-top:10px;padding:12px;border-radius:13px;background:#e8f8ed;border:1px solid #b8e1c5;color:#145b32;font-size:16px;font-weight:900;line-height:1.45}
+#page-location .vg-location-address{margin-top:6px;color:#4c6254;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+#page-location #stvnGpsUpdateButton{width:100%!important;min-height:50px!important;margin:12px 0 8px!important;border-radius:13px!important;font-size:15px!important}
+#page-location #stvnLocationContinue{width:100%!important;min-height:52px!important;margin-top:12px!important;border-radius:14px!important}
+#page-location .leaflet-control-attribution{font-size:9px!important}
+@media(max-width:600px){#page-location .checkout-title{align-items:center!important;gap:10px!important}#page-location .checkout-title h2{font-size:22px!important}#page-location .stvn-location-step-card{padding:12px!important}#page-location .vg-location-map-panel{padding:10px!important}#page-location #vedantInteractiveLocationMap{height:250px;min-height:220px}}
 </style>
+<script id="vedant-interactive-location-map-v3-script">
+(function(){
+ 'use strict';
+ const SHOP_LAT=25.3698055556, SHOP_LNG=83.1131388889, RADIUS_KM=5;
+ const $=id=>document.getElementById(id);
+ let map=null, customerMarker=null, shopMarker=null, radiusCircle=null, selected=null, mapReady=false, gpsAccuracy=null;
+ const text={en:{title:'Select your delivery location',help:'Tap the map or move the pin to adjust your delivery location. Use GPS for your current location.',gps:'📍 Use Current Location',getting:'Getting your current location…',shop:'Vedant Grocery Shop',customer:'Your selected location',distance:'Distance from Shop',within:'Delivery available within 5 km.',outside:'Outside the 5 km delivery area. Delivery is not available here.',tap:'Tap the map to select your delivery location.',continue:'Continue',gpsFail:'Could not get your location. Allow GPS permission and try again.',gpsUnsupported:'GPS is not supported by this browser.',selected:'Selected delivery location',accuracy:'GPS accuracy',mapWait:'Loading map…'},hi:{title:'अपनी डिलीवरी लोकेशन चुनें',help:'मैप पर टैप करें या पिन खिसकाकर डिलीवरी लोकेशन बदलें। वर्तमान लोकेशन के लिए GPS इस्तेमाल करें।',gps:'📍 वर्तमान लोकेशन इस्तेमाल करें',getting:'आपकी वर्तमान लोकेशन ली जा रही है…',shop:'वेदांत ग्रॉसरी शॉप',customer:'आपकी चुनी हुई लोकेशन',distance:'दुकान से दूरी',within:'5 km के अंदर डिलीवरी उपलब्ध है।',outside:'आपकी लोकेशन 5 km डिलीवरी क्षेत्र से बाहर है। यहाँ डिलीवरी उपलब्ध नहीं है।',tap:'अपनी डिलीवरी लोकेशन चुनने के लिए मैप पर टैप करें।',continue:'आगे बढ़ें',gpsFail:'लोकेशन नहीं मिल सकी। GPS अनुमति देकर दोबारा कोशिश करें।',gpsUnsupported:'इस ब्राउज़र में GPS उपलब्ध नहीं है।',selected:'चुनी गई डिलीवरी लोकेशन',accuracy:'GPS की सटीकता',mapWait:'मैप लोड हो रहा है…'}};
+ function lang(){let l=document.documentElement.dataset.language||document.documentElement.lang||'en';try{const email=String(localStorage.getItem('vedantCustomerEmail')||'').trim().toLowerCase();const saved=email?localStorage.getItem('vedantLanguage:'+email):sessionStorage.getItem('vedantGuestLanguage');if(saved==='en'||saved==='hi')l=saved;}catch(_){}return l==='hi'?'hi':'en';}
+ function t(k){return text[lang()][k]||text.en[k]||k;}
+ function kmBetween(a,b,c,d){const r=Math.PI/180,da=(c-a)*r,db=(d-b)*r,x=Math.sin(da/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(db/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+ function mapPanel(){let panel=$('vgLocationMapPanel');if(panel)return panel;const page=$('page-location');if(!page)return null;panel=document.createElement('section');panel.id='vgLocationMapPanel';panel.className='vg-location-map-panel';panel.innerHTML='<h3 class="vg-location-map-title" id="vgLocationMapTitle"></h3><p class="vg-location-map-help" id="vgLocationMapHelp"></p><div id="vedantInteractiveLocationMap" role="application" aria-label="Interactive delivery location map"></div><div class="vg-location-map-legend"><span><i class="vg-location-map-dot" style="background:#e53935"></i><b id="vgMapCustomerLegend"></b></span><span><i class="vg-location-map-dot" style="background:#16834b"></i><b id="vgMapShopLegend"></b></span></div><div id="vgLocationDistance" class="vg-location-distance" hidden></div><div id="vgLocationAddress" class="vg-location-address"></div>';
+ const intro=page.querySelector('.stvn-location-intro');if(intro&&intro.parentNode)intro.insertAdjacentElement('afterend',panel);else page.appendChild(panel);return panel;}
+ function updateLabels(){const p=mapPanel();if(!p)return;const set=(id,v)=>{const e=$(id);if(e)e.textContent=v;};set('vgLocationMapTitle',t('title'));set('vgLocationMapHelp',t('help'));set('vgMapCustomerLegend',t('customer'));set('vgMapShopLegend',t('shop'));const b=$('stvnGpsUpdateButton');if(b&&!b.disabled)b.textContent=t('gps');const n=$('stvnLocationContinue');if(n)n.textContent=t('continue');if(selected)renderDistance(selected.lat,selected.lng,selected.source);else set('vgLocationAddress',t('tap'));}
+ function syncGlobals(lat,lng){window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=kmBetween(lat,lng,SHOP_LAT,SHOP_LNG);window.currentDeliveryAvailable=window.currentDeliveryDistanceKm<=RADIUS_KM;try{customerLatitude=lat;customerLongitude=lng;}catch(_){} }
+ function renderDistance(lat,lng,source){const km=kmBetween(lat,lng,SHOP_LAT,SHOP_LNG),allowed=km<=RADIUS_KM,box=$('vgLocationDistance'),address=$('vgLocationAddress'),status=$('location-status'),next=$('stvnLocationContinue'),details=$('stvnGpsCoordinates');syncGlobals(lat,lng);selected={lat,lng,source};if(box){box.hidden=false;box.textContent=t('distance')+': '+km.toFixed(2)+' km · '+(allowed?t('within'):t('outside'));box.style.background=allowed?'#e8f8ed':'#fff0ed';box.style.borderColor=allowed?'#b8e1c5':'#f0c4bd';box.style.color=allowed?'#145b32':'#9d2d25';}if(address)address.textContent=(source==='gps'?t('customer'):t('selected'))+' · '+lat.toFixed(6)+', '+lng.toFixed(6)+(gpsAccuracy&&source==='gps'?' · '+t('accuracy')+': '+Math.round(gpsAccuracy)+' m':'');if(status){status.textContent=allowed?t('within'):t('outside');status.className=allowed?'location-success':'error';}if(details){details.hidden=false;details.classList.add('vg-location-result-visible');details.style.setProperty('display','none','important');}if(next){next.hidden=!allowed;next.style.display=allowed?'block':'none';next.textContent=t('continue');}try{localStorage.setItem('vedantCustomerDeliveryLocationV1',JSON.stringify({lat,lng,km,name:source==='gps'?'Current Location':'Selected Location',source,accuracy:gpsAccuracy,updatedAt:Date.now()}));}catch(_){}if(typeof updateCart==='function')updateCart();}
+ function addCustomerMarker(lat,lng){if(!map||!window.L)return;const icon=L.divIcon({className:'',html:'<div style="font-size:30px;line-height:34px;filter:drop-shadow(0 2px 3px #555)">📍</div>',iconSize:[34,36],iconAnchor:[17,34]});if(customerMarker)customerMarker.setLatLng([lat,lng]);else customerMarker=L.marker([lat,lng],{icon,draggable:true,autoPan:true}).addTo(map);customerMarker.off('dragend');customerMarker.on('dragend',e=>{const p=e.target.getLatLng();gpsAccuracy=null;renderDistance(p.lat,p.lng,'manual');});}
+ function setPoint(lat,lng,source,zoom){if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat < -90||lat > 90||lng < -180||lng > 180)return;addCustomerMarker(lat,lng);renderDistance(lat,lng,source);if(map&&zoom!==false){map.setView([lat,lng],16,{animate:true});}}
+ function initLeaflet(){const el=$('vedantInteractiveLocationMap');if(!el||mapReady)return;if(!window.L){setTimeout(initLeaflet,250);return;}try{map=L.map(el,{zoomControl:true,scrollWheelZoom:false}).setView([SHOP_LAT,SHOP_LNG],13);mapReady=true;L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);const shopIcon=L.divIcon({className:'',html:'<div style="font-size:27px;line-height:30px">🏪</div>',iconSize:[30,32],iconAnchor:[15,28]});shopMarker=L.marker([SHOP_LAT,SHOP_LNG],{icon:shopIcon}).addTo(map).bindPopup(t('shop'));radiusCircle=L.circle([SHOP_LAT,SHOP_LNG],{radius:RADIUS_KM*1000,color:'#16834b',weight:2,fillColor:'#2bbd68',fillOpacity:.08,dashArray:'7 6'}).addTo(map);map.on('click',e=>{gpsAccuracy=null;setPoint(e.latlng.lat,e.latlng.lng,'manual',false);});setTimeout(()=>map.invalidateSize(),300);const saved=(()=>{try{return JSON.parse(localStorage.getItem('vedantCustomerDeliveryLocationV1')||'null')}catch(_){return null}})();if(saved&&Number.isFinite(Number(saved.lat))&&Number.isFinite(Number(saved.lng))){setPoint(Number(saved.lat),Number(saved.lng),saved.source==='gps'?'gps':'manual',true);if(saved.accuracy)gpsAccuracy=Number(saved.accuracy);}else{const status=$('location-status');if(status)status.textContent=t('tap');}updateLabels();}catch(e){console.error('Interactive location map failed:',e);const help=$('vgLocationMapHelp');if(help)help.textContent=t('mapWait');}}
+ function setup(){const page=$('page-location');if(!page)return;const panel=mapPanel();if(!panel)return;const btn=$('stvnGpsUpdateButton');if(btn){btn.onclick=null;btn.textContent=t('gps');btn.addEventListener('click',getGPS); }const next=$('stvnLocationContinue');if(next)next.textContent=t('continue');updateLabels();initLeaflet();}
+ function getGPS(){const status=$('location-status'),btn=$('stvnGpsUpdateButton'),next=$('stvnLocationContinue');if(next){next.hidden=true;next.style.display='none';}if(!navigator.geolocation){if(status)status.textContent=t('gpsUnsupported');return;}if(btn){btn.disabled=true;btn.textContent=t('getting');}if(status)status.textContent=t('getting');navigator.geolocation.getCurrentPosition(pos=>{gpsAccuracy=Number(pos.coords.accuracy)||0;const lat=Number(pos.coords.latitude),lng=Number(pos.coords.longitude);if(!Number.isFinite(lat)||!Number.isFinite(lng)){if(status)status.textContent=t('gpsFail');if(btn){btn.disabled=false;btn.textContent=t('gps');}return;}if(!mapReady){initLeaflet();setTimeout(()=>{setPoint(lat,lng,'gps',true);if(btn){btn.disabled=false;btn.textContent=t('gps');}},350);}else setPoint(lat,lng,'gps',true);if(btn){btn.disabled=false;btn.textContent=t('gps');}},err=>{console.warn('GPS error',err);if(status)status.textContent=t('gpsFail');if(btn){btn.disabled=false;btn.textContent=t('gps');}}, {enableHighAccuracy:true,timeout:30000,maximumAge:0});}
+ window.requestCustomerLocation=getGPS;
+ const originalContinue=window.continueToLocationReview;
+ window.continueToLocationReview=function(){if(!selected){if(window.stvnAlert)window.stvnAlert(t('tap'));return;}const km=kmBetween(selected.lat,selected.lng,SHOP_LAT,SHOP_LNG);if(km>RADIUS_KM){if(window.stvnAlert)window.stvnAlert(t('outside'));return;}syncGlobals(selected.lat,selected.lng);if(typeof updateCart==='function')updateCart();if(typeof showPaymentInfo==='function')showPaymentInfo();if(typeof showPage==='function')showPage('payment');else if(typeof originalContinue==='function')originalContinue();};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});else setup();
+ const observer=new MutationObserver(()=>{if($('page-location')&&$('stvnGpsUpdateButton')&&!$('vgLocationMapPanel'))setup();});if(document.body)observer.observe(document.body,{childList:true,subtree:true});
+ const langObserver=new MutationObserver(()=>updateLabels());langObserver.observe(document.documentElement,{attributes:true,attributeFilter:['lang','data-language']});
+})();
+</script>
+
 </body>
 </html>
