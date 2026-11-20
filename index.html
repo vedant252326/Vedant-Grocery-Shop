@@ -19052,203 +19052,588 @@ html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #page-loca
 })();
 </script>
 
-<style id="vg-superadmin-css">
-/* ===== Super Admin shell (laptop + mobile) ===== */
-body #page-admin.active.vg-sa{--sa-bg:#f3f5f7;--sa-card:#fff;--sa-line:#e3e8ee;--sa-text:#18212b;--sa-mute:#667585;--sa-brand:#0c831f;--sa-brand-soft:#e6f4e8;--sa-warn:#b7791f;--sa-bad:#c0392b;
- position:fixed!important;inset:0!important;z-index:8000!important;overflow:auto!important;background:var(--sa-bg)!important;color:var(--sa-text)!important;padding:0!important;margin:0!important;max-width:none!important;font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;-webkit-overflow-scrolling:touch}
-body.dark #page-admin.active.vg-sa{--sa-bg:#0f1417;--sa-card:#171e23;--sa-line:#27323a;--sa-text:#e8eef2;--sa-mute:#93a2ae;--sa-brand:#33c24a;--sa-brand-soft:#16301b}
-body #page-admin.vg-sa #adminPanel{display:block!important;max-width:none!important;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
-body #page-admin.vg-sa #adminPanel>h2,body #page-admin.vg-sa #adminContent>.admin-toolbar{display:none!important}
-#vgSaNav,#vgSaTabs,#vgSaTop{display:none}
-body #page-admin.vg-sa #vgSaNav{display:flex;position:fixed;left:0;top:0;bottom:0;width:244px;flex-direction:column;gap:2px;padding:18px 12px;background:var(--sa-card);border-right:1px solid var(--sa-line);overflow:auto;z-index:2}
-body #page-admin.vg-sa #vgSaTop{display:flex;position:sticky;top:0;z-index:3;align-items:center;justify-content:space-between;gap:12px;margin-left:244px;padding:14px 28px;background:var(--sa-bg);border-bottom:1px solid var(--sa-line)}
-#vgSaTop h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em;color:var(--sa-text)}
-#vgSaTop small{display:block;color:var(--sa-mute);font-size:12px;margin-top:2px}
-#vgSaTop .sa-actions{display:flex;gap:8px}
-.sa-brand{display:flex;align-items:center;gap:10px;padding:4px 10px 16px;font-weight:700;color:var(--sa-text)}
-.sa-brand i{width:32px;height:32px;border-radius:9px;background:var(--sa-brand);color:#fff;display:grid;place-items:center;font-style:normal;font-size:15px}
-.sa-brand small{display:block;font-weight:500;font-size:11px;color:var(--sa-mute)}
-.sa-link{display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border:0;border-radius:9px;background:transparent;color:var(--sa-mute);font:600 14px/1.2 inherit;text-align:left;cursor:pointer;min-height:42px}
-.sa-link svg{width:19px;height:19px;flex:0 0 19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.sa-link:hover{background:var(--sa-bg);color:var(--sa-text)}
-.sa-link[aria-current=page]{background:var(--sa-brand-soft);color:var(--sa-brand)}
-.sa-link:focus-visible,.sa-btn:focus-visible,.sa-tab:focus-visible{outline:2px solid var(--sa-brand);outline-offset:2px}
-.sa-sep{height:1px;background:var(--sa-line);margin:10px 6px}
-.sa-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--sa-line);border-radius:9px;background:var(--sa-card);color:var(--sa-text);font:600 13px/1 inherit;cursor:pointer;min-height:38px}
-.sa-btn.primary{background:var(--sa-brand);border-color:var(--sa-brand);color:#fff}
-body #page-admin.vg-sa #adminContent{display:block!important;margin-left:244px;padding:24px 28px 40px;max-width:1280px}
-body #page-admin.vg-sa #adminContent>section,body #page-admin.vg-sa #adminContent>#adminShopStatusSection{background:var(--sa-card)!important;border:1px solid var(--sa-line)!important;border-radius:12px!important;padding:20px!important;margin:0 0 18px!important;box-shadow:none!important;color:var(--sa-text)!important}
-body #page-admin.vg-sa #adminContent>section[hidden]{display:none!important}
-body #page-admin.vg-sa.sa-dash #adminContent{display:none!important}
-body #page-admin.vg-sa #adminContent h3{color:var(--sa-text)!important;font-size:17px;margin:0 0 6px}
-body #page-admin.vg-sa .admin-small{color:var(--sa-mute)!important}
-body #page-admin.vg-sa #adminContent input:not([type=checkbox]):not([type=radio]),body #page-admin.vg-sa #adminContent select,body #page-admin.vg-sa #adminContent textarea{background:var(--sa-card)!important;color:var(--sa-text)!important;border:1px solid var(--sa-line)!important;border-radius:9px!important;min-height:42px}
-body #page-admin.vg-sa #adminContent input:focus,body #page-admin.vg-sa #adminContent select:focus,body #page-admin.vg-sa #adminContent textarea:focus{outline:2px solid var(--sa-brand)!important;outline-offset:0}
-body #page-admin.vg-sa .admin-order,body #page-admin.vg-sa .product-admin-card{background:var(--sa-card)!important;color:var(--sa-text)!important;border:1px solid var(--sa-line)!important;border-radius:12px!important;box-shadow:none!important}
-body #page-admin.vg-sa .admin-btn,body #page-admin.vg-sa .admin-refresh,body #page-admin.vg-sa .admin-section-save-button{border-radius:9px!important;min-height:40px}
-#vgSaHome{display:none}
-body #page-admin.vg-sa #vgSaHome.on{display:block;margin-left:244px;padding:24px 28px 40px;max-width:1280px;box-sizing:content-box}
-.sa-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.sa-kpi{background:var(--sa-card);border:1px solid var(--sa-line);border-radius:12px;padding:16px 18px;min-width:0}
-.sa-kpi span{display:block;color:var(--sa-mute);font-size:13px;font-weight:600}
-.sa-kpi b{display:block;margin-top:8px;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.sa-kpi em{display:block;margin-top:6px;font-style:normal;font-size:12px;color:var(--sa-mute)}
-.sa-kpi.warn b{color:var(--sa-warn)}.sa-kpi.bad b{color:var(--sa-bad)}
-.sa-grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px}
-.sa-panel{background:var(--sa-card);border:1px solid var(--sa-line);border-radius:12px;padding:18px;min-width:0}
-.sa-panel h2{margin:0 0 14px;font-size:15px;font-weight:700;color:var(--sa-text)}
-.sa-bars{display:flex;align-items:flex-end;gap:10px;height:170px}
-.sa-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;min-width:0}
-.sa-bar i{display:block;width:100%;max-width:44px;border-radius:6px 6px 0 0;background:var(--sa-brand);min-height:3px}
-.sa-bar small{font-size:11px;color:var(--sa-mute)}.sa-bar u{text-decoration:none;font-size:11px;font-weight:600;color:var(--sa-text)}
-.sa-table-wrap{overflow-x:auto}
-.sa-table{width:100%;border-collapse:collapse;font-size:13px}
-.sa-table th{text-align:left;color:var(--sa-mute);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--sa-line);white-space:nowrap}
-.sa-table td{padding:11px 10px;border-bottom:1px solid var(--sa-line);white-space:nowrap}
-.sa-table tr:last-child td{border-bottom:0}
-.sa-pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--sa-bg);color:var(--sa-mute)}
-.sa-pill.pending{background:#fff4dc;color:#8a5a00}.sa-pill.delivered{background:var(--sa-brand-soft);color:var(--sa-brand)}.sa-pill.cancelled{background:#fde8e6;color:var(--sa-bad)}.sa-pill.out_for_delivery,.sa-pill.confirmed,.sa-pill.preparing{background:#e5eefc;color:#2255a4}
-.sa-empty{color:var(--sa-mute);font-size:13px;padding:18px 0;text-align:center}
-.sa-filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
-.sa-chip{padding:8px 13px;border:1px solid var(--sa-line);border-radius:99px;background:var(--sa-card);color:var(--sa-mute);font:600 13px/1 inherit;cursor:pointer;min-height:36px}
-.sa-chip[aria-pressed=true]{background:var(--sa-brand);border-color:var(--sa-brand);color:#fff}
-@media(max-width:1100px){.sa-kpis{grid-template-columns:repeat(2,1fr)}.sa-grid2{grid-template-columns:1fr}}
-@media(max-width:860px){
- body #page-admin.vg-sa #vgSaNav{display:none}
- body #page-admin.vg-sa #vgSaTop{margin-left:0;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px}
- #vgSaTop h1{font-size:17px}#vgSaTop .sa-actions .sa-btn span{display:none}
- body #page-admin.vg-sa #adminContent,body #page-admin.vg-sa #vgSaHome.on{margin-left:0;padding:14px 12px calc(88px + env(safe-area-inset-bottom,0px))}
- body #page-admin.vg-sa #adminContent>section{padding:14px!important}
- body #page-admin.vg-sa #vgSaTabs{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sa-card);border-top:1px solid var(--sa-line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
- .sa-tab{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;color:var(--sa-mute);font:600 11px/1.1 inherit;padding:6px 2px;min-height:48px;cursor:pointer}
- .sa-tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
- .sa-tab[aria-current=page]{color:var(--sa-brand)}
- .sa-kpi{padding:13px}.sa-kpi b{font-size:22px}
- #vgSaMore{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--sa-card);border-radius:18px 18px 0 0;border-top:1px solid var(--sa-line);padding:14px 12px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 40px #0004;display:none}
- #vgSaMore.on{display:block}#vgSaMore .sa-link{font-size:15px}
+
+
+
+<!-- ===================================================================
+     VEDANT v9 — Track page redesign, live scooter, cancel window on top,
+     modern bottom order bar, product sync, admin dashboard button
+     =================================================================== -->
+<style id="vg-v9-track-modern">
+/* ---------- Track panel: one self-contained premium card (mobile + laptop) ---------- */
+html body #page-track .stvn-order-tracking-panel{
+  --g1:#12b92b;--g2:#0a7d1c;--ink:#eef8ef;--soft:#a9c2ad;--card:#142018;--card2:#0f1a13;--line:#25402b;
+  display:flex!important;flex-direction:column;gap:12px;
+  padding:14px!important;border-radius:20px!important;
+  background:radial-gradient(120% 90% at 100% 0%,#173a1f 0%,#0e1812 55%,#0a110c 100%)!important;
+  border:1px solid #234a2b!important;color:var(--ink)!important;
+  box-shadow:0 18px 44px rgba(4,20,8,.45),inset 0 1px 0 rgba(255,255,255,.05)!important;
+  overflow:hidden!important;
 }
-@media(min-width:861px){#vgSaMore{display:none!important}}
-@media(prefers-reduced-motion:reduce){#page-admin *{transition:none!important;animation:none!important}}
+html body #page-track .stvn-order-tracking-panel>*{margin:0!important;min-width:0}
+html body #page-track .stvn-order-tracking-panel strong,
+html body #page-track .stvn-order-tracking-panel small,
+html body #page-track .stvn-order-tracking-panel p{color:inherit}
+html body #page-track .stvn-order-tracking-panel:not([hidden]){animation:vgPanelIn .45s cubic-bezier(.2,.9,.3,1) both}
+@keyframes vgPanelIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+
+/* ---------- Cancel window: pinned to the TOP of the panel ---------- */
+html body #page-track .stvn-order-tracking-panel .stvn-track-cancel-row.stvn-track-live-cancel-row{
+  order:-10;position:relative;display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center!important;
+  gap:6px 12px!important;flex-wrap:nowrap!important;flex-direction:row!important;
+  padding:12px 14px 15px!important;border-radius:16px!important;border:1px solid rgba(255,138,138,.45)!important;
+  background:linear-gradient(120deg,#3a1418 0%,#2a1015 60%,#1d0c10 100%)!important;color:#ffd9d9!important;
+  font-size:13px!important;font-weight:800!important;overflow:hidden;
+  box-shadow:0 10px 26px rgba(120,15,25,.35)!important;
+  --cw:1;
+}
+html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row>span{display:flex;align-items:center;gap:8px;color:#ffd9d9!important;line-height:1.25}
+html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row>span:before{content:"⏳";font-size:17px;animation:vgHourglass 2.4s ease-in-out infinite}
+@keyframes vgHourglass{0%,40%{transform:rotate(0)}60%,100%{transform:rotate(180deg)}}
+html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row>span strong{color:#fff!important;font-variant-numeric:tabular-nums;font-size:15px;letter-spacing:.3px}
+html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row .order-cancel-button{
+  min-width:128px!important;min-height:42px!important;padding:9px 16px!important;border-radius:12px!important;border:0!important;
+  background:linear-gradient(135deg,#ff5a5f,#d92035)!important;color:#fff!important;font-size:13px!important;font-weight:900!important;
+  box-shadow:0 8px 20px rgba(217,32,53,.45)!important;transition:transform .15s,box-shadow .15s,filter .15s;
+}
+html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row .order-cancel-button:hover{filter:brightness(1.08)}
+html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row .order-cancel-button:active{transform:scale(.96)}
+html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row:after{
+  content:"";position:absolute;left:0;bottom:0;height:4px;width:calc(var(--cw)*100%);
+  background:linear-gradient(90deg,#ff8a8a,#ff3b4e);border-radius:0 4px 4px 0;transition:width .5s linear;
+}
+@media(max-width:600px){
+  html body #page-track .stvn-order-tracking-panel .stvn-track-cancel-row.stvn-track-live-cancel-row{grid-template-columns:1fr!important;padding:12px 12px 16px!important}
+  html body #page-track .stvn-order-tracking-panel .stvn-track-live-cancel-row .order-cancel-button{width:100%!important}
+}
+
+/* ---------- ETA card ---------- */
+html body #page-track .stvn-order-tracking-panel .stvn-zomato-eta{
+  order:-5;position:relative;display:flex!important;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:16px 18px!important;border-radius:18px!important;border:1px solid rgba(255,255,255,.1)!important;
+  background:linear-gradient(125deg,#0f8f22 0%,#12b92b 45%,#0b7a1b 100%)!important;color:#fff!important;overflow:hidden;
+  box-shadow:0 14px 30px rgba(10,125,28,.4)!important;
+}
+html body #page-track .stvn-order-tracking-panel .stvn-zomato-eta:before{
+  content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);
+  transform:translateX(-120%);animation:vgSheen 3.8s ease-in-out infinite;pointer-events:none;
+}
+@keyframes vgSheen{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
+html body #page-track .stvn-order-tracking-panel .tracking-estimate-label{color:#d9ffe0!important;font-size:12.5px!important;font-weight:800!important;letter-spacing:.2px}
+html body #page-track .stvn-order-tracking-panel .tracking-estimate-time{color:#fff!important;font-size:30px!important;font-weight:900!important;letter-spacing:-.6px!important;line-height:1.15!important;text-shadow:0 2px 10px rgba(0,0,0,.25)}
+html body #page-track .stvn-order-tracking-panel .stvn-eta-subtext{padding:6px 11px;border-radius:99px;background:rgba(255,255,255,.18);color:#fff!important;font-size:11.5px!important;font-weight:800;backdrop-filter:blur(4px)}
+
+/* ---------- Live map card ---------- */
+html body #page-track .stvn-order-tracking-panel .stvn-zomato-tracking-card{
+  order:-4;padding:10px!important;border-radius:18px!important;background:linear-gradient(160deg,#17261c,#101912)!important;
+  border:1px solid #274d2f!important;box-shadow:0 10px 26px rgba(0,0,0,.35)!important;
+}
+html body #page-track .stvn-customer-live-heading strong{color:#fff!important;font-size:15px!important;font-weight:900!important}
+html body #page-track .stvn-live-pill{position:relative;display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 22px;border-radius:99px;background:#0d3b17!important;color:#7dff90!important;border:1px solid #1fa63a!important;font-size:10.5px;font-weight:900;letter-spacing:.8px}
+html body #page-track .stvn-live-pill:before{content:"";position:absolute;left:9px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#2dff55;box-shadow:0 0 0 0 rgba(45,255,85,.7);animation:vgLiveDot 1.5s infinite}
+@keyframes vgLiveDot{70%{box-shadow:0 0 0 8px rgba(45,255,85,0)}100%{box-shadow:0 0 0 0 rgba(45,255,85,0)}}
+html body #page-track .stvn-call-delivery-btn{background:#1b3a22!important;color:#c9ffd2!important;border:1px solid #2c6a39!important;border-radius:99px!important;padding:6px 12px!important;font-weight:800}
+html body #page-track .stvn-customer-delivery-map{height:300px!important;min-height:260px!important;border-radius:14px!important;border:1px solid #2a4d31;background:#1a2a1e}
+@media(max-width:700px){html body #page-track .stvn-customer-delivery-map{height:270px!important;min-height:240px!important}}
+html body #page-track .stvn-map-legend{color:#bcd6c0!important;gap:10px!important}
+html body #page-track .stvn-map-legend span{padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.07)}
+html body #page-track .stvn-customer-map-note{color:#bcd6c0!important;font-size:12px!important;margin:8px 2px 2px!important}
+.vg-dist-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vg-dist-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:99px;background:#103a19;border:1px solid #1f7a32;color:#d6ffdc;font-weight:800;font-size:12px}
+.vg-dist-chip.is-wait{background:#3a2d0c;border-color:#8a6a14;color:#ffe9a8}
+.vg-dist-chip b{color:#fff;font-variant-numeric:tabular-nums}
+
+/* ---------- Order progress: vertical timeline ---------- */
+html body #page-track .stvn-order-tracking-panel .vg-order-progress{
+  order:0;padding:14px!important;border-radius:18px!important;background:linear-gradient(160deg,#16231a,#0f1912)!important;border:1px solid #25402b!important;color:var(--ink)!important;box-shadow:none!important
+}
+html body #page-track .vg-order-progress-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;background:transparent!important;border:0!important;padding:0!important}
+html body #page-track .vg-order-progress-heading strong{color:#fff!important;font-size:14.5px!important}
+html body #page-track .vg-order-current-pill{padding:5px 11px!important;border-radius:99px!important;background:linear-gradient(135deg,#17c534,#0c8a1f)!important;color:#fff!important;font-size:11px!important;font-weight:900!important;border:0!important;box-shadow:0 6px 14px rgba(15,160,40,.35)}
+html body #page-track .vg-order-progress-list{display:flex!important;flex-direction:column;gap:0!important}
+html body #page-track .stvn-order-tracking-panel .vg-order-progress-step{
+  position:relative;display:grid!important;grid-template-columns:34px minmax(0,1fr) auto!important;gap:12px!important;align-items:center!important;
+  padding:10px 4px 10px 0!important;min-height:58px;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;opacity:1!important
+}
+html body #page-track .vg-order-progress-step:not(:last-child):before{
+  content:"";position:absolute;left:16px;top:44px;bottom:-10px;width:3px;border-radius:3px;background:#27402d;
+}
+html body #page-track .vg-order-progress-step.is-done:not(:last-child):before{background:linear-gradient(#1fd13c,#12a02a)}
+html body #page-track .vg-order-progress-step.is-current:not(:last-child):before{background:linear-gradient(#1fd13c,#27402d 70%);animation:vgFlow 1.6s linear infinite;background-size:100% 200%}
+@keyframes vgFlow{from{background-position:0 0}to{background-position:0 -200%}}
+html body #page-track .vg-order-progress-marker{
+  width:34px!important;height:34px!important;display:grid;place-items:center;border-radius:50%!important;font-weight:900;font-size:13px;
+  background:#1d2c21!important;color:#7f9884!important;border:2px solid #2d4a34!important;position:relative;z-index:1;box-shadow:none!important
+}
+html body #page-track .is-done .vg-order-progress-marker{background:linear-gradient(135deg,#1fd13c,#0e9a24)!important;border-color:#2dff55!important;color:#fff!important;animation:vgPop .5s cubic-bezier(.2,1.6,.4,1) both}
+html body #page-track .is-current .vg-order-progress-marker{background:#fff!important;border-color:#2dff55!important;box-shadow:0 0 0 0 rgba(45,255,85,.6)!important;animation:vgRing 1.8s infinite}
+@keyframes vgPop{from{transform:scale(.5)}to{transform:scale(1)}}
+@keyframes vgRing{70%{box-shadow:0 0 0 12px rgba(45,255,85,0)}100%{box-shadow:0 0 0 0 rgba(45,255,85,0)}}
+html body #page-track .vg-order-active-dot{display:block;width:12px;height:12px;border-radius:50%;background:#12b92b;animation:vgBeat 1.1s ease-in-out infinite}
+@keyframes vgBeat{50%{transform:scale(1.35)}}
+html body #page-track .vg-order-progress-copy strong{color:#cfe0d2!important;font-size:14px!important;font-weight:850!important}
+html body #page-track .vg-order-progress-copy small{color:#8fa894!important;font-size:11.5px!important}
+html body #page-track .is-done .vg-order-progress-copy strong{color:#7dff90!important}
+html body #page-track .is-current .vg-order-progress-copy strong{color:#fff!important;font-size:15px!important}
+html body #page-track .is-current .vg-order-progress-copy small{color:#bfe9c6!important}
+html body #page-track .is-upcoming .vg-order-progress-copy strong{color:#7f9884!important}
+html body #page-track .vg-order-now-label,html body #page-track .vg-order-tick-label{grid-column:auto!important;justify-self:end!important;padding:4px 9px;border-radius:99px;font-size:10.5px!important;font-weight:900!important;white-space:nowrap}
+html body #page-track .vg-order-now-label{background:#fff3c9!important;color:#7a5600!important;animation:vgBeat 1.6s ease-in-out infinite}
+html body #page-track .vg-order-tick-label{background:#0f3a19!important;color:#7dff90!important}
+@media(max-width:420px){
+  html body #page-track .stvn-order-tracking-panel .vg-order-progress-step{grid-template-columns:34px minmax(0,1fr)!important}
+  html body #page-track .vg-order-now-label,html body #page-track .vg-order-tick-label{grid-column:2!important;justify-self:start!important}
+}
+
+/* ---------- Payment confirmed + misc ---------- */
+html body #page-track .stvn-order-tracking-panel .vg-payment-confirmed-step{order:2;border-radius:16px!important;background:linear-gradient(120deg,#0f3a19,#0b2a12)!important;border:1px solid #1f7a32!important}
+html body #page-track .stvn-order-tracking-panel .vg-customer-cancelled-banner,
+html body #page-track .stvn-order-tracking-panel .tracking-step{order:1;border-radius:14px!important}
+
+/* ---------- Scooter + map markers ---------- */
+.vg-pin{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#fff;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.35);border:2px solid #0e9a24}
+.vg-scoot{position:relative;width:48px;height:48px}
+.vg-scoot-halo{position:absolute;inset:-6px;border-radius:50%;background:rgba(18,185,43,.28);animation:vgHalo 1.8s ease-out infinite}
+@keyframes vgHalo{0%{transform:scale(.55);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+.vg-scoot-badge{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#19d238,#0a8a1d);border:3px solid #fff;box-shadow:0 6px 16px rgba(0,60,10,.55)}
+.vg-scoot-badge svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s ease}
+.vg-scoot-badge svg .dot{fill:#fff;stroke:none}
+.vg-scoot.is-left .vg-scoot-badge svg{transform:scaleX(-1)}
+.vg-scoot.is-wait .vg-scoot-badge{background:linear-gradient(145deg,#f4b73a,#d9860b);animation:vgWait 1.4s ease-in-out infinite}
+.vg-scoot.is-wait .vg-scoot-halo{background:rgba(244,183,58,.3)}
+@keyframes vgWait{50%{transform:scale(.92)}}
+.leaflet-container{font-family:inherit}
+.stvn-map-emoji-marker{background:transparent!important;border:0!important}
+@media(prefers-reduced-motion:reduce){
+  html body #page-track .stvn-order-tracking-panel *,.vg-scoot-halo{animation:none!important}
+}
 </style>
-<script id="vg-superadmin-js">
+
+<style id="vg-v9-live-bar">
+/* ---------- Bottom live-order bar: status-coloured, animated scooter ---------- */
+html body #stvn-live-order-bar{
+  --a1:#ffb020;--a2:#ff7a18;--p:25%;
+  position:fixed;overflow:hidden;gap:12px!important;padding:11px 14px 14px!important;border-radius:20px!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  background:linear-gradient(120deg,#0f1713 0%,#15221a 100%)!important;color:#fff!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.03) inset!important;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+html body #stvn-live-order-bar:before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(90% 140% at 0% 50%,color-mix(in srgb,var(--a1) 34%,transparent),transparent 62%);
+}
+html body #stvn-live-order-bar[data-vg-status="pending"]{--a1:#ffb020;--a2:#ff7a18;--p:25%}
+html body #stvn-live-order-bar[data-vg-status="confirmed"]{--a1:#38bdf8;--a2:#2563eb;--p:50%}
+html body #stvn-live-order-bar[data-vg-status="preparing"]{--a1:#c084fc;--a2:#7c3aed;--p:75%}
+html body #stvn-live-order-bar[data-vg-status="out_for_delivery"]{--a1:#2dff55;--a2:#0e9a24;--p:100%}
+html body #stvn-live-order-bar.is-visible{animation:vgBarIn .7s cubic-bezier(.2,1.3,.35,1) both}
+@keyframes vgBarIn{
+  0%{opacity:0;transform:translateX(-50%) translateY(60px) scale(.9)}
+  100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+}
+html body #stvn-live-order-bar .stvn-live-order-icon{
+  position:relative;z-index:1;width:54px!important;height:46px!important;flex:0 0 54px!important;border-radius:15px!important;overflow:hidden;
+  background:linear-gradient(145deg,var(--a1),var(--a2))!important;animation:none!important;
+  box-shadow:0 8px 18px color-mix(in srgb,var(--a2) 55%,transparent);display:block!important;
+}
+.vg-bar-road{position:absolute;left:0;right:0;bottom:7px;height:3px;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.85) 0 9px,transparent 9px 18px);animation:vgRoad .55s linear infinite;opacity:.8}
+@keyframes vgRoad{from{background-position:0 0}to{background-position:-18px 0}}
+.vg-bar-scooter{position:absolute;left:50%;top:5px;width:30px;height:30px;margin-left:-15px;animation:vgRideBob 1s ease-in-out infinite;
+  stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.vg-bar-scooter .dot{fill:#fff;stroke:none}
+@keyframes vgRideBob{0%,100%{transform:translate(-2px,0) rotate(0)}50%{transform:translate(2px,-2px) rotate(-3deg)}}
+html body #stvn-live-order-bar[data-vg-status="pending"] .vg-bar-scooter{animation-duration:1.8s}
+html body #stvn-live-order-bar[data-vg-status="out_for_delivery"] .vg-bar-scooter{animation-duration:.55s}
+html body #stvn-live-order-bar[data-vg-status="out_for_delivery"] .vg-bar-road{animation-duration:.28s}
+html body #stvn-live-order-bar .stvn-live-order-copy{position:relative;z-index:1}
+html body #stvn-live-order-bar strong{font-size:14px!important;font-weight:900!important;color:#fff!important;letter-spacing:.1px}
+html body #stvn-live-order-bar small{font-size:11.5px!important;color:#c6d6ca!important;opacity:1!important;margin-top:3px!important}
+html body #stvn-live-order-bar .stvn-live-order-arrow{position:relative;z-index:1;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,.12);font-size:20px!important;transition:transform .2s,background .2s}
+html body #stvn-live-order-bar:hover .stvn-live-order-arrow{transform:translateX(3px);background:rgba(255,255,255,.2)}
+.vg-bar-steps{position:absolute;z-index:1;left:14px;right:14px;bottom:6px;display:flex;gap:5px}
+.vg-bar-steps i{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden;position:relative}
+.vg-bar-steps i.on{background:linear-gradient(90deg,var(--a1),var(--a2))}
+.vg-bar-steps i.now:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(-100%);animation:vgSheen 1.6s ease-in-out infinite}
+@media(max-width:520px){html body #stvn-live-order-bar strong{font-size:13px!important}html body #stvn-live-order-bar small{font-size:10.5px!important}}
+@media(prefers-reduced-motion:reduce){html body #stvn-live-order-bar *,html body #stvn-live-order-bar{animation:none!important}}
+</style>
+<script id="vg-v9-live-bar-js">
 (function(){
- const $=id=>document.getElementById(id);
- const IC={dash:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',orders:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/>',prod:'<path d="M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',cat:'<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',care:'<path d="M3 18v-6a9 9 0 0 1 18 0v6M21 19a2 2 0 0 1-2 2h-1v-8h3zM3 19a2 2 0 0 0 2 2h1v-8H3z"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',shop:'<path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/>',money:'<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',more:'<path d="M5 12h.01M12 12h.01M19 12h.01"/>',out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',back:'<path d="M19 12H5M12 19l-7-7 7-7"/>',ref:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>'};
- const svg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[k]+'</svg>';
- const VIEWS=[
-  {id:'dash',t:'Dashboard',s:'Business overview',ic:'dash'},
-  {id:'orders',t:'Orders',s:'Track and update customer orders',ic:'orders',sec:'adminOrdersSection',load:()=>window.loadAdminOrders&&loadAdminOrders()},
-  {id:'prod',t:'Add product',s:'Create or edit a product',ic:'prod',sec:'adminProductsSection'},
-  {id:'list',t:'Products',s:'Stock, price and availability',ic:'list',sec:'adminProductListSection',load:()=>window.loadAdminProducts&&loadAdminProducts()},
-  {id:'cat',t:'Categories',s:'Category photos on the storefront',ic:'cat',sec:'adminCategoryDisplaySection'},
-  {id:'care',t:'Customer care',s:'Phone, WhatsApp and email shown to customers',ic:'care',sec:'adminCustomerCareSection',load:()=>window.loadCustomerCareSettings&&loadCustomerCareSettings()},
-  {id:'notif',t:'Alerts',s:'Order sound and email notifications',ic:'bell',sec:'adminSoundEmailSection',load:()=>window.loadOrderNotificationSettings&&loadOrderNotificationSettings()},
-  {id:'status',t:'Shop status',s:'Open, close or maintenance mode',ic:'shop',sec:'adminShopStatusSection',after:()=>{const p=$('adminShopStatusPanel');if(p&&p.hidden&&window.toggleShopStatusPanel)toggleShopStatusPanel();}},
-  {id:'wd',t:'Withdrawals',s:'Customer wallet withdrawal requests',ic:'money',sec:'stvnWithdrawalAdmin',custom:()=>{if(window.toggleWithdrawalStatusPanel){const b=$('stvnWithdrawalAdmin');if(!b||b.hidden)toggleWithdrawalStatusPanel();}}},
-  {id:'offers',t:'Offers',s:'Promotional offers',ic:'list',sec:'stvnOffersAdmin'}
- ];
- const TABS=['dash','orders','list','status','more'];
- let current='dash',built=false;
- const money=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
- const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- function build(){
-  const page=$('page-admin'),panel=$('adminPanel'),content=$('adminContent');
-  if(!page||!panel||!content||built)return;built=true;
-  const nav=document.createElement('nav');nav.id='vgSaNav';nav.setAttribute('aria-label','Admin navigation');
-  nav.innerHTML='<div class="sa-brand"><i>V</i><div>Vedant Admin<small>Super admin console</small></div></div>'+
-   VIEWS.map(v=>'<button class="sa-link" type="button" data-v="'+v.id+'">'+svg(v.ic)+v.t+'</button>').join('')+
-   '<div class="sa-sep"></div><button class="sa-link" type="button" data-act="shop">'+svg('back')+'Back to shop</button><button class="sa-link" type="button" data-act="logout">'+svg('out')+'Log out</button>';
-  const top=document.createElement('header');top.id='vgSaTop';
-  top.innerHTML='<div><h1 id="vgSaTitle">Dashboard</h1><small id="vgSaSub"></small></div><div class="sa-actions"><button class="sa-btn" type="button" data-act="refresh">'+svg('ref').replace('<svg','<svg width="16" height="16" style="stroke:currentColor;fill:none;stroke-width:2"')+'<span>Refresh</span></button></div>';
-  const home=document.createElement('section');home.id='vgSaHome';home.setAttribute('aria-label','Dashboard');
-  const tabs=document.createElement('nav');tabs.id='vgSaTabs';tabs.setAttribute('aria-label','Admin tabs');
-  const lab={dash:'Home',orders:'Orders',list:'Products',status:'Shop',more:'More'},ico={dash:'dash',orders:'orders',list:'list',status:'shop',more:'more'};
-  tabs.innerHTML=TABS.map(t=>'<button class="sa-tab" type="button" data-v="'+t+'">'+svg(ico[t])+lab[t]+'</button>').join('');
-  const more=document.createElement('div');more.id='vgSaMore';
-  more.innerHTML=VIEWS.filter(v=>!['dash','orders','list','status'].includes(v.id)).map(v=>'<button class="sa-link" type="button" data-v="'+v.id+'">'+svg(v.ic)+v.t+'</button>').join('')+'<div class="sa-sep"></div><button class="sa-link" type="button" data-act="shop">'+svg('back')+'Back to shop</button><button class="sa-link" type="button" data-act="logout">'+svg('out')+'Log out</button>';
-  panel.insertBefore(nav,content);panel.insertBefore(top,content);panel.insertBefore(home,content);panel.appendChild(tabs);panel.appendChild(more);
-  page.addEventListener('click',e=>{
-   const b=e.target.closest('[data-v],[data-act]');if(!b||!page.contains(b))return;
-   if(b.dataset.v){if(b.dataset.v==='more'){more.classList.toggle('on');return}go(b.dataset.v);return}
-   const a=b.dataset.act;
-   if(a==='shop'&&window.showPage)showPage('shop');
-   if(a==='logout'&&window.adminLogout)adminLogout();
-   if(a==='refresh')go(current,true);
-  });
- }
- function sections(){return VIEWS.filter(v=>v.sec).map(v=>$(v.sec)).filter(Boolean)}
- async function go(id,reload){
-  const v=VIEWS.find(x=>x.id===id)||VIEWS[0];current=v.id;
-  const content=$('adminContent'),home=$('vgSaHome');
-  $('vgSaMore')?.classList.remove('on');
-  sections().forEach(s=>{s.hidden=true});
-  ['adminProductsSection','adminCategoryDisplaySection','adminProductListSection','adminOrdersSection'].forEach(i=>{const s=$(i);if(s)s.hidden=true});
-  content?.classList.remove('admin-full-width-panel');
-  document.querySelectorAll('#vgSaNav [data-v],#vgSaTabs [data-v]').forEach(b=>{const on=b.dataset.v===v.id||(b.dataset.v==='more'&&!TABS.includes(v.id));if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  $('vgSaTitle').textContent=v.t;$('vgSaSub').textContent=v.s;
-  home.classList.toggle('on',v.id==='dash');
-  {const pa=$('page-admin');if(pa.classList.contains('sa-dash')!==(v.id==='dash'))pa.classList.toggle('sa-dash',v.id==='dash');}
-  if(v.id==='dash'){renderDash();return}
-  if(v.custom)v.custom();
-  const sec=$(v.sec);
-  if(sec){sec.hidden=false;if(v.id==='orders')addOrderFilters(sec)}
-  if(v.after)v.after();
-  if(v.load&&(reload||true))try{await v.load()}catch(e){console.warn(e)}
-  window.scrollTo(0,0);$('page-admin').scrollTop=0;
- }
- function addOrderFilters(sec){
-  if(sec.querySelector('.sa-filters'))return;
-  const sel=$('adminOrderFilter');if(!sel)return;
-  const wrap=document.createElement('div');wrap.className='sa-filters';
-  const names={all:'All',pending:'Pending',confirmed:'Confirmed',preparing:'Preparing',out_for_delivery:'Out for delivery',delivered:'Delivered',cancelled:'Cancelled'};
-  wrap.innerHTML=[...sel.options].map(o=>'<button class="sa-chip" type="button" data-f="'+o.value+'" aria-pressed="'+(sel.value===o.value)+'">'+(names[o.value]||o.textContent.trim())+'</button>').join('');
-  wrap.addEventListener('click',e=>{const c=e.target.closest('[data-f]');if(!c)return;sel.value=c.dataset.f;wrap.querySelectorAll('.sa-chip').forEach(x=>x.setAttribute('aria-pressed',String(x===c)));window.loadAdminOrders&&loadAdminOrders()});
-  const h=sec.querySelector('.admin-section-heading-row');(h?h.after(wrap):sec.prepend(wrap));
- }
- async function renderDash(){
-  const home=$('vgSaHome');
-  home.innerHTML='<div class="sa-kpis">'+['Orders today','Revenue today','Pending orders','Low stock items'].map(t=>'<div class="sa-kpi"><span>'+t+'</span><b>–</b><em>Loading…</em></div>').join('')+'</div>';
-  try{
-   const [o,p]=await Promise.all([
-    supabaseClient.from('orders').select('order_id,customer_name,total,order_status,order_date').order('order_date',{ascending:false}).limit(1000),
-    supabaseClient.from('products').select('id,stock,available')
-   ]);
-   if(o.error)throw o.error;
-   const orders=o.data||[],prods=(p&&p.data)||[];
-   const day=d=>{const x=new Date(d);return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()};
-   const today=day(new Date());
-   const live=orders.filter(x=>x.order_status!=='cancelled');
-   const tOrders=orders.filter(x=>day(x.order_date)===today);
-   const tRev=tOrders.filter(x=>x.order_status!=='cancelled').reduce((s,x)=>s+Number(x.total||0),0);
-   const pending=orders.filter(x=>x.order_status==='pending').length;
-   const low=prods.filter(x=>Number(x.stock)<=5).length;
-   const delivered=orders.filter(x=>x.order_status==='delivered').length;
-   const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d});
-   const series=days.map(d=>({l:d.toLocaleDateString('en-IN',{weekday:'short'}),v:live.filter(x=>day(x.order_date)===day(d)).reduce((s,x)=>s+Number(x.total||0),0)}));
-   const max=Math.max(1,...series.map(x=>x.v));
-   const status=s=>'<span class="sa-pill '+esc(s)+'">'+esc(String(s||'').replace(/_/g,' '))+'</span>';
-   const recent=orders.slice(0,6).map(x=>'<tr><td>#'+esc(x.order_id)+'</td><td>'+esc(x.customer_name||'—')+'</td><td>'+money(x.total)+'</td><td>'+status(x.order_status)+'</td></tr>').join('');
-   home.innerHTML=
-    '<div class="sa-kpis">'+
-    '<div class="sa-kpi"><span>Orders today</span><b>'+tOrders.length+'</b><em>'+orders.length+' orders in total</em></div>'+
-    '<div class="sa-kpi"><span>Revenue today</span><b>'+money(tRev)+'</b><em>Cancelled orders excluded</em></div>'+
-    '<div class="sa-kpi '+(pending?'warn':'')+'"><span>Pending orders</span><b>'+pending+'</b><em>'+delivered+' delivered so far</em></div>'+
-    '<div class="sa-kpi '+(low?'bad':'')+'"><span>Low stock items</span><b>'+low+'</b><em>'+prods.length+' products listed</em></div></div>'+
-    '<div class="sa-grid2"><div class="sa-panel"><h2>Revenue, last 7 days</h2><div class="sa-bars">'+series.map(x=>'<div class="sa-bar"><u>'+(x.v?money(x.v):'')+'</u><i style="height:'+Math.max(2,Math.round(x.v/max*100))+'%"></i><small>'+x.l+'</small></div>').join('')+'</div></div>'+
-    '<div class="sa-panel"><h2>Recent orders</h2>'+(recent?'<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>'+recent+'</tbody></table></div><div style="margin-top:12px"><button class="sa-btn" type="button" data-v="orders">View all orders</button></div>':'<div class="sa-empty">No orders yet. New orders will appear here.</div>')+'</div></div>';
-  }catch(err){
-   home.innerHTML='<div class="sa-panel"><h2>Could not load the dashboard</h2><p class="sa-empty" style="text-align:left">'+esc(err.message||err)+'. Check your connection and press Refresh.</p></div>';
+'use strict';
+const SCOOT='<svg class="vg-bar-scooter" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="17.5" r="2.5"/><path d="M8 17.5h8"/><path d="M6 15l2.2-4H12"/><path d="M18.5 15L16 6h-2"/><path d="M14 6h3"/><circle class="dot" cx="19.9" cy="10" r=".8"/></svg>';
+const COPY={
+  pending:['Order placed 🎉','Waiting for the shop to confirm · tap to track'],
+  confirmed:['Order confirmed ✅','The shop is getting your items ready'],
+  preparing:['Packing your order 🧺','Fresh items are being packed'],
+  out_for_delivery:['Out for delivery 🛵','Your scooter is on the way · follow live']
+};
+function norm(t){
+  t=String(t||'').toLowerCase().replace(/[\s-]+/g,'_');
+  if(t.includes('out_for_delivery')||t.includes('shipped'))return 'out_for_delivery';
+  if(t.includes('preparing')||t.includes('processing'))return 'preparing';
+  if(t.includes('confirmed'))return 'confirmed';
+  return 'pending';
+}
+function enhance(bar){
+  if(!bar)return;
+  const icon=bar.querySelector('.stvn-live-order-icon'),copy=bar.querySelector('.stvn-live-order-copy');
+  if(!icon||!copy)return;
+  if(!bar.__vg){
+    bar.__vg=true;
+    icon.innerHTML='<span class="vg-bar-road"></span>'+SCOOT;
+    const steps=document.createElement('div');steps.className='vg-bar-steps';steps.innerHTML='<i></i><i></i><i></i><i></i>';
+    bar.appendChild(steps);
   }
- }
- function sync(){
-  const page=$('page-admin'),content=$('adminContent');if(!page)return;
-  const owner=!!window.__stvnOwnerAdminAuthorized&&page.classList.contains('active')&&$('adminLoginBox')&&getComputedStyle($('adminLoginBox')).display==='none';
-  if(owner){build();if(!page.classList.contains('vg-sa')){page.classList.add('vg-sa');go('dash')}}
-  else if(page.classList.contains('vg-sa'))page.classList.remove('vg-sa');
- }
- const mo=new MutationObserver(sync);
- function start(){const page=$('page-admin');if(!page)return;mo.observe(page,{attributes:true,attributeFilter:['class']});['adminLoginBox','adminPanel','adminContent'].forEach(i=>{const e=$(i);if(e)mo.observe(e,{attributes:true,attributeFilter:['style']})});window.addEventListener('vedant-owner-admin-ready',sync);setInterval(sync,1500);sync()}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+  const strong=copy.querySelector('strong'),small=copy.querySelector('small');
+  const raw=strong?strong.textContent:'';
+  if(/^your order\s*·/i.test(raw)){bar.dataset.vgRaw=raw.replace(/^your order\s*·\s*/i,'')}
+  const st=norm(bar.dataset.vgRaw||raw);
+  if(bar.dataset.vgStatus!==st)bar.dataset.vgStatus=st;
+  const c=COPY[st];
+  if(strong&&strong.textContent!==c[0])strong.textContent=c[0];
+  if(small&&small.textContent!==c[1])small.textContent=c[1];
+  const idx=['pending','confirmed','preparing','out_for_delivery'].indexOf(st);
+  bar.querySelectorAll('.vg-bar-steps i').forEach((n,i)=>{
+    const on=i<=idx,now=i===idx;
+    if(n.classList.contains('on')!==on)n.classList.toggle('on',on);
+    if(n.classList.contains('now')!==now)n.classList.toggle('now',now);
+  });
+}
+function hook(){
+  const bar=document.getElementById('stvn-live-order-bar');
+  if(!bar||bar.__vgObs)return !!bar&&!!bar.__vgObs;
+  bar.__vgObs=true;
+  const run=()=>enhance(bar);
+  new MutationObserver(run).observe(bar,{subtree:true,childList:true,characterData:true});
+  new MutationObserver(run).observe(bar,{attributes:true,attributeFilter:['class']});
+  run();return true;
+}
+if(!hook()){const t=setInterval(()=>{if(hook())clearInterval(t)},400);setTimeout(()=>clearInterval(t),60000)}
+})();
+</script>
+
+<script id="vg-v9-live-map">
+/* Live delivery map: exact scooter position, smooth movement, trimmed route, auto-refresh. */
+(function(){
+'use strict';
+const SHOP=[25.3698055556,83.1131388889];
+const rad=Math.PI/180,R=6371000;
+const ok=(a,b)=>Number.isFinite(a)&&Number.isFinite(b)&&Math.abs(a)>1e-4&&Math.abs(b)>1e-4&&Math.abs(a)<=90&&Math.abs(b)<=180;
+const sb=()=>window.supabaseClient||(typeof supabaseClient!=='undefined'?supabaseClient:null);
+const SCOOT='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="17.5" r="2.5"/><path d="M8 17.5h8"/><path d="M6 15l2.2-4H12"/><path d="M18.5 15L16 6h-2"/><path d="M14 6h3"/><circle class="dot" cx="19.9" cy="10" r=".8"/></svg>';
+function dist(a,b){const dLat=(b[0]-a[0])*rad,dLng=(b[1]-a[1])*rad;const x=Math.sin(dLat/2)**2+Math.cos(a[0]*rad)*Math.cos(b[0]*rad)*Math.sin(dLng/2)**2;return 2*R*Math.asin(Math.sqrt(x));}
+function d2(a,b){const dy=a[0]-b[0],dx=(a[1]-b[1])*Math.cos(a[0]*rad);return dx*dx+dy*dy;}
+let map=null,bike=null,customer=null,cur=null,lastTarget=null,anim=0,liveTimer=null,chan=null,orderId='';
+let routeLine=null,routeCasing=null,routeCoords=[],routeCum=[],routeIdx=0,routeBusy=false,routeAt=0,routeSpeed=6,routeTotal=0,ended=false;
+function noteEl(){return document.getElementById('stvn-delivery-map-note')}
+function fmtKm(m){return m<950?Math.max(10,Math.round(m/10)*10)+' m':(m/1000).toFixed(1)+' km'}
+function setNote(html){const n=noteEl();if(n)n.innerHTML=html}
+function chips(wait){
+  if(!map)return;
+  if(wait||!cur){setNote('<div class="vg-dist-row"><span class="vg-dist-chip is-wait">📡 Delivery partner की GPS location का इंतज़ार है…</span></div>');return}
+  if(!customer){setNote('<div class="vg-dist-row"><span class="vg-dist-chip">Customer GPS location उपलब्ध नहीं है</span></div>');return}
+  let rem;
+  if(routeCoords.length){
+    rem=dist(cur,routeCoords[Math.min(routeIdx,routeCoords.length-1)])+(routeTotal-(routeCum[Math.min(routeIdx,routeCum.length-1)]||0));
+  }else rem=dist(cur,customer);
+  const mins=Math.max(1,Math.round(rem/routeSpeed/60));
+  setNote('<div class="vg-dist-row"><span class="vg-dist-chip">📍 <b>'+fmtKm(rem)+'</b> दूर</span><span class="vg-dist-chip">⏱ लगभग <b>'+mins+' min</b></span><span class="vg-dist-chip">🟢 Live</span></div>');
+}
+function scootIcon(wait){
+  return L.divIcon({className:'stvn-map-emoji-marker',html:'<div class="vg-scoot'+(wait?' is-wait':'')+'"><span class="vg-scoot-halo"></span><span class="vg-scoot-badge">'+SCOOT+'</span></div>',iconSize:[48,48],iconAnchor:[24,24]});
+}
+function pinIcon(emoji){return L.divIcon({className:'stvn-map-emoji-marker',html:'<div class="vg-pin">'+emoji+'</div>',iconSize:[34,34],iconAnchor:[17,17]})}
+function setBike(p){cur=p;if(bike)L.Marker.prototype.setLatLng.call(bike,p)}
+function follow(p){
+  if(!map)return;
+  try{if(!map.getBounds().pad(-0.18).contains(p))L.Map.prototype.panTo.call(map,p,{animate:true,duration:.8})}catch(e){}
+}
+function drawRoute(){
+  if(!map||!cur||!routeCoords.length)return;
+  const pts=[cur].concat(routeCoords.slice(routeIdx));
+  if(!routeLine){
+    routeCasing=L.polyline(pts,{color:'#ffffff',weight:10,opacity:.92,lineCap:'round',lineJoin:'round',interactive:false}).addTo(map);
+    routeLine=L.polyline(pts,{color:'#0fae26',weight:5.5,opacity:1,lineCap:'round',lineJoin:'round',interactive:false}).addTo(map);
+    if(bike&&bike.setZIndexOffset)bike.setZIndexOffset(1000);
+  }else{routeCasing.setLatLngs(pts);routeLine.setLatLngs(pts)}
+}
+function trimRoute(){
+  if(!routeCoords.length||!cur)return;
+  let best=routeIdx,bd=Infinity;
+  const end=Math.min(routeCoords.length,routeIdx+80);
+  for(let i=routeIdx;i<end;i++){const d=d2(routeCoords[i],cur);if(d<bd){bd=d;best=i}}
+  routeIdx=best;drawRoute();
+}
+async function fetchRoute(force){
+  if(!map||!cur||!customer||routeBusy||ended)return;
+  const now=Date.now();
+  if(!force&&now-routeAt<12000)return;
+  routeBusy=true;routeAt=now;
+  const from=cur.slice(),myMap=map;
+  try{
+    const r=await fetch('https://router.project-osrm.org/route/v1/driving/'+from[1]+','+from[0]+';'+customer[1]+','+customer[0]+'?overview=full&geometries=geojson',{cache:'no-store'});
+    if(!r.ok)throw new Error('route');
+    const j=await r.json();const rt=j.routes&&j.routes[0];if(!rt)throw new Error('route');
+    if(myMap!==map)return;
+    routeCoords=rt.geometry.coordinates.map(p=>[p[1],p[0]]);
+    routeCum=[0];for(let i=1;i<routeCoords.length;i++)routeCum[i]=routeCum[i-1]+dist(routeCoords[i-1],routeCoords[i]);
+    routeTotal=routeCum[routeCum.length-1]||rt.distance;routeIdx=0;
+    if(rt.duration>0&&rt.distance>0)routeSpeed=Math.min(9,Math.max(3.5,rt.distance/rt.duration));
+    drawRoute();chips(false);
+  }catch(e){
+    if(myMap!==map)return;
+    if(!routeCoords.length){routeCoords=[from,customer];routeCum=[0,dist(from,customer)];routeTotal=routeCum[1];routeIdx=0;drawRoute();chips(false)}
+  }finally{routeBusy=false}
+}
+function moveBike(lat,lng,instant){
+  if(!map||!bike||!ok(lat,lng))return;
+  const to=[lat,lng];
+  if(lastTarget&&dist(lastTarget,to)<2.5)return;           // ignore GPS jitter
+  const from=cur||to;
+  const el=bike.getElement&&bike.getElement()?bike.getElement().querySelector('.vg-scoot'):null;
+  if(el){
+    if(to[1]<from[1]-1e-7)el.classList.add('is-left');else if(to[1]>from[1]+1e-7)el.classList.remove('is-left');
+    el.classList.remove('is-wait');
+  }
+  lastTarget=to;cancelAnimationFrame(anim);
+  const d=dist(from,to);
+  // a big deviation from the planned road means the partner took another path: re-plan now
+  if(routeCoords.length){const near=routeCoords.slice(routeIdx,routeIdx+80).reduce((m,p)=>Math.min(m,dist(p,to)),Infinity);if(near>70)fetchRoute(true)}
+  if(instant||d<1||d>3000){setBike(to);trimRoute();chips(false);fetchRoute(!routeCoords.length);follow(to);return}
+  const t0=performance.now(),dur=Math.min(2200,Math.max(650,d*45));
+  const step=now=>{
+    const k=Math.min(1,(now-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    setBike([from[0]+(to[0]-from[0])*e,from[1]+(to[1]-from[1])*e]);
+    trimRoute();
+    if(k<1)anim=requestAnimationFrame(step);else{chips(false)}
+  };
+  anim=requestAnimationFrame(step);follow(to);fetchRoute(false);
+}
+function stopLive(){
+  if(liveTimer){clearInterval(liveTimer);liveTimer=null}
+  if(chan){try{const c=sb();c&&c.removeChannel(chan)}catch(e){}chan=null}
+}
+function cleanup(){stopLive();cancelAnimationFrame(anim);map=null;bike=null;routeLine=null;routeCasing=null;routeCoords=[];routeCum=[];routeIdx=0;lastTarget=null;cur=null;routeBusy=false;window.stvnDeliveryBikeMarker=null;window.stvnCustomerHomeMarker=null}
+function apply(o){
+  if(!o||!map)return;
+  const st=String(o.order_status||'').toLowerCase();
+  if(st&&st!=='out_for_delivery'&&st!=='shipped'){
+    if(!ended){ended=true;stopLive();try{window.stvnLoadMyOrdersByAccount&&window.stvnLoadMyOrdersByAccount()}catch(e){}}
+    return;
+  }
+  if(o.delivery_boy_latitude==null||o.delivery_boy_longitude==null)return;
+  const la=Number(o.delivery_boy_latitude),ln=Number(o.delivery_boy_longitude);
+  if(ok(la,ln))moveBike(la,ln);
+}
+async function poll(){
+  if(document.hidden||!map||!orderId)return;
+  const c=sb();if(!c)return;
+  try{
+    const {data,error}=await c.from('orders').select('order_status,delivery_boy_latitude,delivery_boy_longitude').eq('order_id',orderId).limit(5);
+    if(error||!data||!data.length)return;
+    apply(data.find(r=>ok(Number(r.delivery_boy_latitude),Number(r.delivery_boy_longitude)))||data[0]);
+  }catch(e){}
+}
+function startLive(id){
+  stopLive();orderId=id;const c=sb();if(!c||!id)return;
+  try{
+    chan=c.channel('vg-partner-'+id+'-'+Math.random().toString(36).slice(2,7))
+      .on('postgres_changes',{event:'*',schema:'public',table:'orders',filter:'order_id=eq.'+id},p=>apply(p.new)).subscribe();
+  }catch(e){}
+  poll();liveTimer=setInterval(poll,2500);
+}
+window.stvnRenderCustomerDeliveryMap=function(order){
+  const el=document.getElementById('stvn-customer-delivery-map');
+  if(!el||!order)return;
+  if(!window.L){setNote('Map load नहीं हुआ। Internet connection check करें.');return}
+  if(window.stvnCustomerDeliveryMap){try{window.stvnCustomerDeliveryMap.remove()}catch(e){}}
+  cleanup();ended=false;
+  const cLat=Number(order.latitude),cLng=Number(order.longitude);
+  customer=ok(cLat,cLng)?[cLat,cLng]:null;
+  const pLat=Number(order.delivery_boy_latitude),pLng=Number(order.delivery_boy_longitude);
+  const has=order.delivery_boy_latitude!=null&&order.delivery_boy_longitude!=null&&ok(pLat,pLng);
+  const myMap=L.map(el,{zoomControl:false,scrollWheelZoom:false,zoomSnap:.5,attributionControl:true});
+  map=myMap;window.stvnCustomerDeliveryMap=myMap;
+  L.control.zoom({position:'bottomright'}).addTo(myMap);
+  let errs=0;
+  const carto=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap · © CARTO'}).addTo(myMap);
+  carto.on('tileerror',()=>{if(++errs===4){try{myMap.removeLayer(carto);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(myMap)}catch(e){}}});
+  const origRemove=myMap.remove.bind(myMap);
+  myMap.remove=function(){if(map===myMap)cleanup();return origRemove()};
+  cur=has?[pLat,pLng]:SHOP.slice();
+  L.marker(SHOP,{icon:pinIcon('🏪'),keyboard:false}).addTo(myMap).bindPopup('Vedant Grocery Shop');
+  if(customer)window.stvnCustomerHomeMarker=L.marker(customer,{icon:pinIcon('🏠'),keyboard:false}).addTo(myMap).bindPopup('आपका डिलीवरी पता');
+  bike=L.marker(cur,{icon:scootIcon(!has),zIndexOffset:1000,keyboard:false}).addTo(myMap).bindPopup('Delivery partner · Live');
+  window.stvnDeliveryBikeMarker=bike;
+  // Other code (older realtime handler) calls these: route them through the smart versions.
+  bike.setLatLng=function(pt){const p=Array.isArray(pt)?pt:[pt.lat,pt.lng];moveBike(Number(p[0]),Number(p[1]));return bike};
+  myMap.panTo=function(pt){const p=Array.isArray(pt)?pt:(pt?[pt.lat,pt.lng]:null);if(!p||!ok(Number(p[0]),Number(p[1])))return myMap;follow([Number(p[0]),Number(p[1])]);return myMap};
+  const pts=[cur];if(customer)pts.push(customer);
+  const fit=()=>{if(map!==myMap)return;myMap.invalidateSize();if(pts.length>1)myMap.fitBounds(L.latLngBounds(pts),{padding:[44,44],maxZoom:17});else myMap.setView(cur,15)};
+  fit();setTimeout(fit,300);setTimeout(fit,900);
+  chips(!has);
+  if(customer)fetchRoute(true);
+  startLive(String(order.order_id||order.id||''));
+};
+window.stvnUpdateRemainingDeliveryRoute=(la,ln)=>moveBike(Number(la),Number(ln));
+})();
+</script>
+
+<script id="vg-v9-cancel-drain">
+/* Cancel window: keep the countdown bar in sync with the live timer. */
+(function(){
+setInterval(function(){
+  document.querySelectorAll('.stvn-track-live-cancel-row').forEach(function(row){
+    var b=row.querySelector('.order-cancel-button');if(!b)return;
+    var m=/(\d{1,2}):(\d{2})/.exec(b.textContent||'');if(!m)return;
+    var left=(+m[1])*60+(+m[2]);
+    row.style.setProperty('--cw',Math.max(0,Math.min(1,left/120)).toFixed(3));
+    var s=row.querySelector('span strong');if(s&&s.textContent!==m[0])s.textContent=m[0];
+  });
+},400);
+})();
+</script>
+
+<script id="vg-v9-products-sync">
+/* Products added/edited in Admin now reach the customer shop right away (and on every device). */
+(function(){
+'use strict';
+const original=window.loadCustomerProducts;
+if(typeof original!=='function')return;
+let running=null,again=false;
+window.loadCustomerProducts=function(){
+  if(running){again=true;return running}
+  running=(async function(){
+    try{do{again=false;await original()}while(again)}
+    finally{running=null}
+  })();
+  return running;
+};
+const busy=function(){var a=document.activeElement;return document.body.classList.contains('stvn-detail-open')||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))};
+const refresh=function(){if(!document.hidden&&!busy())window.loadCustomerProducts().catch(function(){})};
+let t=null;
+const soon=function(){clearTimeout(t);t=setTimeout(refresh,500)};
+function bind(){
+  const c=window.supabaseClient||(typeof supabaseClient!=='undefined'?supabaseClient:null);
+  if(!c||!c.channel)return false;
+  try{c.channel('vg-products-live').on('postgres_changes',{event:'*',schema:'public',table:'products'},soon).subscribe()}catch(e){}
+  return true;
+}
+if(!bind()){const w=setInterval(function(){if(bind())clearInterval(w)},800);setTimeout(function(){clearInterval(w)},30000)}
+setInterval(refresh,40000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)soon()});
+window.addEventListener('focus',soon);
+window.addEventListener('online',soon);
+})();
+</script>
+
+<style id="vg-v9-admin-dashboard-css">
+#vgAdminDashSection{margin:14px 0;padding:16px;border:1px solid var(--border,#e3e8ee);border-radius:18px;background:var(--surface,#fff);color:var(--text,#18212b)}
+#vgAdminDashSection[hidden]{display:none!important}
+#vgAdminDashSection .vgd-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+#vgAdminDashSection .vgd-head h3{margin:0;font-size:18px}
+#vgAdminDashSection .vgd-head small{display:block;color:var(--muted,#667585);font-size:12px;margin-top:2px}
+#vgAdminDashSection .vgd-btn{padding:8px 13px;border:1px solid var(--border,#e3e8ee);border-radius:10px;background:transparent;color:inherit;font:700 13px/1 inherit;cursor:pointer;min-height:38px}
+.vgd-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.vgd-kpi{padding:14px 15px;border-radius:14px;border:1px solid var(--border,#e3e8ee);background:linear-gradient(160deg,rgba(14,141,31,.08),transparent)}
+.vgd-kpi span{display:block;font-size:12.5px;font-weight:700;color:var(--muted,#667585)}
+.vgd-kpi b{display:block;margin-top:6px;font-size:26px;line-height:1.1;font-weight:900;font-variant-numeric:tabular-nums}
+.vgd-kpi em{display:block;margin-top:5px;font-style:normal;font-size:11.5px;color:var(--muted,#667585)}
+.vgd-kpi.warn b{color:#c9780a}.vgd-kpi.bad b{color:#d4382c}
+.vgd-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-top:12px}
+.vgd-panel{padding:14px;border-radius:14px;border:1px solid var(--border,#e3e8ee);min-width:0}
+.vgd-panel h4{margin:0 0 12px;font-size:14px}
+.vgd-bars{display:flex;align-items:flex-end;gap:8px;height:150px}
+.vgd-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px;min-width:0}
+.vgd-bar i{display:block;width:100%;max-width:40px;border-radius:6px 6px 0 0;background:linear-gradient(#17c534,#0c8a1f);min-height:3px}
+.vgd-bar small{font-size:10.5px;color:var(--muted,#667585)}.vgd-bar u{text-decoration:none;font-size:10.5px;font-weight:700}
+.vgd-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.vgd-table th{text-align:left;color:var(--muted,#667585);padding:6px 8px;border-bottom:1px solid var(--border,#e3e8ee);white-space:nowrap}
+.vgd-table td{padding:9px 8px;border-bottom:1px solid var(--border,#e3e8ee);white-space:nowrap}
+.vgd-wrap{overflow-x:auto}
+.vgd-pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:800;background:rgba(120,120,120,.15)}
+.vgd-pill.pending{background:#fff1cf;color:#8a5a00}.vgd-pill.delivered{background:#dff5e2;color:#0b7a1b}.vgd-pill.cancelled{background:#fde4e1;color:#b3261e}
+.vgd-pill.out_for_delivery,.vgd-pill.confirmed,.vgd-pill.preparing{background:#e2ecfc;color:#1f4f9f}
+.vgd-empty{padding:16px 0;color:var(--muted,#667585);font-size:13px;text-align:center}
+@media(max-width:900px){.vgd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.vgd-grid{grid-template-columns:1fr}}
+</style>
+<script id="vg-v9-admin-dashboard">
+/* Admin: all classic options stay visible. Dashboard is just one more toolbar button (closed by default). */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
+const num=v=>Number(String(v==null?0:v).replace(/[^0-9.\-]/g,''))||0;
+const OPEN='✕ Close Dashboard',SHUT='📊 Dashboard';
+async function render(){
+  const body=$('vgdBody');if(!body)return;
+  body.innerHTML='<div class="vgd-empty">⏳ Dashboard load हो रहा है…</div>';
+  try{
+    const c=window.supabaseClient||supabaseClient;
+    const [o,p]=await Promise.all([
+      c.from('orders').select('*').order('order_date',{ascending:false}).limit(800),
+      c.from('products').select('id,stock,available')
+    ]);
+    if(o.error)throw o.error;
+    const seen=new Set();
+    const orders=(o.data||[]).filter(x=>{const k=String(x.order_id||x.id);if(seen.has(k))return false;seen.add(k);return true});
+    const prods=(p&&p.data)||[];
+    const dayKey=d=>{const x=new Date(d);return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()};
+    const today=dayKey(new Date());
+    const isCancel=x=>/cancel/i.test(String(x.order_status||''));
+    const live=orders.filter(x=>!isCancel(x));
+    const tOrders=orders.filter(x=>dayKey(x.order_date)===today);
+    const tRev=tOrders.filter(x=>!isCancel(x)).reduce((s,x)=>s+num(x.total),0);
+    const pending=orders.filter(x=>String(x.order_status).toLowerCase()==='pending').length;
+    const delivered=orders.filter(x=>String(x.order_status).toLowerCase()==='delivered').length;
+    const low=prods.filter(x=>Number(x.stock)<=5).length;
+    const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d});
+    const series=days.map(d=>({l:d.toLocaleDateString('en-IN',{weekday:'short'}),v:live.filter(x=>dayKey(x.order_date)===dayKey(d)).reduce((s,x)=>s+num(x.total),0)}));
+    const max=Math.max(1,...series.map(x=>x.v));
+    const pill=s=>'<span class="vgd-pill '+esc(s)+'">'+esc(String(s||'').replace(/_/g,' '))+'</span>';
+    const recent=orders.slice(0,6).map(x=>'<tr><td>#'+esc(x.order_id||x.id)+'</td><td>'+esc(x.customer_name||x.name||'—')+'</td><td>'+money(num(x.total))+'</td><td>'+pill(x.order_status)+'</td></tr>').join('');
+    body.innerHTML=
+      '<div class="vgd-kpis">'+
+      '<div class="vgd-kpi"><span>Orders today</span><b>'+tOrders.length+'</b><em>'+orders.length+' orders in total</em></div>'+
+      '<div class="vgd-kpi"><span>Revenue today</span><b>'+money(tRev)+'</b><em>Cancelled excluded</em></div>'+
+      '<div class="vgd-kpi '+(pending?'warn':'')+'"><span>Pending orders</span><b>'+pending+'</b><em>'+delivered+' delivered so far</em></div>'+
+      '<div class="vgd-kpi '+(low?'bad':'')+'"><span>Low stock items</span><b>'+low+'</b><em>'+prods.length+' products listed</em></div></div>'+
+      '<div class="vgd-grid"><div class="vgd-panel"><h4>Revenue, last 7 days</h4><div class="vgd-bars">'+
+      series.map(x=>'<div class="vgd-bar"><u>'+(x.v?money(x.v):'')+'</u><i style="height:'+Math.max(2,Math.round(x.v/max*100))+'%"></i><small>'+x.l+'</small></div>').join('')+'</div></div>'+
+      '<div class="vgd-panel"><h4>Recent orders</h4>'+(recent?'<div class="vgd-wrap"><table class="vgd-table"><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>'+recent+'</tbody></table></div>':'<div class="vgd-empty">No orders yet.</div>')+'</div></div>';
+  }catch(err){
+    body.innerHTML='<div class="vgd-empty">Dashboard load नहीं हुआ: '+esc(err&&err.message||err)+'. Refresh दबाएँ.</div>';
+  }
+}
+function toggle(force){
+  const sec=$('vgAdminDashSection'),btn=$('admin-view-dashboard');if(!sec||!btn)return;
+  const open=typeof force==='boolean'?force:sec.hidden;
+  sec.hidden=!open;btn.setAttribute('aria-expanded',String(open));btn.textContent=open?OPEN:SHUT;
+  if(open){render();sec.scrollIntoView({behavior:'smooth',block:'start'})}
+}
+window.toggleAdminDashboard=toggle;
+function ensure(){
+  const content=$('adminContent'),toolbar=content&&content.querySelector('.admin-toolbar');
+  if(!toolbar||$('admin-view-dashboard'))return;
+  const btn=document.createElement('button');
+  btn.id='admin-view-dashboard';btn.type='button';btn.className='admin-btn';
+  btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-controls','vgAdminDashSection');btn.textContent=SHUT;
+  btn.addEventListener('click',()=>toggle());
+  const status=$('admin-save-status');
+  if(status)status.insertAdjacentElement('afterend',btn);else toolbar.prepend(btn);
+  const sec=document.createElement('section');sec.id='vgAdminDashSection';sec.hidden=true;
+  sec.innerHTML='<div class="vgd-head"><div><h3>📊 Dashboard</h3><small>Orders, revenue and stock at a glance</small></div><div><button type="button" class="vgd-btn" id="vgdRefresh">↻ Refresh</button> <button type="button" class="vgd-btn" id="vgdClose">✕ Close</button></div></div><div id="vgdBody"></div>';
+  toolbar.insertAdjacentElement('afterend',sec);
+  $('vgdRefresh').addEventListener('click',render);
+  $('vgdClose').addEventListener('click',()=>toggle(false));
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensure);else ensure();
+window.addEventListener('vedant-owner-admin-ready',ensure);
+setInterval(ensure,1500);
 })();
 </script>
 
