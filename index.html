@@ -14297,6 +14297,11 @@ Object.assign(enDict,{
   // Blinkit-style energetic brand intro (mobile + desktop). Tap anywhere to skip.
   (function(){
     if(document.getElementById('vgSplash'))return;
+    /* Intro plays only when the app is opened fresh. Never after a login (Google redirect) or a reload within the same session. */
+    var authReturn=/[?&#](access_token|refresh_token|code|error_description|error_code|token_hash)=/.test(location.search+location.hash);
+    var seen=false;try{seen=sessionStorage.getItem('vgSplashSeen')==='1'}catch(e){}
+    if(authReturn||seen){document.documentElement.classList.remove('v-lang-wait');return;}
+    try{sessionStorage.setItem('vgSplashSeen','1')}catch(e){}
     var reduce=false;try{reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
     var food=['🍅','🥬','🥕','🍎','🥛','🍞','🧅','🍌','🥔','🍋','🧃','🍪'];
     var foodHtml=food.map(function(f,i){
@@ -14324,7 +14329,7 @@ Object.assign(enDict,{
     '#vgSplash{position:fixed;inset:0;z-index:2147483600;visibility:visible!important;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:Inter,"Segoe UI",Arial,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;'+
       'background:radial-gradient(circle at 50% 42%,#ffe45c 0%,#fbd34a 38%,#f5b800 100%);clip-path:circle(150% at 50% 58%);animation:vgsIn .35s ease-out both}'+
     '#vgSplash.out{animation:vgsOut .62s cubic-bezier(.7,0,.25,1) forwards;pointer-events:none}'+
-    '#vgSplash .vgs-rays{position:absolute;left:50%;top:44%;width:260vmax;height:260vmax;margin:-130vmax 0 0 -130vmax;background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.22) 0deg 9deg,rgba(255,255,255,0) 9deg 20deg);animation:vgsSpin 14s linear infinite;-webkit-mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.35) 16%,transparent 34%);mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.35) 16%,transparent 34%)}'+
+    '#vgSplash .vgs-rays{will-change:transform;position:absolute;left:50%;top:44%;width:260vmax;height:260vmax;margin:-130vmax 0 0 -130vmax;background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.22) 0deg 9deg,rgba(255,255,255,0) 9deg 20deg);animation:vgsSpin 14s linear infinite;-webkit-mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.35) 16%,transparent 34%);mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.35) 16%,transparent 34%)}'+
     '#vgSplash .vgs-glow{position:absolute;left:50%;top:44%;width:min(120vw,720px);height:min(120vw,720px);transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.65),rgba(255,255,255,0) 62%);animation:vgsBreath 1.8s ease-in-out infinite}'+
     '#vgSplash .vgs-food{position:absolute;inset:0;pointer-events:none}'+
     '#vgSplash .vgs-food span{position:absolute;bottom:-60px;opacity:0;filter:drop-shadow(0 6px 6px rgba(120,80,0,.25));animation:vgsRise 3s ease-in infinite}'+
@@ -14369,7 +14374,8 @@ Object.assign(enDict,{
     var gone=false;
     function leave(){if(gone)return;gone=true;splash.classList.add('out');setTimeout(function(){try{splash.remove();css.remove()}catch(e){}document.documentElement.classList.remove('v-lang-wait')},680)}
     splash.addEventListener('click',leave);
-    setTimeout(leave,reduce?900:3000);
+    setTimeout(leave,reduce?900:2600);
+    setTimeout(function(){gone=true;try{splash.remove();css.remove()}catch(e){}document.documentElement.classList.remove('v-lang-wait')},4500);
   })();
 })();
 </script>
