@@ -2075,11 +2075,11 @@ body.stvn-detail-open{overflow:hidden}
 </style>
 
 <link rel="preload" as="image" href="https://vedantgrocery.shop/logo.png">
-<script>(function(){var d=document.documentElement,skip=false,installed=false;try{skip=sessionStorage.getItem('vgSplashSeen')==='1'}catch(e){}
-try{installed=window.matchMedia('(display-mode: standalone)').matches||window.matchMedia('(display-mode: fullscreen)').matches||window.navigator.standalone===true}catch(e){}
-if(installed)skip=true;
-if(/[?&#](access_token|refresh_token|code|error_description|error_code|token_hash)=/.test(location.search+location.hash))skip=true;
-if(skip)d.classList.add('vg-nosplash');})();</script>
+<script>(function(){
+  // Always play the branded entry animation on every launch, including installed PWA launches.
+  // Do not set vg-nosplash based on sessionStorage or auth callback parameters.
+  document.documentElement.classList.remove('vg-nosplash');
+})();</script>
 <style id="vgSplashCss">
 /* Splash paints on the very first frame (no logo flash, no blank screen). */
 #vgSplash{position:fixed;inset:0;z-index:2147483600;visibility:visible!important;overflow:hidden;display:flex;align-items:center;justify-content:center;
@@ -2514,11 +2514,10 @@ button,input,select,textarea{font:inherit}
 <body>
 <div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.80s;font-size:26px">🍅</span><span style="left:18%;animation-delay:0.35s;animation-duration:3.30s;font-size:32px">🥬</span><span style="left:30%;animation-delay:0.70s;animation-duration:3.80s;font-size:38px">🥕</span><span style="left:42%;animation-delay:1.05s;animation-duration:2.80s;font-size:26px">🍎</span><span style="left:54%;animation-delay:0.00s;animation-duration:3.30s;font-size:32px">🥛</span><span style="left:66%;animation-delay:0.35s;animation-duration:3.80s;font-size:38px">🍞</span><span style="left:78%;animation-delay:0.70s;animation-duration:2.80s;font-size:26px">🍌</span><span style="left:90%;animation-delay:1.05s;animation-duration:3.30s;font-size:32px">🥔</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="https://vedantgrocery.shop/logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.45s">V</b><b style="animation-delay:0.52s">E</b><b style="animation-delay:0.59s">D</b><b style="animation-delay:0.66s">A</b><b style="animation-delay:0.73s">N</b><b style="animation-delay:0.80s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Best prices</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div>
 
-<div id="stvnCustomerLoginGate" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
+<div id="stvnCustomerLoginGate" class="notranslate" translate="no" lang="en" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
   <div class="stvn-customer-login-card">
     <button id="stvnCustomerGuestContinue" class="stvn-login-back-action" type="button" onclick="stvnContinueAsGuest()">← Back</button>
     <div class="stvn-login-hero">
-    <div class="stvn-login-logo stvn-login-leaf-logo" role="img" aria-label="Vedant Grocery Shop"><svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true"><path d="M31 29C17 28 11 17 12 7c12 0 22 6 23 18C40 13 49 9 57 9c-1 14-9 24-23 25" fill="#26a653"/><path d="M31 30C25 20 20 15 14 12M35 30C40 20 47 15 54 13" fill="none" stroke="#eaffed" stroke-width="2.5" stroke-linecap="round"/><path d="M13 34h38l-4 20H17z" fill="#08783d"/><path d="M9 34h46M20 39v10m12-10v10m12-10v10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
     <div style="font-size:12px;font-weight:900;letter-spacing:2.5px;color:#0e8e1f">WELCOME TO VEDANT</div>
     <h2 id="stvnCustomerLoginTitle">Login to continue</h2>
     <p class="stvn-login-subtitle">Browse products freely. Sign in for account details or to place an order.</p>
@@ -2527,7 +2526,7 @@ button,input,select,textarea{font:inherit}
     <div class="stvn-login-sheet">
     <form id="stvnCustomerLoginForm" onsubmit="return stvnCustomerLoginAction(event)">
       <div class="stvn-login-field">
-        <label for="stvnCustomerEmail">Email address / ईमेल</label>
+        <label for="stvnCustomerEmail">Email address</label>
         <input id="stvnCustomerEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
       </div>
       <div class="stvn-login-field" id="stvnCustomerOtpWrap" style="display:none">
@@ -2542,9 +2541,10 @@ button,input,select,textarea{font:inherit}
           <input class="vg-otp-digit" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 7">
           <input class="vg-otp-digit" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 8">
         </div>
-        <input id="stvnCustomerOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" aria-label="Complete OTP" style="position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;padding:0!important;border:0!important">
-        <p class="stvn-login-otp-help">Gmail में Inbox के साथ <b>Spam</b> और <b>All Mail</b> भी चेक करें।</p>
+        <input id="stvnCustomerOtp" type="hidden" inputmode="numeric" autocomplete="one-time-code" maxlength="8" aria-label="Complete OTP">
+        <p class="stvn-login-otp-help">Check your Gmail Inbox, Spam, and All Mail folders for the code.</p>
       </div>
+      <div class="vg-login-action-logo" aria-hidden="true"><img src="https://vedantgrocery.shop/logo.png" alt="" width="64" height="64" loading="eager"></div>
       <button id="stvnCustomerLoginButton" class="stvn-customer-login-action" type="submit">Continue with Email →</button>
       <button id="stvnCustomerResendButton" class="stvn-customer-login-action" type="button" onclick="stvnCustomerResendOtp()" style="display:none;background:#edf8ee;color:#176c22;box-shadow:none">Resend OTP</button>
       <div class="stvn-login-divider" aria-hidden="true">OR</div>
@@ -2554,7 +2554,7 @@ button,input,select,textarea{font:inherit}
       </button>
       <div id="stvnCustomerLoginMessage" class="stvn-login-message" role="status" aria-live="polite"></div>
     </form>
-    <div class="stvn-login-trust"><span>🔒</span><span>Secure email verification · सुरक्षित login</span></div>
+    <div class="stvn-login-trust"><span>🔒</span><span>Secure email verification</span></div>
     </div>
   </div>
 </div>
@@ -3483,7 +3483,7 @@ async function stvnCustomerSendOtp(){
     document.getElementById("stvnCustomerResendButton").style.display="block";
     button.textContent="Verify OTP & Login →";
     stvnCustomerLoginMessage("✅ OTP भेज दिया गया है। Gmail में Inbox, Spam और All Mail फोल्डर चेक करें।","success");
-    document.getElementById("stvnCustomerOtp").focus();
+    if(window.stvnCustomerOtpBoxFocus) window.stvnCustomerOtpBoxFocus();
   }catch(error){
     console.error("Customer OTP send error:",error);
     stvnCustomerLoginMessage("❌ OTP नहीं भेजा गया: "+(error?.message || "कृपया थोड़ी देर बाद कोशिश करें।"),"error");
@@ -14187,11 +14187,11 @@ Object.assign(enDict,{
   '✅ पता आपके अकाउंट में सेव हो गया।':'✅ Address saved to your account.'
  });
  Object.assign(dict,{
-  'Shop Now':'अभी खरीदें','Shop by Category':'श्रेणी के अनुसार खरीदें','Our Products':'हमारे उत्पाद','Products':'उत्पाद','Biscuits':'बिस्कुट','Namkeen And Snacks':'नमकीन और स्नैक्स','Vegetables':'सब्ज़ियाँ','Face And Body Care':'चेहरे और शरीर की देखभाल','Grocery':'किराना','Perfumes':'इत्र','Stationary':'स्टेशनरी','Shoes':'जूते','Sweets And Chocolates':'मिठाई और चॉकलेट','View All':'सभी देखें','Continue with Email':'ईमेल से जारी रखें','Continue with Google':'Google से जारी रखें','Search products':'उत्पाद खोजें','Search for products...':'उत्पाद खोजें...','Change Language':'भाषा बदलें','WELCOME TO':'में आपका स्वागत है','Secure login':'सुरक्षित लॉगिन','आपके email पर verification code आएगा।':'आपके ईमेल पर सत्यापन कोड आएगा।','Email address / ईमेल':'ईमेल पता','Secure email verification · सुरक्षित login':'सुरक्षित ईमेल सत्यापन','Fresh & Local Groceries':'ताज़ा स्थानीय किराना','at Your Doorstep':'आपके दरवाज़े पर','Quality Products':'गुणवत्तापूर्ण उत्पाद','Best Prices':'सबसे अच्छी कीमतें','Local Delivery':'स्थानीय डिलीवरी','Choose a collection to see only its products.':'श्रेणी चुनें और केवल उसी के उत्पाद देखें।','All categories start closed.':'सभी श्रेणियाँ शुरू में बंद हैं।','Products और categories update हो रहे हैं…':'उत्पाद और श्रेणियाँ अपडेट हो रही हैं…','Free delivery':'मुफ़्त डिलीवरी','on orders above':'से अधिक के ऑर्डर पर'
+  'Shop Now':'अभी खरीदें','Shop by Category':'श्रेणी के अनुसार खरीदें','Our Products':'हमारे उत्पाद','Products':'उत्पाद','Biscuits':'बिस्कुट','Namkeen And Snacks':'नमकीन और स्नैक्स','Vegetables':'सब्ज़ियाँ','Face And Body Care':'चेहरे और शरीर की देखभाल','Grocery':'किराना','Perfumes':'इत्र','Stationary':'स्टेशनरी','Shoes':'जूते','Sweets And Chocolates':'मिठाई और चॉकलेट','View All':'सभी देखें','Continue with Email':'ईमेल से जारी रखें','Continue with Google':'Google से जारी रखें','Search products':'उत्पाद खोजें','Search for products...':'उत्पाद खोजें...','Change Language':'भाषा बदलें','WELCOME TO':'में आपका स्वागत है','Secure login':'सुरक्षित लॉगिन','आपके email पर verification code आएगा।':'आपके ईमेल पर सत्यापन कोड आएगा।','Email address':'ईमेल पता','Secure email verification':'सुरक्षित ईमेल सत्यापन','Fresh & Local Groceries':'ताज़ा स्थानीय किराना','at Your Doorstep':'आपके दरवाज़े पर','Quality Products':'गुणवत्तापूर्ण उत्पाद','Best Prices':'सबसे अच्छी कीमतें','Local Delivery':'स्थानीय डिलीवरी','Choose a collection to see only its products.':'श्रेणी चुनें और केवल उसी के उत्पाद देखें।','All categories start closed.':'सभी श्रेणियाँ शुरू में बंद हैं।','Products और categories update हो रहे हैं…':'उत्पाद और श्रेणियाँ अपडेट हो रही हैं…','Free delivery':'मुफ़्त डिलीवरी','on orders above':'से अधिक के ऑर्डर पर'
  });
  
  Object.assign(enDict,{
-  'श्रेणी के अनुसार खरीदें':'Shop by Category','हमारे उत्पाद':'Our Products','उत्पाद':'Products','बिस्कुट':'Biscuits','नमकीन और स्नैक्स':'Namkeen and Snacks','सब्ज़ियाँ':'Vegetables','चेहरे और शरीर की देखभाल':'Face and Body Care','किराना':'Grocery','इत्र':'Perfumes','स्टेशनरी':'Stationery','जूते':'Shoes','मिठाई और चॉकलेट':'Sweets and Chocolates','ताज़ा स्थानीय किराना':'Fresh & Local Groceries','आपके दरवाज़े पर':'at Your Doorstep','गुणवत्तापूर्ण उत्पाद':'Quality Products','सबसे अच्छी कीमतें':'Best Prices','स्थानीय डिलीवरी':'Local Delivery','श्रेणी चुनें और केवल उसी के उत्पाद देखें।':'Choose a category to see only its products.','सभी श्रेणियाँ शुरू में बंद हैं।':'All categories start closed.','उत्पाद और श्रेणियाँ अपडेट हो रही हैं…':'Products and categories are updating…','मुफ़्त डिलीवरी':'Free delivery','Shop Now':'Shop now','सभी देखें':'View all','ईमेल से जारी रखें':'Continue with Email','Google से जारी रखें':'Continue with Google','उत्पाद खोजें':'Search products','भाषा बदलें':'Change Language','में आपका स्वागत है':'Welcome to','सुरक्षित लॉगिन':'Secure login','आपके email पर verification code आएगा।':'A verification code will be sent to your email.','ईमेल पता':'Email address','सुरक्षित ईमेल सत्यापन':'Secure email verification','Secure email verification · सुरक्षित login':'Secure email verification','वेदांत किराना दुकान':'Vedant Grocery Shop'
+  'श्रेणी के अनुसार खरीदें':'Shop by Category','हमारे उत्पाद':'Our Products','उत्पाद':'Products','बिस्कुट':'Biscuits','नमकीन और स्नैक्स':'Namkeen and Snacks','सब्ज़ियाँ':'Vegetables','चेहरे और शरीर की देखभाल':'Face and Body Care','किराना':'Grocery','इत्र':'Perfumes','स्टेशनरी':'Stationery','जूते':'Shoes','मिठाई और चॉकलेट':'Sweets and Chocolates','ताज़ा स्थानीय किराना':'Fresh & Local Groceries','आपके दरवाज़े पर':'at Your Doorstep','गुणवत्तापूर्ण उत्पाद':'Quality Products','सबसे अच्छी कीमतें':'Best Prices','स्थानीय डिलीवरी':'Local Delivery','श्रेणी चुनें और केवल उसी के उत्पाद देखें।':'Choose a category to see only its products.','सभी श्रेणियाँ शुरू में बंद हैं।':'All categories start closed.','उत्पाद और श्रेणियाँ अपडेट हो रही हैं…':'Products and categories are updating…','मुफ़्त डिलीवरी':'Free delivery','Shop Now':'Shop now','सभी देखें':'View all','ईमेल से जारी रखें':'Continue with Email','Google से जारी रखें':'Continue with Google','उत्पाद खोजें':'Search products','भाषा बदलें':'Change Language','में आपका स्वागत है':'Welcome to','सुरक्षित लॉगिन':'Secure login','आपके email पर verification code आएगा।':'A verification code will be sent to your email.','ईमेल पता':'Email address','सुरक्षित ईमेल सत्यापन':'Secure email verification','Secure email verification':'Secure email verification','वेदांत किराना दुकान':'Vedant Grocery Shop'
  });
  dict['Vedant Grocery Shop (वेदांत किराना दुकान)']='वेदांत किराना दुकान';
  enDict['Vedant Grocery Shop (वेदांत किराना दुकान)']='Vedant Grocery Shop';
@@ -18224,25 +18224,24 @@ html body:not(#vq1):not(#vq2):not(#vq3):not(#vq4):not(#vq5) .vg-store-header .vg
 <script id="vg-customer-otp-box-controller">
 (function(){
   function init(){
-    var wrap=document.getElementById('vgCustomerOtpBoxes'),hidden=document.getElementById('stvnCustomerOtp');
+    var wrap=document.getElementById('vgCustomerOtpBoxes'), hidden=document.getElementById('stvnCustomerOtp');
     if(!wrap||!hidden||wrap.dataset.ready==='1')return;
-    wrap.dataset.ready='1';var cells=Array.from(wrap.querySelectorAll('.vg-otp-digit'));
-    function sync(){hidden.value=cells.map(function(c){return c.value}).join('').replace(/\D/g,'').slice(0,8);hidden.dispatchEvent(new Event('input',{bubbles:true}));}
-    function fill(value,start){var digits=String(value||'').replace(/\D/g,'').slice(0,8).split('');cells.forEach(function(c,i){c.value=i<digits.length?digits[i]:''});sync();var next=Math.min(digits.length,7);cells[next].focus();}
+    wrap.dataset.ready='1';
+    var cells=Array.from(wrap.querySelectorAll('.vg-otp-digit'));
+    function sync(){hidden.value=cells.map(function(c){return c.value;}).join('').replace(/\D/g,'').slice(0,8);}
+    function focusFirst(){(cells.find(function(c){return !c.value;})||cells[0]).focus();}
+    function fill(value){var digits=String(value||'').replace(/\D/g,'').slice(0,8).split('');cells.forEach(function(c,i){c.value=digits[i]||'';});sync();var next=cells.find(function(c){return !c.value;});(next||cells[7]).focus();}
     cells.forEach(function(cell,index){
-      cell.addEventListener('input',function(){var v=cell.value.replace(/\D/g,'');if(v.length>1){fill(v,index);return}cell.value=v.slice(-1);sync();if(cell.value&&index<7)cells[index+1].focus();if(cells.every(function(c){return c.value}))document.getElementById('stvnCustomerLoginButton')?.focus();});
-      cell.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!cell.value&&index>0){cells[index-1].value='';cells[index-1].focus();sync()}else if(e.key==='ArrowLeft'&&index>0){e.preventDefault();cells[index-1].focus()}else if(e.key==='ArrowRight'&&index<7){e.preventDefault();cells[index+1].focus()}});
-      cell.addEventListener('paste',function(e){var text=(e.clipboardData||window.clipboardData).getData('text');if(text){e.preventDefault();fill(text,index)}});
+      cell.addEventListener('input',function(){var digits=cell.value.replace(/\D/g,'');if(digits.length>1){fill(digits);return;}cell.value=digits.slice(-1);sync();if(cell.value&&index<7)cells[index+1].focus();});
+      cell.addEventListener('keydown',function(e){if(e.key==='Backspace'){if(cell.value){cell.value='';sync();}else if(index>0){cells[index-1].value='';cells[index-1].focus();sync();}}else if(e.key==='ArrowLeft'&&index>0){e.preventDefault();cells[index-1].focus();}else if(e.key==='ArrowRight'&&index<7){e.preventDefault();cells[index+1].focus();}});
+      cell.addEventListener('paste',function(e){var data=(e.clipboardData||window.clipboardData).getData('text');if(data){e.preventDefault();fill(data);}});
     });
-    hidden.addEventListener('input',function(){var digits=hidden.value.replace(/\D/g,'').slice(0,8);if(cells.map(function(c){return c.value}).join('')!==digits){cells.forEach(function(c,i){c.value=digits[i]||''})}});
-    var oldFocus=window.stvnCustomerOtpBoxFocus;window.stvnCustomerOtpBoxFocus=function(){var first=cells.find(function(c){return !c.value})||cells[0];first.focus()};
-    var emailButton=document.getElementById('stvnCustomerLoginButton');
-    if(emailButton){var observer=new MutationObserver(function(){if(document.getElementById('stvnCustomerOtpWrap')?.style.display!=='none'&&document.getElementById('stvnCustomerOtpWrap')?.offsetParent){} });observer.observe(emailButton,{attributes:true,attributeFilter:['disabled','textContent']});}
+    window.stvnCustomerOtpBoxFocus=focusFirst;
+    hidden.addEventListener('input',function(){var digits=hidden.value.replace(/\D/g,'').slice(0,8);cells.forEach(function(c,i){c.value=digits[i]||'';});});
+    var resend=document.getElementById('stvnCustomerResendButton');
+    if(resend)resend.addEventListener('click',function(){cells.forEach(function(c){c.value='';});sync();});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-  document.addEventListener('click',function(e){if(e.target&&e.target.id==='stvnCustomerResendButton'){var h=document.getElementById('stvnCustomerOtp');if(h)h.value='';document.querySelectorAll('#vgCustomerOtpBoxes .vg-otp-digit').forEach(function(c){c.value=''})}});
-  document.addEventListener('focusin',function(e){if(e.target&&e.target.id==='stvnCustomerOtp'){e.preventDefault();window.stvnCustomerOtpBoxFocus?.()}});
-  var oldSend=window.stvnCustomerSendOtp;
 })();
 </script>
 
@@ -19838,3 +19837,60 @@ html.vg-navigating,html.vg-navigating body{overflow-x:hidden!important}
 
 </body>
 </html>
+
+<style id="vg-login-final-corrections">
+/* Login is English-only. The shop logo is placed directly above Continue. */
+#stvnCustomerLoginGate{translate:no;}
+#stvnCustomerLoginGate .vg-otp-boxes{display:grid!important;grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:6px!important;width:100%!important;direction:ltr!important;visibility:visible!important;opacity:1!important;}
+#stvnCustomerLoginGate .vg-otp-digit{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;width:100%!important;height:50px!important;min-height:50px!important;min-width:0!important;padding:0!important;margin:0!important;color:#123d1b!important;-webkit-text-fill-color:#123d1b!important;background:#f5faf6!important;border:1.5px solid #b9d9bf!important;border-radius:11px!important;text-align:center!important;font:800 20px/1 Arial,sans-serif!important;box-sizing:border-box!important;}
+#stvnCustomerLoginGate .vg-otp-digit:focus{border-color:#07952b!important;box-shadow:0 0 0 3px rgba(18,185,40,.14)!important;outline:none!important;}
+#stvnCustomerLoginGate #stvnCustomerOtp{display:none!important;}
+#stvnCustomerLoginGate .stvn-login-otp-help{color:#594817!important;background:#fff8e4!important;}
+@media(max-width:390px){#stvnCustomerLoginGate .vg-otp-boxes{gap:4px!important}#stvnCustomerLoginGate .vg-otp-digit{height:43px!important;min-height:43px!important;font-size:17px!important;border-radius:8px!important}}
+</style>
+
+
+<style id="vg-login-mobile-refresh-20261120">
+/* Refined light VIP login appearance; storefront and other pages remain unchanged. */
+html body #stvnCustomerLoginGate{
+  padding:16px!important;align-items:center!important;justify-content:center!important;
+  background:radial-gradient(ellipse at 12% 8%,#e4f8e8 0%,transparent 42%),
+             radial-gradient(ellipse at 92% 92%,#fff1c8 0%,transparent 38%),
+             linear-gradient(145deg,#f7fff8 0%,#edf8ef 52%,#fffaf0 100%)!important;
+  backdrop-filter:none!important;overflow-y:auto!important;
+}
+#stvnCustomerLoginGate::before{width:300px;height:300px;right:-150px;top:-140px;background:radial-gradient(circle,rgba(30,180,65,.13),transparent 68%)!important}
+#stvnCustomerLoginGate::after{width:260px;height:260px;left:-130px;bottom:-130px;background:radial-gradient(circle,rgba(255,198,52,.18),transparent 68%)!important}
+html body #stvnCustomerLoginGate .stvn-customer-login-card{
+  width:min(100%,440px)!important;min-height:0!important;margin:auto!important;padding:0!important;
+  border:1px solid rgba(255,255,255,.95)!important;border-radius:28px!important;
+  background:linear-gradient(180deg,#ffffff 0%,#fbfffc 100%)!important;
+  box-shadow:0 22px 60px rgba(23,91,39,.14),0 2px 10px rgba(25,80,35,.06)!important;
+  overflow:hidden!important;display:flex!important;flex-direction:column!important;
+}
+#stvnCustomerLoginGate .stvn-login-hero{padding:30px 24px 20px!important;color:#1c3924!important;background:linear-gradient(135deg,#f0fff2 0%,#ffffff 68%,#fff9e8 100%)!important;text-align:center!important}
+#stvnCustomerLoginGate .stvn-login-hero>div[style]{color:#14802a!important}
+html body #stvnCustomerLoginGate h2{color:#173b20!important;font-size:clamp(25px,7vw,31px)!important;line-height:1.15!important;margin:8px 0!important}
+html body #stvnCustomerLoginGate .stvn-login-subtitle{color:#637568!important;font-size:14px!important;line-height:1.5!important;margin:0 auto 15px!important}
+#stvnCustomerLoginGate .stvn-login-benefits span{background:#f0faf2!important;border-color:#d8eddd!important;color:#19732a!important}
+#stvnCustomerLoginGate .stvn-login-sheet{flex:0 0 auto!important;background:#fff!important;color:#243328!important;border-radius:0!important;box-shadow:none!important;padding:22px 24px 24px!important}
+#stvnCustomerLoginGate .stvn-login-field label{color:#34483a!important}
+html body #stvnCustomerLoginGate input{background:#f8fcf9!important;border:1.5px solid #dcebe0!important;color:#1d3022!important}
+html body #stvnCustomerLoginGate input:focus{background:#fff!important;border-color:#20a83a!important;box-shadow:0 0 0 4px rgba(32,168,58,.12)!important}
+#stvnCustomerLoginGate .vg-login-action-logo{display:flex!important;justify-content:center!important;align-items:center!important;margin:14px auto 7px!important;width:66px!important;height:66px!important;padding:5px!important;border-radius:20px!important;background:linear-gradient(145deg,#fff,#eaf9ed)!important;border:1px solid #d8efdd!important;box-shadow:0 8px 20px rgba(25,115,43,.12)!important}
+#stvnCustomerLoginGate .vg-login-action-logo img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important}
+html body #stvnCustomerLoginGate .stvn-customer-login-action{min-height:54px!important;border-radius:15px!important;background:linear-gradient(135deg,#18b83a,#087c20)!important;color:#fff!important;box-shadow:0 9px 20px rgba(18,155,45,.2)!important}
+html body #stvnCustomerLoginGate .stvn-google-login-action{background:#fff!important;color:#29352d!important;border-color:#dce8df!important}
+#stvnCustomerLoginGate .stvn-login-divider{color:#8a998e!important}
+#stvnCustomerLoginGate .stvn-login-trust{color:#748477!important}
+@media(max-width:600px){
+ html body #stvnCustomerLoginGate{padding:12px!important;align-items:center!important;min-height:100dvh!important}
+ html body #stvnCustomerLoginGate .stvn-customer-login-card{width:100%!important;max-width:440px!important;min-height:0!important;border-radius:25px!important;margin:auto!important}
+ #stvnCustomerLoginGate .stvn-login-hero{padding:25px 18px 17px!important}
+ #stvnCustomerLoginGate .stvn-login-sheet{padding:19px 18px calc(20px + env(safe-area-inset-bottom,0px))!important;border-radius:0 0 25px 25px!important}
+ #stvnCustomerLoginGate .vg-login-action-logo{width:58px!important;height:58px!important;border-radius:17px!important;margin:12px auto 7px!important}
+ #stvnCustomerLoginGate .vg-otp-boxes{gap:5px!important}
+ #stvnCustomerLoginGate .vg-otp-digit{height:44px!important;min-height:44px!important;font-size:18px!important}
+}
+@media(max-height:700px) and (max-width:600px){#stvnCustomerLoginGate .stvn-login-hero{padding-top:18px!important;padding-bottom:12px!important}#stvnCustomerLoginGate .stvn-login-benefits{display:none!important}}
+</style>
