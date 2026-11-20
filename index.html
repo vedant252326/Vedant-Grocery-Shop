@@ -18369,3 +18369,114 @@ html body:not(#bk1):not(#bk2):not(#bk3) #page-admin h2{background:#fff!important
 })();
 
 </script>
+
+<!-- ===== v3 FIXES: (1) auto location (2) Track Your Order page overlap (3) mobile colour-grading on white bars ===== -->
+<style id="vg-v3-mobile-fixes">
+/* (2) Track page: sticky yellow strip was sitting on top of the "Track Your Order" heading */
+body:has(#page-track.active) .promo-strip{position:relative!important;top:auto!important;z-index:1!important;margin-bottom:10px!important}
+
+/* location button: little pulse while GPS is being read */
+.vg-location-button.is-locating .pin{animation:vgLocPulse 1s ease-in-out infinite}
+@keyframes vgLocPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+
+/* (3) Mobile only: white bars -> soft colour gradient (green + yellow, same Blinkit theme) */
+@media(max-width:768px){
+  /* Update location bar */
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-location-button{
+    background:linear-gradient(110deg,#d6f2dc 0%,#ecf9ee 48%,#ffeeb8 100%)!important;
+    border:1px solid #b7dfbf!important;box-shadow:0 2px 8px rgba(12,131,31,.14)!important}
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-location-button:hover,
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-location-button:active{
+    background:linear-gradient(110deg,#c9ecd1 0%,#e4f6e8 48%,#ffe69a 100%)!important;border-color:#8fd09c!important}
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-location-button .vg-location-current{border-left:1px solid rgba(12,131,31,.22)!important}
+  /* Track Order / My Orders buttons */
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-action:not(.vg-wallet-action),
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-orders-action{
+    background:linear-gradient(135deg,#d6f2dc 0%,#f1fbf2 50%,#fff0bd 100%)!important;background-image:linear-gradient(135deg,#d6f2dc 0%,#f1fbf2 50%,#fff0bd 100%)!important;
+    border:1px solid #b7dfbf!important;box-shadow:0 2px 8px rgba(12,131,31,.14)!important}
+  /* Search bar */
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-search{
+    background:linear-gradient(110deg,#fff6cf 0%,#f4fbe9 50%,#d9f3de 100%)!important;
+    border:1px solid #c9dfa8!important;box-shadow:0 2px 8px rgba(12,131,31,.12)!important}
+  html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-search span{color:#0c831f!important}
+  /* Track Your Order page heading bar */
+  html body:not(#bk1):not(#bk2):not(#bk3) #page-track > .section-head{
+    background:linear-gradient(110deg,#d6f2dc 0%,#ecf9ee 50%,#ffeeb8 100%)!important;border:1px solid #b7dfbf!important}
+}
+</style>
+<script id="vg-v3-auto-location">
+(function(){
+  'use strict';
+  var KEY='vedantCustomerDeliveryLocationV1',FLAG='vgAutoLocAskedV3',busy=false;
+  function shop(){return {lat:Number(window.SHOP_LATITUDE)||25.3698055556,lng:Number(window.SHOP_LONGITUDE)||83.1131388889}}
+  function kmBetween(a,b,c,d){var r=Math.PI/180,da=(c-a)*r,db=(d-b)*r,x=Math.sin(da/2)*Math.sin(da/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(db/2)*Math.sin(db/2);return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+  function saved(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+  function getPos(o){return new Promise(function(res,rej){navigator.geolocation.getCurrentPosition(res,rej,o)})}
+  function setLocating(on){document.querySelectorAll('.vg-location-button').forEach(function(b){b.classList.toggle('is-locating',on)})}
+
+  async function capture(manual){
+    if(busy)return false;
+    if(!navigator.geolocation){if(manual&&window.stvnAlert)window.stvnAlert('Location is not available in this browser.');return false}
+    busy=true;setLocating(true);
+    try{
+      var pos;
+      try{pos=await getPos({enableHighAccuracy:false,timeout:12000,maximumAge:120000})}
+      catch(e){
+        if(e&&e.code===1)throw e;                         /* permission denied */
+        pos=await getPos({enableHighAccuracy:true,timeout:25000,maximumAge:0}); /* retry with GPS */
+      }
+      var lat=pos.coords.latitude,lng=pos.coords.longitude,acc=pos.coords.accuracy||0,s=shop();
+      var km=kmBetween(lat,lng,s.lat,s.lng),name=km<=5?'5 km area':'Outside 5 km area';
+      window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=km<=5;
+      try{customerLatitude=lat;customerLongitude=lng}catch(e){}
+      var currentName='';
+      try{currentName=(window.vgReverseGeocodeName&&await window.vgReverseGeocodeName(lat,lng))||''}catch(e){}
+      if(!currentName)currentName=lat.toFixed(3)+', '+lng.toFixed(3);
+      try{localStorage.setItem(KEY,JSON.stringify({lat:lat,lng:lng,km:km,name:name,currentName:currentName,accuracy:acc,updatedAt:Date.now()}))}catch(e){}
+      document.querySelectorAll('.vg-location-label').forEach(function(el){el.textContent=name;el.title=name});
+      document.querySelectorAll('.vg-current-location-name').forEach(function(el){el.textContent=currentName;el.title=currentName});
+      if(typeof window.vgRefreshEta==='function')window.vgRefreshEta();
+      if(typeof window.updateCart==='function'){try{window.updateCart()}catch(e){}}
+      return true;
+    }catch(err){
+      if(manual&&window.stvnAlert){
+        window.stvnAlert(err&&err.code===1?'Please allow location access in your browser settings and try again.':'Location could not be detected. Please turn on GPS / internet and try again.');
+      }
+      return false;
+    }finally{busy=false;setLocating(false)}
+  }
+
+  /* header button: same onclick as before, now with low-accuracy first + GPS retry */
+  window.vgRequestHeaderLocation=function(){return capture(true)};
+  window.vgAutoDetectLocation=function(){return capture(false)};
+
+  function stale(){var l=saved();return !l||!l.updatedAt||(Date.now()-l.updatedAt)>10*60*1000}
+
+  async function start(){
+    if(!navigator.geolocation)return;
+    var state='prompt';
+    try{if(navigator.permissions&&navigator.permissions.query){
+      var p=await navigator.permissions.query({name:'geolocation'});state=p.state;
+      p.onchange=function(){if(p.state==='granted')capture(false)};
+    }}catch(e){}
+    if(state==='denied')return;
+    if(state==='granted'){capture(false);return}
+    /* permission not asked yet: ask once automatically, and again on first tap if the browser needs a gesture */
+    var asked=false;try{asked=sessionStorage.getItem(FLAG)==='1'}catch(e){}
+    if(!asked){
+      try{sessionStorage.setItem(FLAG,'1')}catch(e){}
+      var ok=await capture(false);
+      if(ok||!stale())return;
+    }
+    if(!saved()){
+      var once=function(){document.removeEventListener('pointerdown',once,true);capture(false)};
+      document.addEventListener('pointerdown',once,true);
+    }
+  }
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&stale()&&!busy){
+    try{if(navigator.permissions&&navigator.permissions.query){navigator.permissions.query({name:'geolocation'}).then(function(p){if(p.state==='granted')capture(false)})}}catch(e){}
+  }});
+  function init(){setTimeout(start,1200)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
