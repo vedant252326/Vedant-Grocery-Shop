@@ -19458,9 +19458,7 @@ window.stvnRenderCustomerDeliveryMap=function(order){
   const myMap=L.map(el,{zoomControl:false,scrollWheelZoom:false,zoomSnap:.5,attributionControl:true});
   map=myMap;window.stvnCustomerDeliveryMap=myMap;
   L.control.zoom({position:'bottomright'}).addTo(myMap);
-  let errs=0;
-  const carto=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap · © CARTO'}).addTo(myMap);
-  carto.on('tileerror',()=>{if(++errs===4){try{myMap.removeLayer(carto);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(myMap)}catch(e){}}});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(myMap);
   const origRemove=myMap.remove.bind(myMap);
   myMap.remove=function(){if(map===myMap)cleanup();return origRemove()};
   cur=has?[pLat,pLng]:SHOP.slice();
