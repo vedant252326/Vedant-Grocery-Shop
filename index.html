@@ -2072,9 +2072,12 @@ body.stvn-detail-open{overflow:hidden}
 @media(max-width:520px){.stvn-product-detail-modal{padding:0;align-items:flex-end}.stvn-product-detail-sheet{width:100%;max-height:94vh;border-radius:20px 20px 0 0;padding:14px}.stvn-detail-gallery{height:36vh;min-height:210px}.stvn-detail-name{font-size:20px}.stvn-detail-price{font-size:19px}}
 </style>
 
+<script>(function(){var d=document.documentElement;try{var e=(localStorage.getItem('vedantCustomerEmail')||'').trim().toLowerCase(),v=e?localStorage.getItem('vedantLanguage:'+e):null;if(v!=='en'&&v!=='hi')v=localStorage.getItem('vedantLanguagePreference');if(v!=='en'&&v!=='hi')v=localStorage.getItem('vedantLanguage:guest');d.classList.add(v==='en'||v==='hi'?'v-lang-saved':'v-lang-wait')}catch(x){d.classList.add('v-lang-wait')}setTimeout(function(){d.classList.remove('v-lang-wait')},6000)})();</script>
 <style id="vedant-first-paint-language-guard">
 html{visibility:hidden}
 #vLangGate{visibility:visible;display:flex}
+/* Saved language: never show the chooser. First visit: show it only after the intro animation ends. */
+html.v-lang-saved #vLangGate,html.v-lang-wait #vLangGate{display:none!important}
 </style>
 
 <style id="vedant-complete-mobile-layout-polish-20261115">
@@ -3245,10 +3248,21 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
 "sb_publishable_TNWFpjsV6iyiIZE_bsijfg_gjbqUZLi";
 
+/* Keep the login across app restarts: localStorage first, IndexedDB as a backup copy. */
+const vgAuthDb=(function(){let p=null;function open(){if(p)return p;p=new Promise(function(res,rej){try{const r=indexedDB.open("vedant-auth",1);r.onupgradeneeded=function(){r.result.createObjectStore("kv")};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}}catch(e){rej(e)}});return p}
+function run(mode,fn){return open().then(function(db){return new Promise(function(res){try{const q=fn(db.transaction("kv",mode).objectStore("kv"));q.onsuccess=function(){res(q.result===undefined?null:q.result)};q.onerror=function(){res(null)}}catch(e){res(null)}})}).catch(function(){return null})}
+return{get:function(k){return run("readonly",function(s){return s.get(k)})},set:function(k,v){return run("readwrite",function(s){return s.put(v,k)})},del:function(k){return run("readwrite",function(s){return s.delete(k)})}}})();
+const vgAuthStorage={
+  async getItem(k){let v=null;try{v=localStorage.getItem(k)}catch(e){}if(v==null){v=await vgAuthDb.get(k);if(v!=null){try{localStorage.setItem(k,v)}catch(e){}}}return v},
+  async setItem(k,v){try{localStorage.setItem(k,v)}catch(e){}await vgAuthDb.set(k,v)},
+  async removeItem(k){try{localStorage.removeItem(k)}catch(e){}await vgAuthDb.del(k)}
+};
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 const supabaseClient =
 window.supabase.createClient(
 SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY
+SUPABASE_PUBLISHABLE_KEY,
+{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:vgAuthStorage,storageKey:"sb-dpkffmprgqaadlpkoiqd-auth-token"}}
 );
 // Share the same authenticated client with the account, wallet and tracking modules.
 window.supabaseClient = supabaseClient;
@@ -13950,7 +13964,9 @@ body.stvn-qr-flow-ended>*{display:none!important}
  };
  function currentEmail(){try{return String(localStorage.getItem('vedantCustomerEmail')||'').trim().toLowerCase()}catch(_){return ''}}
  function keyForUser(){const e=currentEmail();return e?'vedantLanguage:'+e:'vedantLanguage:guest'}
- function lang(){try{const e=currentEmail();const saved=e?localStorage.getItem('vedantLanguage:'+e):sessionStorage.getItem('vedantGuestLanguage');return ['en','hi'].includes(saved)?saved:'en'}catch(_){return 'en'}}
+ function savedLang(){try{const e=currentEmail();let s=e?localStorage.getItem('vedantLanguage:'+e):null;if(s!=='en'&&s!=='hi')s=localStorage.getItem('vedantLanguagePreference');if(s!=='en'&&s!=='hi')s=localStorage.getItem('vedantLanguage:guest');return s==='en'||s==='hi'?s:''}catch(_){return ''}}
+ function saveLang(l){try{localStorage.setItem('vedantLanguagePreference',l);const e=currentEmail();localStorage.setItem('vedantLanguage:'+(e||'guest'),l)}catch(_){}}
+ function lang(){return savedLang()||'en'}
  const originals=new WeakMap(),translatedValues=new WeakMap(),translatedLanguages=new WeakMap();
  const indicText=/[\u0900-\u097F\u0980-\u09FF]/;
 
@@ -14248,16 +14264,16 @@ Object.assign(enDict,{
    enqueueTranslation(activePage,lang());
   },80),true);
  }
- function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;gate.style.display='flex';gate.style.visibility='visible';document.documentElement.style.visibility='hidden';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
+ function open(force){if(!gate)return;const continueButton=gate.querySelector('#vLangContinue');if(continueButton)continueButton.disabled=false;document.documentElement.classList.remove('v-lang-saved');gate.style.pointerEvents='';gate.style.display='flex';gate.style.visibility='visible';document.body.style.overflow='hidden';const l=lang();chosen=l;const r=gate.querySelector('input[value="'+l+'"]');if(r)r.checked=true;updateChoices();}
  function close(){if(gate){gate.style.display='none';gate.style.visibility='hidden';gate.style.pointerEvents='none';}document.body.style.overflow='';document.documentElement.style.visibility='visible';window.setTimeout(()=>apply(),0);}
  function updateChoices(){gate.querySelectorAll('[data-lang-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.langChoice===chosen));}
  gate?.querySelectorAll('input[name="vlang"]').forEach(x=>x.addEventListener('change',()=>{chosen=(x.value==='hi'?'hi':'en');updateChoices()}));
- gate?.querySelector('#vLangContinue')?.addEventListener('click',()=>{const button=gate.querySelector('#vLangContinue');if(button?.disabled)return;if(button)button.disabled=true;try{const email=currentEmail();if(email)localStorage.setItem('vedantLanguage:'+email,chosen);else sessionStorage.setItem('vedantGuestLanguage',chosen)}catch(_){}if(typeof window.stvnQrLanguageComplete==='function'){gate.style.display='none';gate.style.visibility='hidden';window.stvnQrLanguageComplete();}else{close();}});
+ gate?.querySelector('#vLangContinue')?.addEventListener('click',()=>{const button=gate.querySelector('#vLangContinue');if(button?.disabled)return;if(button)button.disabled=true;try{const email=currentEmail();}catch(_){}saveLang(chosen);if(typeof window.stvnQrLanguageComplete==='function'){gate.style.display='none';gate.style.visibility='hidden';window.stvnQrLanguageComplete();}else{close();}});
  window.vedantChangeLanguage=open;window.vedantApplyLanguage=apply;
  // Add a language option when the account menu is created, without replacing existing actions.
  function addLanguageButton(){const menu=document.getElementById('stvnProfileMenu');if(!menu)return false;if(!document.getElementById('vLangMenuButton')){const b=document.createElement('button');b.id='vLangMenuButton';b.type='button';b.textContent='🌐 Change Language';b.onclick=()=>open(true);menu.insertBefore(b,menu.querySelector('.stvn-logout')||null);}return true;}
  if(!addLanguageButton()){const menuObserver=new MutationObserver(()=>{if(addLanguageButton())menuObserver.disconnect()});menuObserver.observe(document.body,{childList:true,subtree:true});}
- function startLanguage(){const email=currentEmail();let saved='';try{saved=email?localStorage.getItem('vedantLanguage:'+email):''}catch(_){}if(saved==='en'||saved==='hi'){chosen=saved;gate.style.display='none';gate.style.visibility='hidden';document.documentElement.style.visibility='visible';document.body.style.overflow='';apply();}else{open(true)}}
+ function startLanguage(){const saved=savedLang();if(saved==='en'||saved==='hi'){chosen=saved;gate.style.display='none';gate.style.visibility='hidden';document.documentElement.style.visibility='visible';document.body.style.overflow='';apply();}else{open(true)}}
  // Show the language/storefront immediately; restore the optional account session in the background.
  startLanguage();
  if(window.supabaseClient?.auth){
@@ -14271,7 +14287,8 @@ Object.assign(enDict,{
          const email=String(session.user.email||'').trim().toLowerCase();
          if(email){try{localStorage.setItem('vedantCustomerEmail',email)}catch(_){}}
          let saved='';try{saved=email?localStorage.getItem('vedantLanguage:'+email):''}catch(_){}
-         if(saved==='en'||saved==='hi'){chosen=saved;close()}else open(true);
+         if(saved!=='en'&&saved!=='hi')saved=savedLang();
+         if(saved==='en'||saved==='hi'){chosen=saved;saveLang(saved);close()}else open(true);
        }
      });
    }catch(error){console.warn('Auth state listener unavailable:',error);}
@@ -14350,7 +14367,7 @@ Object.assign(enDict,{
     '@media (prefers-reduced-motion:reduce){#vgSplash *,#vgSplash{animation-duration:.01s!important;animation-delay:0s!important}}';
     document.head.appendChild(css);
     var gone=false;
-    function leave(){if(gone)return;gone=true;splash.classList.add('out');setTimeout(function(){try{splash.remove();css.remove()}catch(e){}},680)}
+    function leave(){if(gone)return;gone=true;splash.classList.add('out');setTimeout(function(){try{splash.remove();css.remove()}catch(e){}document.documentElement.classList.remove('v-lang-wait')},680)}
     splash.addEventListener('click',leave);
     setTimeout(leave,reduce?900:3000);
   })();
@@ -14715,9 +14732,7 @@ Object.assign(enDict,{
 (function(){
  const gate=document.getElementById('vLangGate');if(!gate)return;
  const continueButton=gate.querySelector('#vLangContinue');
- gate.querySelectorAll('label[data-lang-choice]').forEach(label=>{
-   label.addEventListener('click',()=>{const radio=label.querySelector('input[name="vlang"]');if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));}},{passive:true});
- });
+ gate.querySelectorAll('.vlang-choice').forEach(l=>{l.style.touchAction='manipulation';l.style.webkitTapHighlightColor='transparent';l.style.userSelect='none'});
  if(continueButton){continueButton.addEventListener('click',()=>{setTimeout(()=>{if(gate.style.display==='none'){gate.style.pointerEvents='none';gate.style.visibility='hidden';document.documentElement.style.visibility='visible';document.body.style.overflow='';}},0);});}
 })();
 </script>
@@ -17766,7 +17781,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const $=id=>document.getElementById(id);
  let map=null, customerMarker=null, shopMarker=null, radiusCircle=null, tileLayer=null, selected=null, mapReady=false, gpsAccuracy=null, pendingGPS=null, mapResizeObserver=null;
  const text={en:{title:'Select your delivery location',help:'Tap the map or move the pin to adjust your delivery location. Use GPS for your current location.',gps:'📍 Use Current Location',getting:'Getting your current location…',shop:'Vedant Grocery Shop',customer:'Your selected location',distance:'Distance from Shop',within:'Delivery available within 5 km.',outside:'Outside the 5 km delivery area. Delivery is not available here.',tap:'Tap the map to select your delivery location.',continue:'Continue',gpsFail:'Could not get your location. Allow GPS permission and try again.',gpsUnsupported:'GPS is not supported by this browser.',selected:'Selected delivery location',accuracy:'GPS accuracy',mapWait:'Loading map…'},hi:{title:'अपनी डिलीवरी लोकेशन चुनें',help:'मैप पर टैप करें या पिन खिसकाकर डिलीवरी लोकेशन बदलें। वर्तमान लोकेशन के लिए GPS इस्तेमाल करें।',gps:'📍 वर्तमान लोकेशन इस्तेमाल करें',getting:'आपकी वर्तमान लोकेशन ली जा रही है…',shop:'वेदांत ग्रॉसरी शॉप',customer:'आपकी चुनी हुई लोकेशन',distance:'दुकान से दूरी',within:'5 km के अंदर डिलीवरी उपलब्ध है।',outside:'आपकी लोकेशन 5 km डिलीवरी क्षेत्र से बाहर है। यहाँ डिलीवरी उपलब्ध नहीं है।',tap:'अपनी डिलीवरी लोकेशन चुनने के लिए मैप पर टैप करें।',continue:'आगे बढ़ें',gpsFail:'लोकेशन नहीं मिल सकी। GPS अनुमति देकर दोबारा कोशिश करें।',gpsUnsupported:'इस ब्राउज़र में GPS उपलब्ध नहीं है।',selected:'चुनी गई डिलीवरी लोकेशन',accuracy:'GPS की सटीकता',mapWait:'मैप लोड हो रहा है…'}};
- function lang(){let l=document.documentElement.dataset.language||document.documentElement.lang||'en';try{const email=String(localStorage.getItem('vedantCustomerEmail')||'').trim().toLowerCase();const saved=email?localStorage.getItem('vedantLanguage:'+email):sessionStorage.getItem('vedantGuestLanguage');if(saved==='en'||saved==='hi')l=saved;}catch(_){}return l==='hi'?'hi':'en';}
+ function lang(){let l=document.documentElement.dataset.language||document.documentElement.lang||'en';try{const email=String(localStorage.getItem('vedantCustomerEmail')||'').trim().toLowerCase();let saved=email?localStorage.getItem('vedantLanguage:'+email):null;if(saved!=='en'&&saved!=='hi')saved=localStorage.getItem('vedantLanguagePreference')||localStorage.getItem('vedantLanguage:guest');if(saved==='en'||saved==='hi')l=saved;}catch(_){}return l==='hi'?'hi':'en';}
  function t(k){return text[lang()][k]||text.en[k]||k;}
  function kmBetween(a,b,c,d){const r=Math.PI/180,da=(c-a)*r,db=(d-b)*r,x=Math.sin(da/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(db/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
  function mapPanel(){let panel=$('vgLocationMapPanel');if(panel)return panel;const page=$('page-location');if(!page)return null;panel=document.createElement('section');panel.id='vgLocationMapPanel';panel.className='vg-location-map-panel';panel.innerHTML='<h3 class="vg-location-map-title" id="vgLocationMapTitle"></h3><p class="vg-location-map-help" id="vgLocationMapHelp"></p><div id="vedantInteractiveLocationMap" role="application" aria-label="Interactive delivery location map"></div><div class="vg-location-map-legend"><span><i class="vg-location-map-dot" style="background:#e53935"></i><b id="vgMapCustomerLegend"></b></span><span><i class="vg-location-map-dot" style="background:#0e8b1e"></i><b id="vgMapShopLegend"></b></span></div><div id="vgLocationDistance" class="vg-location-distance" hidden></div><div id="vgLocationAddress" class="vg-location-address"></div>';
@@ -19028,6 +19043,206 @@ html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #page-loca
   }
   setTimeout(refreshSaved,3200);
   document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(refreshSaved,1500)});
+})();
+</script>
+
+<style id="vg-superadmin-css">
+/* ===== Super Admin shell (laptop + mobile) ===== */
+body #page-admin.active.vg-sa{--sa-bg:#f3f5f7;--sa-card:#fff;--sa-line:#e3e8ee;--sa-text:#18212b;--sa-mute:#667585;--sa-brand:#0c831f;--sa-brand-soft:#e6f4e8;--sa-warn:#b7791f;--sa-bad:#c0392b;
+ position:fixed!important;inset:0!important;z-index:8000!important;overflow:auto!important;background:var(--sa-bg)!important;color:var(--sa-text)!important;padding:0!important;margin:0!important;max-width:none!important;font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;-webkit-overflow-scrolling:touch}
+body.dark #page-admin.active.vg-sa{--sa-bg:#0f1417;--sa-card:#171e23;--sa-line:#27323a;--sa-text:#e8eef2;--sa-mute:#93a2ae;--sa-brand:#33c24a;--sa-brand-soft:#16301b}
+body #page-admin.vg-sa #adminPanel{display:block!important;max-width:none!important;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+body #page-admin.vg-sa #adminPanel>h2,body #page-admin.vg-sa #adminContent>.admin-toolbar{display:none!important}
+#vgSaNav,#vgSaTabs,#vgSaTop{display:none}
+body #page-admin.vg-sa #vgSaNav{display:flex;position:fixed;left:0;top:0;bottom:0;width:244px;flex-direction:column;gap:2px;padding:18px 12px;background:var(--sa-card);border-right:1px solid var(--sa-line);overflow:auto;z-index:2}
+body #page-admin.vg-sa #vgSaTop{display:flex;position:sticky;top:0;z-index:3;align-items:center;justify-content:space-between;gap:12px;margin-left:244px;padding:14px 28px;background:var(--sa-bg);border-bottom:1px solid var(--sa-line)}
+#vgSaTop h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em;color:var(--sa-text)}
+#vgSaTop small{display:block;color:var(--sa-mute);font-size:12px;margin-top:2px}
+#vgSaTop .sa-actions{display:flex;gap:8px}
+.sa-brand{display:flex;align-items:center;gap:10px;padding:4px 10px 16px;font-weight:700;color:var(--sa-text)}
+.sa-brand i{width:32px;height:32px;border-radius:9px;background:var(--sa-brand);color:#fff;display:grid;place-items:center;font-style:normal;font-size:15px}
+.sa-brand small{display:block;font-weight:500;font-size:11px;color:var(--sa-mute)}
+.sa-link{display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border:0;border-radius:9px;background:transparent;color:var(--sa-mute);font:600 14px/1.2 inherit;text-align:left;cursor:pointer;min-height:42px}
+.sa-link svg{width:19px;height:19px;flex:0 0 19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sa-link:hover{background:var(--sa-bg);color:var(--sa-text)}
+.sa-link[aria-current=page]{background:var(--sa-brand-soft);color:var(--sa-brand)}
+.sa-link:focus-visible,.sa-btn:focus-visible,.sa-tab:focus-visible{outline:2px solid var(--sa-brand);outline-offset:2px}
+.sa-sep{height:1px;background:var(--sa-line);margin:10px 6px}
+.sa-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--sa-line);border-radius:9px;background:var(--sa-card);color:var(--sa-text);font:600 13px/1 inherit;cursor:pointer;min-height:38px}
+.sa-btn.primary{background:var(--sa-brand);border-color:var(--sa-brand);color:#fff}
+body #page-admin.vg-sa #adminContent{display:block!important;margin-left:244px;padding:24px 28px 40px;max-width:1280px}
+body #page-admin.vg-sa #adminContent>section,body #page-admin.vg-sa #adminContent>#adminShopStatusSection{background:var(--sa-card)!important;border:1px solid var(--sa-line)!important;border-radius:12px!important;padding:20px!important;margin:0 0 18px!important;box-shadow:none!important;color:var(--sa-text)!important}
+body #page-admin.vg-sa #adminContent>section[hidden]{display:none!important}
+body #page-admin.vg-sa.sa-dash #adminContent{display:none!important}
+body #page-admin.vg-sa #adminContent h3{color:var(--sa-text)!important;font-size:17px;margin:0 0 6px}
+body #page-admin.vg-sa .admin-small{color:var(--sa-mute)!important}
+body #page-admin.vg-sa #adminContent input:not([type=checkbox]):not([type=radio]),body #page-admin.vg-sa #adminContent select,body #page-admin.vg-sa #adminContent textarea{background:var(--sa-card)!important;color:var(--sa-text)!important;border:1px solid var(--sa-line)!important;border-radius:9px!important;min-height:42px}
+body #page-admin.vg-sa #adminContent input:focus,body #page-admin.vg-sa #adminContent select:focus,body #page-admin.vg-sa #adminContent textarea:focus{outline:2px solid var(--sa-brand)!important;outline-offset:0}
+body #page-admin.vg-sa .admin-order,body #page-admin.vg-sa .product-admin-card{background:var(--sa-card)!important;color:var(--sa-text)!important;border:1px solid var(--sa-line)!important;border-radius:12px!important;box-shadow:none!important}
+body #page-admin.vg-sa .admin-btn,body #page-admin.vg-sa .admin-refresh,body #page-admin.vg-sa .admin-section-save-button{border-radius:9px!important;min-height:40px}
+#vgSaHome{display:none}
+body #page-admin.vg-sa #vgSaHome.on{display:block;margin-left:244px;padding:24px 28px 40px;max-width:1280px;box-sizing:content-box}
+.sa-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.sa-kpi{background:var(--sa-card);border:1px solid var(--sa-line);border-radius:12px;padding:16px 18px;min-width:0}
+.sa-kpi span{display:block;color:var(--sa-mute);font-size:13px;font-weight:600}
+.sa-kpi b{display:block;margin-top:8px;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.sa-kpi em{display:block;margin-top:6px;font-style:normal;font-size:12px;color:var(--sa-mute)}
+.sa-kpi.warn b{color:var(--sa-warn)}.sa-kpi.bad b{color:var(--sa-bad)}
+.sa-grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px}
+.sa-panel{background:var(--sa-card);border:1px solid var(--sa-line);border-radius:12px;padding:18px;min-width:0}
+.sa-panel h2{margin:0 0 14px;font-size:15px;font-weight:700;color:var(--sa-text)}
+.sa-bars{display:flex;align-items:flex-end;gap:10px;height:170px}
+.sa-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;min-width:0}
+.sa-bar i{display:block;width:100%;max-width:44px;border-radius:6px 6px 0 0;background:var(--sa-brand);min-height:3px}
+.sa-bar small{font-size:11px;color:var(--sa-mute)}.sa-bar u{text-decoration:none;font-size:11px;font-weight:600;color:var(--sa-text)}
+.sa-table-wrap{overflow-x:auto}
+.sa-table{width:100%;border-collapse:collapse;font-size:13px}
+.sa-table th{text-align:left;color:var(--sa-mute);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--sa-line);white-space:nowrap}
+.sa-table td{padding:11px 10px;border-bottom:1px solid var(--sa-line);white-space:nowrap}
+.sa-table tr:last-child td{border-bottom:0}
+.sa-pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--sa-bg);color:var(--sa-mute)}
+.sa-pill.pending{background:#fff4dc;color:#8a5a00}.sa-pill.delivered{background:var(--sa-brand-soft);color:var(--sa-brand)}.sa-pill.cancelled{background:#fde8e6;color:var(--sa-bad)}.sa-pill.out_for_delivery,.sa-pill.confirmed,.sa-pill.preparing{background:#e5eefc;color:#2255a4}
+.sa-empty{color:var(--sa-mute);font-size:13px;padding:18px 0;text-align:center}
+.sa-filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.sa-chip{padding:8px 13px;border:1px solid var(--sa-line);border-radius:99px;background:var(--sa-card);color:var(--sa-mute);font:600 13px/1 inherit;cursor:pointer;min-height:36px}
+.sa-chip[aria-pressed=true]{background:var(--sa-brand);border-color:var(--sa-brand);color:#fff}
+@media(max-width:1100px){.sa-kpis{grid-template-columns:repeat(2,1fr)}.sa-grid2{grid-template-columns:1fr}}
+@media(max-width:860px){
+ body #page-admin.vg-sa #vgSaNav{display:none}
+ body #page-admin.vg-sa #vgSaTop{margin-left:0;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px}
+ #vgSaTop h1{font-size:17px}#vgSaTop .sa-actions .sa-btn span{display:none}
+ body #page-admin.vg-sa #adminContent,body #page-admin.vg-sa #vgSaHome.on{margin-left:0;padding:14px 12px calc(88px + env(safe-area-inset-bottom,0px))}
+ body #page-admin.vg-sa #adminContent>section{padding:14px!important}
+ body #page-admin.vg-sa #vgSaTabs{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sa-card);border-top:1px solid var(--sa-line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+ .sa-tab{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;color:var(--sa-mute);font:600 11px/1.1 inherit;padding:6px 2px;min-height:48px;cursor:pointer}
+ .sa-tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ .sa-tab[aria-current=page]{color:var(--sa-brand)}
+ .sa-kpi{padding:13px}.sa-kpi b{font-size:22px}
+ #vgSaMore{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--sa-card);border-radius:18px 18px 0 0;border-top:1px solid var(--sa-line);padding:14px 12px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 40px #0004;display:none}
+ #vgSaMore.on{display:block}#vgSaMore .sa-link{font-size:15px}
+}
+@media(min-width:861px){#vgSaMore{display:none!important}}
+@media(prefers-reduced-motion:reduce){#page-admin *{transition:none!important;animation:none!important}}
+</style>
+<script id="vg-superadmin-js">
+(function(){
+ const $=id=>document.getElementById(id);
+ const IC={dash:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',orders:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/>',prod:'<path d="M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',cat:'<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',care:'<path d="M3 18v-6a9 9 0 0 1 18 0v6M21 19a2 2 0 0 1-2 2h-1v-8h3zM3 19a2 2 0 0 0 2 2h1v-8H3z"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',shop:'<path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/>',money:'<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',more:'<path d="M5 12h.01M12 12h.01M19 12h.01"/>',out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',back:'<path d="M19 12H5M12 19l-7-7 7-7"/>',ref:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>'};
+ const svg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[k]+'</svg>';
+ const VIEWS=[
+  {id:'dash',t:'Dashboard',s:'Business overview',ic:'dash'},
+  {id:'orders',t:'Orders',s:'Track and update customer orders',ic:'orders',sec:'adminOrdersSection',load:()=>window.loadAdminOrders&&loadAdminOrders()},
+  {id:'prod',t:'Add product',s:'Create or edit a product',ic:'prod',sec:'adminProductsSection'},
+  {id:'list',t:'Products',s:'Stock, price and availability',ic:'list',sec:'adminProductListSection',load:()=>window.loadAdminProducts&&loadAdminProducts()},
+  {id:'cat',t:'Categories',s:'Category photos on the storefront',ic:'cat',sec:'adminCategoryDisplaySection'},
+  {id:'care',t:'Customer care',s:'Phone, WhatsApp and email shown to customers',ic:'care',sec:'adminCustomerCareSection',load:()=>window.loadCustomerCareSettings&&loadCustomerCareSettings()},
+  {id:'notif',t:'Alerts',s:'Order sound and email notifications',ic:'bell',sec:'adminSoundEmailSection',load:()=>window.loadOrderNotificationSettings&&loadOrderNotificationSettings()},
+  {id:'status',t:'Shop status',s:'Open, close or maintenance mode',ic:'shop',sec:'adminShopStatusSection',after:()=>{const p=$('adminShopStatusPanel');if(p&&p.hidden&&window.toggleShopStatusPanel)toggleShopStatusPanel();}},
+  {id:'wd',t:'Withdrawals',s:'Customer wallet withdrawal requests',ic:'money',sec:'stvnWithdrawalAdmin',custom:()=>{if(window.toggleWithdrawalStatusPanel){const b=$('stvnWithdrawalAdmin');if(!b||b.hidden)toggleWithdrawalStatusPanel();}}},
+  {id:'offers',t:'Offers',s:'Promotional offers',ic:'list',sec:'stvnOffersAdmin'}
+ ];
+ const TABS=['dash','orders','list','status','more'];
+ let current='dash',built=false;
+ const money=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
+ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ function build(){
+  const page=$('page-admin'),panel=$('adminPanel'),content=$('adminContent');
+  if(!page||!panel||!content||built)return;built=true;
+  const nav=document.createElement('nav');nav.id='vgSaNav';nav.setAttribute('aria-label','Admin navigation');
+  nav.innerHTML='<div class="sa-brand"><i>V</i><div>Vedant Admin<small>Super admin console</small></div></div>'+
+   VIEWS.map(v=>'<button class="sa-link" type="button" data-v="'+v.id+'">'+svg(v.ic)+v.t+'</button>').join('')+
+   '<div class="sa-sep"></div><button class="sa-link" type="button" data-act="shop">'+svg('back')+'Back to shop</button><button class="sa-link" type="button" data-act="logout">'+svg('out')+'Log out</button>';
+  const top=document.createElement('header');top.id='vgSaTop';
+  top.innerHTML='<div><h1 id="vgSaTitle">Dashboard</h1><small id="vgSaSub"></small></div><div class="sa-actions"><button class="sa-btn" type="button" data-act="refresh">'+svg('ref').replace('<svg','<svg width="16" height="16" style="stroke:currentColor;fill:none;stroke-width:2"')+'<span>Refresh</span></button></div>';
+  const home=document.createElement('section');home.id='vgSaHome';home.setAttribute('aria-label','Dashboard');
+  const tabs=document.createElement('nav');tabs.id='vgSaTabs';tabs.setAttribute('aria-label','Admin tabs');
+  const lab={dash:'Home',orders:'Orders',list:'Products',status:'Shop',more:'More'},ico={dash:'dash',orders:'orders',list:'list',status:'shop',more:'more'};
+  tabs.innerHTML=TABS.map(t=>'<button class="sa-tab" type="button" data-v="'+t+'">'+svg(ico[t])+lab[t]+'</button>').join('');
+  const more=document.createElement('div');more.id='vgSaMore';
+  more.innerHTML=VIEWS.filter(v=>!['dash','orders','list','status'].includes(v.id)).map(v=>'<button class="sa-link" type="button" data-v="'+v.id+'">'+svg(v.ic)+v.t+'</button>').join('')+'<div class="sa-sep"></div><button class="sa-link" type="button" data-act="shop">'+svg('back')+'Back to shop</button><button class="sa-link" type="button" data-act="logout">'+svg('out')+'Log out</button>';
+  panel.insertBefore(nav,content);panel.insertBefore(top,content);panel.insertBefore(home,content);panel.appendChild(tabs);panel.appendChild(more);
+  page.addEventListener('click',e=>{
+   const b=e.target.closest('[data-v],[data-act]');if(!b||!page.contains(b))return;
+   if(b.dataset.v){if(b.dataset.v==='more'){more.classList.toggle('on');return}go(b.dataset.v);return}
+   const a=b.dataset.act;
+   if(a==='shop'&&window.showPage)showPage('shop');
+   if(a==='logout'&&window.adminLogout)adminLogout();
+   if(a==='refresh')go(current,true);
+  });
+ }
+ function sections(){return VIEWS.filter(v=>v.sec).map(v=>$(v.sec)).filter(Boolean)}
+ async function go(id,reload){
+  const v=VIEWS.find(x=>x.id===id)||VIEWS[0];current=v.id;
+  const content=$('adminContent'),home=$('vgSaHome');
+  $('vgSaMore')?.classList.remove('on');
+  sections().forEach(s=>{s.hidden=true});
+  ['adminProductsSection','adminCategoryDisplaySection','adminProductListSection','adminOrdersSection'].forEach(i=>{const s=$(i);if(s)s.hidden=true});
+  content?.classList.remove('admin-full-width-panel');
+  document.querySelectorAll('#vgSaNav [data-v],#vgSaTabs [data-v]').forEach(b=>{const on=b.dataset.v===v.id||(b.dataset.v==='more'&&!TABS.includes(v.id));if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  $('vgSaTitle').textContent=v.t;$('vgSaSub').textContent=v.s;
+  home.classList.toggle('on',v.id==='dash');
+  $('page-admin').classList.toggle('sa-dash',v.id==='dash');
+  if(v.id==='dash'){renderDash();return}
+  if(v.custom)v.custom();
+  const sec=$(v.sec);
+  if(sec){sec.hidden=false;if(v.id==='orders')addOrderFilters(sec)}
+  if(v.after)v.after();
+  if(v.load&&(reload||true))try{await v.load()}catch(e){console.warn(e)}
+  window.scrollTo(0,0);$('page-admin').scrollTop=0;
+ }
+ function addOrderFilters(sec){
+  if(sec.querySelector('.sa-filters'))return;
+  const sel=$('adminOrderFilter');if(!sel)return;
+  const wrap=document.createElement('div');wrap.className='sa-filters';
+  const names={all:'All',pending:'Pending',confirmed:'Confirmed',preparing:'Preparing',out_for_delivery:'Out for delivery',delivered:'Delivered',cancelled:'Cancelled'};
+  wrap.innerHTML=[...sel.options].map(o=>'<button class="sa-chip" type="button" data-f="'+o.value+'" aria-pressed="'+(sel.value===o.value)+'">'+(names[o.value]||o.textContent.trim())+'</button>').join('');
+  wrap.addEventListener('click',e=>{const c=e.target.closest('[data-f]');if(!c)return;sel.value=c.dataset.f;wrap.querySelectorAll('.sa-chip').forEach(x=>x.setAttribute('aria-pressed',String(x===c)));window.loadAdminOrders&&loadAdminOrders()});
+  const h=sec.querySelector('.admin-section-heading-row');(h?h.after(wrap):sec.prepend(wrap));
+ }
+ async function renderDash(){
+  const home=$('vgSaHome');
+  home.innerHTML='<div class="sa-kpis">'+['Orders today','Revenue today','Pending orders','Low stock items'].map(t=>'<div class="sa-kpi"><span>'+t+'</span><b>–</b><em>Loading…</em></div>').join('')+'</div>';
+  try{
+   const [o,p]=await Promise.all([
+    supabaseClient.from('orders').select('order_id,customer_name,total,order_status,order_date').order('order_date',{ascending:false}).limit(1000),
+    supabaseClient.from('products').select('id,stock,available')
+   ]);
+   if(o.error)throw o.error;
+   const orders=o.data||[],prods=(p&&p.data)||[];
+   const day=d=>{const x=new Date(d);return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()};
+   const today=day(new Date());
+   const live=orders.filter(x=>x.order_status!=='cancelled');
+   const tOrders=orders.filter(x=>day(x.order_date)===today);
+   const tRev=tOrders.filter(x=>x.order_status!=='cancelled').reduce((s,x)=>s+Number(x.total||0),0);
+   const pending=orders.filter(x=>x.order_status==='pending').length;
+   const low=prods.filter(x=>Number(x.stock)<=5).length;
+   const delivered=orders.filter(x=>x.order_status==='delivered').length;
+   const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d});
+   const series=days.map(d=>({l:d.toLocaleDateString('en-IN',{weekday:'short'}),v:live.filter(x=>day(x.order_date)===day(d)).reduce((s,x)=>s+Number(x.total||0),0)}));
+   const max=Math.max(1,...series.map(x=>x.v));
+   const status=s=>'<span class="sa-pill '+esc(s)+'">'+esc(String(s||'').replace(/_/g,' '))+'</span>';
+   const recent=orders.slice(0,6).map(x=>'<tr><td>#'+esc(x.order_id)+'</td><td>'+esc(x.customer_name||'—')+'</td><td>'+money(x.total)+'</td><td>'+status(x.order_status)+'</td></tr>').join('');
+   home.innerHTML=
+    '<div class="sa-kpis">'+
+    '<div class="sa-kpi"><span>Orders today</span><b>'+tOrders.length+'</b><em>'+orders.length+' orders in total</em></div>'+
+    '<div class="sa-kpi"><span>Revenue today</span><b>'+money(tRev)+'</b><em>Cancelled orders excluded</em></div>'+
+    '<div class="sa-kpi '+(pending?'warn':'')+'"><span>Pending orders</span><b>'+pending+'</b><em>'+delivered+' delivered so far</em></div>'+
+    '<div class="sa-kpi '+(low?'bad':'')+'"><span>Low stock items</span><b>'+low+'</b><em>'+prods.length+' products listed</em></div></div>'+
+    '<div class="sa-grid2"><div class="sa-panel"><h2>Revenue, last 7 days</h2><div class="sa-bars">'+series.map(x=>'<div class="sa-bar"><u>'+(x.v?money(x.v):'')+'</u><i style="height:'+Math.max(2,Math.round(x.v/max*100))+'%"></i><small>'+x.l+'</small></div>').join('')+'</div></div>'+
+    '<div class="sa-panel"><h2>Recent orders</h2>'+(recent?'<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>'+recent+'</tbody></table></div><div style="margin-top:12px"><button class="sa-btn" type="button" data-v="orders">View all orders</button></div>':'<div class="sa-empty">No orders yet. New orders will appear here.</div>')+'</div></div>';
+  }catch(err){
+   home.innerHTML='<div class="sa-panel"><h2>Could not load the dashboard</h2><p class="sa-empty" style="text-align:left">'+esc(err.message||err)+'. Check your connection and press Refresh.</p></div>';
+  }
+ }
+ function sync(){
+  const page=$('page-admin'),content=$('adminContent');if(!page)return;
+  const owner=!!window.__stvnOwnerAdminAuthorized&&page.classList.contains('active')&&$('adminLoginBox')&&getComputedStyle($('adminLoginBox')).display==='none';
+  if(owner){build();if(!page.classList.contains('vg-sa')){page.classList.add('vg-sa');go('dash')}}
+  else page.classList.remove('vg-sa');
+ }
+ const mo=new MutationObserver(sync);
+ function start(){const page=$('page-admin');if(!page)return;mo.observe(page,{attributes:true,attributeFilter:['class']});['adminLoginBox','adminPanel','adminContent'].forEach(i=>{const e=$(i);if(e)mo.observe(e,{attributes:true,attributeFilter:['style']})});window.addEventListener('vedant-owner-admin-ready',sync);setInterval(sync,1500);sync()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
 </script>
 
