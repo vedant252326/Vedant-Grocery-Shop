@@ -39,6 +39,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#fbd34a">
 <style>html{background:#fbd34a}</style>
+<script id="vgr-boot">try{if(localStorage.getItem("vgRiderMode")==="rider"){document.documentElement.classList.add("vgr-boot");setTimeout(function(){document.documentElement.classList.remove("vgr-boot")},7000)}}catch(e){}</script>
 <style id="vgFestEarly">
 html[data-festival]{--fon:#fff;--ftg:linear-gradient(#fff6d6,#ffc83d)}
 html[data-festival="diwali"]{--fp:#c2410c;--fq:#7c2d12;--fa:#ffc83d;--fs:#fff3de;--fs2:#ffe0ae;--fbg:#fff7ea;--fh:linear-gradient(135deg,#3b0a1a,#8a1c1c 52%,#e8590c);--fb:linear-gradient(135deg,#e8590c,#a8380a)}
@@ -21591,3 +21592,778 @@ hook();W.addEventListener('load',hook);
 })();
 
 </script>
+
+<!-- ===================== VEDANT RIDER MODULE (additive, does not edit older code) ===================== -->
+<style id="vgr-style">
+html.vgr-boot::before{content:"";position:fixed;inset:0;background:#0b1220;z-index:2147481000}
+#vgRider{position:fixed;inset:0;z-index:2147482000;background:#f3f6f4;color:#14221a;display:none;flex-direction:column;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:contain}
+#vgRider.vgr-open{display:flex}
+#vgRider *{box-sizing:border-box}
+#vgRider button{font:inherit;cursor:pointer;border:0}
+.vgr-top{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;background:linear-gradient(135deg,#0b1220,#16301f);color:#fff;flex:0 0 auto}
+.vgr-brand{font-weight:900;font-size:17px;flex:1;min-width:0;line-height:1.15}
+.vgr-brand small{display:block;font-weight:600;font-size:11px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vgr-chip{border-radius:999px;padding:8px 12px;font-weight:800;font-size:13px;background:#ffffff1f;color:#fff}
+.vgr-chip.vgr-shop{background:#fbd34a;color:#1c1c1c}
+.vgr-chip.vgr-on{background:#16a34a}
+.vgr-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(24px + env(safe-area-inset-bottom,0px))}
+.vgr-card{background:#fff;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 4px 14px #0b122014;border:1px solid #e3ece6}
+.vgr-card h3{margin:0 0 10px;font-size:16px}
+.vgr-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vgr-stat{background:linear-gradient(135deg,#ecfdf3,#d7f7e3);border-radius:16px;padding:14px;text-align:center}
+.vgr-stat b{display:block;font-size:26px;color:#0f6b2d;line-height:1.1}
+.vgr-stat span{font-size:12px;font-weight:700;color:#3b5546}
+.vgr-stat.alt{background:linear-gradient(135deg,#fff8e1,#ffeeb0)}.vgr-stat.alt b{color:#8a5a00}
+.vgr-field{display:block;margin-bottom:11px}
+.vgr-field span{display:block;font-size:12px;font-weight:800;margin-bottom:4px;color:#3b5546}
+.vgr-field input{width:100%;padding:13px 12px;border:1.5px solid #cfe0d4;border-radius:12px;font-size:16px;background:#fbfdfc;color:#14221a}
+.vgr-field input:focus{outline:none;border-color:#16a34a}
+.vgr-btn{width:100%;padding:15px;border-radius:14px;font-weight:900;font-size:16px;background:#16a34a;color:#fff;margin-top:6px}
+.vgr-btn.sec{background:#e8f0ea;color:#14221a}.vgr-btn.warn{background:#dc2626}.vgr-btn.blue{background:#2563eb}.vgr-btn.gold{background:#f59e0b;color:#1c1c1c}
+.vgr-btn[disabled]{opacity:.5}
+.vgr-row{display:flex;gap:8px}.vgr-row>*{flex:1}
+.vgr-muted{color:#5f7568;font-size:13px}
+.vgr-duty{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.vgr-switch{position:relative;width:66px;height:36px;border-radius:999px;background:#c5d1c9;flex:0 0 auto;transition:.2s}
+.vgr-switch:after{content:"";position:absolute;top:4px;left:4px;width:28px;height:28px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px #0003}
+.vgr-switch.on{background:#16a34a}.vgr-switch.on:after{left:34px}
+.vgr-wait{text-align:center;padding:22px 10px}
+.vgr-pulse{width:54px;height:54px;border-radius:50%;background:#16a34a22;margin:0 auto 10px;display:grid;place-items:center;font-size:26px;animation:vgrp 1.6s infinite}
+@keyframes vgrp{0%{box-shadow:0 0 0 0 #16a34a55}100%{box-shadow:0 0 0 22px #16a34a00}}
+.vgr-hist{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #dbe6de;font-size:14px}
+.vgr-hist:last-child{border:0}.vgr-hist b{color:#0f6b2d}
+.vgr-map{width:100%;border-radius:16px;overflow:hidden;background:#dfe9e2}
+.vgr-fare{font-size:44px;font-weight:900;color:#0f6b2d;text-align:center;line-height:1}
+.vgr-pill{display:inline-block;background:#eef5f0;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:800;margin:3px 3px 0 0}
+#vgrIncoming{position:absolute;inset:0;background:#000000aa;display:none;align-items:flex-end;z-index:30}
+#vgrIncoming.show{display:flex}
+.vgr-sheet{width:100%;background:#fff;border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));animation:vgru .25s ease}
+@keyframes vgru{from{transform:translateY(60px);opacity:.4}to{transform:none;opacity:1}}
+.vgr-ring{font-size:46px;text-align:center;animation:vgrs .5s infinite alternate}
+@keyframes vgrs{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+#vgrRide{position:absolute;inset:0;background:#fff;display:none;flex-direction:column;z-index:20}
+#vgrRide.show{display:flex}
+#vgrRideMap{position:absolute;inset:0;z-index:1}
+.vgr-rtop{position:absolute;left:10px;right:10px;top:calc(10px + env(safe-area-inset-top,0px));z-index:5;background:#0b1220ee;color:#fff;border-radius:16px;padding:11px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.vgr-rtop b{font-size:18px}
+.vgr-rbottom{position:absolute;left:0;right:0;bottom:0;z-index:5;background:#fff;border-radius:22px 22px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 24px #0003;max-height:62vh;overflow-y:auto}
+.vgr-pay{border-radius:14px;padding:11px 12px;margin:8px 0;font-weight:800;font-size:14px}
+.vgr-pay.cod{background:#fff3cd;color:#7a5300}.vgr-pay.ok{background:#d9f7e3;color:#0f6b2d}
+#vgrMenu,#vgrAsk{position:absolute;inset:0;background:#000000aa;display:none;align-items:flex-end;justify-content:center;z-index:40}
+#vgrMenu.show,#vgrAsk.show{display:flex}
+#vgrAsk{align-items:center;padding:20px}
+#vgrAsk .vgr-sheet{border-radius:20px;max-width:380px}
+#vgrToast{position:absolute;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:60;background:#111c14;color:#fff;border-radius:14px;padding:11px 16px;font-weight:700;font-size:14px;max-width:90%;text-align:center;display:none}
+#vgrSoundBar{display:none;background:#fff3cd;color:#7a5300;font-weight:800;font-size:13px;padding:9px 12px;text-align:center}
+#vgrPill{position:fixed;left:12px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:2147481500;background:#0b1220;color:#fff;border-radius:999px;padding:12px 16px;font-weight:900;font-size:14px;box-shadow:0 8px 22px #0006;border:2px solid #fbd34a;display:none;cursor:pointer}
+#vgrPill.show{display:block}
+#vgrPill.hot{animation:vgrp 1.2s infinite;background:#dc2626}
+.vgr-pin{font-size:30px;line-height:30px;text-align:center;filter:drop-shadow(0 2px 3px #0006)}
+/* admin additions */
+.vgr-admin-badge{margin:8px 0;padding:9px 12px;border-radius:12px;background:#eef6ff;border:1px solid #bcd7ff;font-size:13px;font-weight:700;color:#12326b}
+.vgr-admin-badge button{margin-left:6px;padding:5px 10px;border-radius:9px;border:0;background:#fee2e2;color:#991b1b;font-weight:800;cursor:pointer}
+#vgrAdminSection{margin:16px 0;padding:14px;border:1px solid var(--border,#ddd);border-radius:18px;background:var(--surface,#fff)}
+.vgr-ar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #cfd8d2;font-size:14px}
+</style>
+
+<div id="vgrPill" role="button" aria-label="Open rider page">🏍️ Rider</div>
+
+<script id="vgr-script">
+(function(){
+'use strict';
+if(window.__vgRiderLoaded)return;window.__vgRiderLoaded=true;
+
+/* ---------- constants & helpers ---------- */
+var SHOP={lat:Number(window.SHOP_LATITUDE)||25.3698055556,lng:Number(window.SHOP_LONGITUDE)||83.1131388889};
+var ETA_PREFIX="__STVN_ETA__|";
+var OWNER_UID="554777a2-e360-4870-91a1-a41deb04e694";
+var MODE_KEY="vgRiderMode",SKIP_KEY="vgRiderSkipped";
+var $=function(id){return document.getElementById(id)};
+function sb(){return window.supabaseClient||(typeof supabaseClient!=="undefined"?supabaseClient:null)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]})}
+function money(n){n=Number(n)||0;return "₹"+(Math.round(n*100)/100).toLocaleString("en-IN",{maximumFractionDigits:2})}
+function digits(s){return String(s||"").replace(/\D/g,"")}
+function km(a,b,c,d){var R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,q=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.sqrt(q))}
+function okLL(a,b){return isFinite(a)&&isFinite(b)&&Math.abs(a)>1e-4&&Math.abs(b)>1e-4}
+function errMsg(e){var m=String((e&&(e.message||e.details))||e||"");return m.replace(/^.*?exception:?\s*/i,"")}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+function bootOff(){document.documentElement.classList.remove("vgr-boot")}
+
+/* ---------- state ---------- */
+var S={uid:null,email:"",me:null,active:null,avail:[],stats:null,hist:[],skipped:{},seen:{},incoming:null,
+       open:false,view:"",busy:false,pollT:null,pos:null,watch:null,wake:null,lastPush:0,lastPushPos:null,
+       mapA:null,mapB:null,layers:{},routeAt:0,routePos:null,followPause:0,ctx:null,ringT:null,vibT:null,sound:false,
+       lastDash:0};
+try{S.skipped=JSON.parse(lsGet(SKIP_KEY)||"{}")||{}}catch(e){S.skipped={}}
+function saveSkips(){var n=Date.now();Object.keys(S.skipped).forEach(function(k){if(n-S.skipped[k]>20*60*1000)delete S.skipped[k]});lsSet(SKIP_KEY,JSON.stringify(S.skipped))}
+
+/* ---------- build overlay ---------- */
+function build(){
+  if($("vgRider"))return;
+  var d=document.createElement("div");d.id="vgRider";
+  d.innerHTML=
+  '<div class="vgr-top"><div class="vgr-brand">🏍️ Vedant Rider<small id="vgrWho">Rider</small></div>'+
+  '<button class="vgr-chip" id="vgrDutyChip" type="button">Off Duty</button>'+
+  '<button class="vgr-chip vgr-shop" id="vgrShopBtn" type="button">🏪 Shop</button>'+
+  '<button class="vgr-chip" id="vgrAcctBtn" type="button" aria-label="Account">👤</button></div>'+
+  '<div id="vgrSoundBar">🔔 Order ki ringtone chalu karne ke liye yahan tap karo</div>'+
+  '<div class="vgr-body" id="vgrBody"></div>'+
+  '<div id="vgrRide"><div id="vgrRideMap"></div><div class="vgr-rtop"><div><small id="vgrRTopLbl">Customer tak</small><br><b id="vgrRTopEta">--</b></div><button class="vgr-chip" id="vgrRideRecenter" type="button">🎯</button></div><div class="vgr-rbottom" id="vgrRideBottom"></div></div>'+
+  '<div id="vgrIncoming"><div class="vgr-sheet" id="vgrIncomingSheet"></div></div>'+
+  '<div id="vgrMenu"><div class="vgr-sheet" id="vgrMenuSheet"></div></div>'+
+  '<div id="vgrAsk"><div class="vgr-sheet" id="vgrAskSheet"></div></div>'+
+  '<div id="vgrToast"></div>';
+  document.body.appendChild(d);
+  $("vgrShopBtn").onclick=function(){goShop()};
+  $("vgrAcctBtn").onclick=function(){showMenu()};
+  $("vgrDutyChip").onclick=function(){toggleDuty()};
+  $("vgrSoundBar").onclick=function(){unlockAudio();checkSoundBar()};
+  $("vgrRideRecenter").onclick=function(){S.followPause=0;if(S.pos&&S.mapB)S.mapB.setView([S.pos.lat,S.pos.lng],Math.max(S.mapB.getZoom(),16))};
+  d.addEventListener("touchstart",function(){unlockAudio()},{passive:true});
+  d.addEventListener("click",function(){unlockAudio()},true);
+  var p=$("vgrPill");p.onclick=function(){openOverlay()};
+}
+var toastT=null;
+function toast(m,ms){var t=$("vgrToast");if(!t)return;t.textContent=m;t.style.display="block";clearTimeout(toastT);toastT=setTimeout(function(){t.style.display="none"},ms||3200)}
+function ask(msg,okLabel,cancelLabel){
+  return new Promise(function(res){
+    var w=$("vgrAsk"),s=$("vgrAskSheet");
+    s.innerHTML='<p style="font-size:16px;font-weight:700;margin:0 0 14px;line-height:1.4">'+esc(msg)+'</p><div class="vgr-row"><button class="vgr-btn sec" id="vgrAskNo" type="button">'+esc(cancelLabel||"Cancel")+'</button><button class="vgr-btn" id="vgrAskYes" type="button">'+esc(okLabel||"OK")+'</button></div>';
+    w.classList.add("show");
+    $("vgrAskNo").onclick=function(){w.classList.remove("show");res(false)};
+    $("vgrAskYes").onclick=function(){w.classList.remove("show");res(true)};
+  });
+}
+
+/* ---------- audio: loud ringtone ---------- */
+function unlockAudio(){
+  try{
+    if(!S.ctx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;S.ctx=new AC()}
+    if(S.ctx.state==="suspended")S.ctx.resume();
+    if(!S.sound&&S.ctx.state==="running"){S.sound=true;checkSoundBar()}
+  }catch(e){}
+}
+function checkSoundBar(){var b=$("vgrSoundBar");if(!b)return;var need=S.me&&S.me.on_duty&&(!S.ctx||S.ctx.state!=="running");b.style.display=need?"block":"none"}
+function beepPattern(){
+  if(!S.ctx||S.ctx.state!=="running")return;
+  var c=S.ctx,t=c.currentTime,seq=[880,1175,880,1175,880,1175];
+  seq.forEach(function(f,i){
+    var o=c.createOscillator(),g=c.createGain();
+    o.type="square";o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,t+i*0.2);g.gain.exponentialRampToValueAtTime(0.9,t+i*0.2+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+i*0.2+0.18);
+    o.connect(g);g.connect(c.destination);o.start(t+i*0.2);o.stop(t+i*0.2+0.2);
+  });
+}
+function startRing(){
+  if(S.ringT)return;
+  beepPattern();S.ringT=setInterval(beepPattern,1700);
+  try{if(navigator.vibrate){navigator.vibrate([500,150,500,150,500]);S.vibT=setInterval(function(){navigator.vibrate([500,150,500,150,500])},2000)}}catch(e){}
+}
+function stopRing(){
+  if(S.ringT){clearInterval(S.ringT);S.ringT=null}
+  if(S.vibT){clearInterval(S.vibT);S.vibT=null}
+  try{navigator.vibrate&&navigator.vibrate(0)}catch(e){}
+}
+function sysNotify(title,body){
+  try{if("Notification" in window&&Notification.permission==="granted"&&document.hidden){var n=new Notification(title,{body:body,tag:"vgr-order",renotify:true,requireInteraction:true});n.onclick=function(){window.focus();openOverlay();n.close()}}}catch(e){}
+}
+async function getWake(){try{if("wakeLock" in navigator&&!S.wake){S.wake=await navigator.wakeLock.request("screen");S.wake.addEventListener("release",function(){S.wake=null})}}catch(e){}}
+function dropWake(){try{S.wake&&S.wake.release()}catch(e){}S.wake=null}
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&S.me&&(S.me.on_duty||S.active)){getWake();tick(true)}});
+
+/* ---------- open / close ---------- */
+function openOverlay(){
+  if(!S.uid)return;build();
+  $("vgRider").classList.add("vgr-open");S.open=true;
+  $("vgrPill").classList.remove("show");bootOff();render();
+}
+function goShop(){
+  var o=$("vgRider");if(o)o.classList.remove("vgr-open");S.open=false;
+  destroyMaps();updatePill();bootOff();
+  try{if(typeof window.showPage==="function")window.showPage("home")}catch(e){}
+}
+function updatePill(){
+  var p=$("vgrPill");if(!p)return;
+  var show=!!(S.me&&S.uid&&!S.open);
+  p.classList.toggle("show",show);
+  p.classList.toggle("hot",!!(show&&(S.active||S.incoming)));
+  p.textContent=S.active?"🏍️ Order chal raha hai":(S.incoming?"🔔 Naya order!":"🏍️ Rider page");
+}
+
+/* ---------- data ---------- */
+async function loadMe(){
+  var c=sb();if(!c)return;
+  var r=await c.from("riders").select("*").eq("user_id",S.uid).maybeSingle();
+  if(r.error){console.warn("riders table:",r.error.message);S.me=null;return}
+  S.me=r.data||null;
+}
+async function loadDash(force){
+  if(!S.me||!sb())return;
+  var now=Date.now();if(!force&&now-S.lastDash<1500)return;S.lastDash=now;
+  var r=await sb().rpc("rider_dashboard");
+  if(r.error){console.warn("rider_dashboard",r.error.message);return}
+  var d=r.data||{};
+  S.stats=d;S.hist=d.history||[];
+  var prev=S.active&&S.active.order_id,prevStage=S.active&&S.active.rider_stage,prevSig=S.active&&(S.active.payment_status+"|"+S.active.rider_payment_confirmed);
+  S.active=d.active||null;
+  if(prev&&!S.active){onActiveGone(prev)}
+  else if(S.active&&(S.active.order_id!==prev||S.active.rider_stage!==prevStage))onActiveChanged();
+  else if(S.active&&S.open&&S.view==="ride"&&prevSig!==(S.active.payment_status+"|"+S.active.rider_payment_confirmed))renderRide();
+}
+function onActiveGone(id){
+  destroyMaps();stopGeo();$("vgrRide")&&$("vgrRide").classList.remove("show");
+  toast("Order #"+shortId(id)+" khatam ho gaya",3500);
+  if(!(S.me&&S.me.on_duty))stopGeo();
+  if(S.open){S.view="";render()}
+}
+function shortId(id){return String(id||"").replace(/^VEDANT-/,"").slice(-6)}
+function onActiveChanged(){
+  hideIncoming(true);startGeo();getWake();
+  if(S.open)render();
+}
+
+async function tick(force){
+  if(!S.uid||!S.me||!sb())return;
+  if(!(S.me.on_duty||S.active)){updatePill();return}
+  try{
+    await loadDash(force);
+    if(S.me.on_duty&&!S.active){
+      var r=await sb().rpc("rider_available_orders");
+      if(!r.error)handleAvail(r.data||[]);
+    }else if(S.incoming){hideIncoming(true)}
+  }catch(e){console.warn("tick",e)}
+  if(S.open&&S.view==="dash")renderDashBody();
+  updatePill();
+}
+function handleAvail(list){
+  S.avail=list;
+  var ids={};list.forEach(function(o){ids[o.order_id]=1});
+  if(S.incoming&&!ids[S.incoming.order_id]){hideIncoming(true);toast("Ye order kisi aur rider ne le liya",3500)}
+  if(!S.incoming){
+    var next=list.filter(function(o){return !S.skipped[o.order_id]})[0];
+    if(next)showIncoming(next);
+  }
+}
+function showIncoming(o){
+  S.incoming=o;build();
+  var dist=o.delivery_distance_km!=null?Number(o.delivery_distance_km).toFixed(1)+" km":"--";
+  var toShop=S.pos?km(S.pos.lat,S.pos.lng,SHOP.lat,SHOP.lng).toFixed(1)+" km":"--";
+  $("vgrIncomingSheet").innerHTML=
+   '<div class="vgr-ring">🔔</div><h2 style="text-align:center;margin:6px 0 2px">Naya Delivery Order!</h2>'+
+   '<div class="vgr-muted" style="text-align:center">Order #'+esc(shortId(o.order_id))+'</div>'+
+   '<div style="margin:14px 0 4px;text-align:center" class="vgr-muted">Aapki kamai (Delivery Charge)</div>'+
+   '<div class="vgr-fare">'+money(o.delivery_charge)+'</div>'+
+   '<div style="text-align:center;margin:10px 0"><span class="vgr-pill">🏪 Shop tak: '+toShop+'</span><span class="vgr-pill">📍 Delivery distance: '+dist+'</span></div>'+
+   '<div class="vgr-row" style="margin-top:12px"><button class="vgr-btn sec" id="vgrSkip" type="button">Skip</button><button class="vgr-btn" id="vgrAccept" type="button">✅ Accept</button></div>';
+  $("vgrIncoming").classList.add("show");
+  $("vgrAccept").onclick=function(){acceptOrder(o.order_id)};
+  $("vgrSkip").onclick=function(){S.skipped[o.order_id]=Date.now();saveSkips();hideIncoming(true);tick(true)};
+  if(!S.open)openOverlay();
+  startRing();
+  sysNotify("🔔 Naya delivery order",money(o.delivery_charge)+" kamai");
+  updatePill();
+}
+function hideIncoming(){
+  S.incoming=null;stopRing();var w=$("vgrIncoming");if(w)w.classList.remove("show");updatePill();
+}
+async function acceptOrder(id){
+  var btn=$("vgrAccept");if(btn){btn.disabled=true;btn.textContent="Accepting…"}
+  stopRing();
+  var r=await sb().rpc("rider_accept_order",{p_order_id:id});
+  if(r.error){
+    var m=errMsg(r.error);
+    hideIncoming(true);
+    if(/ORDER_TAKEN/.test(m))toast("😕 Ye order dusre rider ne le liya",4000);else toast("❌ "+m,4500);
+    tick(true);return;
+  }
+  hideIncoming(true);toast("✅ Order accept ho gaya! Pehle shop pe jao",3500);
+  S.active=r.data;S.view="active";await loadDash(true);onActiveChanged();render();
+}
+
+/* ---------- duty ---------- */
+async function toggleDuty(){
+  if(!S.me||S.busy)return;
+  var want=!S.me.on_duty;
+  if(!want&&S.active){toast("Pehle chalta hua order complete karo",3500);return}
+  S.busy=true;
+  if(want){
+    unlockAudio();
+    try{if("Notification" in window&&Notification.permission==="default")Notification.requestPermission()}catch(e){}
+    try{navigator.geolocation&&navigator.geolocation.getCurrentPosition(function(p){S.pos={lat:p.coords.latitude,lng:p.coords.longitude}},function(){},{enableHighAccuracy:true,timeout:15000})}catch(e){}
+  }
+  var r=await sb().rpc("rider_set_duty",{p_on:want});
+  S.busy=false;
+  if(r.error){toast("❌ "+errMsg(r.error),4500);return}
+  S.me=r.data;
+  if(want){getWake();startGeo();toast("🟢 Aap On Duty ho — orders aayenge",3000);tick(true)}
+  else{hideIncoming(true);dropWake();if(!S.active)stopGeo();toast("🔴 Aap Off Duty ho",2500)}
+  checkSoundBar();render();updatePill();
+}
+
+/* ---------- geolocation ---------- */
+function startGeo(){
+  if(S.watch!=null||!navigator.geolocation)return;
+  S.watch=navigator.geolocation.watchPosition(onFix,function(e){
+    if(e&&e.code===1)toast("📍 Location permission Allow karo, warna map/tracking nahi chalega",5000);
+  },{enableHighAccuracy:true,maximumAge:1000,timeout:30000});
+}
+function stopGeo(){if(S.watch!=null){try{navigator.geolocation.clearWatch(S.watch)}catch(e){}S.watch=null}}
+function onFix(p){
+  S.pos={lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy};
+  if(S.active){
+    updateRiderMarkers();
+    if(S.active.rider_stage==="picked")pushLocation(false);
+    refreshRoute(false);
+  }
+}
+async function pushLocation(force){
+  var a=S.active;if(!a||!S.pos||a.rider_stage!=="picked")return;
+  var now=Date.now(),moved=S.lastPushPos?km(S.lastPushPos[0],S.lastPushPos[1],S.pos.lat,S.pos.lng)*1000:1e9;
+  if(!force&&((moved<4&&now-S.lastPush<10000)||now-S.lastPush<2500))return;
+  S.lastPush=now;S.lastPushPos=[S.pos.lat,S.pos.lng];
+  try{
+    var r=await sb().rpc("rider_update_location",{p_order_id:a.order_id,p_lat:S.pos.lat,p_lng:S.pos.lng});
+    if(!r.error&&r.data&&r.data.ok===false)tick(true);
+  }catch(e){}
+}
+setInterval(function(){if(S.active&&S.active.rider_stage==="picked"&&S.pos)pushLocation(true)},12000);
+
+/* ---------- maps ---------- */
+function haveL(){return typeof window.L!=="undefined"&&window.L.map}
+function icon(emoji){return L.divIcon({className:"",html:'<div class="vgr-pin">'+emoji+'</div>',iconSize:[30,30],iconAnchor:[15,26]})}
+function destroyMaps(){
+  ["mapA","mapB"].forEach(function(k){if(S[k]){try{S[k].remove()}catch(e){}S[k]=null}});
+  S.layers={};S.routePos=null;S.routeAt=0;
+}
+function makeMap(el,key){
+  if(!haveL()){setTimeout(function(){if(S.active&&!S[key])makeMap(el,key)},400);return null}
+  if(S[key]){try{S[key].remove()}catch(e){}S[key]=null}
+  var m=L.map(el,{zoomControl:false,attributionControl:true,tap:true}).setView([SHOP.lat,SHOP.lng],15);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
+  m.on("dragstart",function(){S.followPause=Date.now()+12000});
+  S[key]=m;S.layers={};
+  setTimeout(function(){try{m.invalidateSize()}catch(e){}},250);
+  return m;
+}
+function curMap(){return S.active&&S.active.rider_stage==="picked"?S.mapB:S.mapA}
+function curTarget(){
+  var a=S.active;if(!a)return null;
+  if(a.rider_stage==="picked"){var la=Number(a.latitude),ln=Number(a.longitude);return okLL(la,ln)?{lat:la,lng:ln,label:"Customer"}:null}
+  return {lat:SHOP.lat,lng:SHOP.lng,label:"Shop"};
+}
+function updateRiderMarkers(){
+  var m=curMap();if(!m||!S.pos||!haveL())return;
+  var ll=[S.pos.lat,S.pos.lng];
+  if(!S.layers.me)S.layers.me=L.marker(ll,{icon:icon("🏍️"),zIndexOffset:900}).addTo(m);else S.layers.me.setLatLng(ll);
+  if(!S.layers.fitted){S.layers.fitted=true;fitAll()}
+  else if(Date.now()>S.followPause&&S.active&&S.active.rider_stage==="picked")m.panTo(ll,{animate:true,duration:.5});
+}
+function fitAll(){
+  var m=curMap(),t=curTarget();if(!m)return;
+  var pts=[];if(S.pos)pts.push([S.pos.lat,S.pos.lng]);if(t)pts.push([t.lat,t.lng]);
+  if(pts.length>1)m.fitBounds(pts,{padding:[60,60],maxZoom:17});else if(pts.length)m.setView(pts[0],15);
+}
+function placeTarget(){
+  var m=curMap(),t=curTarget();if(!m||!t||!haveL())return;
+  if(S.layers.tgt)S.layers.tgt.remove();
+  S.layers.tgt=L.marker([t.lat,t.lng],{icon:icon(t.label==="Shop"?"🏪":"🏠")}).addTo(m);
+}
+async function refreshRoute(force){
+  var m=curMap(),t=curTarget();if(!m||!t||!S.pos||!haveL())return;
+  var now=Date.now(),moved=S.routePos?km(S.routePos[0],S.routePos[1],S.pos.lat,S.pos.lng)*1000:1e9;
+  if(!force&&(now-S.routeAt<15000||moved<60))return;
+  S.routeAt=now;S.routePos=[S.pos.lat,S.pos.lng];
+  var key=S.active.order_id+S.active.rider_stage;
+  try{
+    var res=await fetch("https://router.project-osrm.org/route/v1/driving/"+S.pos.lng+","+S.pos.lat+";"+t.lng+","+t.lat+"?overview=full&geometries=geojson");
+    var j=await res.json();var rt=j.routes&&j.routes[0];if(!rt)throw new Error("no route");
+    if(!S.active||S.active.order_id+S.active.rider_stage!==key||m!==curMap())return;
+    if(S.layers.route)S.layers.route.remove();
+    S.layers.route=L.polyline(rt.geometry.coordinates.map(function(p){return[p[1],p[0]]}),{color:"#2563eb",weight:6,opacity:.85}).addTo(m);
+    setRouteInfo(rt.distance/1000,Math.max(1,Math.round(rt.duration/60)));
+  }catch(e){
+    var d=km(S.pos.lat,S.pos.lng,t.lat,t.lng);
+    if(S.layers.route)S.layers.route.remove();
+    S.layers.route=L.polyline([[S.pos.lat,S.pos.lng],[t.lat,t.lng]],{color:"#2563eb",weight:5,dashArray:"8 8"}).addTo(m);
+    setRouteInfo(d,Math.max(1,Math.round(d/0.4)));
+  }
+}
+function setRouteInfo(dkm,min){
+  var t=curTarget();
+  var txt=(dkm<1?Math.round(dkm*1000)+" m":dkm.toFixed(1)+" km")+" • ~"+min+" min";
+  var a=$("vgrRouteInfo");if(a)a.textContent=txt;
+  var b=$("vgrRTopEta");if(b)b.textContent=txt;
+  var l=$("vgrRTopLbl");if(l&&t)l.textContent=t.label+" tak";
+}
+function gmaps(t){return "https://www.google.com/maps/dir/?api=1&destination="+t.lat+","+t.lng+"&travelmode=two-wheeler"}
+
+/* ---------- views ---------- */
+function render(){
+  if(!S.open)return;
+  var me=S.me;if(!me){S.view="register";renderRegister();return}
+  $("vgrWho").textContent=me.full_name+" • "+me.phone;
+  var chip=$("vgrDutyChip");chip.textContent=me.on_duty?"🟢 On Duty":"Off Duty";chip.classList.toggle("vgr-on",!!me.on_duty);
+  checkSoundBar();
+  var a=S.active;
+  if(a&&a.rider_stage==="picked"){S.view="ride";renderRide()}
+  else if(a){S.view="active";$("vgrRide").classList.remove("show");renderActive()}
+  else{S.view="dash";$("vgrRide").classList.remove("show");destroyMaps();renderDash()}
+}
+function renderRegister(){
+  $("vgrWho").textContent=S.email||"Naya rider";
+  $("vgrDutyChip").style.display="none";
+  $("vgrBody").innerHTML=
+  '<div class="vgr-card"><h3>🏍️ Rider Account banao</h3><p class="vgr-muted" style="margin-top:0">Login: <b>'+esc(S.email)+'</b></p>'+
+  '<label class="vgr-field"><span>Poora naam *</span><input id="vgrfName" autocomplete="name" maxlength="60"></label>'+
+  '<label class="vgr-field"><span>Age * (18+)</span><input id="vgrfAge" type="number" inputmode="numeric" min="18" max="70"></label>'+
+  '<label class="vgr-field"><span>Mobile number * (10 digit)</span><input id="vgrfPhone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel"></label>'+
+  '<label class="vgr-field"><span>Vehicle number</span><input id="vgrfVeh" maxlength="15" style="text-transform:uppercase" placeholder="UP78 AB 1234"></label>'+
+  '<button class="vgr-btn" id="vgrfGo" type="button">Rider Account banao</button>'+
+  '<button class="vgr-btn sec" id="vgrfBack" type="button">🏪 Wapas Shop</button></div>';
+  $("vgrfBack").onclick=goShop;
+  $("vgrfGo").onclick=submitRegister;
+}
+async function submitRegister(){
+  var n=$("vgrfName").value.trim(),age=parseInt($("vgrfAge").value,10),ph=digits($("vgrfPhone").value),ve=$("vgrfVeh").value.trim();
+  if(n.length<2)return toast("Naam likho");
+  if(!(age>=18&&age<=70))return toast("Age 18 se 70 ke beech honi chahiye");
+  if(!/^[6-9][0-9]{9}$/.test(ph))return toast("Sahi 10 digit mobile number likho");
+  var b=$("vgrfGo");b.disabled=true;b.textContent="Ban raha hai…";
+  var r=await sb().rpc("rider_register",{p_name:n,p_age:age,p_phone:ph,p_dl:"",p_vehicle:ve});
+  if(r.error){b.disabled=false;b.textContent="Rider Account banao";var m=errMsg(r.error);
+    if(/ALREADY_RIDER/.test(m)){await loadMe();$("vgrDutyChip").style.display="";render();return}
+    toast("❌ "+m,4500);return}
+  S.me=r.data;lsSet(MODE_KEY,"rider");$("vgrDutyChip").style.display="";ensureMenu();startPolling();
+  toast("🎉 Rider account ban gaya!",3500);render();
+}
+function renderDash(){
+  $("vgrDutyChip").style.display="";
+  $("vgrBody").innerHTML=
+  '<div class="vgr-grid2"><div class="vgr-stat"><b id="vgrStToday">₹0</b><span>Aaj ki kamai</span></div><div class="vgr-stat alt"><b id="vgrStTotal">₹0</b><span>Total earning</span></div></div>'+
+  '<div class="vgr-grid2" style="margin-top:10px"><div class="vgr-stat alt"><b id="vgrStTc">0</b><span>Aaj delivered</span></div><div class="vgr-stat"><b id="vgrStAc">0</b><span>Total delivered</span></div></div>'+
+  '<div class="vgr-card" style="margin-top:12px"><div class="vgr-duty"><div><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
+  '<div id="vgrWait"></div><div class="vgr-card"><h3>✅ Delivered Orders</h3><div id="vgrHist"></div></div>';
+  $("vgrSwitch").onclick=toggleDuty;
+  renderDashBody();
+}
+function renderDashBody(){
+  var me=S.me;if(!me||!$("vgrStToday"))return;
+  var st=S.stats||{};
+  $("vgrStToday").textContent=money(st.today_earning);$("vgrStTotal").textContent=money(st.total_earning);
+  $("vgrStTc").textContent=st.today_count||0;$("vgrStAc").textContent=st.total_count||0;
+  $("vgrSwitch").classList.toggle("on",!!me.on_duty);
+  $("vgrDutyTxt").textContent=me.on_duty?"On Duty — naye orders aayenge":"Off Duty — On karo tabhi order aayenge";
+  $("vgrWait").innerHTML=me.on_duty?'<div class="vgr-card vgr-wait"><div class="vgr-pulse">🏍️</div><b>Order ka intezaar…</b><div class="vgr-muted">Screen on rakho aur ye app khula rakho, naya order aate hi ringtone bajegi.</div></div>':'';
+  var h=S.hist||[];
+  $("vgrHist").innerHTML=h.length?h.map(function(x){var d=x.at?new Date(x.at):null;return '<div class="vgr-hist"><span>#'+esc(shortId(x.order_id))+(d?' • '+d.toLocaleDateString("en-IN",{day:"2-digit",month:"short"})+' '+d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):'')+'</span><b>+'+money(x.earning)+'</b></div>'}).join(""):'<div class="vgr-muted">Abhi koi delivery nahi hui.</div>';
+}
+function renderActive(){
+  var a=S.active;if(!a)return;
+  $("vgrBody").innerHTML=
+  '<div class="vgr-card"><div class="vgr-muted">Order #'+esc(shortId(a.order_id))+'</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><h3 style="margin:0">🏪 Pehle Shop pe jao</h3><b style="font-size:22px;color:#0f6b2d">'+money(a.delivery_charge)+'</b></div>'+
+  '<div class="vgr-muted" style="margin:6px 0">Vedant Grocery Shop se order uthao, phir Start Ride dabao.</div>'+
+  '<div class="vgr-pill" id="vgrRouteInfo">Route load ho raha hai…</div></div>'+
+  '<div class="vgr-map" id="vgrMapA" style="height:48vh;min-height:280px"></div>'+
+  '<div class="vgr-card" style="margin-top:12px"><div class="vgr-row"><button class="vgr-btn blue" id="vgrNavShop" type="button">🧭 Google Maps</button><button class="vgr-btn sec" id="vgrRecA" type="button">🎯 Meri location</button></div>'+
+  '<button class="vgr-btn" id="vgrStart" type="button">📍 Shop pahunch gaya — Start Ride</button></div>';
+  $("vgrNavShop").onclick=function(){window.open(gmaps({lat:SHOP.lat,lng:SHOP.lng}),"_blank")};
+  $("vgrRecA").onclick=function(){S.followPause=0;fitAll()};
+  $("vgrStart").onclick=startRide;
+  var m=makeMap($("vgrMapA"),"mapA");
+  if(m){placeTarget();updateRiderMarkers();refreshRoute(true)}
+  startGeo();
+}
+async function startRide(){
+  var a=S.active;if(!a)return;
+  var t={lat:Number(a.latitude),lng:Number(a.longitude)};
+  if(!okLL(t.lat,t.lng))return toast("Customer ki location order me nahi mili, admin se baat karo",5000);
+  if(S.pos){
+    var d=km(S.pos.lat,S.pos.lng,SHOP.lat,SHOP.lng);
+    if(d>0.6){var go=await ask("Aap shop se "+d.toFixed(1)+" km door ho. Phir bhi ride start karni hai?","Haan, Start","Nahi");if(!go)return}
+  }
+  var b=$("vgrStart");if(b){b.disabled=true;b.textContent="Start ho raha hai…"}
+  var dd=S.pos?km(S.pos.lat||SHOP.lat,S.pos.lng||SHOP.lng,t.lat,t.lng):km(SHOP.lat,SHOP.lng,t.lat,t.lng);
+  var mins=Math.max(5,Math.min(90,Math.round(dd/0.35)+3));
+  var delivery=(typeof window.stvnEncodeDeliveryValue==="function")?window.stvnEncodeDeliveryValue(mins,new Date().toISOString()):(ETA_PREFIX+mins+"|"+new Date().toISOString());
+  var p=S.pos||{lat:SHOP.lat,lng:SHOP.lng};
+  var r=await sb().rpc("rider_start_ride",{p_order_id:a.order_id,p_delivery:delivery,p_lat:p.lat,p_lng:p.lng});
+  if(r.error){toast("❌ "+errMsg(r.error),4500);if(b){b.disabled=false;b.textContent="📍 Shop pahunch gaya — Start Ride"}return}
+  S.active=r.data;S.lastPush=0;destroyMaps();S.layers={};render();pushLocation(true);
+}
+function renderRide(){
+  var a=S.active;if(!a)return;
+  var cod=!(/^(paid|confirmed)$/i.test(String(a.payment_status||"")));
+  var paidOk=!cod||a.rider_payment_confirmed;
+  var addr=esc(a.customer_address||"");
+  var tel=digits(a.customer_phone);
+  $("vgrRideBottom").innerHTML=
+   '<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div style="min-width:0"><b style="font-size:17px">🏠 '+esc(a.customer_name||"Customer")+'</b><div class="vgr-muted" style="margin-top:2px">'+addr+'</div></div><b style="color:#0f6b2d;font-size:20px;white-space:nowrap">'+money(a.delivery_charge)+'</b></div>'+
+   '<div class="vgr-pay '+(paidOk?'ok':'cod')+'" id="vgrPayBox">'+(cod?(a.rider_payment_confirmed?'✅ Cash '+money(a.total)+' mil gaya':'💵 Customer se Cash lo: '+money(a.total)):'✅ Online paid — cash nahi lena')+'</div>'+
+   '<div class="vgr-row">'+(tel?'<button class="vgr-btn sec" id="vgrCallC" type="button">📞 Call</button>':'')+'<button class="vgr-btn blue" id="vgrNavC" type="button">🧭 Google Maps</button></div>'+
+   (cod&&!a.rider_payment_confirmed?'<button class="vgr-btn gold" id="vgrPayOk" type="button">💵 Payment mil gayi — Confirm</button>':'')+
+   '<button class="vgr-btn" id="vgrDone" type="button" '+(paidOk?'':'disabled')+'>🏁 Delivery Complete</button>';
+  $("vgrRide").classList.add("show");
+  if(tel)$("vgrCallC").onclick=function(){location.href="tel:"+tel};
+  $("vgrNavC").onclick=function(){var t=curTarget();if(t)window.open(gmaps(t),"_blank")};
+  var pb=$("vgrPayOk");if(pb)pb.onclick=confirmPay;
+  $("vgrDone").onclick=completeOrder;
+  if(!S.mapB||!document.getElementById("vgrRideMap")||!S.mapB.getContainer||S.mapB.getContainer()!==$("vgrRideMap")){
+    var m=makeMap($("vgrRideMap"),"mapB");
+    if(m){placeTarget();updateRiderMarkers();refreshRoute(true)}
+  }
+  startGeo();
+}
+async function confirmPay(){
+  var a=S.active;if(!a)return;
+  var ok=await ask("Kya customer se "+money(a.total)+" cash mil gaya?","Haan, mil gaya","Nahi");if(!ok)return;
+  var r=await sb().rpc("rider_confirm_payment",{p_order_id:a.order_id});
+  if(r.error)return toast("❌ "+errMsg(r.error),4500);
+  S.active=r.data;toast("✅ Payment confirm ho gayi",2500);renderRide();
+}
+async function completeOrder(){
+  var a=S.active;if(!a)return;
+  var ok=await ask("Order customer ko deliver ho gaya? Complete karne ke baad delivery charge aapke account me add ho jayega.","Haan, Delivered","Nahi");if(!ok)return;
+  var b=$("vgrDone");if(b){b.disabled=true;b.textContent="Ho raha hai…"}
+  var r=await sb().rpc("rider_complete_order",{p_order_id:a.order_id});
+  if(r.error){
+    var m=errMsg(r.error);
+    if(/PAYMENT_NOT_CONFIRMED/.test(m))toast("Pehle customer se payment lekar Confirm dabao",4500);else toast("❌ "+m,4500);
+    if(b){b.disabled=false;b.textContent="🏁 Delivery Complete"}return;
+  }
+  var earn=r.data&&r.data.earning;
+  destroyMaps();$("vgrRide").classList.remove("show");S.active=null;S.lastPushPos=null;
+  if(!S.me.on_duty)stopGeo();
+  await loadDash(true);S.view="dash";render();
+  toast("🎉 Delivered! "+money(earn)+" aapke account me add ho gaye",4500);
+  tick(true);
+}
+
+/* ---------- account menu inside rider page ---------- */
+function showMenu(){
+  var me=S.me,w=$("vgrMenu"),s=$("vgrMenuSheet");
+  s.innerHTML='<h3 style="margin:0 0 4px">👤 Rider Account</h3>'+
+   (me?'<div class="vgr-muted" style="line-height:1.7"><b>'+esc(me.full_name)+'</b><br>📧 '+esc(S.email)+'<br>📞 '+esc(me.phone)+(me.vehicle_no?'<br>🏍️ '+esc(me.vehicle_no):'')+'</div>':'<div class="vgr-muted">'+esc(S.email)+'</div>')+
+   '<button class="vgr-btn sec" id="vgrMShop" type="button" style="margin-top:12px">🏪 Shop (Customer view)</button>'+
+   '<button class="vgr-btn warn" id="vgrMOut" type="button">🚪 Log out</button>'+
+   '<button class="vgr-btn sec" id="vgrMClose" type="button">Band karo</button>';
+  w.classList.add("show");
+  $("vgrMClose").onclick=function(){w.classList.remove("show")};
+  $("vgrMShop").onclick=function(){w.classList.remove("show");goShop()};
+  $("vgrMOut").onclick=async function(){
+    w.classList.remove("show");
+    if(S.active){toast("Pehle chalta hua order complete karo, phir logout karo",4000);return}
+    var ok=await ask("Logout karna hai? Logout ke baad aapko order nahi aayenge.","Log out","Cancel");if(!ok)return;
+    try{if(S.me&&S.me.on_duty)await sb().rpc("rider_set_duty",{p_on:false})}catch(e){}
+    riderLogout();
+  };
+  w.onclick=function(e){if(e.target===w)w.classList.remove("show")};
+}
+async function riderLogout(){
+  lsDel(MODE_KEY);
+  try{teardown();var e=await sb().auth.signOut();if(e&&e.error)throw e.error}catch(err){console.warn(err)}
+  try{lsDel("vedantCustomerEmail")}catch(e){}
+  location.reload();
+}
+
+/* ---------- lifecycle ---------- */
+function startPolling(){
+  if(S.pollT)clearInterval(S.pollT);
+  S.pollT=setInterval(function(){tick(false)},4000);
+  if(S.me&&(S.me.on_duty)){getWake();startGeo()}
+  tick(true);
+}
+function teardown(){
+  if(S.pollT){clearInterval(S.pollT);S.pollT=null}
+  stopRing();stopGeo();dropWake();destroyMaps();
+  S.me=null;S.active=null;S.incoming=null;S.avail=[];S.stats=null;S.hist=[];S.open=false;
+  var o=$("vgRider");if(o)o.classList.remove("vgr-open");
+  var p=$("vgrPill");if(p)p.classList.remove("show");
+  ensureMenu();
+}
+async function onSession(session){
+  var u=session&&session.user;
+  if(!u){if(S.uid||S.me)teardown();S.uid=null;S.email="";lsDel(MODE_KEY);bootOff();return}
+  if(S.uid===u.id&&S.me){S.email=u.email||S.email;return}
+  S.uid=u.id;S.email=String(u.email||"").toLowerCase();
+  try{await loadMe()}catch(e){S.me=null}
+  ensureMenu();
+  if(S.me){
+    lsSet(MODE_KEY,"rider");
+    try{await loadDash(true)}catch(e){}
+    startPolling();
+    openOverlay();
+  }else{
+    lsDel(MODE_KEY);bootOff();
+    if(lsGet("vgRiderSignup")==="1"){lsDel("vgRiderSignup");openRegister()}
+  }
+}
+function openRegister(){
+  if(!S.uid)return;build();
+  $("vgRider").classList.add("vgr-open");S.open=true;bootOff();
+  S.me=null;render();
+}
+
+/* ---------- account menu entry (customer UI) ---------- */
+function ensureMenu(){
+  var menu=$("stvnProfileMenu");if(!menu)return;
+  var b=$("vgMenuRider");
+  if(!b){
+    b=document.createElement("button");b.type="button";b.id="vgMenuRider";
+    var lo=menu.querySelector(".stvn-logout");
+    if(lo)menu.insertBefore(b,lo);else menu.appendChild(b);
+    b.addEventListener("click",onMenuClick);
+  }
+  b.textContent=S.me?"🏍️ Rider Mode":"🏍️ Create Rider Account";
+}
+async function onMenuClick(){
+  try{if(typeof window.stvnSetProfileMenuOpen==="function")window.stvnSetProfileMenuOpen(false)}catch(e){}
+  var c=sb();if(!c)return;
+  var s=await c.auth.getSession();var session=s&&s.data&&s.data.session;
+  if(session&&session.user){
+    if(!S.uid||S.uid!==session.user.id){S.uid=session.user.id;S.email=String(session.user.email||"").toLowerCase();await loadMe();ensureMenu()}
+    if(S.me){startPolling();openOverlay()}else openRegister();
+    return;
+  }
+  lsSet("vgRiderSignup","1");
+  if(typeof window.stvnRequireCustomerLogin==="function"){
+    window.stvnRequireCustomerLogin({message:"Rider account ke liye pehle apne Gmail se sign in karo.",action:{type:"page",page:"home"}});
+  }else toast("Pehle login karo");
+}
+
+/* ---------- customer: call the rider who accepted this order ---------- */
+(function(){
+  var prev=window.stvnCallDeliveryBoy;
+  window.stvnCallDeliveryBoy=async function(ev){
+    if(ev){try{ev.preventDefault();ev.stopPropagation()}catch(e){}}
+    try{
+      var id=(typeof trackedOrderId!=="undefined")?trackedOrderId:null,c=sb();
+      if(id&&c){
+        var r=await c.from("orders").select("rider_phone,order_status").eq("order_id",String(id)).maybeSingle();
+        var ph=digits(r&&r.data&&r.data.rider_phone);
+        if(ph&&!/^(delivered|cancelled|canceled|cancelled_by_admin)$/i.test(String(r.data.order_status||""))){window.location.href="tel:"+ph;return false}
+      }
+    }catch(e){console.warn("rider call lookup",e)}
+    if(typeof prev==="function")return prev.apply(this,[null]);
+    return false;
+  };
+})();
+
+/* ---------- ADMIN additions: rider info on order cards, auto-refresh, Riders panel ---------- */
+var A={cache:{},sig:"",busy:false,riders:[],t:null};
+function isOwner(){return window.__stvnOwnerAdminAuthorized===true}
+async function adminFetchRiderInfo(){
+  var c=sb();if(!c)return;
+  var r=await c.from("orders").select("order_id,order_status,payment_status,rider_id,rider_name,rider_phone,rider_stage,rider_payment_confirmed").order("order_date",{ascending:false}).limit(150);
+  if(r.error)return;
+  var cache={},sig=[];
+  (r.data||[]).forEach(function(o){cache[o.order_id]=o;sig.push([o.order_id,o.order_status,o.payment_status,o.rider_id,o.rider_stage,o.rider_payment_confirmed].join("~"))});
+  var s=sig.join("|"),changed=A.sig&&s!==A.sig;
+  A.cache=cache;A.sig=s;
+  return changed;
+}
+function adminDecorate(){
+  var box=$("adminOrders");if(!box)return;
+  box.querySelectorAll('select[id^="order-status-"]').forEach(function(sel){
+    var id=sel.id.replace("order-status-","");
+    var card=sel;while(card.parentElement&&card.parentElement!==box)card=card.parentElement;
+    if(!card||card===box)return;
+    var o=A.cache[id],old=card.querySelector(".vgr-admin-badge");
+    var html="";
+    if(o&&o.rider_id){
+      var stage={accepted:"Shop ja raha hai",picked:"Delivery pe hai",delivered:"Delivered"}[o.rider_stage]||o.rider_stage||"";
+      html='🏍️ Rider: <b>'+esc(o.rider_name||"Rider")+'</b> • '+esc(o.rider_phone||"")+' • '+esc(stage)+(o.rider_payment_confirmed?' • 💵 payment confirmed':'')+
+           (o.rider_stage!=="delivered"&&!/^(delivered|cancelled|cancelled_by_admin)$/i.test(o.order_status||"")?' <button type="button" data-vgr-unassign="'+esc(id)+'">Rider hatao</button>':'');
+    }
+    if(!html){if(old)old.remove();return}
+    if(!old){old=document.createElement("div");old.className="vgr-admin-badge";card.insertBefore(old,card.firstChild)}
+    if(old.dataset.h!==html){old.innerHTML=html;old.dataset.h=html}
+  });
+}
+document.addEventListener("click",async function(e){
+  var b=e.target.closest&&e.target.closest("[data-vgr-unassign]");if(!b)return;
+  var id=b.getAttribute("data-vgr-unassign");
+  var ok=window.stvnConfirm?await window.stvnConfirm("Is order se rider hata dein? Order dobara dusre riders ko dikhega."):confirm("Rider hata dein?");
+  if(!ok)return;
+  var r=await sb().from("orders").update({rider_id:null,rider_name:null,rider_phone:null,rider_stage:null,rider_payment_confirmed:false,delivery_boy_latitude:null,delivery_boy_longitude:null}).eq("order_id",id).select("order_id");
+  if(r.error||!r.data||!r.data.length){if(window.stvnAlert)window.stvnAlert("Rider nahi hata: "+((r.error&&r.error.message)||"permission/RLS check karo"));return}
+  await adminFetchRiderInfo();if(typeof window.loadAdminOrders==="function")await window.loadAdminOrders();adminDecorate();
+});
+async function adminLoop(){
+  if(!isOwner()||A.busy)return;
+  A.busy=true;
+  try{
+    ensureAdminUI();
+    var changed=await adminFetchRiderInfo();
+    var ae=document.activeElement,editing=ae&&$("adminOrders")&&$("adminOrders").contains(ae)&&/^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName);
+    var visible=$("adminOrdersSection")&&!$("adminOrdersSection").hidden&&$("adminPanel")&&$("adminPanel").style.display!=="none";
+    if(changed&&visible&&!editing&&typeof window.loadAdminOrders==="function"){await window.loadAdminOrders()}
+    adminDecorate();
+    if($("vgrAdminSection")&&!$("vgrAdminSection").hidden)adminLoadRiders();
+  }catch(e){console.warn("admin rider loop",e)}
+  A.busy=false;
+}
+function ensureAdminUI(){
+  if($("vgrAdminBtn"))return;
+  var anchor=$("admin-sound-email-toggle");if(!anchor||!anchor.parentElement)return;
+  var btn=document.createElement("button");btn.type="button";btn.id="vgrAdminBtn";btn.className="admin-btn";btn.textContent="🏍️ Riders";
+  anchor.parentElement.appendChild(btn);
+  var sec=document.createElement("section");sec.id="vgrAdminSection";sec.hidden=true;
+  sec.innerHTML='<h3 style="margin-top:0">🏍️ Riders / Delivery Partners</h3><div class="admin-small" id="vgrAdminMsg">Loading…</div><div id="vgrAdminList"></div>';
+  var os=$("adminOrdersSection");
+  if(os&&os.parentNode)os.parentNode.insertBefore(sec,os);else anchor.parentElement.parentElement.appendChild(sec);
+  btn.addEventListener("click",function(){sec.hidden=!sec.hidden;if(!sec.hidden){adminLoadRiders();sec.scrollIntoView({behavior:"smooth",block:"nearest"})}});
+}
+async function adminLoadRiders(){
+  var c=sb();if(!c)return;
+  var rs=await c.from("riders").select("*").order("created_at",{ascending:false});
+  var msg=$("vgrAdminMsg"),list=$("vgrAdminList");if(!list)return;
+  if(rs.error){msg.textContent="Riders load nahi hue: "+rs.error.message+" (rider_setup.sql run kiya?)";return}
+  var od=await c.from("orders").select("rider_id,order_status,rider_stage,rider_earning,delivery_charge,rider_delivered_at,order_id").not("rider_id","is",null).limit(2000);
+  var by={};
+  (od.data||[]).forEach(function(o){
+    var k=o.rider_id;by[k]=by[k]||{total:0,count:0,today:0,active:null};
+    if(String(o.order_status).toLowerCase()==="delivered"){
+      var e=Number(o.rider_earning||o.delivery_charge||0);by[k].total+=e;by[k].count++;
+      if(o.rider_delivered_at&&new Date(o.rider_delivered_at).toDateString()===new Date().toDateString())by[k].today+=e;
+    }else if(!/^(cancelled|canceled|cancelled_by_admin|rejected|completed)$/i.test(o.order_status||""))by[k].active=o.order_id;
+  });
+  var rows=rs.data||[];
+  msg.textContent=rows.length?(rows.length+" rider(s) • "+rows.filter(function(r){return r.on_duty}).length+" On Duty"):"Abhi koi rider account nahi bana.";
+  list.innerHTML=rows.map(function(r){
+    var st=by[r.user_id]||{total:0,count:0,today:0,active:null};
+    return '<div class="vgr-ar"><div><b>'+esc(r.full_name)+'</b> '+(r.on_duty?'🟢':'⚪')+(r.blocked?' <span style="color:#b91c1c">• BLOCKED</span>':'')+'<br><span class="admin-small">📞 '+esc(r.phone)+' • Age '+esc(r.age)+(r.vehicle_no?' • 🏍️ '+esc(r.vehicle_no):'')+'<br>📧 '+esc(r.email||"")+'</span></div>'+
+      '<div class="admin-small" style="text-align:right">Aaj '+money(st.today)+'<br>Total '+money(st.total)+' ('+st.count+' orders)'+(st.active?'<br>Live: #'+esc(shortId(st.active)):'')+'</div>'+
+      '<button class="admin-btn" type="button" data-vgr-block="'+esc(r.user_id)+'" data-b="'+(r.blocked?1:0)+'">'+(r.blocked?'Unblock':'Block')+'</button></div>';
+  }).join("");
+}
+document.addEventListener("click",async function(e){
+  var b=e.target.closest&&e.target.closest("[data-vgr-block]");if(!b)return;
+  var blocked=b.getAttribute("data-b")==="1";
+  var up={blocked:!blocked};if(!blocked)up.on_duty=false;
+  var r=await sb().from("riders").update(up).eq("user_id",b.getAttribute("data-vgr-block")).select("user_id");
+  if(r.error&&window.stvnAlert)window.stvnAlert("Update nahi hua: "+r.error.message);
+  adminLoadRiders();
+});
+
+/* ---------- init ---------- */
+function init(){
+  var c=sb();
+  if(!c||!c.auth){setTimeout(init,300);return}
+  build();
+  c.auth.getSession().then(function(r){return onSession(r&&r.data&&r.data.session)}).catch(function(){bootOff()});
+  c.auth.onAuthStateChange(function(ev,session){
+    setTimeout(function(){
+      if(ev==="SIGNED_OUT"){onSession(null);return}
+      if(session&&session.user&&(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"||ev==="USER_UPDATED"||ev==="TOKEN_REFRESHED"))onSession(session);
+    },0);
+  });
+  ensureMenu();setInterval(ensureMenu,1500);
+  A.t=setInterval(adminLoop,6000);
+  setTimeout(bootOff,7000);
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+</script>
+<!-- ===================== END VEDANT RIDER MODULE ===================== -->
