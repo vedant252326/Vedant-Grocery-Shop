@@ -5754,7 +5754,7 @@ async function placeOrder(){
     const totalAmount=Number(String(totalText).replace(/[^0-9.]/g,""))||0;
     if(totalAmount<=0) throw new Error("Cart total is not valid. Please refresh your cart and try again.");
     const order={
-      id:"VEDANT-"+Date.now(), name, phone, address, customer_email:customerEmail,
+      id:await window.vgNewOrderId(), name, phone, address, customer_email:customerEmail,
       payment:payment==="UPI"?"UPI QR":"Cash on Delivery",
       payment_status:payment==="UPI"?"pending_verification":"pending",
       order_status:"pending", total:totalText,
@@ -5997,6 +5997,7 @@ async function saveVedantOrder(order,customerEmail){
   while(true){
     ({error:supabaseError}=await supabaseClient.from("orders").insert([recordToSave]));
     if(!supabaseError)break;
+    if(String(supabaseError.code)==="23505"&&/order_id|orders_pkey|duplicate/i.test(supabaseError.message||"")&&(window.__vgIdTry=(window.__vgIdTry||0)+1)<6){const nid=await window.vgNewOrderId(true);recordToSave.order_id=nid;order.id=nid;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"customer_email")&&isMissingCustomerEmailColumn(supabaseError)){delete recordToSave.customer_email;savedWithoutCustomerEmail=true;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"user_id")&&isMissingOrderColumn(supabaseError,"user_id")){delete recordToSave.user_id;continue;}
     if(Object.prototype.hasOwnProperty.call(recordToSave,"delivery_charge")&&isMissingOrderColumn(supabaseError,"delivery_charge")){delete recordToSave.delivery_charge;continue;}
@@ -21221,6 +21222,163 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boo
 })();
 
 </script>
+
+<style id="vedant-v12-css">
+/* admin toolbar (phone) */
+#admin-shop-status-toolbar-toggle.vgx-sm{font-size:10px!important;padding:5px 8px!important;min-height:28px!important;border-radius:8px!important}
+@media(max-width:700px){#admin-festival-toolbar-toggle,#adminFestivalSection{display:none!important}}
+/* header admin button */
+.vgx-admin-hdr{display:inline-flex;align-items:center;gap:5px;min-height:40px;padding:0 12px;border:0;border-radius:12px;background:linear-gradient(135deg,#f5c542,#e0a100);color:#2b2100;font-weight:900;font-size:13px;cursor:pointer;white-space:nowrap}
+.vgx-admin-hdr:active{transform:scale(.95)}
+@media(max-width:600px){.vgx-admin-hdr{padding:0 9px;font-size:12px;min-height:36px}}
+/* rider VIP card */
+.vgx-vip{margin:12px 0;padding:14px;border-radius:18px;background:linear-gradient(135deg,#1b2a20,#0f1812);color:#fff;border:1px solid #e7c34a55;box-shadow:0 6px 18px #0003}
+.vgx-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.vgx-badge{font-weight:900;font-size:15px;padding:6px 12px;border-radius:999px;background:linear-gradient(135deg,#ffe08a,#f5c542);color:#3a2a00}
+.vgx-top small,.vgx-row small{opacity:.8;font-size:12px}
+.vgx-bar{height:9px;margin:9px 0;border-radius:99px;background:#ffffff22;overflow:hidden}.vgx-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#f5c542,#ffe08a);transition:width .5s}
+.vgx-bar.g i{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.vgx-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800}
+.vgx-vip{position:relative;animation:vgxGlow 3s ease-in-out infinite}@keyframes vgxGlow{0%,100%{box-shadow:0 6px 18px #0003,0 0 0 #f5c54200}50%{box-shadow:0 6px 22px #0004,0 0 18px #f5c54255}}
+.vgx-week{margin:12px 0;padding:14px;border-radius:18px;background:var(--surface,#fff);color:var(--text,#222);border:1px solid var(--border,#e0e6e1)}
+.vgx-chart{display:flex;align-items:flex-end;gap:6px;height:110px;margin:12px 0 8px}
+.vgx-col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px}
+.vgx-col i{width:100%;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#4ade80,#16a34a)}.vgx-col.now i{background:linear-gradient(180deg,#ffe08a,#f5c542)}
+.vgx-col span{font-size:9px;font-weight:800;opacity:.75}.vgx-col small{font-size:10px;opacity:.7}
+.vgx-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}.vgx-kpis div{padding:8px 2px;border-radius:12px;background:#16a34a14}
+.vgx-kpis b{display:block;font-size:14px}.vgx-kpis small{font-size:10px;opacity:.75}
+
+/* ===== VIP rider theme (black + gold) ===== */
+html body #vgRider{background:radial-gradient(120% 60% at 50% 0%,#2b2410 0%,#0d0f0e 55%,#070807 100%);color:#f3efe2}
+html body #vgRider .vgr-top{background:linear-gradient(135deg,#0a0a0a,#1d1a0d);border-bottom:1px solid #e7c34a66;box-shadow:0 4px 18px #000a}
+html body #vgRider .vgr-card,html body #vgRider .vgx-week{background:linear-gradient(160deg,#15181a,#1b1f1c);border:1px solid #e7c34a33;color:#f3efe2;box-shadow:0 8px 22px #0009;animation:vgxUp .45s ease both}
+html body #vgRider .vgr-card h3,html body #vgRider h2,html body #vgRider b,html body #vgRider strong{color:#ffe08a}
+html body #vgRider .vgr-muted,html body #vgRider .vgr-field span,html body #vgRider small{color:#b9b39c}
+html body #vgRider .vgr-stat{background:linear-gradient(135deg,#17201a,#10251a);border:1px solid #2a5a3a;box-shadow:0 6px 16px #0008}
+html body #vgRider .vgr-stat b{color:#6ee7a0}html body #vgRider .vgr-stat span{color:#c9d6cc}
+html body #vgRider .vgr-stat.alt{background:linear-gradient(135deg,#f5c542,#c98f00);border:0}
+html body #vgRider .vgr-stat.alt b,html body #vgRider .vgr-stat.alt span{color:#241a00}
+html body #vgRider .vgr-btn{background:linear-gradient(135deg,#ffe08a,#f5c542 55%,#d99a00);color:#241a00;box-shadow:0 6px 16px #f5c54233}
+html body #vgRider .vgr-btn.sec{background:#262a26;color:#f3efe2;box-shadow:none}
+html body #vgRider .vgr-btn.warn{background:#dc2626;color:#fff;box-shadow:none}
+html body #vgRider .vgr-field input,html body #vgRider input{background:#0d100e;color:#f3efe2;border-color:#e7c34a44}
+html body #vgRider .vgr-sheet,html body #vgRider .vgr-rbottom{background:#15181a;color:#f3efe2}
+html body #vgRider .vgr-hist{border-bottom-color:#2b2f2b}html body #vgRider .vgr-pill{background:#262a26;color:#f3efe2}
+html body #vgRider .vgx-week{color:#f3efe2}html body #vgRider .vgx-kpis div{background:#f5c54217}
+html body #vgRider .vgx-hello{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:14px;border-radius:18px;background:linear-gradient(135deg,#2b2410,#15181a);border:1px solid #e7c34a55;animation:vgxUp .4s ease both}
+html body #vgRider .vgx-av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:21px;font-weight:900;color:#241a00;background:linear-gradient(135deg,#ffe08a,#d99a00);box-shadow:0 0 0 3px #f5c54233}
+html body #vgRider .vgx-hello small{display:block;opacity:.85}html body #vgRider .vgx-hello b{font-size:17px}
+@keyframes vgxUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){html body #vgRider *{animation:none!important}}
+.vgx-share{width:100%;margin-top:6px;min-height:44px;border:1px solid #ffffff33;border-radius:12px;background:#ffffff14;color:#fff;font-weight:800;font-size:14px}
+#vgxDel{width:100%;margin-top:10px;min-height:44px;border-radius:12px;border:1.5px solid #d93025;background:transparent;color:#d93025;font-weight:900;font-size:14px}
+</style>
+<script id="vedant-v12-script">
+(function(){
+'use strict';
+if(window.__vgV12)return;window.__vgV12=true;
+var D=document;function $(i){return D.getElementById(i)}
+function sbc(){return window.supabaseClient||null}
+/* ---- short 4-digit order id (unique-checked) ---- */
+window.vgNewOrderId=async function(retry){
+  if(!retry)window.__vgIdTry=0;
+  var c=sbc();
+  for(var n=0;n<8;n++){
+    var digits=n<6?4:5,min=Math.pow(10,digits-1),id=String(min+Math.floor(Math.random()*9*min));
+    try{if(!c)return id;var r=await c.from('orders').select('order_id').eq('order_id',id).limit(1);if(r&&!r.error&&r.data&&r.data.length)continue}catch(e){}
+    return id;
+  }
+  return String(Date.now()).slice(-6);
+};
+/* ---- admin: header button beside cart ---- */
+function headerAdmin(){
+  var cart=D.querySelector('.vg-cart-action'),b=$('vgxAdminHdr'),on=window.__stvnOwnerAdminAuthorized===true;
+  if(!on||!cart){if(b)b.remove();return}
+  if(b)return;
+  b=D.createElement('button');b.id='vgxAdminHdr';b.type='button';b.className='vgx-admin-hdr';b.innerHTML='🛠️ <span>Admin</span>';
+  b.onclick=function(){if(typeof window.showPage==='function')window.showPage('admin')};
+  cart.insertAdjacentElement('afterend',b);
+}
+/* ---- admin toolbar order: ETA | Riders | Shop Status(small) | OTP ---- */
+function toolbar(){
+  var eta=$('stvnDeliveryQuickToggle'),rd=$('vgrAdminBtn'),sh=$('admin-shop-status-toolbar-toggle'),otp=$('vgOtpAdminBtn');
+  if(eta&&rd&&rd.previousElementSibling!==eta)eta.insertAdjacentElement('afterend',rd);
+  var anchor=rd||eta;
+  if(sh){sh.classList.add('vgx-sm');if(anchor&&sh.previousElementSibling!==anchor)anchor.insertAdjacentElement('afterend',sh)}
+  if(sh&&otp&&sh.nextElementSibling!==otp)sh.insertAdjacentElement('afterend',otp);
+}
+/* ---- rider: VIP card ---- */
+var TIERS=[['🥉 Bronze Rider',0],['🥈 Silver Rider',25],['🥇 Gold Rider',100],['💎 Platinum VIP',250]],GOAL=10,lastSig='',W=null,RN='';
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+function num(id){var e=$(id);return e?parseInt(String(e.textContent).replace(/[^0-9]/g,''))||0:0}
+function vip(){
+  var ex=$('vgrExtra');if(!ex)return;
+  var tot=num('vgrStAc'),today=num('vgrStTc'),earn=($('vgrStToday')||{}).textContent||'₹0';
+  var i=0;for(var k=0;k<TIERS.length;k++)if(tot>=TIERS[k][1])i=k;
+  var nxt=TIERS[i+1],pct=nxt?Math.min(100,Math.round((tot-TIERS[i][1])/(nxt[1]-TIERS[i][1])*100)):100;
+  var gp=Math.min(100,Math.round(today/GOAL*100));
+  var sig=[tot,today,earn,RN,JSON.stringify(W),!!ex.querySelector('.vgx-vip')].join('|');if(sig===lastSig)return;lastSig=sig;
+  var hr=new Date().getHours(),gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  ex.innerHTML='<div class="vgx-hello"><div class="vgx-av">'+esc((RN||'R').charAt(0).toUpperCase())+'</div><div><small>'+gr+' 👋</small><b>'+esc(RN||'Delivery Partner')+'</b><small>'+TIERS[i][0]+' · Vedant Grocery</small></div></div><div class="vgx-vip"><div class="vgx-top"><span class="vgx-badge">'+TIERS[i][0]+'</span><small>'+(nxt?'Next: '+nxt[0]+' · '+(nxt[1]-tot)+' delivery baaki':'Top tier unlocked 👑')+'</small></div><div class="vgx-bar"><i style="width:'+pct+'%"></i></div>'+
+   '<div class="vgx-row"><span>🎯 Aaj ka goal</span><span>'+Math.min(today,GOAL)+'/'+GOAL+(today>=GOAL?' ✅':'')+'</span></div><div class="vgx-bar g"><i style="width:'+gp+'%"></i></div>'+
+   '<button type="button" class="vgx-share" id="vgxShare">📤 Aaj ki kamai share karo</button></div>'+weekHTML();
+  $('vgxShare').onclick=function(){
+    var txt='Aaj '+today+' delivery · kamai '+earn+' · '+TIERS[i][0]+' — Vedant Grocery';
+    if(navigator.share)navigator.share({text:txt}).catch(function(){});
+    else if(navigator.clipboard){navigator.clipboard.writeText(txt);if(window.stvnAlert)window.stvnAlert('Copy ho gaya ✅')}
+  };
+}
+/* ---- rider: 7-day earnings + insights ---- */
+function money(n){return '₹'+(Math.round(n*100)/100).toLocaleString('en-IN')}
+function weekHTML(){
+  if(!W)return '';
+  var mx=Math.max.apply(null,W.days.map(function(d){return d.e}).concat([1]));
+  var bars=W.days.map(function(d,i){var h=Math.max(6,Math.round(d.e/mx*100));return '<div class="vgx-col'+(i===6?' now':'')+'"><span>'+(d.e?Math.round(d.e):'')+'</span><i style="height:'+h+'%"></i><small>'+d.l+'</small></div>'}).join('');
+  return '<div class="vgx-week"><div class="vgx-row"><span>📊 Pichhle 7 din</span><span>'+money(W.week)+'</span></div><div class="vgx-chart">'+bars+'</div>'+
+   '<div class="vgx-kpis"><div><b>'+W.cnt+'</b><small>Deliveries</small></div><div><b>'+money(W.avg)+'</b><small>Avg / order</small></div><div><b>'+W.best+'</b><small>Best din</small></div><div><b>'+W.streak+'🔥</b><small>Streak</small></div></div></div>';
+}
+async function fetchWeek(){
+  var c=sbc();if(!c||!$('vgrExtra'))return;
+  try{
+    var u=await c.auth.getUser(),uid=u&&u.data&&u.data.user&&u.data.user.id;if(!uid)return;
+    if(!RN){var q=await c.from('riders').select('full_name').eq('user_id',uid).maybeSingle();if(q&&q.data&&q.data.full_name)RN=q.data.full_name}
+    var since=new Date(Date.now()-30*864e5).toISOString();
+    var r=await c.from('orders').select('rider_earning,delivery_charge,rider_delivered_at').eq('rider_id',uid).eq('order_status','delivered').gte('rider_delivered_at',since);
+    if(r.error||!r.data)return;
+    var DN=['Ravi','Som','Mang','Budh','Guru','Shuk','Shani'],map={},k;
+    r.data.forEach(function(o){if(!o.rider_delivered_at)return;k=new Date(o.rider_delivered_at).toDateString();map[k]=map[k]||{e:0,n:0};map[k].e+=Number(o.rider_earning!=null?o.rider_earning:o.delivery_charge)||0;map[k].n++});
+    var days=[],week=0,cnt=0,bi=0,bv=-1;
+    for(var i=6;i>=0;i--){var d=new Date(Date.now()-i*864e5),m=map[d.toDateString()]||{e:0,n:0};days.push({e:m.e,l:DN[d.getDay()]});week+=m.e;cnt+=m.n;if(m.e>bv){bv=m.e;bi=days.length-1}}
+    var streak=0;for(var j=0;j<30;j++){if(map[new Date(Date.now()-j*864e5).toDateString()])streak++;else if(j>0)break;else continue}
+    W={days:days,week:week,cnt:cnt,avg:cnt?week/cnt:0,best:bv>0?days[bi].l:'-',streak:streak};
+  }catch(e){}
+}
+setInterval(fetchWeek,45000);setTimeout(fetchWeek,2500);
+/* ---- rider: delete own account ---- */
+async function delRider(){
+  var msg='Rider account delete karna hai? Ye wapas nahi hoga. Delete ke baad aap normal shop par aa jaoge, aur baad me dobara rider account bana sakte ho.';
+  var ok=window.stvnConfirm?await window.stvnConfirm(msg):confirm(msg);if(!ok)return;
+  var c=sbc(),b=$('vgxDel');if(b){b.disabled=true;b.textContent='Delete ho raha hai…'}
+  try{
+    var u=await c.auth.getUser(),uid=u&&u.data&&u.data.user&&u.data.user.id;if(!uid)throw new Error('Login nahi mila');
+    var r=await c.rpc('rider_delete_account');
+    if(r.error){
+      if(/ACTIVE_ORDER/.test(r.error.message||'')){alert('Pehle chalta hua order complete karo, phir account delete karo.');if(b){b.disabled=false;b.textContent='🗑️ Rider account delete karo'}return}
+      var d=await c.from('riders').delete().eq('user_id',uid).select('user_id');
+      if(d.error||!d.data||!d.data.length)throw new Error('Delete allow nahi hua. Supabase me rider_delete_account.sql run karo.');
+    }
+    try{localStorage.removeItem('vgRiderMode')}catch(e){}
+    location.reload();
+  }catch(e){alert('❌ '+((e&&e.message)||e));if(b){b.disabled=false;b.textContent='🗑️ Rider account delete karo'}}
+}
+function menu(){
+  var out=$('vgrMOut');if(!out||$('vgxDel'))return;
+  var b=D.createElement('button');b.id='vgxDel';b.type='button';b.textContent='🗑️ Rider account delete karo';b.onclick=delRider;
+  out.insertAdjacentElement('afterend',b);
+}
+setInterval(function(){try{headerAdmin();toolbar();vip();menu()}catch(e){}},1000);
+})();
+</script>
 </body>
 </html>
 
@@ -23117,7 +23275,7 @@ var lastTrack=null;
 function injectTrackPin(order,box){
   if(!box)return;
   var old=box.querySelector(':scope > .vgotp-card');if(old)old.remove();
-  if(!order||box.closest('.history-item'))return;
+  if(!order||box.closest('#order-history'))return;   /* My Orders has its own mini PIN badge; Track page panels (inside .history-item cards) must show the PIN card */
   if(!otpOn()||!isOpenStatus(order.order_status))return;
   var id=order.order_id||order.id;if(!id)return;
   var s=D.createElement('section');s.className='vgotp-card';s.setAttribute('data-oid',String(id));s.innerHTML=pinCardHTML(id);
