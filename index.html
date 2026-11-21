@@ -21666,6 +21666,30 @@ html.vgr-boot::before{content:"";position:fixed;inset:0;background:#0b1220;z-ind
 .vgr-ar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #cfd8d2;font-size:14px}
 </style>
 
+<style id="vgr-style2">
+#vgRider{--ac:#16a34a;--gold:#fbbf24;--hd:linear-gradient(135deg,#0b1220,#16301f 55%,#0d4a2a);background:radial-gradient(900px 420px at 50% -8%,#e3f6ea,#f3f6f4 62%);height:100dvh}
+html[data-festival] #vgRider{--ac:var(--fp,#16a34a);--gold:var(--fa,#fbbf24);--hd:var(--fh,linear-gradient(135deg,#0b1220,#16301f));background:var(--fbg,#f3f6f4)}
+#vgRider .vgr-top{background:var(--hd);border-bottom:2px solid var(--gold);box-shadow:0 8px 22px #0005}
+#vgRider .vgr-brand{font-size:18px;letter-spacing:.4px;text-shadow:0 1px 6px #0006}
+#vgRider .vgr-chip{backdrop-filter:blur(6px);border:1px solid #ffffff33}
+#vgRider .vgr-chip.vgr-shop{background:var(--gold);color:#1c1c1c;border:0}
+#vgRider .vgr-card{border-radius:22px;border:1px solid color-mix(in srgb,var(--gold) 55%,#fff);box-shadow:0 10px 28px #0b122018}
+#vgRider .vgr-stat{border-radius:20px;border:1px solid color-mix(in srgb,var(--ac) 25%,#fff);box-shadow:0 6px 16px #0b12200f}
+#vgRider .vgr-btn{background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 68%,#000));color:#fff;border-radius:16px;box-shadow:0 8px 18px #0003;transition:transform .12s,opacity .2s;min-height:50px}
+#vgRider .vgr-btn:active{transform:scale(.97)}
+#vgRider .vgr-btn.sec{background:#e8f0ea;color:#14221a;box-shadow:none}
+#vgRider .vgr-btn.warn{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+#vgRider .vgr-btn.blue{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+#vgRider .vgr-btn.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1c1c1c}
+#vgRider .vgr-switch.on{background:var(--ac)}
+#vgRider .vgr-fare{background:linear-gradient(135deg,var(--ac),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+#vgRider .vgr-sheet{border-top:3px solid var(--gold)}
+#vgRider .vgr-field input{border-radius:14px;min-height:50px}
+.vgr-vip{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:var(--gold);color:#1c1c1c;font-size:10px;font-weight:900;vertical-align:middle}
+html.vgr-active{overflow:hidden}
+html.vgr-active #fxFall,html.vgr-active #fxPop{display:none!important}
+@media(max-width:380px){#vgRider .vgr-chip{padding:7px 9px;font-size:12px}.vgr-fare{font-size:38px}}
+</style>
 <div id="vgrPill" role="button" aria-label="Open rider page">🏍️ Rider</div>
 
 <script id="vgr-script">
@@ -21704,7 +21728,7 @@ function build(){
   if($("vgRider"))return;
   var d=document.createElement("div");d.id="vgRider";
   d.innerHTML=
-  '<div class="vgr-top"><div class="vgr-brand">🏍️ Vedant Rider<small id="vgrWho">Rider</small></div>'+
+  '<div class="vgr-top"><div class="vgr-brand">🏍️ Vedant Rider<span class="vgr-vip">VIP</span><small id="vgrWho">Rider</small></div>'+
   '<button class="vgr-chip" id="vgrDutyChip" type="button">Off Duty</button>'+
   '<button class="vgr-chip vgr-shop" id="vgrShopBtn" type="button">🏪 Shop</button>'+
   '<button class="vgr-chip" id="vgrAcctBtn" type="button" aria-label="Account">👤</button></div>'+
@@ -21775,11 +21799,12 @@ document.addEventListener("visibilitychange",function(){if(!document.hidden&&S.m
 
 /* ---------- open / close ---------- */
 function openOverlay(){
-  if(!S.uid)return;build();
+  if(!S.uid)return;build();S.shop=false;document.documentElement.classList.add("vgr-active");
   $("vgRider").classList.add("vgr-open");S.open=true;
   $("vgrPill").classList.remove("show");bootOff();render();
 }
 function goShop(){
+  S.shop=true;document.documentElement.classList.remove("vgr-active");
   var o=$("vgRider");if(o)o.classList.remove("vgr-open");S.open=false;
   destroyMaps();updatePill();bootOff();
   try{if(typeof window.showPage==="function")window.showPage("home")}catch(e){}
@@ -21796,7 +21821,7 @@ function updatePill(){
 async function loadMe(){
   var c=sb();if(!c)return;
   var r=await c.from("riders").select("*").eq("user_id",S.uid).maybeSingle();
-  if(r.error){console.warn("riders table:",r.error.message);S.me=null;return}
+  if(r.error){var r2=await c.rpc("rider_me");if(!r2.error){S.me=(r2.data&&r2.data.user_id)?r2.data:null;return}console.warn("riders table:",r.error.message);return}
   S.me=r.data||null;
 }
 async function loadDash(force){
@@ -22019,6 +22044,7 @@ function renderRegister(){
   '<label class="vgr-field"><span>Poora naam *</span><input id="vgrfName" autocomplete="name" maxlength="60"></label>'+
   '<label class="vgr-field"><span>Age * (18+)</span><input id="vgrfAge" type="number" inputmode="numeric" min="18" max="70"></label>'+
   '<label class="vgr-field"><span>Mobile number * (10 digit)</span><input id="vgrfPhone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel"></label>'+
+  '<label class="vgr-field"><span>Driving Licence (DL) — Optional</span><input id="vgrfDl" maxlength="20" style="text-transform:uppercase"></label>'+
   '<label class="vgr-field"><span>Vehicle number</span><input id="vgrfVeh" maxlength="15" style="text-transform:uppercase" placeholder="UP78 AB 1234"></label>'+
   '<button class="vgr-btn" id="vgrfGo" type="button">Rider Account banao</button>'+
   '<button class="vgr-btn sec" id="vgrfBack" type="button">🏪 Wapas Shop</button></div>';
@@ -22031,7 +22057,7 @@ async function submitRegister(){
   if(!(age>=18&&age<=70))return toast("Age 18 se 70 ke beech honi chahiye");
   if(!/^[6-9][0-9]{9}$/.test(ph))return toast("Sahi 10 digit mobile number likho");
   var b=$("vgrfGo");b.disabled=true;b.textContent="Ban raha hai…";
-  var r=await sb().rpc("rider_register",{p_name:n,p_age:age,p_phone:ph,p_dl:"",p_vehicle:ve});
+  var r=await sb().rpc("rider_register",{p_name:n,p_age:age,p_phone:ph,p_dl:($("vgrfDl")?$("vgrfDl").value.trim():""),p_vehicle:ve});
   if(r.error){b.disabled=false;b.textContent="Rider Account banao";var m=errMsg(r.error);
     if(/ALREADY_RIDER/.test(m)){await loadMe();$("vgrDutyChip").style.display="";render();return}
     toast("❌ "+m,4500);return}
@@ -22170,7 +22196,7 @@ async function riderLogout(){
 /* ---------- lifecycle ---------- */
 function startPolling(){
   if(S.pollT)clearInterval(S.pollT);
-  S.pollT=setInterval(function(){tick(false)},4000);
+  S.pollT=setInterval(function(){tick(false)},2500);subRT();
   if(S.me&&(S.me.on_duty)){getWake();startGeo()}
   tick(true);
 }
@@ -22178,8 +22204,9 @@ function teardown(){
   if(S.pollT){clearInterval(S.pollT);S.pollT=null}
   stopRing();stopGeo();dropWake();destroyMaps();
   S.me=null;S.active=null;S.incoming=null;S.avail=[];S.stats=null;S.hist=[];S.open=false;
-  var o=$("vgRider");if(o)o.classList.remove("vgr-open");
+  document.documentElement.classList.remove("vgr-active");var o=$("vgRider");if(o)o.classList.remove("vgr-open");
   var p=$("vgrPill");if(p)p.classList.remove("show");
+  try{if(S.rt)sb().removeChannel(S.rt)}catch(e){}S.rt=null;
   ensureMenu();
 }
 async function onSession(session){
@@ -22201,6 +22228,7 @@ async function onSession(session){
 }
 function openRegister(){
   if(!S.uid)return;build();
+  S.shop=false;document.documentElement.classList.add("vgr-active");
   $("vgRider").classList.add("vgr-open");S.open=true;bootOff();
   S.me=null;render();
 }
@@ -22209,13 +22237,14 @@ function openRegister(){
 function ensureMenu(){
   var menu=$("stvnProfileMenu");if(!menu)return;
   var b=$("vgMenuRider");
+  if(!S.me){if(b)b.remove();return}
   if(!b){
     b=document.createElement("button");b.type="button";b.id="vgMenuRider";
     var lo=menu.querySelector(".stvn-logout");
     if(lo)menu.insertBefore(b,lo);else menu.appendChild(b);
     b.addEventListener("click",onMenuClick);
   }
-  b.textContent=S.me?"🏍️ Rider Mode":"🏍️ Create Rider Account";
+  b.textContent=lang()===2?"🏍️ राइडर मोड":"🏍️ Rider Mode";
 }
 async function onMenuClick(){
   try{if(typeof window.stvnSetProfileMenuOpen==="function")window.stvnSetProfileMenuOpen(false)}catch(e){}
@@ -22318,6 +22347,7 @@ function ensureAdminUI(){
 async function adminLoadRiders(){
   var c=sb();if(!c)return;
   var rs=await c.from("riders").select("*").order("created_at",{ascending:false});
+  if(rs.error){var rr=await c.rpc("admin_list_riders");if(!rr.error)rs={data:rr.data,error:null}}
   var msg=$("vgrAdminMsg"),list=$("vgrAdminList");if(!list)return;
   if(rs.error){msg.textContent="Riders load nahi hue: "+rs.error.message+" (rider_setup.sql run kiya?)";return}
   var od=await c.from("orders").select("rider_id,order_status,rider_stage,rider_earning,delivery_charge,rider_delivered_at,order_id").not("rider_id","is",null).limit(2000);
@@ -22343,23 +22373,112 @@ document.addEventListener("click",async function(e){
   var blocked=b.getAttribute("data-b")==="1";
   var up={blocked:!blocked};if(!blocked)up.on_duty=false;
   var r=await sb().from("riders").update(up).eq("user_id",b.getAttribute("data-vgr-block")).select("user_id");
+  if(r.error||!r.data||!r.data.length){r=await sb().rpc("admin_set_rider_block",{p_user_id:b.getAttribute("data-vgr-block"),p_blocked:!blocked})}
   if(r.error&&window.stvnAlert)window.stvnAlert("Update nahi hua: "+r.error.message);
   adminLoadRiders();
 });
+
+
+/* ---------- realtime + watchdog (rider page never closes by itself) ---------- */
+function subRT(){var c=sb();if(!c||S.rt)return;try{S.rt=c.channel("vgr-orders").on("postgres_changes",{event:"*",schema:"public",table:"orders"},function(){tick(true)}).subscribe()}catch(e){}}
+function watchdog(){
+  if(!S.me||!S.uid||S.shop)return;
+  var o=$("vgRider");
+  if(!o||!o.classList.contains("vgr-open")||!S.open)openOverlay();
+}
+/* ---------- language: follows site language (en / hi) ---------- */
+var TR=[
+["Order ki ringtone chalu karne ke liye yahan tap karo","Tap here to enable the order ringtone","ऑर्डर की रिंगटोन चालू करने के लिए यहाँ टैप करें"],
+["Screen on rakho aur ye app khula rakho, naya order aate hi ringtone bajegi.","Keep the screen on and this app open. The ringtone plays as soon as a new order arrives.","स्क्रीन ऑन रखें और ऐप खुला रखें, नया ऑर्डर आते ही रिंगटोन बजेगी।"],
+["Vedant Grocery Shop se order uthao, phir Start Ride dabao.","Pick up the order from Vedant Grocery Shop, then tap Start Ride.","वेदांत ग्रोसरी शॉप से ऑर्डर उठाएँ, फिर स्टार्ट राइड दबाएँ।"],
+["Order customer ko deliver ho gaya? Complete karne ke baad delivery charge aapke account me add ho jayega.","Order delivered to the customer? The delivery charge is added to your account once completed.","ऑर्डर कस्टमर को डिलीवर हो गया? पूरा करने के बाद डिलीवरी चार्ज आपके अकाउंट में जुड़ जाएगा।"],
+["Customer ki location order me nahi mili, admin se baat karo","Customer location missing in the order. Contact admin.","ऑर्डर में कस्टमर की लोकेशन नहीं मिली, एडमिन से बात करें"],
+["Pehle chalta hua order complete karo, phir logout karo","Finish the running order first, then log out","पहले चल रहा ऑर्डर पूरा करें, फिर लॉग आउट करें"],
+["Logout karna hai? Logout ke baad aapko order nahi aayenge.","Log out? You will not receive orders after logging out.","लॉग आउट करना है? लॉग आउट के बाद आपको ऑर्डर नहीं आएँगे।"],
+["📍 Location permission Allow karo, warna map/tracking nahi chalega","📍 Allow location permission, otherwise map/tracking will not work","📍 लोकेशन परमिशन Allow करें, वरना मैप/ट्रैकिंग नहीं चलेगी"],
+["Off Duty — On karo tabhi order aayenge","Off Duty — switch On to receive orders","ऑफ ड्यूटी — ऑर्डर पाने के लिए ऑन करें"],
+["On Duty — naye orders aayenge","On Duty — new orders will arrive","ऑन ड्यूटी — नए ऑर्डर आएँगे"],
+["Pehle customer se payment lekar Confirm dabao","First collect payment, then tap Confirm","पहले कस्टमर से पेमेंट लेकर कन्फर्म दबाएँ"],
+["Pehle chalta hua order complete karo","Finish the running order first","पहले चल रहा ऑर्डर पूरा करें"],
+["✅ Order accept ho gaya! Pehle shop pe jao","✅ Order accepted! Go to the shop first","✅ ऑर्डर स्वीकार हो गया! पहले शॉप पर जाएँ"],
+["Ye order kisi aur rider ne le liya","Another rider took this order","यह ऑर्डर किसी और राइडर ने ले लिया"],
+["😕 Ye order dusre rider ne le liya","😕 Another rider took this order","😕 यह ऑर्डर दूसरे राइडर ने ले लिया"],
+["🟢 Aap On Duty ho — orders aayenge","🟢 You are On Duty — orders will arrive","🟢 आप ऑन ड्यूटी हैं — ऑर्डर आएँगे"],
+["🔴 Aap Off Duty ho","🔴 You are Off Duty","🔴 आप ऑफ ड्यूटी हैं"],
+["Age 18 se 70 ke beech honi chahiye","Age must be between 18 and 70","उम्र 18 से 70 के बीच होनी चाहिए"],
+["Sahi 10 digit mobile number likho","Enter a valid 10 digit mobile number","सही 10 अंकों का मोबाइल नंबर लिखें"],
+["🎉 Rider account ban gaya!","🎉 Rider account created!","🎉 राइडर अकाउंट बन गया!"],
+["✅ Payment confirm ho gayi","✅ Payment confirmed","✅ पेमेंट कन्फर्म हो गई"],
+["Kya customer se ","Did you receive "," क्या कस्टमर से "],
+[" cash mil gaya?"," in cash from the customer?"," कैश मिल गया?"],
+["Aap shop se ","You are "," आप शॉप से "],
+[" km door ho. Phir bhi ride start karni hai?"," km from the shop. Start the ride anyway?"," km दूर हैं। फिर भी राइड शुरू करनी है?"],
+[" aapke account me add ho gaye"," added to your account"," आपके अकाउंट में जुड़ गए"],
+["Haan, mil gaya","Yes, received","हाँ, मिल गया"],["Haan, Delivered","Yes, Delivered","हाँ, डिलीवर हुआ"],["Haan, Start","Yes, Start","हाँ, शुरू करें"],
+["Abhi koi delivery nahi hui.","No deliveries yet.","अभी कोई डिलीवरी नहीं हुई।"],
+["Aapki kamai (Delivery Charge)","Your earning (Delivery Charge)","आपकी कमाई (डिलीवरी चार्ज)"],
+["Route load ho raha hai…","Loading route…","रूट लोड हो रहा है…"],
+["📍 Shop pahunch gaya — Start Ride","📍 Reached the shop — Start Ride","📍 शॉप पहुँच गया — स्टार्ट राइड"],
+["💵 Payment mil gayi — Confirm","💵 Payment received — Confirm","💵 पेमेंट मिल गई — कन्फर्म"],
+["✅ Online paid — cash nahi lena","✅ Paid online — do not collect cash","✅ ऑनलाइन पेड — कैश नहीं लेना"],
+["💵 Customer se Cash lo: ","💵 Collect cash from customer: ","💵 कस्टमर से कैश लें: "],
+["🏪 Pehle Shop pe jao","🏪 Go to the shop first","🏪 पहले शॉप पर जाएँ"],
+["🏪 Shop (Customer view)","🏪 Shop (Customer view)","🏪 शॉप (कस्टमर व्यू)"],
+["🏪 Wapas Shop","🏪 Back to Shop","🏪 शॉप पर वापस"],
+["🏪 Shop tak: ","🏪 To shop: ","🏪 शॉप तक: "],
+["📍 Delivery distance: ","📍 Delivery distance: ","📍 डिलीवरी दूरी: "],
+["Driving Licence (DL) — Optional","Driving Licence (DL) — Optional","ड्राइविंग लाइसेंस (DL) — वैकल्पिक"],
+["Mobile number * (10 digit)","Mobile number * (10 digit)","मोबाइल नंबर * (10 अंक)"],
+["🏍️ Rider Account banao","🏍️ Create Rider Account","🏍️ राइडर अकाउंट बनाएँ"],
+["Rider Account banao","Create Rider Account","राइडर अकाउंट बनाएँ"],
+["Order ka intezaar…","Waiting for orders…","ऑर्डर का इंतज़ार…"],
+["Naya Delivery Order!","New Delivery Order!","नया डिलीवरी ऑर्डर!"],
+["✅ Delivered Orders","✅ Delivered Orders","✅ डिलीवर हुए ऑर्डर"],
+["🏁 Delivery Complete","🏁 Delivery Complete","🏁 डिलीवरी पूरी"],
+["🎉 Delivered! ","🎉 Delivered! ","🎉 डिलीवर हो गया! "],
+["Start ho raha hai…","Starting…","शुरू हो रहा है…"],["Ban raha hai…","Creating…","बन रहा है…"],["Ho raha hai…","Please wait…","हो रहा है…"],["Accepting…","Accepting…","स्वीकार हो रहा है…"],
+["Poora naam *","Full name *","पूरा नाम *"],["Age * (18+)","Age * (18+)","उम्र * (18+)"],["Vehicle number","Vehicle number","वाहन नंबर"],
+["Aaj ki kamai","Today’s earnings","आज की कमाई"],["Total earning","Total earnings","कुल कमाई"],["Aaj delivered","Delivered today","आज डिलीवर"],["Total delivered","Total delivered","कुल डिलीवर"],
+["Duty Status","Duty Status","ड्यूटी स्टेटस"],["🟢 On Duty","🟢 On Duty","🟢 ऑन ड्यूटी"],["Off Duty","Off Duty","ऑफ ड्यूटी"],
+["🎯 Meri location","🎯 My location","🎯 मेरी लोकेशन"],["🧭 Google Maps","🧭 Google Maps","🧭 गूगल मैप्स"],["📞 Call","📞 Call","📞 कॉल"],
+["👤 Rider Account","👤 Rider Account","👤 राइडर अकाउंट"],["🚪 Log out","🚪 Log out","🚪 लॉग आउट"],["Band karo","Close","बंद करें"],
+["Customer tak","To customer","कस्टमर तक"],["Shop tak","To shop","शॉप तक"],["🏪 Shop","🏪 Shop","🏪 शॉप"],
+["✅ Accept","✅ Accept","✅ स्वीकार करें"],["Skip","Skip","छोड़ें"],["Cancel","Cancel","रद्द करें"],["Naya rider","New rider","नया राइडर"],
+["Naam likho","Enter your name","नाम लिखें"],["Pehle login karo","Please log in first","पहले लॉगिन करें"],["Order #","Order #","ऑर्डर #"],
+[" khatam ho gaya"," is finished"," पूरा हो गया"],["✅ Cash ","✅ Cash ","✅ कैश "],[" mil gaya"," received"," मिल गया"],["Nahi","No","नहीं"],["Login: ","Login: ","लॉगिन: "]
+];
+var TRX=null,TRM={};
+function lang(){var R=document.documentElement,l=String(R.dataset.language||R.lang||"en").toLowerCase();return l.indexOf("hi")===0?2:1}
+function tr(s){
+  if(!TRX){TR.sort(function(a,b){return b[0].length-a[0].length});TR.forEach(function(r){TRM[r[0]]=r});TRX=new RegExp(TR.map(function(r){return r[0].replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}).join("|"),"g")}
+  var i=lang();return s.replace(TRX,function(m){return TRM[m][i]});
+}
+function trNode(n){
+  var v=n.nodeValue,l=lang();if(n.__t===v&&n.__l===l)return;
+  var o=(n.__t===v&&n.__o!=null)?n.__o:v,r=tr(o);n.__o=o;n.__t=r;n.__l=l;if(r!==v)n.nodeValue=r;
+}
+function trTree(root){var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),n,a=[];while((n=w.nextNode()))a.push(n);a.forEach(trNode)}
+function i18nStart(){
+  var o=$("vgRider");if(!o||o.__i18n)return;o.__i18n=1;o.setAttribute("translate","no");o.classList.add("notranslate");
+  new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData")trNode(m.target);else m.addedNodes.forEach(function(n){if(n.nodeType===3)trNode(n);else if(n.nodeType===1)trTree(n)})})}).observe(o,{childList:true,subtree:true,characterData:true});
+  new MutationObserver(function(){trTree(o);ensureMenu()}).observe(document.documentElement,{attributes:true,attributeFilter:["data-language","lang"]});
+  trTree(o);
+}
 
 /* ---------- init ---------- */
 function init(){
   var c=sb();
   if(!c||!c.auth){setTimeout(init,300);return}
-  build();
+  build();i18nStart();
   c.auth.getSession().then(function(r){return onSession(r&&r.data&&r.data.session)}).catch(function(){bootOff()});
   c.auth.onAuthStateChange(function(ev,session){
     setTimeout(function(){
-      if(ev==="SIGNED_OUT"){onSession(null);return}
+      if(ev==="SIGNED_OUT"){c.auth.getSession().then(function(r){if(!(r&&r.data&&r.data.session))onSession(null)});return}
       if(session&&session.user&&(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"||ev==="USER_UPDATED"||ev==="TOKEN_REFRESHED"))onSession(session);
     },0);
   });
-  ensureMenu();setInterval(ensureMenu,1500);
+  ensureMenu();setInterval(ensureMenu,1500);setInterval(watchdog,1500);
+  try{if(/rider-signup/.test(location.hash)){lsSet("vgRiderSignup","1");setTimeout(function(){if(!S.uid&&typeof window.stvnRequireCustomerLogin==="function")window.stvnRequireCustomerLogin({message:"Rider account ke liye pehle apne Gmail se sign in karo.",action:{type:"page",page:"home"}});else if(S.uid&&!S.me)openRegister()},1800)}}catch(e){}
   A.t=setInterval(adminLoop,6000);
   setTimeout(bootOff,7000);
 }
