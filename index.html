@@ -21593,6 +21593,165 @@ hook();W.addEventListener('load',hook);
 
 </script>
 
+<!-- ===================== VEDANT VIP ACCOUNT PAGE ===================== -->
+<style id="vga-style">
+#page-account{padding:0 0 130px;background:var(--fbg,#f4f6f4);min-height:100vh}
+#page-account .vga-wrap{max-width:680px;margin:0 auto}
+.vga-hero{position:relative;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 64px;background:var(--fh,linear-gradient(135deg,#0b1220,#16301f 55%,#0d4a2a));color:#fff;border-radius:0 0 30px 30px;overflow:hidden}
+.vga-hero:after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--fa,#fbbf24)55,transparent 70%);opacity:.5}
+.vga-bar{display:flex;align-items:center;gap:10px;position:relative;z-index:1}
+.vga-back{width:42px;height:42px;border-radius:50%;border:1px solid #ffffff44;background:#ffffff22;color:#fff;font-size:22px;display:grid;place-items:center;cursor:pointer;padding:0;margin:0}
+.vga-bar h2{margin:0;font-size:19px;color:#fff;flex:1}
+.vga-vip{padding:5px 11px;border-radius:99px;background:var(--fa,#fbbf24);color:#1c1c1c;font-weight:900;font-size:11px}
+.vga-user{display:flex;gap:14px;align-items:center;margin-top:18px;position:relative;z-index:1}
+.vga-av{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--fa,#fbbf24),#fff);color:#1c1c1c;border:3px solid #ffffff88;flex:0 0 auto;box-shadow:0 8px 22px #0006}
+.vga-user b{display:block;font-size:20px;line-height:1.2}.vga-user small{display:block;opacity:.85;font-size:13px;margin-top:2px;word-break:break-all}
+.vga-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:-40px 14px 0;position:relative;z-index:2}
+.vga-tile{background:#fff;border-radius:18px;padding:12px 4px;text-align:center;font-weight:800;font-size:12px;color:#26332a;box-shadow:0 10px 24px #0b122022;border:1px solid color-mix(in srgb,var(--fa,#fbbf24) 40%,#fff);cursor:pointer;margin:0}
+.vga-tile span{display:block;font-size:26px;margin-bottom:4px}
+.vga-sec{margin:18px 14px 0}
+.vga-sec>h3{margin:0 4px 8px;font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:#6b7a70}
+.vga-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 8px 22px #0b12201a;border:1px solid #e6eee8}
+.vga-row{display:flex;align-items:center;gap:12px;width:100%;padding:14px 14px;background:transparent;border:0;border-bottom:1px solid #eef3ef;text-align:left;font-size:15px;font-weight:700;color:#1f2a22;cursor:pointer;margin:0;border-radius:0}
+.vga-row:last-child{border-bottom:0}
+.vga-row i{font-style:normal;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--fs,#eaf7ec);font-size:19px;flex:0 0 auto}
+.vga-row div{flex:1;min-width:0}.vga-row small{display:block;font-weight:600;color:#78877d;font-size:12px;margin-top:1px}
+.vga-row em{font-style:normal;color:#9aa8a0;font-size:20px}
+.vga-sw{position:relative;width:48px;height:28px;border-radius:99px;background:#c9d4cc;flex:0 0 auto;transition:.2s}
+.vga-sw:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 5px #0003}
+.vga-sw.on{background:var(--fp,#16a34a)}.vga-sw.on:after{left:23px}
+.vga-card details{border-bottom:1px solid #eef3ef}.vga-card details:last-child{border:0}
+.vga-card summary{list-style:none;display:flex;align-items:center;gap:12px;padding:14px;font-weight:700;font-size:15px;cursor:pointer;color:#1f2a22}
+.vga-card summary::-webkit-details-marker{display:none}
+.vga-card summary i{font-style:normal;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--fs,#eaf7ec);font-size:19px}
+.vga-card summary:after{content:"›";margin-left:auto;font-size:22px;color:#9aa8a0;transition:.2s}
+.vga-card details[open] summary:after{transform:rotate(90deg)}
+.vga-form{padding:2px 14px 16px}
+.vga-form label{display:block;font-size:12px;font-weight:800;color:#5c6b61;margin:10px 0 4px}
+.vga-form input,.vga-form textarea{width:100%;box-sizing:border-box;padding:13px 12px;border:1.5px solid #d6e2d9;border-radius:13px;font-size:16px;background:#fbfdfc;color:#1f2a22;margin:0}
+.vga-form input:focus,.vga-form textarea:focus{outline:none;border-color:var(--fp,#16a34a)}
+.vga-save{width:100%;margin-top:14px;padding:14px;border:0;border-radius:14px;font-weight:900;font-size:16px;color:#fff;background:var(--fb,linear-gradient(135deg,#16a34a,#0b7a1a));box-shadow:0 8px 18px #0003;cursor:pointer}
+.vga-out{color:#c62828}
+.vga-foot{text-align:center;color:#8a988f;font-size:12px;margin:22px 0 0}
+body.dark #page-account{background:#0e1210}
+body.dark .vga-tile,body.dark .vga-card{background:#171d19;border-color:#26312a}
+body.dark .vga-tile,body.dark .vga-row,body.dark .vga-card summary{color:#e7efe9}
+body.dark .vga-row,body.dark .vga-card details{border-color:#26312a}
+body.dark .vga-row i,body.dark .vga-card summary i{background:#223027}
+body.dark .vga-form input,body.dark .vga-form textarea{background:#101512;color:#e7efe9;border-color:#2c3a31}
+body.dark .vga-form label,body.dark .vga-sec>h3{color:#9db0a2}
+.vg-theme-action{display:none}
+@media(min-width:701px){.vg-account-action{display:none!important}.vg-store-header .vg11-theme:not(.vg-theme-action){display:none!important}.vg-store-header .vg-theme-action{display:inline-grid!important;width:44px!important;height:44px!important;font-size:20px!important}}
+html body .modern-bottom-nav{display:grid!important;grid-auto-flow:column!important;grid-template-columns:none!important;grid-auto-columns:minmax(0,1fr)!important}
+</style>
+<script id="vga-script">
+(function(){
+'use strict';
+if(window.__vgAccLoaded)return;window.__vgAccLoaded=true;
+var D=document,$=function(i){return D.getElementById(i)};
+function hi(){return String(D.documentElement.dataset.language||D.documentElement.lang||'en').toLowerCase().indexOf('hi')===0}
+function T(e,h){return hi()?h:e}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+function email(){try{return localStorage.getItem('vedantCustomerEmail')||''}catch(e){return ''}}
+function load(k){try{return JSON.parse(localStorage.getItem(window.stvnCustomerStorageKey(k))||'{}')||{}}catch(e){return {}}}
+function isDark(){return D.body&&D.body.classList.contains('dark')}
+function msg(m){if(window.stvnAlert)window.stvnAlert(m);else alert(m)}
+function greet(){var h=new Date().getHours();return h<12?T('Good morning','सुप्रभात'):h<17?T('Good afternoon','नमस्कार'):T('Good evening','शुभ संध्या')}
+function ensurePage(){
+  var p=$('page-account');if(p)return p;
+  p=D.createElement('main');p.id='page-account';p.className='page';D.body.appendChild(p);return p;
+}
+function row(act,ic,title,sub){return '<button type="button" class="vga-row" data-vga="'+act+'"><i>'+ic+'</i><div>'+esc(title)+(sub?'<small>'+esc(sub)+'</small>':'')+'</div><em>›</em></button>'}
+function render(){
+  var p=ensurePage(),pr=load('profile'),ad=load('address'),em=email(),nm=pr.name||'';
+  var ini=(nm||em||'V').trim().charAt(0).toUpperCase();
+  var rb=$('vgMenuRider'),rtxt=rb?rb.textContent.replace(/^🏍️\s*/,''):'';
+  var isRider=rb&&/Rider Mode|राइडर मोड/.test(rb.textContent);
+  var admin=window.__stvnOwnerAdminAuthorized===true;
+  var open={};p.querySelectorAll('details').forEach(function(d){if(d.open)open[d.id]=1});
+  p.innerHTML='<div class="vga-wrap"><div class="vga-hero"><div class="vga-bar"><button type="button" class="vga-back" data-vga="back" aria-label="Back">←</button><h2>'+T('My Account','मेरा अकाउंट')+'</h2><span class="vga-vip">⭐ VIP</span></div>'+
+   '<div class="vga-user"><div class="vga-av">'+esc(ini)+'</div><div><small>'+greet()+' 👋</small><b>'+esc(nm||T('Vedant Customer','वेदांत ग्राहक'))+'</b><small>'+esc(pr.phone?'📞 '+pr.phone:'')+'</small><small>'+esc(em)+'</small></div></div></div>'+
+   '<div class="vga-tiles"><button type="button" class="vga-tile" data-vga="orders"><span>📦</span>'+T('Orders','ऑर्डर')+'</button><button type="button" class="vga-tile" data-vga="wallet"><span>👛</span>'+T('Wallet','वॉलेट')+'</button><button type="button" class="vga-tile" data-vga="wishlist"><span>❤️</span>'+T('Wishlist','पसंदीदा')+'</button><button type="button" class="vga-tile" data-vga="track"><span>🚚</span>'+T('Track','ट्रैक')+'</button></div>'+
+   '<div class="vga-sec"><h3>'+T('Your information','आपकी जानकारी')+'</h3><div class="vga-card">'+
+   '<details id="vgaD1"><summary><i>👤</i>'+T('Edit profile','प्रोफ़ाइल बदलें')+'</summary><div class="vga-form"><label>'+T('Full name','पूरा नाम')+'</label><input id="vgaName" autocomplete="name" value="'+esc(nm)+'"><label>'+T('Mobile number','मोबाइल नंबर')+'</label><input id="vgaPhone" type="tel" inputmode="numeric" maxlength="10" value="'+esc(pr.phone||'')+'"><label>Email</label><input value="'+esc(em)+'" disabled><button type="button" class="vga-save" data-vga="saveP">'+T('Save Profile','प्रोफ़ाइल सेव करें')+'</button></div></details>'+
+   '<details id="vgaD2"><summary><i>📍</i>'+T('Saved address','सेव किया पता')+'</summary><div class="vga-form"><label>'+T('House / Street / Area','घर / गली / इलाका')+'</label><textarea id="vgaLine" rows="2">'+esc(ad.line||'')+'</textarea><label>'+T('City','शहर')+'</label><input id="vgaCity" value="'+esc(ad.city||'')+'"><label>'+T('PIN code','पिन कोड')+'</label><input id="vgaPin" inputmode="numeric" maxlength="6" value="'+esc(ad.pincode||'')+'"><label>'+T('Landmark (optional)','लैंडमार्क (वैकल्पिक)')+'</label><input id="vgaLand" value="'+esc(ad.landmark||'')+'"><button type="button" class="vga-save" data-vga="saveA">'+T('Save Address','पता सेव करें')+'</button></div></details>'+
+   row('orders','📦',T('My Orders','मेरे ऑर्डर'),T('Order history & invoices','ऑर्डर हिस्ट्री'))+row('wallet','👛',T('Vedant Wallet','वेदांत वॉलेट'),T('Balance & payments','बैलेंस और पेमेंट'))+row('wishlist','❤️',T('Wishlist','पसंदीदा'),T('Items you saved','सेव किए सामान'))+row('track','🚚',T('Track Order','ऑर्डर ट्रैक करें'),T('Live delivery status','लाइव डिलीवरी स्टेटस'))+
+   '</div></div>'+
+   '<div class="vga-sec"><h3>'+T('Preferences','पसंद')+'</h3><div class="vga-card">'+
+   '<button type="button" class="vga-row" data-vga="dark"><i>'+(isDark()?'☀️':'🌙')+'</i><div>'+T('Dark mode','डार्क मोड')+'</div><span class="vga-sw'+(isDark()?' on':'')+'"></span></button>'+
+   row('lang','🌐',T('Language','भाषा'),hi()?'हिन्दी':'English')+row('loc','📍',T('Delivery location','डिलीवरी लोकेशन'),T('Update your location','लोकेशन अपडेट करें'))+
+   '</div></div>'+
+   '<div class="vga-sec"><h3>'+T('Help & more','मदद और अन्य')+'</h3><div class="vga-card">'+
+   row('care','🧑‍💼',T('Customer Care','ग्राहक सहायता'),T('Orders, payments, complaints','ऑर्डर, पेमेंट, शिकायत'))+row('share','🔗',T('Share Vedant Grocery','दोस्तों को बताएँ'),T('Invite family & friends','परिवार और दोस्तों को बुलाएँ'))+
+   (rb?row('rider','🏍️',isRider?T('Rider Mode','राइडर मोड'):T('Create Rider Account','राइडर अकाउंट बनाएँ'),isRider?T('Open delivery partner page','डिलीवरी पार्टनर पेज खोलें'):T('Earn by delivering orders','डिलीवरी करके कमाएँ')):'')+
+   (admin?row('admin','⚙️',T('Admin Panel','एडमिन पैनल'),T('Owner only','सिर्फ मालिक')):'')+
+   '<button type="button" class="vga-row vga-out" data-vga="logout"><i>↪</i><div>'+T('Log out','लॉग आउट')+'</div></button></div></div>'+
+   '<p class="vga-foot">Vedant Grocery Shop • '+T('Fresh • Fast • Local','ताज़ा • तेज़ • लोकल')+'</p></div>';
+  Object.keys(open).forEach(function(k){var d=$(k);if(d)d.open=true});
+}
+function go(p){if(typeof window.showPage==='function')window.showPage(p)}
+D.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('[data-vga]');if(!b||!$('page-account')||!$('page-account').contains(b))return;
+  var a=b.getAttribute('data-vga');
+  if(a==='back')go(window.__vgAccPrev&&window.__vgAccPrev!=='account'?window.__vgAccPrev:'home');
+  else if(a==='orders'||a==='wallet'||a==='wishlist')go(a);
+  else if(a==='track'){if(typeof window.goToTracking==='function')window.goToTracking();else go('track')}
+  else if(a==='care')window.stvnOpenProfileSection&&window.stvnOpenProfileSection('customerCare');
+  else if(a==='dark'){if(window.toggleDarkMode)window.toggleDarkMode();setTimeout(render,60)}
+  else if(a==='lang'){if(window.vedantChangeLanguage)window.vedantChangeLanguage()}
+  else if(a==='loc'){if(window.vgRequestHeaderLocation)window.vgRequestHeaderLocation()}
+  else if(a==='share'){var d={title:'Vedant Grocery Shop',text:T('Order fresh groceries from Vedant Grocery Shop','वेदांत ग्रोसरी शॉप से ताज़ा सामान मँगाएँ'),url:location.origin};if(navigator.share)navigator.share(d).catch(function(){});else{try{navigator.clipboard.writeText(d.url);msg(T('Link copied','लिंक कॉपी हो गया'))}catch(x){}}}
+  else if(a==='rider'){var rb=$('vgMenuRider');if(rb)rb.click()}
+  else if(a==='admin')go('admin');
+  else if(a==='logout'){if(window.stvnCustomerLogout)window.stvnCustomerLogout()}
+  else if(a==='saveP'){var n=$('vgaName').value.trim(),ph=$('vgaPhone').value.replace(/\D/g,'');if(n.length<2)return msg(T('Please enter your name','अपना नाम लिखें'));if(ph&&!/^[6-9]\d{9}$/.test(ph))return msg(T('Enter a valid 10 digit mobile number','सही 10 अंकों का मोबाइल नंबर लिखें'));try{localStorage.setItem(window.stvnCustomerStorageKey('profile'),JSON.stringify({name:n,phone:ph}));if(window.stvnRefreshCustomerProfile)window.stvnRefreshCustomerProfile();msg(T('Profile saved','प्रोफ़ाइल सेव हो गई'));render()}catch(x){msg(T('Could not save','सेव नहीं हो पाया'))}}
+  else if(a==='saveA'){var l=$('vgaLine').value.trim(),c=$('vgaCity').value.trim(),pn=$('vgaPin').value.trim(),lm=$('vgaLand').value.trim();if(!l||!c||!/^\d{6}$/.test(pn))return msg(T('Please fill address, city and a valid 6 digit PIN','पता, शहर और सही 6 अंकों का पिन भरें'));try{localStorage.setItem(window.stvnCustomerStorageKey('address'),JSON.stringify({line:l,city:c,pincode:pn,landmark:lm}));if(window.stvnRefreshCustomerProfile)window.stvnRefreshCustomerProfile();msg(T('Address saved','पता सेव हो गया'))}catch(x){msg(T('Could not save','सेव नहीं हो पाया'))}}
+},true);
+/* showPage hook: login gate + remember previous page */
+function wrap(){
+  var o=window.showPage;if(typeof o!=='function'||o.__vgAcc)return;
+  var f=function(p,opt){
+    if(p==='account'){
+      if(!window.__stvnCustomerAuthenticated&&!(opt&&opt.customerAuthVerified)){
+        if(window.stvnRequireCustomerLogin){window.stvnRequireCustomerLogin({action:{type:'page',page:'account'},message:T('Please sign in to view your account.','अकाउंट देखने के लिए साइन इन करें।'),onAuthorized:function(){window.showPage('account',Object.assign({},opt,{customerAuthVerified:true}))}});return}
+      }
+      ensurePage();render();
+    }else if(p!=='checkout'&&p!=='account')window.__vgAccPrev=p;
+    return o.apply(this,arguments);
+  };
+  f.__vgAcc=1;window.showPage=f;
+}
+/* header: replace My Account with dark-mode button; bottom/top nav: Account button */
+function dk(b){b.textContent=isDark()?'☀️':'🌙'}
+function ensureUI(){
+  wrap();
+  D.querySelectorAll('.vg-store-header').forEach(function(h){
+    if(h.querySelector('.vg-theme-action'))return;
+    var c=h.querySelector('.vg-cart-action'),b=D.createElement('button');
+    b.type='button';b.className='vg11-theme vg-theme-action';b.setAttribute('aria-label','Dark mode');
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(window.toggleDarkMode)window.toggleDarkMode()});
+    dk(b);if(c&&c.parentNode)c.parentNode.insertBefore(b,c.nextSibling);else h.appendChild(b);
+  });
+  var bn=D.querySelector('.modern-bottom-nav');
+  if(bn&&!bn.querySelector('[data-page="account"]'))addBtn(bn,'<span>👤</span>'+T('Account','अकाउंट')+'<small>अकाउंट</small>',null);
+  var tn=D.querySelector('.nav-cart');
+  if(tn&&tn.parentNode&&!tn.parentNode.querySelector('[data-page="account"]'))addBtn(tn.parentNode,'👤 '+T('Account','अकाउंट')+'<small>अकाउंट</small>',tn);
+  D.querySelectorAll('[data-page="account"]').forEach(function(b){var s=b.querySelector('small');var lbl=T('Account','अकाउंट');if(b.firstChild&&b.firstChild.nodeType===3&&b.firstChild.nodeValue!==lbl&&b.parentNode.classList.contains('modern-bottom-nav')===false)b.firstChild.nodeValue='👤 '+lbl})
+}
+function addBtn(par,html,after){
+  var b=D.createElement('button');b.type='button';b.setAttribute('data-page','account');b.innerHTML=html;
+  b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();window.showPage('account')});
+  if(after&&after.nextSibling)par.insertBefore(b,after.nextSibling);else par.appendChild(b);
+}
+function boot(){
+  ensurePage();ensureUI();setInterval(ensureUI,900);
+  new MutationObserver(function(){D.querySelectorAll('.vg-theme-action').forEach(dk);var p=$('page-account');if(p&&p.classList.contains('active'))render()}).observe(D.body,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(function(){D.querySelectorAll('[data-page="account"]').forEach(function(b){var s=b.querySelector('span');if(s&&b.parentNode.classList.contains('modern-bottom-nav'))b.innerHTML='<span>👤</span>'+T('Account','अकाउंट')+'<small>अकाउंट</small>'});var p=$('page-account');if(p&&p.classList.contains('active'))render()}).observe(D.documentElement,{attributes:true,attributeFilter:['data-language','lang']});
+}
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+<!-- ===================== END VIP ACCOUNT PAGE ===================== -->
 <!-- ===================== VEDANT RIDER MODULE (additive, does not edit older code) ===================== -->
 <style id="vgr-style">
 html.vgr-boot::before{content:"";position:fixed;inset:0;background:#0b1220;z-index:2147481000}
@@ -21690,6 +21849,35 @@ html.vgr-active{overflow:hidden}
 html.vgr-active #fxFall,html.vgr-active #fxPop{display:none!important}
 @media(max-width:380px){#vgRider .vgr-chip{padding:7px 9px;font-size:12px}.vgr-fare{font-size:38px}}
 </style>
+<style id="vgr-style3">
+#vgFx,#vgrFx{position:absolute;inset:0;z-index:80;display:none;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:radial-gradient(circle at 50% 45%,#0b1220d9,#0b1220f5);color:#fff;text-align:center;pointer-events:none;overflow:hidden;padding:20px}
+#vgrFx.show{display:flex;animation:vgrfi .25s}
+@keyframes vgrfi{from{opacity:0}}
+.vgr-fxi{font-size:86px;line-height:1;animation:vgrpop .75s cubic-bezier(.2,1.7,.4,1);filter:drop-shadow(0 0 22px var(--gold))}
+@keyframes vgrpop{0%{transform:scale(.1) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
+.vgr-fxr{position:absolute;width:150px;height:150px;border-radius:50%;border:3px solid var(--gold);animation:vgrring 1.3s ease-out infinite;opacity:0}
+@keyframes vgrring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+#vgrFx h2{margin:10px 0 0;font-size:24px;position:relative}
+.vgr-fxb{font-size:48px;font-weight:900;color:var(--gold);position:relative}
+.vgr-cf{position:absolute;top:-24px;width:10px;height:16px;border-radius:2px;animation:vgrcf linear forwards}
+@keyframes vgrcf{to{top:108%;transform:translateX(30px) rotate(720deg)}}
+.vgr-steps{display:flex;align-items:center;margin:0 0 12px}
+.vgr-st{flex:1;text-align:center;font-size:10px;font-weight:800;color:#8aa095;position:relative}
+.vgr-st i{display:grid;place-items:center;width:26px;height:26px;margin:0 auto 3px;border-radius:50%;background:#dbe6de;font-style:normal;font-size:13px;position:relative;z-index:1}
+.vgr-st:not(:last-child):after{content:"";position:absolute;top:12px;left:50%;width:100%;height:3px;background:#dbe6de}
+.vgr-st.on{color:var(--ac)}.vgr-st.on i{background:var(--ac);color:#fff;box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 25%,transparent)}
+.vgr-st.on:not(:last-child):after{background:var(--ac)}
+.vgr-st.now i{animation:vgrglow 1.4s infinite}
+@keyframes vgrglow{0%{box-shadow:0 0 0 0 var(--ac)}100%{box-shadow:0 0 0 12px transparent}}
+#vgRider .vgr-switch.on{animation:vgrglow 1.6s infinite}
+#vgRider .vgr-btn.vgr-glow{animation:vgrglow 1.2s infinite}
+.vgr-pin{animation:vgrbob 1.4s ease-in-out infinite}
+@keyframes vgrbob{50%{transform:translateY(-4px)}}
+#vgRider .leaflet-overlay-pane path{filter:drop-shadow(0 0 4px #2563eb99)}
+.vgr-goal{height:12px;border-radius:99px;background:#dbe6de;overflow:hidden;margin:8px 0 4px}
+.vgr-goal b{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--ac),var(--gold));transition:width .8s}
+.vgr-lvl{display:inline-block;padding:4px 12px;border-radius:99px;background:linear-gradient(135deg,var(--gold),#fff3c4);color:#1c1c1c;font-weight:900;font-size:13px}
+</style>
 <div id="vgrPill" role="button" aria-label="Open rider page">🏍️ Rider</div>
 
 <script id="vgr-script">
@@ -21738,7 +21926,7 @@ function build(){
   '<div id="vgrIncoming"><div class="vgr-sheet" id="vgrIncomingSheet"></div></div>'+
   '<div id="vgrMenu"><div class="vgr-sheet" id="vgrMenuSheet"></div></div>'+
   '<div id="vgrAsk"><div class="vgr-sheet" id="vgrAskSheet"></div></div>'+
-  '<div id="vgrToast"></div>';
+  '<div id="vgrFx"></div><div id="vgrToast"></div>';
   document.body.appendChild(d);
   $("vgrShopBtn").onclick=function(){goShop()};
   $("vgrAcctBtn").onclick=function(){showMenu()};
@@ -21903,7 +22091,7 @@ async function acceptOrder(id){
     if(/ORDER_TAKEN/.test(m))toast("😕 Ye order dusre rider ne le liya",4000);else toast("❌ "+m,4500);
     tick(true);return;
   }
-  hideIncoming(true);toast("✅ Order accept ho gaya! Pehle shop pe jao",3500);
+  hideIncoming(true);fx("accept","✅ Order accept ho gaya! Pehle shop pe jao","Order uthao aur Start Ride dabao");
   S.active=r.data;S.view="active";await loadDash(true);onActiveChanged();render();
 }
 
@@ -21922,8 +22110,8 @@ async function toggleDuty(){
   S.busy=false;
   if(r.error){toast("❌ "+errMsg(r.error),4500);return}
   S.me=r.data;
-  if(want){getWake();startGeo();toast("🟢 Aap On Duty ho — orders aayenge",3000);tick(true)}
-  else{hideIncoming(true);dropWake();if(!S.active)stopGeo();toast("🔴 Aap Off Duty ho",2500)}
+  if(want){lsSet("vgrDutyAt",String(Date.now()));getWake();startGeo();fx("duty","🟢 Aap On Duty ho — orders aayenge");tick(true)}
+  else{lsDel("vgrDutyAt");hideIncoming(true);dropWake();if(!S.active)stopGeo();toast("🔴 Aap Off Duty ho",2500)}
   checkSoundBar();render();updatePill();
 }
 
@@ -21937,6 +22125,8 @@ function startGeo(){
 function stopGeo(){if(S.watch!=null){try{navigator.geolocation.clearWatch(S.watch)}catch(e){}S.watch=null}}
 function onFix(p){
   S.pos={lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy};
+  S.reached=S.reached||{};
+  if(S.active&&S.active.rider_stage==="accepted"&&!S.reached[S.active.order_id]&&km(S.pos.lat,S.pos.lng,SHOP.lat,SHOP.lng)<0.1){S.reached[S.active.order_id]=1;fx("reached","📍 Aap shop pe pahunch gaye!","Order uthao aur Start Ride dabao");var gs=$("vgrStart");if(gs)gs.classList.add("vgr-glow")}
   if(S.active){
     updateRiderMarkers();
     if(S.active.rider_stage==="picked")pushLocation(false);
@@ -22069,13 +22259,13 @@ function renderDash(){
   $("vgrBody").innerHTML=
   '<div class="vgr-grid2"><div class="vgr-stat"><b id="vgrStToday">₹0</b><span>Aaj ki kamai</span></div><div class="vgr-stat alt"><b id="vgrStTotal">₹0</b><span>Total earning</span></div></div>'+
   '<div class="vgr-grid2" style="margin-top:10px"><div class="vgr-stat alt"><b id="vgrStTc">0</b><span>Aaj delivered</span></div><div class="vgr-stat"><b id="vgrStAc">0</b><span>Total delivered</span></div></div>'+
-  '<div class="vgr-card" style="margin-top:12px"><div class="vgr-duty"><div><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
+  '<div id="vgrExtra"></div><div class="vgr-card" style="margin-top:12px"><div class="vgr-duty"><div><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
   '<div id="vgrWait"></div><div class="vgr-card"><h3>✅ Delivered Orders</h3><div id="vgrHist"></div></div>';
   $("vgrSwitch").onclick=toggleDuty;
   renderDashBody();
 }
 function renderDashBody(){
-  var me=S.me;if(!me||!$("vgrStToday"))return;
+  var me=S.me;if(!me||!$("vgrStToday"))return;renderExtra();
   var st=S.stats||{};
   $("vgrStToday").textContent=money(st.today_earning);$("vgrStTotal").textContent=money(st.total_earning);
   $("vgrStTc").textContent=st.today_count||0;$("vgrStAc").textContent=st.total_count||0;
@@ -22088,7 +22278,7 @@ function renderDashBody(){
 function renderActive(){
   var a=S.active;if(!a)return;
   $("vgrBody").innerHTML=
-  '<div class="vgr-card"><div class="vgr-muted">Order #'+esc(shortId(a.order_id))+'</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><h3 style="margin:0">🏪 Pehle Shop pe jao</h3><b style="font-size:22px;color:#0f6b2d">'+money(a.delivery_charge)+'</b></div>'+
+  '<div class="vgr-card">'+stepper(1)+'<div class="vgr-muted">Order #'+esc(shortId(a.order_id))+'</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><h3 style="margin:0">🏪 Pehle Shop pe jao</h3><b style="font-size:22px;color:#0f6b2d">'+money(a.delivery_charge)+'</b></div>'+
   '<div class="vgr-muted" style="margin:6px 0">Vedant Grocery Shop se order uthao, phir Start Ride dabao.</div>'+
   '<div class="vgr-pill" id="vgrRouteInfo">Route load ho raha hai…</div></div>'+
   '<div class="vgr-map" id="vgrMapA" style="height:48vh;min-height:280px"></div>'+
@@ -22096,7 +22286,7 @@ function renderActive(){
   '<button class="vgr-btn" id="vgrStart" type="button">📍 Shop pahunch gaya — Start Ride</button></div>';
   $("vgrNavShop").onclick=function(){window.open(gmaps({lat:SHOP.lat,lng:SHOP.lng}),"_blank")};
   $("vgrRecA").onclick=function(){S.followPause=0;fitAll()};
-  $("vgrStart").onclick=startRide;
+  $("vgrStart").onclick=startRide;if(S.reached&&S.reached[a.order_id])$("vgrStart").classList.add("vgr-glow");
   var m=makeMap($("vgrMapA"),"mapA");
   if(m){placeTarget();updateRiderMarkers();refreshRoute(true)}
   startGeo();
@@ -22116,7 +22306,7 @@ async function startRide(){
   var p=S.pos||{lat:SHOP.lat,lng:SHOP.lng};
   var r=await sb().rpc("rider_start_ride",{p_order_id:a.order_id,p_delivery:delivery,p_lat:p.lat,p_lng:p.lng});
   if(r.error){toast("❌ "+errMsg(r.error),4500);if(b){b.disabled=false;b.textContent="📍 Shop pahunch gaya — Start Ride"}return}
-  S.active=r.data;S.lastPush=0;destroyMaps();S.layers={};render();pushLocation(true);
+  S.active=r.data;S.lastPush=0;destroyMaps();S.layers={};render();pushLocation(true);fx("ride","🏍️ Ride shuru! Customer ke paas chalo","Order sahi salamat deliver karo");
 }
 function renderRide(){
   var a=S.active;if(!a)return;
@@ -22125,7 +22315,7 @@ function renderRide(){
   var addr=esc(a.customer_address||"");
   var tel=digits(a.customer_phone);
   $("vgrRideBottom").innerHTML=
-   '<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div style="min-width:0"><b style="font-size:17px">🏠 '+esc(a.customer_name||"Customer")+'</b><div class="vgr-muted" style="margin-top:2px">'+addr+'</div></div><b style="color:#0f6b2d;font-size:20px;white-space:nowrap">'+money(a.delivery_charge)+'</b></div>'+
+   stepper(2)+'<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div style="min-width:0"><b style="font-size:17px">🏠 '+esc(a.customer_name||"Customer")+'</b><div class="vgr-muted" style="margin-top:2px">'+addr+'</div></div><b style="color:#0f6b2d;font-size:20px;white-space:nowrap">'+money(a.delivery_charge)+'</b></div>'+
    '<div class="vgr-pay '+(paidOk?'ok':'cod')+'" id="vgrPayBox">'+(cod?(a.rider_payment_confirmed?'✅ Cash '+money(a.total)+' mil gaya':'💵 Customer se Cash lo: '+money(a.total)):'✅ Online paid — cash nahi lena')+'</div>'+
    '<div class="vgr-row">'+(tel?'<button class="vgr-btn sec" id="vgrCallC" type="button">📞 Call</button>':'')+'<button class="vgr-btn blue" id="vgrNavC" type="button">🧭 Google Maps</button></div>'+
    (cod&&!a.rider_payment_confirmed?'<button class="vgr-btn gold" id="vgrPayOk" type="button">💵 Payment mil gayi — Confirm</button>':'')+
@@ -22162,7 +22352,7 @@ async function completeOrder(){
   destroyMaps();$("vgrRide").classList.remove("show");S.active=null;S.lastPushPos=null;
   if(!S.me.on_duty)stopGeo();
   await loadDash(true);S.view="dash";render();
-  toast("🎉 Delivered! "+money(earn)+" aapke account me add ho gaye",4500);
+  fx("done","Shabaash! Delivery complete",money(earn)+" aapke account me add ho gaye",Number(earn)||0);
   tick(true);
 }
 
@@ -22237,14 +22427,13 @@ function openRegister(){
 function ensureMenu(){
   var menu=$("stvnProfileMenu");if(!menu)return;
   var b=$("vgMenuRider");
-  if(!S.me){if(b)b.remove();return}
   if(!b){
     b=document.createElement("button");b.type="button";b.id="vgMenuRider";
     var lo=menu.querySelector(".stvn-logout");
     if(lo)menu.insertBefore(b,lo);else menu.appendChild(b);
     b.addEventListener("click",onMenuClick);
   }
-  b.textContent=lang()===2?"🏍️ राइडर मोड":"🏍️ Rider Mode";
+  b.textContent=S.me?(lang()===2?"🏍️ राइडर मोड":"🏍️ Rider Mode"):(lang()===2?"🏍️ राइडर अकाउंट बनाएँ":"🏍️ Create Rider Account");
 }
 async function onMenuClick(){
   try{if(typeof window.stvnSetProfileMenuOpen==="function")window.stvnSetProfileMenuOpen(false)}catch(e){}
@@ -22447,6 +22636,7 @@ var TR=[
 ["Naam likho","Enter your name","नाम लिखें"],["Pehle login karo","Please log in first","पहले लॉगिन करें"],["Order #","Order #","ऑर्डर #"],
 [" khatam ho gaya"," is finished"," पूरा हो गया"],["✅ Cash ","✅ Cash ","✅ कैश "],[" mil gaya"," received"," मिल गया"],["Nahi","No","नहीं"],["Login: ","Login: ","लॉगिन: "]
 ];
+TR.push(["🏍️ Ride shuru! Customer ke paas chalo","🏍️ Ride started! Head to the customer","🏍️ राइड शुरू! कस्टमर के पास चलें"],["📍 Aap shop pe pahunch gaye!","📍 You have reached the shop!","📍 आप शॉप पर पहुँच गए!"],["Order uthao aur Start Ride dabao","Pick up the order and tap Start Ride","ऑर्डर उठाएँ और स्टार्ट राइड दबाएँ"],["Order sahi salamat deliver karo","Deliver the order safely","ऑर्डर सुरक्षित डिलीवर करें"],["Shabaash! Delivery complete","Well done! Delivery complete","शाबाश! डिलीवरी पूरी हुई"],["🎯 Aaj ka target","🎯 Today’s goal","🎯 आज का टारगेट"],["Target badalne ke liye tap karo","Tap to change target","टारगेट बदलने के लिए टैप करें"],["🎉 Target poora! Shabaash","🎉 Goal reached! Well done","🎉 टारगेट पूरा! शाबाश"],[" Avg / delivery "," Avg / delivery "," औसत / डिलीवरी "],["🥉 Bronze Rider","🥉 Bronze Rider","🥉 ब्रॉन्ज़ राइडर"],["🥈 Silver Rider","🥈 Silver Rider","🥈 सिल्वर राइडर"],["🥇 Gold Rider","🥇 Gold Rider","🥇 गोल्ड राइडर"],["💎 Platinum Rider","💎 Platinum Rider","💎 प्लैटिनम राइडर"],["Accepted","Accepted","स्वीकारा"],["At shop","At shop","शॉप पर"],["On the way","On the way","रास्ते में"],["Done","Done","पूरा"]);
 var TRX=null,TRM={};
 function lang(){var R=document.documentElement,l=String(R.dataset.language||R.lang||"en").toLowerCase();return l.indexOf("hi")===0?2:1}
 function tr(s){
@@ -22463,6 +22653,42 @@ function i18nStart(){
   new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData")trNode(m.target);else m.addedNodes.forEach(function(n){if(n.nodeType===3)trNode(n);else if(n.nodeType===1)trTree(n)})})}).observe(o,{childList:true,subtree:true,characterData:true});
   new MutationObserver(function(){trTree(o);ensureMenu()}).observe(document.documentElement,{attributes:true,attributeFilter:["data-language","lang"]});
   trTree(o);
+}
+
+
+/* ---------- animations + extra features ---------- */
+var fxT=null;
+function chime(kind){
+  if(!S.ctx||S.ctx.state!=="running")return;
+  var c=S.ctx,t=c.currentTime,seq=kind==="done"?[523,659,784,1047]:kind==="duty"?[523,784]:[659,880];
+  seq.forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t+i*.14);g.gain.exponentialRampToValueAtTime(.5,t+i*.14+.03);g.gain.exponentialRampToValueAtTime(.0001,t+i*.14+.3);o.connect(g);g.connect(c.destination);o.start(t+i*.14);o.stop(t+i*.14+.32)});
+}
+function fx(kind,title,sub,amt){
+  var w=$("vgrFx");if(!w)return;
+  var ic={duty:"🟢",accept:"✅",reached:"📍",ride:"🏍️",done:"🎉"}[kind]||"✨",cf="";
+  if(kind==="done"||kind==="accept"){var n=kind==="done"?48:22,cols=["#fbbf24","#22c55e","#3b82f6","#ef4444","#a855f7","#ffffff"];
+    for(var i=0;i<n;i++)cf+='<i class="vgr-cf" style="left:'+(Math.random()*100)+'%;background:'+cols[i%6]+';animation-duration:'+(1.6+Math.random()*1.6)+'s;animation-delay:'+(Math.random()*.6)+'s;transform:rotate('+(Math.random()*360)+'deg)"></i>'}
+  w.innerHTML=cf+'<div class="vgr-fxr"></div><div class="vgr-fxr" style="animation-delay:.5s"></div><div class="vgr-fxi">'+ic+'</div><h2>'+esc(title)+'</h2>'+(amt!=null?'<div class="vgr-fxb" id="vgrFxB">₹0</div>':'')+(sub?'<div style="color:#cbd5e1;font-weight:700;position:relative">'+esc(sub)+'</div>':'');
+  w.classList.add("show");
+  if(amt!=null){var t0=Date.now(),b=$("vgrFxB");(function st(){var p=Math.min(1,(Date.now()-t0)/1000);if(b)b.textContent=money(amt*p);if(p<1&&w.classList.contains("show"))requestAnimationFrame(st)})()}
+  try{navigator.vibrate&&navigator.vibrate(kind==="done"?[120,60,120,60,260]:[90])}catch(e){}
+  chime(kind);clearTimeout(fxT);fxT=setTimeout(function(){w.classList.remove("show")},kind==="done"?3600:2300);
+}
+function stepper(n){
+  var L=[["🏍️","Accepted"],["🏪","At shop"],["🧭","On the way"],["✅","Done"]];
+  return '<div class="vgr-steps">'+L.map(function(x,i){var on=i<=n;return '<div class="vgr-st'+(on?' on':'')+(i===n?' now':'')+'"><i>'+x[0]+'</i>'+x[1]+'</div>'}).join("")+'</div>';
+}
+function lvl(n){return n>=150?"💎 Platinum Rider":n>=50?"🥇 Gold Rider":n>=10?"🥈 Silver Rider":"🥉 Bronze Rider"}
+function renderExtra(){
+  var b=$("vgrExtra");if(!b||!S.stats)return;
+  var st=S.stats,goal=Number(lsGet("vgrGoal"))||500,td=Number(st.today_earning)||0,pct=Math.min(100,Math.round(td/goal*100));
+  var at=Number(lsGet("vgrDutyAt")),on=S.me&&S.me.on_duty&&at,mins=on?Math.max(0,Math.round((Date.now()-at)/60000)):0;
+  var tc=Number(st.total_count)||0,avg=tc?(Number(st.total_earning)||0)/tc:0;
+  b.innerHTML='<div class="vgr-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="vgr-lvl">'+lvl(tc)+'</span><span class="vgr-muted">'+(on?'⏱ '+Math.floor(mins/60)+'h '+(mins%60)+'m':'')+'</span></div>'+
+   '<div style="display:flex;justify-content:space-between;margin-top:12px;font-weight:800"><span>🎯 Aaj ka target</span><span>'+money(td)+' / '+money(goal)+'</span></div>'+
+   '<div class="vgr-goal"><b style="width:'+pct+'%"></b></div>'+
+   '<div class="vgr-muted" id="vgrGoalEdit" style="cursor:pointer">'+(pct>=100?'🎉 Target poora! Shabaash':'Target badalne ke liye tap karo')+' • Avg / delivery '+money(avg)+'</div></div>';
+  var ge=$("vgrGoalEdit");if(ge)ge.onclick=function(){var v=parseInt(prompt("Daily target (₹)",goal),10);if(v>=50){lsSet("vgrGoal",String(v));renderExtra()}};
 }
 
 /* ---------- init ---------- */
@@ -22486,3 +22712,4 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 })();
 </script>
 <!-- ===================== END VEDANT RIDER MODULE ===================== -->
+
