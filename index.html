@@ -26,6 +26,7 @@
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Vedant Grocery Shop",
+  "alternateName": ["वेदांत किराना दुकान", "Vedant Kirana Store"],
   "url": "https://vedantgrocery.shop/"
 }
 </script>
@@ -1694,9 +1695,6 @@ body.stvn-customer-login-open{overflow:hidden}
   border:1px solid var(--border);
 }
 .stvn-online-icon{color:#1469bd;background:#edf5ff}
-  color:#fff;background:linear-gradient(145deg,#2b7de9,#1746a2);
-  box-shadow:0 5px 12px rgba(37,99,235,.2);
-}
 .stvn-payment-card-copy{display:grid;gap:4px;min-width:0;flex:1}
 .stvn-payment-card-copy strong{font-size:15px;font-weight:900;line-height:1.25}
 .stvn-payment-card-copy small{font-size:12px;color:var(--muted);font-weight:600;line-height:1.35}
@@ -2760,7 +2758,7 @@ Grand Total: ₹<span id="cart-total">0</span>
     <div class="stvn-payment-accordion" aria-label="Choose a payment method">
       <div class="stvn-payment-accordion-item" data-payment-card="COD">
         <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-cod" onclick="toggleVedantPayment('COD')">
-          <span class="stvn-payment-icon stvn-cod-icon" aria-hidden="true">🫴💵</span>
+          <span class="stvn-payment-icon stvn-cod-icon" aria-hidden="true">💵</span>
           <span class="stvn-payment-card-copy"><strong>Pay by cash</strong></span>
           
         </button>
@@ -2769,7 +2767,7 @@ Grand Total: ₹<span id="cart-total">0</span>
 
       <div class="stvn-payment-accordion-item" data-payment-card="UPI">
         <button type="button" class="stvn-payment-accordion-trigger" aria-expanded="false" aria-controls="stvn-payment-detail-upi" onclick="toggleVedantPayment('UPI')">
-          <span class="stvn-payment-icon stvn-online-icon" aria-hidden="true">📱</span>
+          <span class="stvn-payment-icon stvn-online-icon" aria-hidden="true">📲</span>
           <span class="stvn-payment-card-copy"><strong>Online Payment</strong></span>
           
         </button>
@@ -22259,7 +22257,7 @@ function build(){
   var d=document.createElement("div");d.id="vgRider";
   d.innerHTML=
   '<div class="vgr-top"><div class="vgr-brand">🏍️ Vedant Rider<span class="vgr-vip">VIP</span><small id="vgrWho">Rider</small></div>'+
-  '<button class="vgr-chip" id="vgrDutyChip" type="button">Off Duty</button>'+
+  '<button class="vgr-chip vgr-off" id="vgrDutyChip" type="button">🔴 Off Duty</button>'+
   '<button class="vgr-chip vgr-shop" id="vgrShopBtn" type="button">🏪 Shop</button>'+
   '<button class="vgr-chip" id="vgrAcctBtn" type="button" aria-label="Account">👤</button></div>'+
   '<div id="vgrSoundBar">🔔 Order ki ringtone chalu karne ke liye yahan tap karo</div>'+
@@ -22562,7 +22560,7 @@ function render(){
   if(!S.open)return;
   var me=S.me;if(!me){S.view="register";renderRegister();return}
   $("vgrWho").textContent=me.full_name+" • "+me.phone;
-  var chip=$("vgrDutyChip");chip.textContent=me.on_duty?"🟢 On Duty":"Off Duty";chip.classList.toggle("vgr-on",!!me.on_duty);
+  var chip=$("vgrDutyChip");chip.textContent=me.on_duty?"🟢 On Duty":"🔴 Off Duty";chip.classList.toggle("vgr-on",!!me.on_duty);chip.classList.toggle("vgr-off",!me.on_duty);
   checkSoundBar();
   var a=S.active;
   if(a&&a.rider_stage==="picked"){S.view="ride";renderRide()}
@@ -22600,9 +22598,10 @@ async function submitRegister(){
 function renderDash(){
   $("vgrDutyChip").style.display="";
   $("vgrBody").innerHTML=
+  '<div class="vgr-card vgr-dutycard off" id="vgrDutyCard"><div class="vgr-duty"><div class="vgr-dutyico" id="vgrDutyIco">😴</div><div style="flex:1;min-width:0"><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
   '<div id="vgrWait"></div><div class="vgr-grid2" style="margin-top:12px"><div class="vgr-stat"><b id="vgrStToday">₹0</b><span>Aaj ki kamai</span></div><div class="vgr-stat alt"><b id="vgrStTotal">₹0</b><span>Total earning</span></div></div>'+
   '<div class="vgr-grid2" style="margin-top:10px"><div class="vgr-stat alt"><b id="vgrStTc">0</b><span>Aaj delivered</span></div><div class="vgr-stat"><b id="vgrStAc">0</b><span>Total delivered</span></div></div>'+
-  '<div id="vgrExtra"></div><div class="vgr-card" style="margin-top:12px"><div class="vgr-duty"><div><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
+  '<div id="vgrExtra"></div>'+
   '<div class="vgr-card"><h3>✅ Delivered Orders</h3><div id="vgrHist"></div></div>';
   $("vgrSwitch").onclick=toggleDuty;
   renderDashBody();
@@ -22612,7 +22611,7 @@ function renderDashBody(){
   var st=S.stats||{};
   $("vgrStToday").textContent=money(st.today_earning);$("vgrStTotal").textContent=money(st.total_earning);
   $("vgrStTc").textContent=st.today_count||0;$("vgrStAc").textContent=st.total_count||0;
-  $("vgrSwitch").classList.toggle("on",!!me.on_duty);
+  $("vgrSwitch").classList.toggle("on",!!me.on_duty);var dc=$("vgrDutyCard");if(dc){dc.classList.toggle("on",!!me.on_duty);dc.classList.toggle("off",!me.on_duty);var di=$("vgrDutyIco");if(di)di.textContent=me.on_duty?"🏍️":"😴"}
   $("vgrDutyTxt").textContent=me.on_duty?"On Duty — naye orders aayenge":"Off Duty — On karo tabhi order aayenge";
   var ws=me.on_duty?"1":"0",wb=$("vgrWait");
   if(wb.getAttribute("data-s")!==ws){wb.setAttribute("data-s",ws);wb.innerHTML=ws==="1"?'<div class="vgr-card vgr-wait"><div class="vgr-pulse">🏍️</div><b>Order ka intezaar…</b><div class="vgr-muted">Screen on rakho aur ye app khula rakho, naya order aate hi ringtone bajegi.</div></div>':'<div class="vgr-card vgr-wait vgx-off"><div class="vgx-sleep">😴</div><b>Duty OFF</b><div class="vgr-muted">Duty ON karo tabhi naye orders aayenge.</div></div>'}
@@ -22978,7 +22977,7 @@ var TR=[
 ["Start ho raha hai…","Starting…","शुरू हो रहा है…"],["Ban raha hai…","Creating…","बन रहा है…"],["Ho raha hai…","Please wait…","हो रहा है…"],["Accepting…","Accepting…","स्वीकार हो रहा है…"],
 ["Poora naam *","Full name *","पूरा नाम *"],["Age * (18+)","Age * (18+)","उम्र * (18+)"],["Vehicle number","Vehicle number","वाहन नंबर"],
 ["Aaj ki kamai","Today’s earnings","आज की कमाई"],["Total earning","Total earnings","कुल कमाई"],["Aaj delivered","Delivered today","आज डिलीवर"],["Total delivered","Total delivered","कुल डिलीवर"],
-["Duty Status","Duty Status","ड्यूटी स्टेटस"],["🟢 On Duty","🟢 On Duty","🟢 ऑन ड्यूटी"],["Off Duty","Off Duty","ऑफ ड्यूटी"],
+["Duty Status","Duty Status","ड्यूटी स्टेटस"],["🟢 On Duty","🟢 On Duty","🟢 ऑन ड्यूटी"],["Off Duty","Off Duty","ऑफ ड्यूटी"],["🔴 Off Duty","🔴 Off Duty","🔴 ऑफ ड्यूटी"],
 ["🎯 Meri location","🎯 My location","🎯 मेरी लोकेशन"],["🧭 Google Maps","🧭 Google Maps","🧭 गूगल मैप्स"],["📞 Call","📞 Call","📞 कॉल"],
 ["👤 Rider Account","👤 Rider Account","👤 राइडर अकाउंट"],["🚪 Log out","🚪 Log out","🚪 लॉग आउट"],["Band karo","Close","बंद करें"],
 ["Customer tak","To customer","कस्टमर तक"],["Shop tak","To shop","शॉप तक"],["🏪 Shop","🏪 Shop","🏪 शॉप"],
@@ -23271,11 +23270,13 @@ function sbc(){return window.supabaseClient||null}
 var KEY='vgOtpOn',ROW=4;
 function otpOn(){try{return localStorage.getItem(KEY)==='1'}catch(e){return false}}
 function setCache(v){try{localStorage.setItem(KEY,v?'1':'0')}catch(e){}}
+var PIN_LEN=4;
+function normId(id){return String(id==null?'':id).trim().replace(/^#/,'').replace(/^VEDANT-/i,'').replace(/\s+/g,'')}
 function pinFor(id){
-  var s='vedant-delivery-pin|'+String(id||'').trim(),h=2166136261>>>0;
+  var s='vedant-delivery-pin|'+normId(id),h=2166136261>>>0;
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}
   h^=h>>>15;h=Math.imul(h,2246822519)>>>0;h^=h>>>13;
-  return String(h%10000).padStart(4,'0');
+  return String(h%Math.pow(10,PIN_LEN)).padStart(PIN_LEN,'0');
 }
 function withTimeout(p,ms){return Promise.race([p,new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},ms)})])}
 async function fetchOtp(){
@@ -23328,17 +23329,18 @@ function ensureAdminBtn(){
 function isOpenStatus(st){st=String(st||'').toLowerCase();return ['delivered','completed','cancelled','canceled','cancelled_by_admin','rejected'].indexOf(st)<0}
 function pinCardHTML(id){
   var p=pinFor(id);
-  return '<div class="vgotp-lock">🔐</div><div class="vgotp-body"><b>Delivery PIN</b><small>Share this 4-digit PIN with the delivery partner only when your order is in your hands.</small></div><div class="vgotp-digits">'+p.split('').map(function(d){return '<i>'+d+'</i>'}).join('')+'</div>';
+  return '<div class="vgotp-head"><span class="vgotp-lk">🔐</span><b>Delivery PIN</b><span class="vgotp-oid">Order #'+esc(normId(id))+'</span></div><small>Ye '+PIN_LEN+' digit ka PIN delivery partner ko tabhi batao jab order aapke haath mein ho.</small><div class="vgotp-digits">'+p.split('').slice(0,PIN_LEN).map(function(d){return '<i>'+d+'</i>'}).join('')+'</div>';
 }
 var lastTrack=null;
 function injectTrackPin(order,box){
   if(!box)return;
-  var old=box.querySelector(':scope > .vgotp-card');if(old)old.remove();
+  box.querySelectorAll('.vgotp-card').forEach(function(x){x.remove()});
   if(!order||box.closest('#order-history'))return;   /* My Orders has its own mini PIN badge; Track page panels (inside .history-item cards) must show the PIN card */
   if(!otpOn()||!isOpenStatus(order.order_status))return;
   var id=order.order_id||order.id;if(!id)return;
   var s=D.createElement('section');s.className='vgotp-card';s.setAttribute('data-oid',String(id));s.innerHTML=pinCardHTML(id);
   box.insertBefore(s,box.firstChild);
+  D.querySelectorAll('.vgotp-card[data-oid="'+String(id).replace(/"/g,'')+'"]').forEach(function(x){if(!box.contains(x))x.remove()});
 }
 (function wrapTrack(){
   var o=window.renderCustomerTracking;
@@ -23407,29 +23409,33 @@ var ACT=null,verifiedAt={};
   };
 })();
 async function findActive(){
-  if(ACT)return ACT;
+  /* the order the rider is delivering right now comes from the database first;
+     the cached id (ACT) is only a fallback, so a stale id can never give a wrong PIN */
   try{
     var c=sbc(),u=await c.auth.getUser(),uid=u&&u.data&&u.data.user&&u.data.user.id;
-    if(!uid)return null;
-    var r=await withTimeout(c.from('orders').select('order_id').eq('rider_id',uid).eq('rider_stage','picked').limit(1),5000);
-    if(r&&!r.error&&r.data&&r.data[0])ACT=String(r.data[0].order_id);
+    if(uid){
+      var r=await withTimeout(c.from('orders').select('order_id').eq('rider_id',uid).eq('rider_stage','picked').not('order_status','in','(delivered,cancelled,cancelled_by_admin)').order('order_date',{ascending:false}).limit(1),5000);
+      if(r&&!r.error&&r.data&&r.data[0]){ACT=String(r.data[0].order_id);return ACT}
+    }
   }catch(e){}
   return ACT;
 }
 function buildRiderUI(){
   var w=$('vgOtpRider');if(w)return w;
+  var boxes='';for(var k=1;k<=PIN_LEN;k++)boxes+='<input inputmode="numeric" pattern="[0-9]*" maxlength="1" '+(k===1?'autocomplete="one-time-code" ':'')+'aria-label="PIN digit '+k+'">';
   w=D.createElement('div');w.id='vgOtpRider';
   w.innerHTML='<div class="vgo-scene"><div class="vgo-track"><div class="vgo-road"></div><span class="vgo-bike">🏍️</span><span class="vgo-house">🏠</span><div class="vgo-ring"></div></div><h2>Customer ke paas pahunch gaye! 🎉</h2><p>Ab delivery PIN verify karo…</p></div>'+
-  '<div class="vgo-sheet"><div class="vgo-lock">🔐</div><h3>Enter Delivery PIN</h3><p class="vgo-sub">Customer ke Track page / My Orders me dikhne wala 4-digit PIN lo</p>'+
-  '<div class="vgo-digits" id="vgoDigits"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="one-time-code" aria-label="PIN digit 1"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="PIN digit 2"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="PIN digit 3"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="PIN digit 4"></div>'+
+  '<div class="vgo-sheet"><div class="vgo-lock">🔐</div><h3>Enter Delivery PIN</h3><p class="vgo-sub" id="vgoSub"></p>'+
+  '<div class="vgo-digits" id="vgoDigits">'+boxes+'</div>'+
   '<div class="vgo-msg" id="vgoMsg"></div><div class="vgo-row"><button type="button" class="vgo-btn sec" id="vgoCancel">Cancel</button><button type="button" class="vgo-btn" id="vgoOk">✓ Verify &amp; Deliver</button></div></div>'+
   '<div class="vgo-ok"><i>✅</i><div>PIN sahi hai!</div></div>';
   D.body.appendChild(w);return w;
 }
 function pinFlow(orderId){
   return new Promise(function(resolve){
-    var w=buildRiderUI(),ins=[].slice.call(w.querySelectorAll('#vgoDigits input')),dg=$('vgoDigits'),msg=$('vgoMsg'),okb=$('vgoOk'),cb=$('vgoCancel');
-    var want=pinFor(orderId),tries=0,closed=false;
+    var w=buildRiderUI(),ins=[].slice.call(w.querySelectorAll('#vgoDigits input')),dg=$('vgoDigits'),msg=$('vgoMsg'),okb=$('vgoOk'),cb=$('vgoCancel'),sub=$('vgoSub');
+    var want=pinFor(orderId),tries=0,closed=false,last=ins.length-1;
+    if(sub)sub.textContent='Order #'+normId(orderId)+' — customer ke Track page / My Orders me dikhne wala '+PIN_LEN+' digit ka PIN lo';
     function reset(){ins.forEach(function(i){i.value='';i.classList.remove('filled')});dg.classList.remove('bad','good','shake');msg.className='vgo-msg';msg.textContent=''}
     function close(v){if(closed)return;closed=true;w.classList.remove('show','s1','s2','s3');resolve(v)}
     reset();w.className='show s1';
@@ -23437,14 +23443,14 @@ function pinFlow(orderId){
     setTimeout(function(){if(closed)return;w.className='show s2';setTimeout(function(){ins[0].focus()},350)},1700);
     function val(){return ins.map(function(i){return i.value}).join('')}
     function check(){
-      var v=val();if(v.length<4){msg.className='vgo-msg bad';msg.textContent='4 digit ka PIN daalo';return}
+      var v=val();if(v.length<PIN_LEN){msg.className='vgo-msg bad';msg.textContent=PIN_LEN+' digit ka PIN daalo';return}
       if(v===want){
         dg.classList.remove('bad');dg.classList.add('good');msg.className='vgo-msg good';msg.textContent='✅ PIN verified';
         try{navigator.vibrate&&navigator.vibrate([40,40,120])}catch(e){}
         setTimeout(function(){w.className='show s3';setTimeout(function(){close(true)},1000)},350);
       }else{
         tries++;dg.classList.remove('shake');void dg.offsetWidth;dg.classList.add('bad','shake');
-        msg.className='vgo-msg bad';msg.textContent='❌ Wrong OTP'+(tries>1?' (attempt '+tries+')':'');
+        msg.className='vgo-msg bad';msg.textContent='❌ Galat PIN — customer se dobara check karo'+(tries>1?' (attempt '+tries+')':'');
         try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(e){}
         setTimeout(function(){ins.forEach(function(i){i.value='';i.classList.remove('filled')});dg.classList.remove('bad');ins[0].focus()},750);
       }
@@ -23454,11 +23460,11 @@ function pinFlow(orderId){
       inp.oninput=function(){
         inp.value=inp.value.replace(/\D/g,'').slice(-1);
         inp.classList.toggle('filled',!!inp.value);
-        if(inp.value&&idx<3)ins[idx+1].focus();
-        if(val().length===4)setTimeout(check,180);
+        if(inp.value&&idx<last)ins[idx+1].focus();
+        if(val().length===PIN_LEN)setTimeout(check,180);
       };
       inp.onkeydown=function(e){if(e.key==='Backspace'&&!inp.value&&idx>0){ins[idx-1].value='';ins[idx-1].classList.remove('filled');ins[idx-1].focus()}if(e.key==='Enter')check()};
-      inp.onpaste=function(e){var t=((e.clipboardData||window.clipboardData).getData('text')||'').replace(/\D/g,'').slice(0,4);if(!t)return;e.preventDefault();t.split('').forEach(function(ch,i){ins[i].value=ch;ins[i].classList.add('filled')});ins[Math.min(t.length,3)].focus();if(t.length===4)setTimeout(check,180)};
+      inp.onpaste=function(e){var t=((e.clipboardData||window.clipboardData).getData('text')||'').replace(/\D/g,'').slice(0,PIN_LEN);if(!t)return;e.preventDefault();t.split('').forEach(function(ch,i){ins[i].value=ch;ins[i].classList.add('filled')});ins[Math.min(t.length,last)].focus();if(t.length===PIN_LEN)setTimeout(check,180)};
     });
     okb.onclick=check;cb.onclick=function(){close(false)};
   });
@@ -23491,7 +23497,7 @@ function riderHint(){
   var btn=$('vgrDone'),h=D.querySelector('.vgotp-rhint');
   if(!btn){if(h)h.remove();return}
   if(otpOn()){
-    if(!h){h=D.createElement('div');h.className='vgotp-rhint';h.textContent='🔐 Customer se 4-digit Delivery PIN lo — PIN ke bina delivery complete nahi hogi';btn.parentNode.insertBefore(h,btn)}
+    if(!h){h=D.createElement('div');h.className='vgotp-rhint';h.textContent='🔐 Customer se '+PIN_LEN+'-digit Delivery PIN lo — PIN ke bina delivery complete nahi hogi';btn.parentNode.insertBefore(h,btn)}
   }else if(h)h.remove();
 }
 D.addEventListener('pointerdown',function(e){
@@ -23519,11 +23525,13 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boo
 (function(){
 'use strict';
 if(window.__vgPinMail)return;window.__vgPinMail=true;
+var PIN_LEN=4;
+function normId(id){return String(id==null?'':id).trim().replace(/^#/,'').replace(/^VEDANT-/i,'').replace(/\s+/g,'')}
 function pinFor(id){
-  var s='vedant-delivery-pin|'+String(id||'').trim(),h=2166136261>>>0;
+  var s='vedant-delivery-pin|'+normId(id),h=2166136261>>>0;
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}
   h^=h>>>15;h=Math.imul(h,2246822519)>>>0;h^=h>>>13;
-  return String(h%10000).padStart(4,'0');
+  return String(h%Math.pow(10,PIN_LEN)).padStart(PIN_LEN,'0');
 }
 async function otpIsOn(){
   try{
@@ -23565,3 +23573,63 @@ async function sendPinMail(order,email){
 })();
 </script>
 <!-- ===================== END VEDANT v11 ===================== -->
+
+<style id="vgx-polish-20261121">
+/* ===== 1. Payment cards: cash (green bar) + online (blue bar) ===== */
+.stvn-payment-accordion{gap:12px}
+.stvn-payment-accordion-item[data-payment-card]{position:relative;border-radius:18px;--pay-a:#16a34a;--pay-b:#0b6b27;--pay-tint:#ecfbf0;--pay-ring:rgba(22,163,74,.20)}
+.stvn-payment-accordion-item[data-payment-card="UPI"]{--pay-a:#2563eb;--pay-b:#7c3aed;--pay-tint:#edf3ff;--pay-ring:rgba(37,99,235,.20)}
+.stvn-payment-accordion-item[data-payment-card]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(180deg,var(--pay-a),var(--pay-b));transition:width .18s ease}
+.stvn-payment-accordion-item[data-payment-card].is-selected::before{width:10px}
+#page-payment .stvn-payment-accordion-item[data-payment-card] .stvn-payment-accordion-trigger,
+.stvn-payment-accordion-item[data-payment-card] .stvn-payment-accordion-trigger{padding-left:22px!important;gap:14px}
+.stvn-payment-accordion-item[data-payment-card] .stvn-payment-icon{flex:0 0 54px;width:54px;height:54px;border-radius:17px;border:0;font-size:29px;line-height:1;box-shadow:0 7px 15px var(--pay-ring),inset 0 0 0 1px rgba(0,0,0,.04);transition:transform .2s ease}
+.stvn-payment-accordion-item[data-payment-card] .stvn-payment-icon{text-shadow:0 2px 5px rgba(0,0,0,.2)}
+.stvn-payment-accordion-item .stvn-cod-icon{background:linear-gradient(145deg,#fff7d1,#ffd966)!important}
+.stvn-payment-accordion-item .stvn-online-icon{background:linear-gradient(145deg,#e6efff,#c9dcff)!important}
+.stvn-payment-accordion-item[data-payment-card].is-selected .stvn-payment-icon{transform:scale(1.07) rotate(-4deg)}
+.stvn-payment-accordion-item[data-payment-card] .stvn-payment-card-copy strong{font-size:16px;letter-spacing:.1px}
+.stvn-payment-accordion-item[data-payment-card].is-selected,
+#page-payment .stvn-payment-accordion-item[data-payment-card].is-selected{border:2px solid var(--pay-a)!important;background:linear-gradient(135deg,var(--pay-tint),var(--surface))!important;box-shadow:0 0 0 4px var(--pay-ring),0 10px 22px var(--pay-ring)!important}
+#page-payment .stvn-payment-accordion-item[data-payment-card].is-selected .stvn-payment-card-copy:after{background:var(--pay-a)}
+#page-payment .stvn-payment-accordion-item[data-payment-card].is-selected .stvn-payment-accordion-trigger:after{background:linear-gradient(135deg,var(--pay-a),var(--pay-b))}
+body.dark .stvn-payment-accordion-item[data-payment-card]{--pay-tint:#12281a}
+body.dark .stvn-payment-accordion-item[data-payment-card="UPI"]{--pay-tint:#121d3a}
+body.dark .stvn-payment-accordion-item .stvn-cod-icon{background:linear-gradient(145deg,#4d3d0b,#7a5f10)!important}
+body.dark .stvn-payment-accordion-item .stvn-online-icon{background:linear-gradient(145deg,#15264d,#21408a)!important}
+@media(max-width:480px){.stvn-payment-accordion-item[data-payment-card] .stvn-payment-icon{flex-basis:48px;width:48px;height:48px;font-size:25px;border-radius:15px}.stvn-payment-accordion-item[data-payment-card] .stvn-payment-card-copy strong{font-size:15px}}
+/* online method list (UPI / card / netbanking ...) */
+.stvn-online-method{border-left:5px solid #2563eb}
+.stvn-online-method.is-selected{border-color:#2563eb!important;border-left-width:5px!important;background:linear-gradient(135deg,#edf3ff,var(--surface))!important;box-shadow:0 7px 18px rgba(37,99,235,.18)!important}
+.stvn-online-method.is-selected .stvn-online-method-radio{border-color:#2563eb}
+.stvn-online-method.is-selected .stvn-online-method-radio:after{background:#2563eb}
+body.dark .stvn-online-method.is-selected{background:linear-gradient(135deg,#121d3a,var(--surface))!important}
+
+/* ===== 2. Rider: duty status on top, green = ON, red = OFF ===== */
+html body #vgRider .vgr-chip#vgrDutyChip{color:#fff!important;font-weight:900;border:0!important;transition:background .25s,box-shadow .25s}
+html body #vgRider .vgr-chip#vgrDutyChip.vgr-on{background:linear-gradient(135deg,#22c55e,#15803d)!important;box-shadow:0 0 0 3px rgba(34,197,94,.30)}
+html body #vgRider .vgr-chip#vgrDutyChip.vgr-off{background:linear-gradient(135deg,#ef4444,#b91c1c)!important;box-shadow:0 0 0 3px rgba(239,68,68,.28)}
+html body #vgRider .vgr-card.vgr-dutycard{padding:16px;margin:0 0 14px;border:0!important;border-radius:22px;color:#fff!important;transition:background .3s,box-shadow .3s}
+html body #vgRider .vgr-card.vgr-dutycard.on{background:linear-gradient(135deg,#22c55e,#0b6b27)!important;box-shadow:0 12px 26px rgba(22,163,74,.38)!important}
+html body #vgRider .vgr-card.vgr-dutycard.off{background:linear-gradient(135deg,#f05252,#991b1b)!important;box-shadow:0 12px 26px rgba(220,38,38,.38)!important}
+html body #vgRider .vgr-dutycard h3{color:#fff!important;font-size:18px}
+html body #vgRider .vgr-dutycard .vgr-muted{color:#fff!important;opacity:.93;font-size:13px;margin-top:3px;line-height:1.35}
+html body #vgRider .vgr-dutycard .vgr-duty{gap:12px}
+html body #vgRider .vgr-dutycard .vgr-dutyico{flex:0 0 54px;width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:rgba(255,255,255,.22)}
+html body #vgRider .vgr-dutycard .vgr-switch{flex:0 0 auto;width:78px;height:42px;background:rgba(0,0,0,.30)!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.45)}
+html body #vgRider .vgr-dutycard .vgr-switch:after{top:4px;left:4px;width:34px;height:34px}
+html body #vgRider .vgr-dutycard .vgr-switch.on:after{left:40px}
+@media(max-width:380px){html body #vgRider .vgr-dutycard .vgr-dutyico{display:none}}
+
+/* ===== 3. Delivery PIN card (customer Track page): lock in heading, exactly 4 digit boxes ===== */
+.vgotp-card{display:block!important;text-align:center;padding:18px 16px 20px}
+.vgotp-card .vgotp-head{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.vgotp-card .vgotp-lk{font-size:26px;line-height:1}
+.vgotp-card .vgotp-head b{display:inline;font-size:18px}
+.vgotp-card .vgotp-oid{padding:2px 10px;border-radius:999px;background:rgba(255,255,255,.22);font-size:12px;font-weight:800}
+.vgotp-card small{display:block;max-width:330px;margin:2px auto 0;font-size:12px;line-height:1.45;opacity:.95}
+.vgotp-card .vgotp-digits{margin:14px auto 0!important;width:auto!important;justify-content:center!important;gap:10px}
+.vgotp-card .vgotp-digits i{width:52px;height:60px;font-size:30px}
+@media(max-width:360px){.vgotp-card .vgotp-digits{gap:8px}.vgotp-card .vgotp-digits i{width:46px;height:54px;font-size:26px}.vgo-digits input{width:50px;height:58px}}
+
+</style>
