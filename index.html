@@ -70,7 +70,41 @@ html[data-festival] #vgSplash .vgs-bar{background:rgba(255,255,255,.3)}
 html[data-festival] #vgSplash .vgs-bar i{background:linear-gradient(90deg,var(--fa),#fff)}
 html[data-festival] #vgSplash .vgs-lines{background:linear-gradient(90deg,transparent,var(--fa))}
 </style>
-<script>(function(){try{var k=localStorage.getItem('vedantFestivalTheme');var C={diwali:'#c2410c',dhanteras:'#1e3a8a',bhaidooj:'#be185d',holi:'#7e22ce',rakhi:'#b91c1c',navratri:'#a21caf',dussehra:'#ea580c',ganesh:'#d97706',janmashtami:'#0e7490',eid:'#0f766e',christmas:'#14532d',newyear:'#4338ca',sankranti:'#0284c7',tiranga:'#1e3a8a'};if(k&&C[k]){document.documentElement.setAttribute('data-festival',k);var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',C[k])}}catch(e){}window.vgT=function(e,h){var l=String(document.documentElement.dataset.language||document.documentElement.lang||'en').toLowerCase();return l.indexOf('hi')===0?h:e}})();</script>
+<style id="vgFestMore">
+[data-fx-theme="shivratri"],html[data-festival="shivratri"]{--fp:#3730a3;--fq:#1e1b4b;--fa:#c7d2fe;--fs:#ebeaf6;--fs2:#d3d1eb;--fbg:#f5f5fa;--fh:linear-gradient(135deg,#1e1b4b,#3730a3 55%,#c7d2fe);--fb:linear-gradient(135deg,#4741aa,#1e1b4b)}
+[data-fx-theme="vasant"],html[data-festival="vasant"]{--fp:#ca8a04;--fq:#713f12;--fa:#fde047;--fs:#faf3e6;--fs2:#f3e5c8;--fbg:#fcf9f2;--fh:linear-gradient(135deg,#713f12,#ca8a04 55%,#fde047);--fb:linear-gradient(135deg,#ce9318,#713f12)}
+[data-fx-theme="lohri"],html[data-festival="lohri"]{--fp:#c2410c;--fq:#7c2d12;--fa:#fbbf24;--fs:#f9ece7;--fs2:#f2d5ca;--fbg:#fcf6f3;--fh:linear-gradient(135deg,#7c2d12,#c2410c 55%,#fbbf24);--fb:linear-gradient(135deg,#c7501f,#7c2d12)}
+[data-fx-theme="pongal"],html[data-festival="pongal"]{--fp:#15803d;--fq:#14532d;--fa:#facc15;--fs:#e8f2ec;--fs2:#cce3d4;--fbg:#f3f9f5;--fh:linear-gradient(135deg,#14532d,#15803d 55%,#facc15);--fb:linear-gradient(135deg,#288a4d,#14532d)}
+[data-fx-theme="ramnavami"],html[data-festival="ramnavami"]{--fp:#ea580c;--fq:#7c2d12;--fa:#fde047;--fs:#fdeee7;--fs2:#fadaca;--fbg:#fef7f3;--fh:linear-gradient(135deg,#7c2d12,#ea580c 55%,#fde047);--fb:linear-gradient(135deg,#ec651f,#7c2d12)}
+[data-fx-theme="hanuman"],html[data-festival="hanuman"]{--fp:#dd3f1b;--fq:#7a1d0a;--fa:#fcd34d;--fs:#fcece8;--fs2:#f8d5cd;--fbg:#fdf5f4;--fh:linear-gradient(135deg,#7a1d0a,#dd3f1b 55%,#fcd34d);--fb:linear-gradient(135deg,#e04e2d,#7a1d0a)}
+[data-fx-theme="baisakhi"],html[data-festival="baisakhi"]{--fp:#ca8a04;--fq:#422006;--fa:#fde68a;--fs:#faf3e6;--fs2:#f3e5c8;--fbg:#fcf9f2;--fh:linear-gradient(135deg,#422006,#ca8a04 55%,#fde68a);--fb:linear-gradient(135deg,#ce9318,#422006)}
+[data-fx-theme="gudipadwa"],html[data-festival="gudipadwa"]{--fp:#b45309;--fq:#78350f;--fa:#fde047;--fs:#f8eee6;--fs2:#eed9c9;--fbg:#fbf6f3;--fh:linear-gradient(135deg,#78350f,#b45309 55%,#fde047);--fb:linear-gradient(135deg,#ba611d,#78350f)}
+[data-fx-theme="onam"],html[data-festival="onam"]{--fp:#15803d;--fq:#064e3b;--fa:#fde047;--fs:#e8f2ec;--fs2:#cce3d4;--fbg:#f3f9f5;--fh:linear-gradient(135deg,#064e3b,#15803d 55%,#fde047);--fb:linear-gradient(135deg,#288a4d,#064e3b)}
+[data-fx-theme="teej"],html[data-festival="teej"]{--fp:#059669;--fq:#064e3b;--fa:#f9a8d4;--fs:#e6f4f0;--fs2:#c8e8de;--fbg:#f2faf8;--fh:linear-gradient(135deg,#064e3b,#059669 55%,#f9a8d4);--fb:linear-gradient(135deg,#199e75,#064e3b)}
+[data-fx-theme="durgapuja"],html[data-festival="durgapuja"]{--fp:#be123c;--fq:#4c0519;--fa:#fcd34d;--fs:#f8e7ec;--fs2:#f1cbd4;--fbg:#fcf3f5;--fh:linear-gradient(135deg,#4c0519,#be123c 55%,#fcd34d);--fb:linear-gradient(135deg,#c3254c,#4c0519)}
+[data-fx-theme="karwachauth"],html[data-festival="karwachauth"]{--fp:#9f1239;--fq:#500724;--fa:#fde68a;--fs:#f5e7eb;--fs2:#eacbd3;--fbg:#faf3f5;--fh:linear-gradient(135deg,#500724,#9f1239 55%,#fde68a);--fb:linear-gradient(135deg,#a72549,#500724)}
+[data-fx-theme="chhath"],html[data-festival="chhath"]{--fp:#b45309;--fq:#451a03;--fa:#fbbf24;--fs:#f8eee6;--fs2:#eed9c9;--fbg:#fbf6f3;--fh:linear-gradient(135deg,#451a03,#b45309 55%,#fbbf24);--fb:linear-gradient(135deg,#ba611d,#451a03)}
+[data-fx-theme="gurunanak"],html[data-festival="gurunanak"]{--fp:#0369a1;--fq:#0c4a6e;--fa:#fb923c;--fs:#e6f0f6;--fs2:#c8deea;--fbg:#f2f8fa;--fh:linear-gradient(135deg,#0c4a6e,#0369a1 55%,#fb923c);--fb:linear-gradient(135deg,#1775a9,#0c4a6e)}
+[data-fx-theme="mahavir"],html[data-festival="mahavir"]{--fp:#dc2626;--fq:#7f1d1d;--fa:#fde68a;--fs:#fce9e9;--fs2:#f7cfcf;--fbg:#fdf4f4;--fh:linear-gradient(135deg,#7f1d1d,#dc2626 55%,#fde68a);--fb:linear-gradient(135deg,#df3737,#7f1d1d)}
+[data-fx-theme="buddha"],html[data-festival="buddha"]{--fp:#0d9488;--fq:#134e4a;--fa:#fde68a;--fs:#e7f4f3;--fs2:#cae7e5;--fbg:#f3faf9;--fh:linear-gradient(135deg,#134e4a,#0d9488 55%,#fde68a);--fb:linear-gradient(135deg,#209d92,#134e4a)}
+[data-fx-theme="valentine"],html[data-festival="valentine"]{--fp:#e11d48;--fq:#881337;--fa:#fda4af;--fs:#fce8ed;--fs2:#f8cdd7;--fbg:#fef4f6;--fh:linear-gradient(135deg,#881337,#e11d48 55%,#fda4af);--fb:linear-gradient(135deg,#e32f57,#881337)}
+[data-fx-theme="easter"],html[data-festival="easter"]{--fp:#7c3aed;--fq:#4c1d95;--fa:#fde68a;--fs:#f2ebfd;--fs2:#e2d4fb;--fbg:#f8f5fe;--fh:linear-gradient(135deg,#4c1d95,#7c3aed 55%,#fde68a);--fb:linear-gradient(135deg,#864aee,#4c1d95)}
+[data-fx-theme="bakrid"],html[data-festival="bakrid"]{--fp:#0e7f5c;--fq:#022c22;--fa:#fde68a;--fs:#e7f2ef;--fs2:#cae3db;--fbg:#f3f9f7;--fh:linear-gradient(135deg,#022c22,#0e7f5c 55%,#fde68a);--fb:linear-gradient(135deg,#218969,#022c22)}
+[data-fx-theme="gandhi"],html[data-festival="gandhi"]{--fp:#475569;--fq:#1e293b;--fa:#fbbf24;--fs:#edeef0;--fs2:#d7dade;--fbg:#f6f6f8;--fh:linear-gradient(135deg,#1e293b,#475569 55%,#fbbf24);--fb:linear-gradient(135deg,#566375,#1e293b)}
+@keyframes vfRise{from{opacity:0;transform:translateY(40px) scale(.8);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes vfSwing{from{opacity:0;transform:rotate(-14deg) translateY(-30px)}60%{transform:rotate(6deg)}to{opacity:1;transform:none}}
+@keyframes vfPop{from{opacity:0;transform:scale(.3)}70%{transform:scale(1.12)}to{opacity:1;transform:scale(1)}}
+@keyframes vfCurtain{from{opacity:0;clip-path:inset(0 50% 0 50%)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes vfDrop{0%{opacity:0;transform:translateY(-60px)}60%{opacity:1;transform:translateY(10px)}80%{transform:translateY(-4px)}100%{opacity:1;transform:none}}
+html[data-festival="diwali"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="dhanteras"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="lohri"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="ramnavami"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="hanuman"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="dussehra"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="chhath"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag){animation:vfRise 1.1s cubic-bezier(.2,.9,.3,1) both!important}
+html[data-festival="rakhi"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="bhaidooj"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="christmas"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="teej"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="valentine"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="onam"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag){animation:vfSwing 1.1s cubic-bezier(.2,.9,.3,1) both!important}
+html[data-festival="holi"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="newyear"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="baisakhi"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="gudipadwa"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="easter"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="tiranga"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="sankranti"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag){animation:vfPop 1.1s cubic-bezier(.2,.9,.3,1) both!important}
+html[data-festival="navratri"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="durgapuja"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="karwachauth"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="eid"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="bakrid"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="gurunanak"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="mahavir"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag){animation:vfCurtain 1.1s cubic-bezier(.2,.9,.3,1) both!important}
+html[data-festival="ganesh"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="janmashtami"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="vasant"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="pongal"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="shivratri"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="buddha"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag),html[data-festival="gandhi"] #vgSplash :is(.vgs-word,.vgs-badge,.vgs-tag){animation:vfDrop 1.1s cubic-bezier(.2,.9,.3,1) both!important}
+@media(prefers-reduced-motion:reduce){#vgSplash *{animation:none!important}}
+</style>
+
+<script>(function(){try{var k=localStorage.getItem('vedantFestivalTheme');var C={diwali:'#c2410c',dhanteras:'#1e3a8a',bhaidooj:'#be185d',holi:'#7e22ce',rakhi:'#b91c1c',navratri:'#a21caf',dussehra:'#ea580c',ganesh:'#d97706',janmashtami:'#0e7490',eid:'#0f766e',christmas:'#14532d',newyear:'#4338ca',sankranti:'#0284c7',tiranga:'#1e3a8a',shivratri:'#3730a3',vasant:'#ca8a04',lohri:'#c2410c',pongal:'#15803d',ramnavami:'#ea580c',hanuman:'#dd3f1b',baisakhi:'#ca8a04',gudipadwa:'#b45309',onam:'#15803d',teej:'#059669',durgapuja:'#be123c',karwachauth:'#9f1239',chhath:'#b45309',gurunanak:'#0369a1',mahavir:'#dc2626',buddha:'#0d9488',valentine:'#e11d48',easter:'#7c3aed',bakrid:'#0e7f5c',gandhi:'#475569'};if(k&&C[k]){document.documentElement.setAttribute('data-festival',k);var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',C[k])}}catch(e){}window.vgT=function(e,h){var l=String(document.documentElement.dataset.language||document.documentElement.lang||'en').toLowerCase();return l.indexOf('hi')===0?h:e}})();</script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="application-name" content="Vedant Grocery Shop">
@@ -20270,7 +20304,27 @@ eid:['🌙',['Eid Mubarak','ईद मुबारक'],['Joy and blessings to y
 christmas:['🎄',['Merry Christmas','मेरी क्रिसमस'],['Warm wishes and happy moments for you.','आपके लिए खुशियों भरी शुभकामनाएँ।'],'Christmas',['🎄','❄️','⭐','🎁'],'#14532d'],
 newyear:['🎆',['Happy New Year','नववर्ष की शुभकामनाएँ'],['Wishing you a healthy and happy year ahead.','आने वाला साल सेहत और खुशियों भरा हो।'],'New Year',['🎆','🎉','✨','🥂'],'#4338ca'],
 sankranti:['🪁',['Happy Makar Sankranti','मकर संक्रांति की शुभकामनाएँ'],['Sweet moments and high-flying joy! Happy Lohri and Pongal too.','मीठी खुशियाँ और ऊँची उड़ान! लोहड़ी व पोंगल की भी शुभकामनाएँ।'],'Makar Sankranti',['🪁','☀️','✨','🌾'],'#0284c7'],
-tiranga:['🇮🇳',['Jai Hind','जय हिंद'],['Happy Independence Day / Republic Day. Salute to the Tricolour!','स्वतंत्रता / गणतंत्र दिवस की शुभकामनाएँ। तिरंगे को सलाम!'],'Tiranga',['🇮🇳','🪁','✨','☸️'],'#1e3a8a']
+tiranga:['🇮🇳',['Jai Hind','जय हिंद'],['Happy Independence Day / Republic Day. Salute to the Tricolour!','स्वतंत्रता / गणतंत्र दिवस की शुभकामनाएँ। तिरंगे को सलाम!'],'Tiranga',['🇮🇳','🪁','✨','☸️'],'#1e3a8a'],
+shivratri:['🔱',['Har Har Mahadev','हर हर महादेव'],['Happy Maha Shivratri to you and your family.','आपको और परिवार को महाशिवरात्रि की शुभकामनाएँ।'],'Maha Shivratri',['🔱','🌙','🕉️','✨'],'#3730a3'],
+vasant:['🌼',['Happy Vasant Panchami','वसंत पंचमी की शुभकामनाएँ'],['May Maa Saraswati bless you with wisdom.','माँ सरस्वती आपको ज्ञान का आशीर्वाद दें।'],'Vasant Panchami',['🌼','🌻','📚','✨'],'#ca8a04'],
+lohri:['🔥',['Happy Lohri','लोहड़ी की शुभकामनाएँ'],['Warmth, sweetness and joy around the bonfire.','अलाव की गर्माहट और मिठास भरी खुशियाँ।'],'Lohri',['🔥','🌾','✨','🍿'],'#c2410c'],
+pongal:['🍚',['Happy Pongal','पोंगल की शुभकामनाएँ'],['May your home overflow with harvest joy.','आपका घर फसल की खुशियों से भरा रहे।'],'Pongal',['🌾','🍚','☀️','✨'],'#15803d'],
+ramnavami:['🏹',['Jai Shri Ram','जय श्री राम'],['Happy Ram Navami to you and your family.','आपको और परिवार को रामनवमी की शुभकामनाएँ।'],'Ram Navami',['🏹','🚩','🪔','✨'],'#ea580c'],
+hanuman:['🚩',['Jai Bajrang Bali','जय बजरंग बली'],['Happy Hanuman Jayanti — strength and courage to all.','हनुमान जयंती की शुभकामनाएँ — बल और साहस बना रहे।'],'Hanuman Jayanti',['🚩','🙏','✨','🌼'],'#dd3f1b'],
+baisakhi:['🌾',['Happy Baisakhi','बैसाखी की शुभकामनाएँ'],['Golden harvest, bhangra and happiness!','सुनहरी फसल, भांगड़ा और खुशियाँ!'],'Baisakhi',['🌾','🥁','🎉','✨'],'#ca8a04'],
+gudipadwa:['🚩',['Happy Gudi Padwa','गुड़ी पड़वा की शुभकामनाएँ'],['A new year of new hopes. Happy Gudi Padwa and Ugadi!','नए साल की नई उम्मीदें। गुड़ी पड़वा व उगादी मुबारक!'],'Gudi Padwa / Ugadi',['🚩','🌼','🥭','✨'],'#b45309'],
+onam:['🌺',['Happy Onam','ओणम की शुभकामनाएँ'],['May Maveli bless your home with prosperity.','आपके घर में सुख-समृद्धि बनी रहे।'],'Onam',['🌼','🌺','🛶','✨'],'#15803d'],
+teej:['🌿',['Happy Teej','तीज की शुभकामनाएँ'],['Green bangles, swings and monsoon joy.','हरी चूड़ियाँ, झूले और सावन की खुशियाँ।'],'Teej',['🌿','🌸','💚','✨'],'#059669'],
+durgapuja:['🪔',['Shubho Durga Puja','शुभ दुर्गा पूजा'],['Maa Durga brings strength and happiness to your home.','माँ दुर्गा आपके घर शक्ति और खुशियाँ लाएँ।'],'Durga Puja',['🪔','🌺','🔱','✨'],'#be123c'],
+karwachauth:['🌕',['Happy Karwa Chauth','करवा चौथ की शुभकामनाएँ'],['Love, devotion and a beautiful moonrise.','प्रेम, श्रद्धा और सुंदर चाँद का दीदार।'],'Karwa Chauth',['🌕','💍','✨','🪔'],'#9f1239'],
+chhath:['☀️',['Happy Chhath Puja','छठ पूजा की शुभकामनाएँ'],['Blessings of Surya Dev and Chhathi Maiya.','सूर्य देव और छठी मैया का आशीर्वाद।'],'Chhath Puja',['☀️','🌾','🪔','✨'],'#b45309'],
+gurunanak:['🙏',['Happy Gurpurab','गुरुपर्व की शुभकामनाएँ'],['Wishing you peace and blessings on Guru Nanak Jayanti.','गुरु नानक जयंती पर शांति और आशीर्वाद मिले।'],'Guru Nanak Jayanti',['🙏','✨','🌼','🪔'],'#0369a1'],
+mahavir:['☸️',['Happy Mahavir Jayanti','महावीर जयंती की शुभकामनाएँ'],['Peace, non-violence and compassion for all.','शांति, अहिंसा और करुणा सबके लिए।'],'Mahavir Jayanti',['☸️','🌼','🕊️','✨'],'#dc2626'],
+buddha:['🪷',['Happy Buddha Purnima','बुद्ध पूर्णिमा की शुभकामनाएँ'],['May peace and mindfulness fill your days.','शांति और सजगता आपके जीवन में बनी रहे।'],'Buddha Purnima',['🪷','🌕','☸️','✨'],'#0d9488'],
+valentine:['💖',['Happy Valentine’s Day','वैलेंटाइन डे मुबारक'],['Share sweetness with the people you love.','अपनों के साथ मिठास बाँटिए।'],'Valentine’s Day',['💖','🌹','💌','✨'],'#e11d48'],
+easter:['🐣',['Happy Easter','ईस्टर की शुभकामनाएँ'],['Hope, joy and new beginnings.','उम्मीद, खुशी और नई शुरुआत।'],'Easter',['🐣','🥚','🌷','✨'],'#7c3aed'],
+bakrid:['🐐',['Eid Mubarak (Bakrid)','बकरीद मुबारक'],['Sharing, sacrifice and gratitude to you and your family.','आपको और परिवार को बकरीद की दिली मुबारकबाद।'],'Bakrid',['🌙','🐐','⭐','✨'],'#0e7f5c'],
+gandhi:['🕊️',['Gandhi Jayanti','गांधी जयंती'],['Truth and non-violence — a day to remember Bapu.','सत्य और अहिंसा — बापू को याद करने का दिन।'],'Gandhi Jayanti',['🕊️','🌿','☸️','✨'],'#475569']
 };
 var cur='',msg={en:'',hi:''},dirty=false;
 var meta=D.querySelector('meta[name=theme-color]'),origColor=meta?meta.content:'#fbd34a';
@@ -20303,7 +20357,7 @@ function banner(id,compact){
 }
 function banners(){banner('page-home');banner('page-shop',1);['page-cart','page-checkout','page-location','page-order-review','page-payment','page-wishlist','page-track','page-orders'].forEach(function(id){banner(id,1)})}
 
-var FX={diwali:'burst',dhanteras:'burst',newyear:'burst',holi:'splash',eid:'twinkle',navratri:'twinkle',dussehra:'rise',sankranti:'rise',janmashtami:'rise',ganesh:'rise',christmas:'snow',tiranga:'confetti'};
+var FX={diwali:'burst',dhanteras:'burst',newyear:'burst',holi:'splash',eid:'twinkle',navratri:'twinkle',dussehra:'rise',sankranti:'rise',janmashtami:'rise',ganesh:'rise',christmas:'snow',tiranga:'confetti',shivratri:'twinkle',vasant:'rise',lohri:'rise',pongal:'rise',ramnavami:'rise',hanuman:'burst',baisakhi:'confetti',gudipadwa:'confetti',onam:'rise',teej:'rise',durgapuja:'twinkle',karwachauth:'twinkle',chhath:'rise',gurunanak:'twinkle',mahavir:'twinkle',buddha:'twinkle',valentine:'burst',easter:'confetti',bakrid:'twinkle',gandhi:'confetti'};
 var BC={diwali:['#ffd34d','#ff7a1a','#ff3d3d','#fff3c4'],newyear:['#ffd34d','#a78bfa','#38bdf8','#ffffff'],dhanteras:['#ffd34d','#fff3c4','#60a5fa','#ffffff']};
 var HC=['#ec4899','#f59e0b','#06b6d4','#22c55e','#a855f7','#ef4444'],tm=[];
 function rnd(a,b){return a+Math.random()*(b-a)}
@@ -20467,7 +20521,7 @@ function buildGrid(){
   var g=D.getElementById('adminFestGrid');if(!g)return;
   var h='<button type="button" class="fx-card" data-k="" aria-pressed="false" onclick="vgFestPick(\'\')"><span class="fx-sw">🛒</span><span>Normal · सामान्य</span></button>';
   Object.keys(F).forEach(function(k){
-    h+='<button type="button" class="fx-card" data-k="'+k+'" data-fx-theme="'+k+'" aria-pressed="false" onclick="vgFestPick(\''+k+'\')"><span class="fx-sw">'+F[k][0]+'</span><span>'+F[k][3]+'</span></button>';
+    h+='<button type="button" class="fx-card" data-k="'+k+'" data-s="'+(k+' '+F[k][1][0]+' '+F[k][1][1]+' '+F[k][3]).toLowerCase().replace(/"/g,'')+'" data-fx-theme="'+k+'" aria-pressed="false" onclick="vgFestPick(\''+k+'\')"><span class="fx-sw">'+F[k][0]+'</span><span>'+F[k][3]+'</span></button>';
   });
   g.innerHTML=h;
 }
@@ -21428,6 +21482,62 @@ function menu(){
 setInterval(function(){try{headerAdmin();toolbar();vip();menu()}catch(e){}},1000);
 })();
 </script>
+<style id="vg-final-grade-20261121">
+/* festival search */
+.vgfs{position:sticky;top:0;z-index:3;margin:10px 0;padding:8px;border-radius:18px;background:linear-gradient(135deg,#fff,var(--fs,#f1faf3));border:2px solid var(--fp,#16a34a);box-shadow:0 8px 20px -10px var(--fq,#0b3d24)}
+.vgfs label{display:flex;align-items:center;gap:8px}
+.vgfs input{flex:1;min-width:0;height:44px;border:0;outline:0;background:transparent;font:700 15px system-ui;color:#10281a}
+.vgfs b{font-size:18px}.vgfs small{display:block;margin:4px 6px 0;color:#52665a;font-weight:700}
+#adminFestGrid.fx-grid{max-height:min(56vh,430px);overflow:auto;-webkit-overflow-scrolling:touch;padding:4px}
+.fx-card[hidden]{display:none!important}
+/* PIN: exactly 4 boxes */
+#vgoDigits input:nth-child(n+5),.vgotp-digits i:nth-child(n+5){display:none!important}
+/* colour grading: orders, track, rider */
+body:not(.dark) :is(#page-orders,#page-track){background:linear-gradient(180deg,#e9faf0,#f7fcf9 40%,#fff)!important}
+body:not(.dark) .history-item{background:#fff!important;border:1px solid #cfe9d8!important;border-left:5px solid #16a34a!important;border-radius:18px!important;box-shadow:0 12px 26px -16px rgba(11,90,40,.55)!important}
+body.dark .history-item{background:linear-gradient(160deg,#10221a,#0b1511)!important;border:1px solid #1f4a32!important;border-left:5px solid #22c55e!important;border-radius:18px!important}
+.vgr-top{background:linear-gradient(135deg,#052e16,#0f7a3a 62%,#22c55e)!important;color:#fff!important;box-shadow:0 10px 24px -12px #052e16}
+/* order-id search */
+.vgos{margin:10px 0 14px;padding:8px 10px;border-radius:18px;background:#fff;border:2px solid #16a34a;box-shadow:0 10px 22px -12px rgba(11,90,40,.6)}
+body.dark .vgos{background:#0f1a14}
+.vgos label{display:flex;align-items:center;gap:8px}
+.vgos input{flex:1;min-width:0;height:44px;border:0;outline:0;background:transparent;font:800 15px system-ui;color:#10281a}
+body.dark .vgos input{color:#e9fbed}
+.vgos button{border:0;border-radius:12px;padding:10px 14px;background:linear-gradient(135deg,#22c55e,#0b7a35);color:#fff;font-weight:900}
+.vgos small{display:block;margin:5px 4px 0;color:#52665a;font-weight:700}
+/* before placing order: green, fixed Place/Pay button on mobile */
+html body :is(.place-order,#proceed-checkout-btn),html[data-festival] body :is(.place-order,#proceed-checkout-btn),html body :is(#page-payment,#page-order-review) .shop-btn{background:linear-gradient(135deg,#22c55e,#0b7a35)!important;color:#fff!important;border:0!important;border-radius:16px!important;font-weight:900!important;box-shadow:0 12px 24px -10px rgba(11,122,53,.8)!important}
+@media(max-width:700px){
+ html body :is(#page-checkout,#page-order-review,#page-payment) .place-order{display:block!important;position:sticky!important;bottom:calc(68px + env(safe-area-inset-bottom,0px))!important;z-index:30!important;width:100%!important;min-height:52px!important;margin:12px 0 0!important}
+ html body :is(#page-order-review,#page-payment) :is(.summary,.section-card,.checkout-card){background:#f2fcf5!important;border:1px solid #cfe9d8!important;border-radius:16px!important;color:#10281a!important}
+}
+</style>
+<script id="vg-final-grade-20261121-js">
+(function(){'use strict';var D=document;
+/* festival search bar */
+function fs(){var g=D.getElementById('adminFestGrid');if(!g||D.getElementById('vgFestSearch'))return;
+ var w=D.createElement('div');w.className='vgfs';
+ w.innerHTML='<label><b>🔎</b><input id="vgFestSearch" type="search" placeholder="Festival search · जैसे Diwali, होली, Eid…" autocomplete="off"></label><small id="vgFestCount"></small>';
+ g.parentNode.insertBefore(w,g);var i=w.querySelector('input'),c=w.querySelector('small');
+ function f(){var q=i.value.trim().toLowerCase(),n=0;g.querySelectorAll('.fx-card').forEach(function(b){var s=(b.getAttribute('data-s')||b.textContent).toLowerCase(),ok=!q||s.indexOf(q)>-1||!b.getAttribute('data-k')&&'normal सामान्य'.indexOf(q)>-1;b.hidden=!ok;if(ok)n++});c.textContent=n?n+' festival mile':'Koi festival nahi mila'}
+ i.addEventListener('input',f);f()}
+/* delivery PIN: always exactly 4 */
+function pin(){D.querySelectorAll('#vgoDigits').forEach(function(d){var x=d.querySelectorAll('input');for(var k=x.length-1;k>=4;k--)x[k].remove()});
+ D.querySelectorAll('.vgotp-digits').forEach(function(d){var x=d.querySelectorAll('i');for(var k=x.length-1;k>=4;k--)x[k].remove()})}
+/* order id search */
+function os(){var p=D.getElementById('page-orders');if(!p||p.querySelector('.vgos'))return;
+ var w=D.createElement('div');w.className='vgos';
+ w.innerHTML='<label><b>🔎</b><input type="search" inputmode="search" placeholder="Order ID se search karo" autocomplete="off"><button type="button">Find</button></label><small></small>';
+ var h=p.querySelector('.section-head');h?h.after(w):p.prepend(w);var i=w.querySelector('input'),m=w.querySelector('small');
+ function f(){var q=i.value.trim().toLowerCase().replace(/^#/,''),n=0,t=0;p.querySelectorAll('.history-item').forEach(function(e){t++;var ok=!q||e.textContent.toLowerCase().indexOf(q)>-1;e.style.display=ok?'':'none';if(ok)n++});m.textContent=q?(n?n+' order mila':'Is ID ka koi order nahi mila'):t+' orders'}
+ i.addEventListener('input',f);w.querySelector('button').onclick=f;
+ new MutationObserver(function(){if(i.value)f()}).observe(p,{childList:true,subtree:true});f()}
+function run(){fs();pin();os()}
+new MutationObserver(function(){clearTimeout(run.t);run.t=setTimeout(run,120)}).observe(D.body,{childList:true,subtree:true});
+D.addEventListener('DOMContentLoaded',run);run();
+})();
+</script>
+
 </body>
 </html>
 
