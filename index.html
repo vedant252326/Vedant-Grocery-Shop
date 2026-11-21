@@ -2574,27 +2574,27 @@ button,input,select,textarea{font:inherit}
  <div class="stvn-profile-card">
   <div class="stvn-profile-head"><h2 id="stvnProfileTitle">My Profile</h2><button id="stvnProfileClose" type="button" onclick="stvnCloseProfile()" aria-label="Close">✕</button></div>
   <section class="stvn-profile-section active" id="stvnProfileSectionProfile">
-   <p class="stvn-profile-note">आपकी customer details</p>
-   <label for="stvnProfileName">Full name</label><input id="stvnProfileName" type="text" autocomplete="name" placeholder="अपना नाम लिखें">
+   <p class="stvn-profile-note">Your customer details</p>
+   <label for="stvnProfileName">Full name</label><input id="stvnProfileName" type="text" autocomplete="name" placeholder="Enter your name">
    <label for="stvnProfilePhone">Mobile number</label><input id="stvnProfilePhone" type="tel" autocomplete="tel" placeholder="Mobile number">
    <p><b>Email:</b> <span id="stvnProfileEmailValue">—</span></p>
    <button type="button" class="stvn-profile-save" onclick="stvnSaveCustomerProfile()">Save Profile</button>
   </section>
   <section class="stvn-profile-section" id="stvnProfileSectionAddress">
-   <p class="stvn-profile-note">डिलीवरी के लिए अपना address save करें।</p>
-   <label for="stvnAddressLine">House / Street / Area</label><textarea id="stvnAddressLine" rows="3" placeholder="मकान नंबर, गली, मोहल्ला"></textarea>
-   <label for="stvnAddressCity">City</label><input id="stvnAddressCity" type="text" autocomplete="address-level2" placeholder="शहर">
+   <p class="stvn-profile-note">Save your address for delivery.</p>
+   <label for="stvnAddressLine">House / Street / Area</label><textarea id="stvnAddressLine" rows="3" placeholder="House number, street, locality"></textarea>
+   <label for="stvnAddressCity">City</label><input id="stvnAddressCity" type="text" autocomplete="address-level2" placeholder="City">
    <label for="stvnAddressPincode">PIN code</label><input id="stvnAddressPincode" type="text" inputmode="numeric" maxlength="6" autocomplete="postal-code" placeholder="6-digit PIN code">
-   <label for="stvnAddressLandmark">Landmark (optional)</label><input id="stvnAddressLandmark" type="text" placeholder="पास की कोई जगह">
+   <label for="stvnAddressLandmark">Landmark (optional)</label><input id="stvnAddressLandmark" type="text" placeholder="A nearby place">
    <button type="button" class="stvn-profile-save" onclick="stvnSaveCustomerAddress()">Save Address</button>
-   <p class="stvn-profile-note">यह address इस browser में save होगा। इसे सभी devices पर sync करने के लिए database integration चाहिए।</p>
+   <p class="stvn-profile-note">This address is saved in this browser only. Syncing it across all devices needs database integration.</p>
   </section>
   <section class="stvn-profile-section" id="stvnProfileSectionOrders">
-   <p class="stvn-profile-note">इस browser में उपलब्ध order history</p><div id="stvnProfileOrdersList"></div>
+   <p class="stvn-profile-note">Order history available in this browser</p><div id="stvnProfileOrdersList"></div>
   </section>
   <section class="stvn-profile-section" id="stvnProfileSectionCustomerCare">
-   <p class="stvn-profile-note">Order, payment, delivery या शिकायत में सहायता के लिए संपर्क करें।</p>
-   <h3 id="stvnAccountCareTitle">Vedant Customer Care</h3><p id="stvnAccountCareMessage">Order में मदद चाहिए? हमसे संपर्क करें।</p><div id="stvnAccountCareActions" class="stvn-account-care-actions"></div>
+   <p class="stvn-profile-note">Contact us for help with orders, payments, delivery or complaints.</p>
+   <h3 id="stvnAccountCareTitle">Vedant Customer Care</h3><p id="stvnAccountCareMessage">Need help with your order? Contact us.</p><div id="stvnAccountCareActions" class="stvn-account-care-actions"></div>
   </section>
  </div>
 </div>
@@ -2926,7 +2926,7 @@ style="display:none">
 
 <div class="admin-toolbar">
 
-<span id="admin-save-status" class="admin-small" role="status" aria-live="polite">अभी कोई pending बदलाव नहीं है।</span>
+<span id="admin-save-status" class="admin-small" role="status" aria-live="polite">No pending changes right now.</span>
 
 <button
 id="admin-view-product-management"
@@ -3042,17 +3042,17 @@ Logout
     <h3 id="admin-customer-care-heading">🧑‍💼 Customer Care Settings</h3>
     <button type="button" class="admin-section-save-button" onclick="saveCustomerCareSettings()">💾 Save Customer Care</button>
   </div>
-  <p class="admin-small">यहाँ से ग्राहक सहायता का फोन, WhatsApp और ईमेल बदलें। Save करने पर ये सेटिंग सभी ग्राहकों की वेबसाइट पर दिखेगी (इसके लिए Supabase SQL Editor में customer_care_settings.sql एक बार चलाना होगा)।</p>
-  <label><input id="cc-enabled" type="checkbox" checked> Customer Care चालू रखें</label>
+  <p class="admin-small">Change the customer support phone, WhatsApp and email here. After you Save, these settings will show on the website for all customers (you must run customer_care_settings.sql once in the Supabase SQL Editor).</p>
+  <label><input id="cc-enabled" type="checkbox" checked> Keep Customer Care enabled</label>
   <div class="admin-grid" style="margin-top:12px">
-    <input id="cc-title" type="text" maxlength="80" placeholder="Customer Care का नाम (जैसे Vedant Support)">
-    <input id="cc-phone" type="tel" maxlength="25" placeholder="Call के लिए फोन नंबर">
-    <input id="cc-whatsapp" type="tel" maxlength="25" placeholder="WhatsApp नंबर (देश कोड सहित, जैसे 91...) ">
-    <input id="cc-email" type="email" maxlength="160" placeholder="Customer Care ईमेल">
+    <input id="cc-title" type="text" maxlength="80" placeholder="Customer Care name (e.g. Vedant Support)">
+    <input id="cc-phone" type="tel" maxlength="25" placeholder="Phone number for calls">
+    <input id="cc-whatsapp" type="tel" maxlength="25" placeholder="WhatsApp number (with country code, e.g. 91...) ">
+    <input id="cc-email" type="email" maxlength="160" placeholder="Customer Care email">
   </div>
-  <label for="cc-message" style="display:block;margin-top:12px;font-weight:800">📝 Customer Care Description / ग्राहकों के लिए विवरण</label>
-  <textarea id="cc-message" rows="12" maxlength="10000" placeholder="ग्राहकों को बताएं कि ऑर्डर, पेमेंट, डिलीवरी या शिकायत में कैसे मदद मिलेगी… (100 lines तक)" style="width:100%;min-height:260px;margin-top:6px;line-height:1.55;white-space:pre-wrap;resize:vertical"></textarea>
-  <small id="cc-message-count" class="admin-small">0 / 100 lines · अधिकतम 10,000 characters</small>
+  <label for="cc-message" style="display:block;margin-top:12px;font-weight:800">📝 Customer Care Description</label>
+  <textarea id="cc-message" rows="12" maxlength="10000" placeholder="Tell customers how to get help with orders, payments, delivery or complaints… (up to 100 lines)" style="width:100%;min-height:260px;margin-top:6px;line-height:1.55;white-space:pre-wrap;resize:vertical"></textarea>
+  <small id="cc-message-count" class="admin-small">0 / 100 lines · max 10,000 characters</small>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
     <button type="button" class="admin-btn" onclick="loadCustomerCareSettings()">🔄 Load Settings</button>
     <button type="button" class="admin-btn" onclick="previewCustomerCare()">👁️ Preview</button>
@@ -3063,11 +3063,11 @@ Logout
 <!-- ===== ORDER SOUND & EMAIL SETTINGS ===== -->
 <section id="adminSoundEmailSection" class="section-card" aria-labelledby="admin-sound-email-heading" hidden style="margin:16px 0;padding:16px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
   <div class="admin-section-heading-row"><h3 id="admin-sound-email-heading">🔔 Order Sound & Gmail Email</h3><button type="button" class="admin-section-save-button" onclick="saveOrderNotificationSettings()">💾 Save Settings</button></div>
-  <p class="admin-small">दोनों alerts अलग-अलग ON/OFF कर सकते हैं। Admin sound तभी बजेगा जब Admin Panel वाला पेज खुला हो। Panel बंद होने पर Gmail email के लिए नीचे server setup भी करना होगा।</p>
-  <label style="display:block;margin:10px 0"><input type="checkbox" id="admin-order-sound-enabled" checked> 🔊 Admin Panel में नए order की आवाज़ ON</label>
+  <p class="admin-small">You can switch both alerts ON/OFF separately. The admin sound plays only while the Admin Panel page is open. For Gmail email alerts when the panel is closed, you also need to finish the server setup below.</p>
+  <label style="display:block;margin:10px 0"><input type="checkbox" id="admin-order-sound-enabled" checked> 🔊 Sound for new orders in Admin Panel: ON</label>
   <input type="checkbox" id="admin-order-email-enabled" checked hidden aria-hidden="true">
   
-  <label for="admin-order-email-recipient" style="display:block;margin-top:12px">Email कहाँ भेजना है?</label>
+  <label for="admin-order-email-recipient" style="display:block;margin-top:12px">Where should the email be sent?</label>
   <input id="admin-order-email-recipient" type="email" maxlength="200" placeholder="vedansh2811111@gmail.com" style="width:100%;max-width:520px">
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="admin-btn" onclick="testAdminOrderSound()">🔊 Test Sound</button><button type="button" class="admin-btn" onclick="loadOrderNotificationSettings()">🔄 Reload</button></div>
   <p id="admin-order-notification-message" class="admin-small" role="status" aria-live="polite"></p>
@@ -3076,34 +3076,34 @@ Logout
 
 <!-- ===== SHOP STATUS (collapsible; existing shop status feature) ===== -->
 <section id="adminShopStatusSection" class="section-card" style="margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
-  <button type="button" id="adminShopStatusToggle" class="admin-btn stvn-shop-status-toggle" aria-expanded="false" aria-controls="adminShopStatusPanel" onclick="toggleShopStatusPanel()">🏪 Shop Status / दुकान की स्थिति <span id="adminShopStatusToggleIcon" aria-hidden="true">＋</span></button>
+  <button type="button" id="adminShopStatusToggle" class="admin-btn stvn-shop-status-toggle" aria-expanded="false" aria-controls="adminShopStatusPanel" onclick="toggleShopStatusPanel()">🏪 Shop Status <span id="adminShopStatusToggleIcon" aria-hidden="true">＋</span></button>
   <div id="adminShopStatusPanel" hidden>
-    <p class="admin-small">दुकान की स्थिति चुनें। यदि दुकान बंद है, तो नीचे कारण लिखें। Save करने पर ग्राहक को यही संदेश बड़े और साफ़ फ़ॉर्मेट में दिखेगा और प्रोडक्ट/कैटेगरी छिप जाएँगी।</p>
+    <p class="admin-small">Choose the shop status. If the shop is closed, write the reason below. After Save, customers will see this message in a large, clear format and products/categories will be hidden.</p>
     <div class="stvn-shop-status-controls" role="group" aria-label="Shop status">
       <button type="button" id="adminShopOpenChoice" class="admin-btn" aria-pressed="false" onclick="selectShopStatus('open')">🟢 Shop Open</button>
       <button type="button" id="adminShopCloseChoice" class="admin-logout" aria-pressed="false" onclick="selectShopStatus('closed')">🔴 Shop Close</button>
       <button type="button" id="adminShopMaintenanceChoice" class="admin-btn" aria-pressed="false" onclick="selectShopStatus('maintenance')" style="background:#b7791f;color:#fff">🛠️ Under Maintenance</button>
       <label class="stvn-shop-reason-wrap" for="adminShopStatusReason">
-        <span>📝 बंद होने की वजह / Problem details</span>
-        <textarea id="adminShopStatusReason" rows="3" maxlength="700" placeholder="उदाहरण: तकनीकी समस्या के कारण दुकान अस्थायी रूप से बंद है…"></textarea>
+        <span>📝 Reason for closing / Problem details</span>
+        <textarea id="adminShopStatusReason" rows="3" maxlength="700" placeholder="Example: The shop is temporarily closed due to a technical issue…"></textarea>
       </label>
       <button type="button" id="adminShopStatusSave" class="shop-btn" onclick="saveShopStatus()">💾 Save Status</button>
     </div>
-    <p id="adminShopStatusMessage" class="admin-small" role="status" aria-live="polite">दुकान की स्थिति लोड हो रही है…</p>
+    <p id="adminShopStatusMessage" class="admin-small" role="status" aria-live="polite">Loading shop status…</p>
   </div>
 </section>
 
 <section id="adminFestivalSection" class="section-card" style="margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
-  <button type="button" id="adminFestivalToggle" class="admin-btn" aria-expanded="false" aria-controls="adminFestivalPanel" onclick="vgFestToggle()">🎉 Festival Theme / त्योहार थीम <span id="adminFestivalIcon" aria-hidden="true">＋</span></button>
+  <button type="button" id="adminFestivalToggle" class="admin-btn" aria-expanded="false" aria-controls="adminFestivalPanel" onclick="vgFestToggle()">🎉 Festival Theme <span id="adminFestivalIcon" aria-hidden="true">＋</span></button>
   <div id="adminFestivalPanel" hidden>
-    <p class="admin-small">त्योहार चुनें। चुनते ही इस फ़ोन पर Preview दिखेगा। Save दबाने पर Home, Shop, Cart और Bottom Menu की थीम सभी customers के लिए बदल जाएगी। वापस सामान्य करने के लिए "Normal" चुनकर Save करें।</p>
+    <p class="admin-small">Choose a festival. A preview shows on this phone as soon as you pick one. Press Save to change the Home, Shop, Cart and Bottom Menu theme for all customers. To go back to normal, choose “Normal” and Save.</p>
     <p id="adminFestLive" class="admin-small" role="status"></p>
     <div id="adminFestGrid" class="fx-grid"></div>
     <label class="admin-small" for="adminFestMsg">Message in English (optional)</label>
     <input id="adminFestMsg" type="text" maxlength="110" placeholder="e.g. Happy Diwali from Vedant Grocery family!" oninput="vgFestMsg()">
-    <label class="admin-small" for="adminFestMsgHi">हिंदी संदेश (optional)</label>
-    <input id="adminFestMsgHi" type="text" maxlength="110" placeholder="जैसे: वेदांत ग्रोसरी परिवार की ओर से दीपावली की शुभकामनाएँ" oninput="vgFestMsg()">
-    <button type="button" id="adminFestSave" class="shop-btn" onclick="vgFestSave()">💾 Save करें और सभी Customers को दिखाएँ</button>
+    <label class="admin-small" for="adminFestMsgHi">Hindi message (optional)</label>
+    <input id="adminFestMsgHi" type="text" maxlength="110" placeholder="e.g. (in Hindi) वेदांत ग्रोसरी परिवार की ओर से दीपावली की शुभकामनाएँ" oninput="vgFestMsg()">
+    <button type="button" id="adminFestSave" class="shop-btn" onclick="vgFestSave()">💾 Save &amp; show to all Customers</button>
     <p id="adminFestStatus" class="admin-small" role="status" aria-live="polite"></p>
   </div>
 </section>
@@ -3118,7 +3118,7 @@ Logout
 </div>
 
 <p class="admin-small">
-यहाँ product details, price, stock और photos बदलें। Add / Update दबाते ही बदलाव अपने-आप Supabase में सेव होंगे।
+Edit product details, price, stock and photos here. Changes are saved to Supabase automatically when you press Add / Update.
 </p>
 
 <p id="product-form-mode" class="admin-small" role="status" aria-live="polite">➕ Add a product</p>
@@ -3240,14 +3240,14 @@ Clear
     <h3 id="category-display-title">🖼️ Category Photo Display</h3>
 
   </div>
-  <p class="admin-small">कैटेगरी का नाम लिखकर Add Category दबाएँ। फिर फोटो चुनें और Add Photo to Display दबाएँ। दोनों actions अपने-आप Supabase में सेव होंगे।</p>
-  <label for="category-display-category">Category / कैटेगरी</label>
-  <input id="category-display-category" type="text" list="category-display-options" placeholder="अपनी कैटेगरी का नाम लिखें" autocomplete="off" onchange="onCategoryDisplayCategoryChange()">
+  <p class="admin-small">Type a category name and press Add Category. Then choose a photo and press Add Photo to Display. Both actions are saved to Supabase automatically.</p>
+  <label for="category-display-category">Category</label>
+  <input id="category-display-category" type="text" list="category-display-options" placeholder="Type your category name" autocomplete="off" onchange="onCategoryDisplayCategoryChange()">
   <datalist id="category-display-options"></datalist>
   <div class="product-image-buttons">
     <button type="button" class="admin-btn" onclick="addCategoryDisplayCategory()">➕ Add Category</button>
     <label class="product-image-btn gallery-btn">
-      🖼️ Choose Photo / फोटो चुनें
+      🖼️ Choose Photo
       <input id="category-display-photo-input" type="file" accept="image/*" onchange="handleCategoryDisplayPhoto(this)" hidden>
     </label>
     <button type="button" class="product-save-btn" onclick="saveCategoryDisplayPhoto()">➕ Add Photo to Display</button>
@@ -3267,25 +3267,25 @@ Clear
     <button id="admin-save-product-list" type="button" class="admin-section-save-button" onclick="saveAdminChangesForGroup('product-list','Product List')">💾 Save All</button>
   </div>
 </div>
-<p class="admin-small">Search करें, product edit करें और बदलाव लागू करने के लिए Save All दबाएँ।</p>
+<p class="admin-small">Search, edit products, and press Save All to apply the changes.</p>
 
 <hr>
 
-<p id="admin-products-status" class="admin-small" role="status" aria-live="polite">Products load करने के लिए Refresh Products दबाएँ.</p>
+<p id="admin-products-status" class="admin-small" role="status" aria-live="polite">Press Refresh Products to load products.</p>
 
 <div class="admin-product-search-bar">
   <label for="admin-product-search">🔎 Search products by name, category, or ID</label>
   <input
   id="admin-product-search"
   type="search"
-  placeholder="Product name, category, or ID लिखें..."
+  placeholder="Type product name, category, or ID..."
   autocomplete="off"
   oninput="filterAdminProducts()">
   <p id="admin-product-search-status" class="admin-small" role="status" aria-live="polite"></p>
 </div>
 
 <div id="adminProductsList">
-<p>Products यहाँ दिखाई देंगे।</p>
+<p>Products will appear here.</p>
 </div>
 
 </section>
@@ -3293,7 +3293,7 @@ Clear
 
 <section id="adminOrdersSection" aria-labelledby="admin-orders-heading" hidden>
 <div class="admin-section-heading-row">
-  <h3 id="admin-orders-heading">📦 Orders / ऑर्डर</h3>
+  <h3 id="admin-orders-heading">📦 Orders</h3>
   <div class="admin-section-heading-actions">
     <button type="button" class="admin-refresh admin-section-save-button" onclick="loadAdminOrders()">🔄 Refresh Orders</button>
   </div>
@@ -3301,7 +3301,7 @@ Clear
 <div id="adminOrders">
 
 <p>
-Login करके orders load करो.
+Log in to load orders.
 </p>
 
 </div>
@@ -6522,7 +6522,7 @@ function playNewOrderSound(){
 
 const ORDER_NOTIFY_TABLE="order_notification_settings";
 function setOrderNotifyMessage(message){const el=document.getElementById("admin-order-notification-message");if(el)el.textContent=message;}
-function testAdminOrderSound(){playNewOrderSound();setOrderNotifyMessage("🔊 Test sound चलाने की कोशिश की गई। Browser sound permission/volume भी जाँचें।");}
+function testAdminOrderSound(){playNewOrderSound();setOrderNotifyMessage("🔊 Tried to play the test sound. Also check the browser sound permission/volume.");}
 async function loadOrderNotificationSettings(){
   const sound=document.getElementById("admin-order-sound-enabled");
   const email=document.getElementById("admin-order-email-enabled");
@@ -6534,8 +6534,8 @@ async function loadOrderNotificationSettings(){
     const {data,error}=await supabaseClient.from(ORDER_NOTIFY_TABLE).select("id,email_enabled,recipient_email").eq("id",1).maybeSingle();
     if(error)throw error;
     if(data){if(email)email.checked=!!data.email_enabled;if(recipient)recipient.value=data.recipient_email||"vedansh2811111@gmail.com";}
-    setOrderNotifyMessage("✅ Settings load हो गईं। Save Settings दबाकर बदलाव सेव करें।");
-  }catch(error){setOrderNotifyMessage("⚠️ Email settings table अभी सेट नहीं है या load नहीं हुई। SQL setup चलाने के बाद Reload करें। Admin sound toggle इस browser में काम करेगा।");}
+    setOrderNotifyMessage("✅ Settings loaded. Press Save Settings to save your changes.");
+  }catch(error){setOrderNotifyMessage("⚠️ The email settings table is not set up or did not load. Reload after running the SQL setup. The admin sound toggle will still work in this browser.");}
 }
 async function saveOrderNotificationSettings(){
   const sound=document.getElementById("admin-order-sound-enabled");
@@ -6543,15 +6543,15 @@ async function saveOrderNotificationSettings(){
   const recipient=document.getElementById("admin-order-email-recipient");
   const soundOn=!!sound?.checked, emailOn=true;
   const emailTo=String(recipient?.value||"").trim();
-  if(emailOn && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTo)){setOrderNotifyMessage("❌ सही email address लिखें।");return;}
+  if(emailOn && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTo)){setOrderNotifyMessage("❌ Enter a valid email address.");return;}
   try{localStorage.setItem("vedantAdminOrderSoundEnabled",String(soundOn));}catch(_e){}
   try{
     const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
-    if(sessionError)throw sessionError;if(!sessionData?.session)throw new Error("पहले Admin Login करें।");
+    if(sessionError)throw sessionError;if(!sessionData?.session)throw new Error("Please log in as Admin first.");
     const {error}=await supabaseClient.from(ORDER_NOTIFY_TABLE).upsert({id:1,email_enabled:emailOn,recipient_email:emailTo,updated_at:new Date().toISOString()},{onConflict:"id"});
     if(error)throw error;
-    setOrderNotifyMessage("✅ Settings सेव हो गईं। Admin sound: "+(soundOn?"ON":"OFF")+"; Email alert: "+(emailOn?"ON":"OFF")+". Email भेजने के लिए Edge Function + Resend webhook setup भी पूरा होना चाहिए।");
-  }catch(error){setOrderNotifyMessage("⚠️ Admin sound setting इस browser में सेव है, लेकिन email setting database में सेव नहीं हुई: "+(error.message||"SQL/RLS setup जाँचें।"));}
+    setOrderNotifyMessage("✅ Settings saved. Admin sound: "+(soundOn?"ON":"OFF")+"; Email alert: "+(emailOn?"ON":"OFF")+". To send emails, the Edge Function + Resend webhook setup must also be complete.");
+  }catch(error){setOrderNotifyMessage("⚠️ The admin sound setting is saved in this browser, but the email setting was not saved to the database: "+(error.message||"Check the SQL/RLS setup."));}
 }
 
 function showNewOrderAlert(order){
@@ -6652,12 +6652,12 @@ async function adminLogin(){
   const resendButton = document.getElementById("adminOtpResendButton");
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    message.textContent = "❌ सही admin email address डालो.";
+    message.textContent = "❌ Enter a valid admin email address.";
     emailInput.focus();
     return;
   }
   if (!isOwnerAdminEmail(email)) {
-    message.textContent = "❌ इस ईमेल को Admin Panel की अनुमति नहीं है. Owner email से लॉगिन करें.";
+    message.textContent = "❌ This email is not allowed to access the Admin Panel. Log in with the Owner email.";
     otpInput.value = "";
     otpInput.style.display = "none";
     emailInput.readOnly = false;
@@ -6667,7 +6667,7 @@ async function adminLogin(){
     return;
   }
 
-  message.textContent = "⏳ Email OTP भेजा जा रहा है...";
+  message.textContent = "⏳ Sending email OTP...";
   button.disabled = true;
   try {
     const { error } = await supabaseClient.auth.signInWithOtp({
@@ -6683,11 +6683,11 @@ async function adminLogin(){
     emailInput.readOnly = true;
     button.textContent = "Verify OTP and Login";
     if (resendButton) resendButton.style.display = "inline-block";
-    message.textContent = "✅ OTP भेज दिया गया है. Inbox/Spam में email देखें, फिर 6 अंकों का OTP डालकर Verify दबाएँ.";
+    message.textContent = "✅ OTP sent. Check your Inbox/Spam, then enter the 6-digit OTP and press Verify.";
     otpInput.focus();
   } catch (error) {
     console.error("Admin OTP send error:", error);
-    message.textContent = "❌ OTP नहीं भेजा गया: " + (error?.message || "Unknown error");
+    message.textContent = "❌ OTP was not sent: " + (error?.message || "Unknown error");
   } finally {
     button.disabled = false;
   }
@@ -6698,15 +6698,15 @@ async function adminResendOtp(){
   const message = document.getElementById("adminLoginMessage");
   const button = document.getElementById("adminOtpResendButton");
   if (!isOwnerAdminEmail(email)) {
-    message.textContent = "❌ केवल Owner email पर Admin OTP भेजा जा सकता है.";
+    message.textContent = "❌ Admin OTP can be sent only to the Owner email.";
     return;
   }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    message.textContent = "❌ पहले admin email डालो.";
+    message.textContent = "❌ Enter the admin email first.";
     return;
   }
   button.disabled = true;
-  message.textContent = "⏳ नया OTP भेजा जा रहा है...";
+  message.textContent = "⏳ Sending a new OTP...";
   try {
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
@@ -6715,10 +6715,10 @@ async function adminResendOtp(){
     if (error) throw error;
     adminOtpSentForEmail = email;
     document.getElementById("adminOtp").value = "";
-    message.textContent = "✅ नया OTP भेज दिया गया है. सबसे नए email में आया OTP इस्तेमाल करें.";
+    message.textContent = "✅ New OTP sent. Use the OTP from the newest email.";
   } catch (error) {
     console.error("Admin OTP resend error:", error);
-    message.textContent = "❌ OTP दोबारा नहीं भेजा गया: " + (error?.message || "Unknown error");
+    message.textContent = "❌ OTP could not be resent: " + (error?.message || "Unknown error");
   } finally {
     button.disabled = false;
   }
@@ -6731,17 +6731,17 @@ async function adminVerifyOtp(){
   const button = document.getElementById("adminOtpActionButton");
 
   if (!isOwnerAdminEmail(email)) {
-    message.textContent = "❌ इस ईमेल को Admin Panel की अनुमति नहीं है.";
+    message.textContent = "❌ This email is not allowed to access the Admin Panel.";
     document.getElementById("adminContent").style.display = "none";
     document.getElementById("adminLoginBox").style.display = "block";
     return;
   }
   if (!email || email !== adminOtpSentForEmail || !/^\d{6}$/.test(token)) {
-    message.textContent = "❌ उसी Owner email के साथ 6 अंकों का OTP डालो जिससे OTP भेजा था. अगर email में केवल login link आता है, तो Supabase Email Template में {{ .Token }} इस्तेमाल करो.";
+    message.textContent = "❌ Enter the 6-digit OTP sent to the same Owner email. If the email contains only a login link, use {{ .Token }} in the Supabase Email Template.";
     return;
   }
 
-  message.textContent = "⏳ OTP verify हो रहा है...";
+  message.textContent = "⏳ Verifying OTP...";
   button.disabled = true;
   try {
     const { data, error } = await supabaseClient.auth.verifyOtp({
@@ -6751,7 +6751,7 @@ async function adminVerifyOtp(){
     });
     if (error) throw error;
     if (!data || !data.session) {
-      throw new Error("Login session नहीं बनी. नया OTP भेजकर फिर कोशिश करें.");
+      throw new Error("Login session was not created. Send a new OTP and try again.");
     }
     const verifiedUser = data.user || data.session.user;
     const verifiedEmail = String(verifiedUser?.email || "").trim().toLowerCase();
@@ -6762,7 +6762,7 @@ async function adminVerifyOtp(){
       document.getElementById("adminContent").style.display = "none";
       document.getElementById("adminLoginBox").style.display = "block";
       if (typeof window.setAdminButtonVisibility === "function") window.setAdminButtonVisibility(false);
-      throw new Error("यह अकाउंट Owner email/UID से match नहीं करता. Admin Panel का access बंद कर दिया गया.");
+      throw new Error("This account does not match the Owner email/UID. Admin Panel access has been disabled.");
     }
 
     adminOtpSentForEmail = "";
@@ -6779,7 +6779,7 @@ async function adminVerifyOtp(){
     if (typeof startAdminOrderNotifications === "function") startAdminOrderNotifications();
   } catch (error) {
     console.error("Admin OTP verification error:", error);
-    message.textContent = "❌ OTP verify नहीं हुआ: " + (error?.message || "Unknown error") + " — OTP नया हो सकता है या expire हो गया हो.";
+    message.textContent = "❌ OTP verification failed: " + (error?.message || "Unknown error") + " — The OTP may be newer or may have expired.";
   } finally {
     button.disabled = false;
   }
@@ -6904,10 +6904,10 @@ function updateAdminSaveAllStatus(message){
   document.querySelectorAll(".admin-section-save-button").forEach(button=>button.disabled=adminSavingAll);
   if(status)status.textContent=message||(
     adminSavingAll
-      ?"⏳ बदलाव सेव हो रहे हैं..."
+      ?"⏳ Saving changes..."
       :pendingCount
-        ?pendingCount+" बदलाव सेव होने के लिए तैयार हैं।"
-        :"अभी कोई pending बदलाव नहीं है।"
+        ?pendingCount+" Changes are ready to be saved."
+        :"No pending changes right now."
   );
 }
 
@@ -6932,13 +6932,13 @@ async function saveAdminChangesForGroup(group,sectionName){
     ({data:sessionData,error:sessionError}=await supabaseClient.auth.getSession());
   }catch(error){
     console.error("Admin session check failed before section save:",error);
-    const message="❌ Admin session जाँची नहीं जा सकी: "+(error.message||"फिर कोशिश करें.");
+    const message="❌ Could not verify the admin session: "+(error.message||"Please try again.");
     updateAdminSaveAllStatus(message);
     window.stvnAlert(message);
     return;
   }
   if(sessionError||!sessionData.session){
-    const message="❌ Save करने से पहले admin login करें.";
+    const message="❌ Log in as admin before saving.";
     updateAdminSaveAllStatus(message);
     window.stvnAlert(message);
     return;
@@ -6946,7 +6946,7 @@ async function saveAdminChangesForGroup(group,sectionName){
   const status=document.getElementById("admin-save-status");
   const matchingActions=adminPendingSaveActions.some(item=>item.group===group);
   if(!matchingActions){
-    updateAdminSaveAllStatus(sectionName+" में कोई pending बदलाव नहीं है।");
+    updateAdminSaveAllStatus(sectionName+" has no pending changes.");
     return;
   }
 
@@ -6962,7 +6962,7 @@ async function saveAdminChangesForGroup(group,sectionName){
         index++;
         continue;
       }
-      if(status)status.textContent="⏳ सेव हो रहा है: "+pending.label;
+      if(status)status.textContent="⏳ Saving: "+pending.label;
       await pending.action();
       adminPendingSaveActions.splice(index,1);
       completed++;
@@ -6971,17 +6971,17 @@ async function saveAdminChangesForGroup(group,sectionName){
     if(group==="product-management"||group==="product-list"){
       const productChangesStillPending=adminPendingSaveActions.some(item=>item.group==="product-management"||item.group==="product-list");
       if(!productChangesStillPending)pendingAdminProductChanges.clear();
-      if(status)status.textContent="⏳ सेव किए गए products अपडेट हो रहे हैं...";
+      if(status)status.textContent="⏳ Updating saved products...";
       await Promise.all([loadAdminProducts(),loadCustomerProducts()]);
     }
     if(group==="orders"){
-      if(status)status.textContent="⏳ सेव किए गए orders अपडेट हो रहे हैं...";
+      if(status)status.textContent="⏳ Updating saved orders...";
       await Promise.all([loadAdminOrders(),showOrderHistory()]);
     }
-    finalStatus="✅ "+completed+" "+sectionName+" बदलाव सेव हो गए।";
+    finalStatus="✅ "+completed+" "+sectionName+" Changes saved.";
   }catch(error){
     console.error(sectionName+" save failed:",error);
-    finalStatus="❌ सेव नहीं हुआ: "+(error.message||"कृपया फिर कोशिश करें.");
+    finalStatus="❌ Not saved: "+(error.message||"Please try again.");
     window.stvnAlert(finalStatus);
   }finally{
     adminSavingAll=false;
@@ -6993,17 +6993,17 @@ async function saveAdminChangesForGroup(group,sectionName){
 function savePendingCategoryDisplayChanges(){
   if(adminSavingAll)return;
   if(typeof window.hasPendingCategoryDisplayChanges!=="function"||!window.hasPendingCategoryDisplayChanges()){
-    updateAdminSaveAllStatus("Category Photo Display में कोई pending बदलाव नहीं है।");
+    updateAdminSaveAllStatus("Category Photo Display has no pending changes.");
     return;
   }
   const saveButton=document.querySelector("#adminCategoryDisplaySection .admin-section-save-button");
   if(saveButton)saveButton.disabled=true;
   try{
     Promise.resolve(window.commitCategoryDisplayChanges()).then(()=>{
-      updateAdminSaveAllStatus("✅ Category Photo Display बदलाव सेव हो गए।");
+      updateAdminSaveAllStatus("✅ Category Photo Display changes saved.");
     }).catch(error=>{
       console.error("Category Photo Display save failed:",error);
-      const message="❌ Category changes सेव नहीं हुए: "+(error.message||"कृपया फिर कोशिश करें.");
+      const message="❌ Category changes were not saved: "+(error.message||"Please try again.");
       updateAdminSaveAllStatus(message);
       window.stvnAlert(message);
     }).finally(()=>{
@@ -7011,7 +7011,7 @@ function savePendingCategoryDisplayChanges(){
     });
   }catch(error){
     console.error("Category Photo Display save failed:",error);
-    const message="❌ Category changes सेव नहीं हुए: "+(error.message||"कृपया फिर कोशिश करें.");
+    const message="❌ Category changes were not saved: "+(error.message||"Please try again.");
     updateAdminSaveAllStatus(message);
     window.stvnAlert(message);
     if(saveButton)saveButton.disabled=false;
@@ -7083,7 +7083,7 @@ await supabaseClient.auth.getSession();
 if(!sessionData.session){
 
 ordersBox.innerHTML =
-"<p>पहले admin login करो.</p>";
+"<p>Log in as admin first.</p>";
 
 return;
 
@@ -7133,7 +7133,7 @@ console.error(error);
 
 ordersBox.innerHTML =
 '<p class="error">' +
-"❌ Orders load नहीं हुए." +
+"❌ Orders failed to load." +
 "</p>";
 
 return;
@@ -7144,7 +7144,7 @@ return;
 if(!orders || orders.length===0){
 
 ordersBox.innerHTML =
-"<p>इस filter में कोई order नहीं है.</p>";
+"<p>There are no orders in this filter.</p>";
 
 return;
 
@@ -7277,7 +7277,7 @@ ${escapeHtml(customerName)}
 
 <p class="stvn-admin-customer-phone-row">
 ${escapeHtml(phone)}
-${phone && phone !== "N/A" ? `<a class="stvn-admin-call-customer" href="tel:${escapeAttribute(String(phone).replace(/[^0-9+]/g,""))}" aria-label="कस्टमर को कॉल करें" title="कस्टमर को कॉल करें">☎ कॉल</a>` : ""}
+${phone && phone !== "N/A" ? `<a class="stvn-admin-call-customer" href="tel:${escapeAttribute(String(phone).replace(/[^0-9+]/g,""))}" aria-label="Call customer" title="Call customer">☎ Call</a>` : ""}
 </p>
 
 </div>
@@ -7430,7 +7430,7 @@ ${Number(order.longitude)}
 `
 
 <p class="admin-small">
-⚠️ Customer location अभी available नहीं है.
+⚠️ Customer location is not available yet.
 </p>
 
 `
@@ -7557,7 +7557,7 @@ value="${escapeAttribute(stvnDecodeDeliveryValue(order.delivery || "20–25 Minu
 placeholder="Delivery time" onchange="updateDeliveryTime('${escapeAttribute(orderId)}')">
 
 
-${orderStatus==="out_for_delivery" ? `<button class="admin-btn stvn-admin-gps-button" type="button" onclick="startDeliveryPartnerLocation('${escapeAttribute(orderId)}','${escapeAttribute(order.phone||order.customer_phone||"")}')">📍 Start Delivery GPS</button><small class="stvn-admin-gps-note" id="delivery-location-status-${escapeAttribute(orderId)}">Delivery partner के phone पर GPS sharing शुरू करें</small>` : ""}
+${orderStatus==="out_for_delivery" ? `<button class="admin-btn stvn-admin-gps-button" type="button" onclick="startDeliveryPartnerLocation('${escapeAttribute(orderId)}','${escapeAttribute(order.phone||order.customer_phone||"")}')">📍 Start Delivery GPS</button><small class="stvn-admin-gps-note" id="delivery-location-status-${escapeAttribute(orderId)}">Start GPS sharing on the delivery partner’s phone</small>` : ""}
 
 
 <select
@@ -7650,20 +7650,20 @@ async function deleteOrder(orderId){
     const cleanOrderId = String(orderId || "").trim();
 
     if(!cleanOrderId){
-        window.stvnAlert("❌ Valid Order ID नहीं मिला.");
+        window.stvnAlert("❌ Valid Order ID not found.");
         return;
     }
 
     if(!(await window.stvnConfirm(
-        "⚠️ क्या आप इस order को permanently delete करना चाहते हैं?\n\n" +
+        "⚠️ Do you want to permanently delete this order?\n\n" +
         "Order ID: " + cleanOrderId +
-        "\n\nयह order Supabase से भी delete हो जाएगा."
+        "\n\nThis order will also be deleted from Supabase."
     ))) return;
 
     try{
         const {data,error}=await supabaseClient.from("orders").delete().eq("order_id",cleanOrderId).select("order_id");
         if(error)throw error;
-        if(!data||!data.length)throw new Error("कोई order delete नहीं हुआ। Admin login और Supabase DELETE permission/RLS policy जाँचें.");
+        if(!data||!data.length)throw new Error("No order was deleted. Check Admin login and the Supabase DELETE permission/RLS policy.");
         if(Array.isArray(orderHistory)){orderHistory=orderHistory.filter(order=>String(order.order_id||order.id||"")!==cleanOrderId);saveData();}
         await loadAdminOrders();
         if(typeof showOrderHistory==="function")await showOrderHistory();
@@ -7671,7 +7671,7 @@ async function deleteOrder(orderId){
         window.stvnAlert("✅ Order permanently deleted.");
     }catch(error){
         console.error("Order delete failed:",error);
-        window.stvnAlert("❌ Order delete नहीं हुआ: "+String(error.message||error));
+        window.stvnAlert("❌ Order was not deleted: "+String(error.message||error));
     }
 }
 
@@ -7696,7 +7696,7 @@ if(
 ){
 
 window.stvnAlert(
-"❌ Valid location नहीं मिली."
+"❌ Valid location not found."
 );
 
 return;
@@ -7721,7 +7721,7 @@ url,
 
 
 /*
- * Admin के लिए customer तक
+ * For Admin, up to the customer
  * Google Maps driving navigation.
  */
 
@@ -7743,7 +7743,7 @@ if(
 ){
 
 window.stvnAlert(
-"❌ Customer की valid location उपलब्ध नहीं है."
+"❌ A valid customer location is not available."
 );
 
 return;
@@ -7821,7 +7821,7 @@ function openOrderWhatsAppUpdate(orderId, phone){
 
 async function updateOrderStatus(orderId){
   const select=document.getElementById("order-status-"+orderId);
-  if(!select){window.stvnAlert("❌ Order status selector नहीं मिला.");return;}
+  if(!select){window.stvnAlert("❌ Order status selector not found.");return;}
   const selectedStatus=String(select.value||"pending");
   const newStatus=selectedStatus==="cancelled"?"cancelled_by_admin":selectedStatus;
   const button=select.parentElement?.querySelector('button[onclick*="updateOrderStatus"]');
@@ -7848,16 +7848,16 @@ async function updateOrderStatus(orderId){
     }
     const {data,error}=await supabaseClient.from("orders").update(updateValues).eq("order_id",String(orderId)).select("order_id");
     if(error)throw new Error(error.message);
-    if(!data||!data.length)throw new Error("कोई order update नहीं हुआ। Admin UPDATE permission/RLS policy जाँचें.");
+    if(!data||!data.length)throw new Error("No order was updated. Check the Admin UPDATE permission/RLS policy.");
     if(newStatus==="delivered"||newStatus==="cancelled"||newStatus==="cancelled_by_admin"){
       if(typeof window.stopDeliveryPartnerLocation==="function")window.stopDeliveryPartnerLocation(orderId);
     }
     await Promise.all([loadAdminOrders(),showOrderHistory()]);
     if(typeof window.stvnRefreshLiveOrderBar==="function")window.stvnRefreshLiveOrderBar();
-    window.stvnAlert(newStatus==="out_for_delivery"?"✅ Out for Delivery! Customer tracking में arrival countdown और route map दिखेगा. Delivery partner के phone से Start Delivery GPS दबाएँ.":"✅ Order status updated. Customer tracking will refresh automatically.");
+    window.stvnAlert(newStatus==="out_for_delivery"?"✅ Out for Delivery! Customer tracking will show the arrival countdown and route map. Press Start Delivery GPS on the delivery partner’s phone.":"✅ Order status updated. Customer tracking will refresh automatically.");
   }catch(error){
     console.error("Order status update failed:",error);
-    window.stvnAlert("❌ Order status update नहीं हुआ: "+String(error.message||error));
+    window.stvnAlert("❌ Order status was not updated: "+String(error.message||error));
     if(button){button.disabled=false;button.textContent=oldText||"📦 Update Order";}
   }
 }
@@ -7869,7 +7869,7 @@ async function updateDeliveryTime(orderId){
   if(!input)return;
   const raw=input.value.trim();
   const match=raw.match(/(\d+(?:\.\d+)?)/);
-  if(!match){window.stvnAlert("❌ Delivery time minutes में डालें, जैसे 10.");return;}
+  if(!match){window.stvnAlert("❌ Enter the delivery time in minutes, e.g. 10.");return;}
   const minutes=Math.max(1,Math.min(240,Math.round(Number(match[1]))));
   try{
     const {data:current,error:readError}=await supabaseClient.from("orders").select("order_status").eq("order_id",String(orderId)).maybeSingle();
@@ -7877,9 +7877,9 @@ async function updateDeliveryTime(orderId){
     const delivery=String(current?.order_status||"").toLowerCase()==="out_for_delivery"?stvnEncodeDeliveryValue(minutes,new Date().toISOString()):minutes+" Minutes";
     const {data,error}=await supabaseClient.from("orders").update({delivery}).eq("order_id",String(orderId)).select("order_id");
     if(error)throw new Error(error.message);
-    if(!data||!data.length)throw new Error("Delivery time save नहीं हुआ। Admin UPDATE permission/RLS policy जाँचें.");
+    if(!data||!data.length)throw new Error("Delivery time was not saved. Check the Admin UPDATE permission/RLS policy.");
     await loadAdminOrders();window.stvnAlert("✅ Delivery time updated to "+minutes+" minutes.");
-  }catch(error){console.error(error);window.stvnAlert("❌ Delivery time update नहीं हुआ: "+String(error.message||error));}
+  }catch(error){console.error(error);window.stvnAlert("❌ Delivery time was not updated: "+String(error.message||error));}
 }
 
 /* ================= PAYMENT STATUS ================= */
@@ -7890,9 +7890,9 @@ async function updatePaymentStatus(orderId){
   try{
     const {data,error}=await supabaseClient.from("orders").update({payment_status:select.value}).eq("order_id",String(orderId)).select("order_id");
     if(error)throw new Error(error.message);
-    if(!data||!data.length)throw new Error("Payment update नहीं हुआ। Admin UPDATE permission/RLS policy जाँचें.");
+    if(!data||!data.length)throw new Error("Payment was not updated. Check the Admin UPDATE permission/RLS policy.");
     await loadAdminOrders();window.stvnAlert("✅ Payment status updated.");
-  }catch(error){console.error(error);window.stvnAlert("❌ Payment status update नहीं हुआ: "+String(error.message||error));}
+  }catch(error){console.error(error);window.stvnAlert("❌ Payment status was not updated: "+String(error.message||error));}
 }
 
 /* ================= RESTORE ADMIN SESSION ================= */
@@ -7980,21 +7980,21 @@ function renderAdminProductPhotoStrip(){
 function handleMultipleProductImages(input){
   const files=Array.from(input?.files||[]);
   const valid=files.filter(file=>file.type&&file.type.startsWith("image/")&&file.size<=15*1024*1024);
-  if(valid.length!==files.length)window.stvnAlert("केवल image files चुनें और हर फोटो 15 MB से छोटी रखें।");
+  if(valid.length!==files.length)window.stvnAlert("Choose image files only, and keep each photo under 15 MB.");
   selectedProductImageFiles.push(...valid);
   renderAdminProductPhotoStrip();
   const message=document.getElementById("product-image-preview-message");
-  if(message&&valid.length)message.textContent=valid.length+" नई फोटो चुनी गई हैं। Save दबाएँ।";
+  if(message&&valid.length)message.textContent=valid.length+" New photos selected. Press Save.";
   input.value="";
 }
 
 function compressProductPhotoFile(file){
   return new Promise((resolve,reject)=>{
     const reader=new FileReader();
-    reader.onerror=()=>reject(new Error("Photo read नहीं हुई"));
+    reader.onerror=()=>reject(new Error("Photo could not be read"));
     reader.onload=()=>{
       const img=new Image();
-      img.onerror=()=>reject(new Error("Photo खुल नहीं पाई"));
+      img.onerror=()=>reject(new Error("Photo could not be opened"));
       img.onload=()=>{
         const max=1600,scale=Math.min(1,max/Math.max(img.width,img.height));
         const canvas=document.createElement("canvas");
@@ -8002,7 +8002,7 @@ function compressProductPhotoFile(file){
         canvas.height=Math.max(1,Math.round(img.height*scale));
         const ctx=canvas.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.drawImage(img,0,0,canvas.width,canvas.height);
-        canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Photo compress नहीं हुई")),"image/jpeg",0.84);
+        canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Photo could not be compressed")),"image/jpeg",0.84);
       };
       img.src=reader.result;
     };
@@ -8016,7 +8016,7 @@ async function uploadSelectedProductPhotos(files){
     const blob=await compressProductPhotoFile(file);
     const safeName="products/"+Date.now()+"_"+Math.random().toString(36).slice(2)+".jpg";
     const {data,error}=await supabaseClient.storage.from("product-images").upload(safeName,blob,{contentType:"image/jpeg",upsert:false});
-    if(error)throw new Error("Product photo upload नहीं हुई: "+error.message+". पहले नीचे दिया गया SQL चलाएँ।");
+    if(error)throw new Error("Product photo upload failed: "+error.message+". Run the SQL given below first.");
     const {data:publicData}=supabaseClient.storage.from("product-images").getPublicUrl(data.path);
     if(publicData?.publicUrl)urls.push(publicData.publicUrl);
   }
@@ -8036,12 +8036,12 @@ function processProductImage(input,sourceLabel){
   if(!file) return;
 
   if(!file.type || !file.type.startsWith("image/")){
-    window.stvnAlert("❌ कृपया केवल image चुनें.");
+    window.stvnAlert("❌ Please choose an image only.");
     return;
   }
 
   if(file.size > 15 * 1024 * 1024){
-    window.stvnAlert("❌ Photo 15 MB से छोटी होनी चाहिए.");
+    window.stvnAlert("❌ Photo must be under 15 MB.");
     input.value="";
     return;
   }
@@ -8071,7 +8071,7 @@ function processProductImage(input,sourceLabel){
     if(message) message.textContent=sourceLabel+" image selected";
   }).catch(function(error){
     console.error("Product photo processing failed:",error);
-    window.stvnAlert("❌ Photo process नहीं हुई. दूसरी image चुनें.");
+    window.stvnAlert("❌ Photo could not be processed. Choose another image.");
     input.value="";
   });
 }
@@ -8080,7 +8080,7 @@ async function useInternetProductImage(){
   const imageBox=document.getElementById("product-image");
   if(!imageBox) return;
 
-  const url=await window.stvnPrompt("🌐 Internet image का direct image URL डालें:");
+  const url=await window.stvnPrompt("🌐 Enter the direct image URL of an internet image:");
   if(url===null) return;
 
   const cleanUrl=url.trim();
@@ -8117,7 +8117,7 @@ function previewProductImage(){
   preview.onerror=function(){
     preview.style.display="none";
     const message=document.getElementById("product-image-preview-message");
-    if(message) message.textContent="❌ Image load नहीं हुई; सही image URL डालें.";
+    if(message) message.textContent="❌ Image failed to load; enter a valid image URL.";
   };
 
   preview.src=url;
@@ -8136,7 +8136,7 @@ const refreshButton=document.getElementById("admin-refresh-products");
 if(!box)
 return;
 
-if(status)status.textContent="⏳ Products refresh हो रहे हैं...";
+if(status)status.textContent="⏳ Refreshing products...";
 if(refreshButton)refreshButton.disabled=true;
 try{
 const {
@@ -8149,7 +8149,7 @@ await supabaseClient.auth.getSession();
 if(sessionError)throw sessionError;
 if(!sessionData.session){
 
-if(status)status.textContent="पहले admin login करें.";
+if(status)status.textContent="Log in as admin first.";
 
 return;
 
@@ -8175,7 +8175,7 @@ if(error){
 
 console.error(error);
 
-if(status)status.textContent="❌ Products load नहीं हुए: "+escapeHtml(error.message);
+if(status)status.textContent="❌ Products failed to load: "+escapeHtml(error.message);
 
 return;
 
@@ -8188,8 +8188,8 @@ if(typeof window.refreshCategoryDisplayAdmin==="function"){
 if(!data || data.length===0){
 
 box.innerHTML =
-"<p>अभी कोई product नहीं है.</p>";
-if(status)status.textContent="✅ कोई product नहीं है.";
+"<p>No products yet.</p>";
+if(status)status.textContent="✅ No products.";
 
 return;
 
@@ -8351,7 +8351,7 @@ if(status)status.textContent="✅ "+data.length+" products loaded.";
 
 }catch(error){
 console.error("Admin products refresh failed:",error);
-if(status)status.textContent="❌ Products load नहीं हुए: "+escapeHtml(error.message||"कृपया फिर कोशिश करें.");
+if(status)status.textContent="❌ Products failed to load: "+escapeHtml(error.message||"Please try again.");
 }finally{
 if(refreshButton)refreshButton.disabled=false;
 }
@@ -8403,15 +8403,15 @@ async function saveProduct(event){
     description:document.getElementById("product-description").value.trim()||null,
     available:document.getElementById("product-available").checked
   };
-  if(!payload.name||!payload.category){showProductMessage("❌ Name और category जरूरी हैं.",true);return;}
-  if(!Number.isFinite(payload.price)||payload.price<0){showProductMessage("❌ Price सही डालो.",true);return;}
-  if(!Number.isInteger(payload.stock)||payload.stock<0){showProductMessage("❌ Stock 0 या उससे ज्यादा integer होना चाहिए.",true);return;}
+  if(!payload.name||!payload.category){showProductMessage("❌ Name and category are required.",true);return;}
+  if(!Number.isFinite(payload.price)||payload.price<0){showProductMessage("❌ Enter a valid price.",true);return;}
+  if(!Number.isInteger(payload.stock)||payload.stock<0){showProductMessage("❌ Stock must be an integer, 0 or more.",true);return;}
   if(payload.stock===0)payload.available=false;
 
   const filesToUpload=[...selectedProductImageFiles];
   const existingPhotoUrls=[...productImageUrlsBeingEdited];
   if(button){button.disabled=true;button.textContent="⏳ Saving...";}
-  showProductMessage("⏳ Product और photos Supabase में सेव हो रहे हैं...",false);
+  showProductMessage("⏳ Saving product and photos to Supabase...",false);
   try{
     const uploadedUrls=await uploadSelectedProductPhotos(filesToUpload);
     const mergedUrls=[...new Set([...existingPhotoUrls,...uploadedUrls])];
@@ -8424,12 +8424,12 @@ async function saveProduct(event){
     if(result.error)throw new Error(result.error.message);
     if(id)pendingAdminProductChanges.delete(String(id));
     resetProductForm();
-    showProductMessage(id?"✅ Product update अपने-आप सेव हो गया।":"✅ Product अपने-आप सेव हो गया।",false);
+    showProductMessage(id?"✅ Product update saved automatically.":"✅ Product saved automatically.",false);
     await Promise.all([loadAdminProducts(),loadCustomerProducts()]);
     if(typeof window.refreshStoreCategories==="function")window.refreshStoreCategories();
   }catch(error){
     console.error("Instant product save failed:",error);
-    showProductMessage("❌ Product सेव नहीं हुआ: "+(error.message||"कृपया फिर कोशिश करें."),true);
+    showProductMessage("❌ Product was not saved: "+(error.message||"Please try again."),true);
   }finally{
     if(button)button.disabled=false;
   }
@@ -8454,7 +8454,7 @@ Number(id)
 if(error){
 
 window.stvnAlert(
-"❌ Product load नहीं हुआ: " +
+"❌ Product failed to load: " +
 error.message
 );
 
@@ -8537,7 +8537,7 @@ if(productManagementSection && productManagementSection.hidden){
 }
 
 document.getElementById("product-form-mode").textContent=
-  "✏️ Editing product: "+(productForEdit.name||"Product")+" — price, stock और photo बदलें";
+  "✏️ Editing product: "+(productForEdit.name||"Product")+" — edit price, stock and photo";
 document.getElementById("product-submit-button").textContent="✏️ Update Product";
 
 document.getElementById(
@@ -8550,7 +8550,7 @@ block:"start"
 document.getElementById("product-price").focus({preventScroll:true});
 
 showProductMessage(
-"✏️ Product details loaded. बदलाव queue करने के बाद Product Management में Save दबाएँ.",
+"✏️ Product details loaded. After queuing your changes, press Save in Product Management.",
 false
 );
 
@@ -8597,10 +8597,10 @@ const nextStock=Math.max(0,currentStock+amount);
 updatePendingAdminProductCard(id,{stock:nextStock,available:nextStock>0});
 queueAdminSaveAction("Product "+id+" stock",async function(){
   const {data,error}=await supabaseClient.from("products").select("stock").eq("id",Number(id)).single();
-  if(error)throw new Error("Stock load नहीं हुआ: "+error.message);
+  if(error)throw new Error("Stock failed to load: "+error.message);
   const newStock=Math.max(0,Number(data.stock||0)+amount);
   const {error:updateError}=await supabaseClient.from("products").update({stock:newStock,available:newStock>0}).eq("id",Number(id));
-  if(updateError)throw new Error("Stock update नहीं हुआ: "+updateError.message);
+  if(updateError)throw new Error("Stock was not updated: "+updateError.message);
 },"product-list");
 
 }
@@ -8616,7 +8616,7 @@ updatePendingAdminProductCard(id,{available:!effectiveAvailable});
 queueAdminSaveAction("Product "+id+" availability",async function(){
   const finalState=pendingAdminProductChanges.get(String(id))?.available;
   const {error}=await supabaseClient.from("products").update({available:finalState===undefined?!effectiveAvailable:finalState}).eq("id",Number(id));
-  if(error)throw new Error("Availability update नहीं हुआ: "+error.message);
+  if(error)throw new Error("Availability was not updated: "+error.message);
 },"product-list");
 
 }
@@ -8626,7 +8626,7 @@ async function deleteProduct(id){
 
 if(
 !(await window.stvnConfirm(
-"क्या यह product delete करना है?"
+"Do you want to delete this product?"
 ))
 )
 return;
@@ -8635,7 +8635,7 @@ updatePendingAdminProductCard(id,{pendingDelete:true});
 
 queueAdminSaveAction("Delete product "+id,async function(){
   const {error}=await supabaseClient.from("products").delete().eq("id",Number(id));
-  if(error)throw new Error("Delete नहीं हुआ: "+error.message);
+  if(error)throw new Error("Not deleted: "+error.message);
 },"product-list");
 
 }
@@ -8665,7 +8665,7 @@ async function applyHindiProductNames(){
       title.insertAdjacentElement("afterend",label);
     }
     if(hindi){ label.textContent=hindi; return; }
-    label.textContent="हिंदी नाम लोड हो रहा है...";
+    label.textContent="Loading Hindi name...";
     try{
       const response=await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q="+encodeURIComponent(name));
       const data=await response.json();
@@ -8712,10 +8712,10 @@ function renderCustomerProducts(data){
     card.dataset.outOfStock=String(!available);
     card.setAttribute("role","button");
     card.setAttribute("tabindex","0");
-    card.setAttribute("aria-label",String(product.name||"Product")+" details खोलें");
+    card.setAttribute("aria-label",String(product.name||"Product")+" Open details");
     card.innerHTML=`
       <div class="product-icon">
-        ${available?"":'<span class="product-stock-status" role="status">OUT OF STOCK / स्टॉक में नहीं</span>'}
+        ${available?"":'<span class="product-stock-status" role="status">OUT OF STOCK</span>'}
         ${images.length?`<img src="${escapeAttribute(images[0])}" alt="${escapeAttribute(product.name||"Product")}" loading="lazy">`:'<span class="stvn-product-placeholder">🛒</span>'}
         ${images.length>1?`<span class="stvn-product-photo-count">▧ ${images.length} photos</span>`:""}
       </div>
@@ -9414,7 +9414,7 @@ function modernUIInit(){
     adminBtn.onclick=()=>{
       supabaseClient.auth.getSession().then(({data})=>{
         if(stvnIsOwnerSession(data&&data.session)) showPage("admin");
-        else { window.setAdminButtonVisibility(false); window.stvnAlert("Admin Panel केवल Owner account के लिए है."); }
+        else { window.setAdminButtonVisibility(false); window.stvnAlert("The Admin Panel is for the Owner account only."); }
       });
     };
   }
@@ -9490,7 +9490,7 @@ function modernUIInit(){
             window.showPage("admin");
           }else{
             window.setAdminButtonVisibility(false);
-            window.stvnAlert("Admin Panel केवल Owner account के लिए है.");
+            window.stvnAlert("The Admin Panel is for the Owner account only.");
             window.showPage("shop");
           }
         });
@@ -9816,8 +9816,8 @@ restoreAdminSession();
     }
     try{
       const sessionResult=await supabaseClient.auth.getSession();
-      if(sessionResult.error||!sessionResult.data?.session){window.stvnAlert("पहले admin login करो.");return;}
-    }catch(e){window.stvnAlert("Admin session verify नहीं हो सकी.");return;}
+      if(sessionResult.error||!sessionResult.data?.session){window.stvnAlert("Log in as admin first.");return;}
+    }catch(e){window.stvnAlert("Could not verify the admin session.");return;}
     partnerWatchOrderId=id;setStatus(id,"⏳ Phone GPS permission माँगी जा रही है…");
     const onPosition=async position=>{
       if(partnerWatchOrderId!==id)return;
@@ -9981,8 +9981,8 @@ function stvnCloseProfile(){document.getElementById('stvnProfileModal').classLis
 function stvnSaveCustomerProfile(){
   const name=document.getElementById('stvnProfileName').value.trim();
   const phone=document.getElementById('stvnProfilePhone').value.trim();
-  try{localStorage.setItem(stvnCustomerStorageKey('profile'),JSON.stringify({name,phone}));window.stvnAlert('Profile save हो गया।');}
-  catch(e){window.stvnAlert('Profile save नहीं हो पाया। Browser storage check करें।');}
+  try{localStorage.setItem(stvnCustomerStorageKey('profile'),JSON.stringify({name,phone}));window.stvnAlert('Profile saved.');}
+  catch(e){window.stvnAlert('Could not save profile. Please check browser storage.');}
 }
 function stvnSaveCustomerAddress(){
   const line=document.getElementById('stvnAddressLine').value.trim();
@@ -12214,7 +12214,7 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
     try{
       const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
       if(sessionError)throw sessionError;
-      if(!sessionData?.session)throw new Error('पहले Admin Login करें।');
+      if(!sessionData?.session)throw new Error('Please log in as Admin first.');
       const updatedAt=new Date().toISOString();
       const payload={id:ROW_ID,is_open:selectedStatus==='open',updated_at:updatedAt};
       const {error}=await supabaseClient.from(TABLE).upsert(payload,{onConflict:'id'});
@@ -12371,7 +12371,7 @@ window.stvnCallDeliveryBoy = async function(event){
     return d;
   };
   window.loadCustomerCareSettings=async function(){
-    setAdminMessage('Settings लोड हो रही हैं…');
+    setAdminMessage('Loading settings…');
     const d=await fetchSettings();
     if(byId('cc-enabled'))byId('cc-enabled').checked=!!d.enabled;
     if(byId('cc-title'))byId('cc-title').value=d.title||'';
@@ -12380,7 +12380,7 @@ window.stvnCallDeliveryBoy = async function(event){
     if(byId('cc-email'))byId('cc-email').value=d.email||'';
     if(byId('cc-message'))byId('cc-message').value=d.message||'';
     updateDescriptionCount();
-    renderCustomerCare(d);setAdminMessage('Settings लोड हो गईं। Save करने के लिए Supabase table/policies सही होने चाहिए।');
+    renderCustomerCare(d);setAdminMessage('Settings loaded. Supabase tables/policies must be correct to Save.');
   };
   window.saveCustomerCareSettings=async function(){
     const client=getClient();
@@ -12390,20 +12390,20 @@ window.stvnCallDeliveryBoy = async function(event){
     try{
       if(!client||typeof client.from!=='function')throw new Error('Supabase client नहीं मिला।');
       const sess=await client.auth.getSession();
-      if(!sess||!sess.data||!sess.data.session)throw new Error('Admin login session नहीं मिला। दोबारा Admin login करें।');
+      if(!sess||!sess.data||!sess.data.session)throw new Error('Admin login session not found. Please log in as Admin again.');
       const result=await client.from('customer_care_settings').upsert(d,{onConflict:'id'}).select().maybeSingle();
       if(result.error)throw result.error;
       if(!result.data)throw new Error('Supabase ने row सेव नहीं की (RLS policy block कर रही है)।');
       writeCache(result.data);renderCustomerCare(Object.assign({},defaults,result.data));
-      setAdminMessage('✅ Customer Care सेव हो गया। अब यह सभी ग्राहकों और Track page के Call button पर दिखेगा।');
+      setAdminMessage('✅ Customer Care saved. It will now show to all customers and on the Track page Call button.');
     }catch(e){
       console.error('Save customer care failed:',e);
       renderCustomerCare(d);
       const raw=String((e&&e.message)||e||'');
       let why=raw;
       if((e&&(e.code==='42P01'||e.code==='PGRST205'))||/could not find the table|does not exist/i.test(raw))why='Supabase में customer_care_settings table नहीं बनी है।';
-      else if((e&&e.code==='42501')||/row-level security|permission denied|RLS/i.test(raw))why='Supabase RLS policy Admin को INSERT/UPDATE की अनुमति नहीं दे रही।';
-      setAdminMessage('⚠️ यह सिर्फ इसी फोन/ब्राउज़र में सेव हुआ, Supabase में नहीं ('+why+'). Supabase → SQL Editor में customer_care_settings.sql एक बार Run करें, फिर Save दबाएँ।');
+      else if((e&&e.code==='42501')||/row-level security|permission denied|RLS/i.test(raw))why='The Supabase RLS policy is not allowing Admin INSERT/UPDATE.';
+      setAdminMessage('⚠️ This was saved only on this phone/browser, not in Supabase ('+why+'). Run customer_care_settings.sql once in Supabase → SQL Editor, then press Save.');
     }
     finally{if(button)button.disabled=false;}
   };
@@ -12448,7 +12448,7 @@ window.stvnCallDeliveryBoy = async function(event){
   function renderSaved(card){const loc=getSaved();if(!loc)return;const name=card.querySelector('.stvn-delivery-location-name'),dist=card.querySelector('.stvn-delivery-distance'),eta=card.querySelector('.stvn-delivery-eta'),note=card.querySelector('.stvn-delivery-location-note'),btn=card.querySelector('button');if(name)name.textContent=loc.name||'आपकी वर्तमान लोकेशन सेव है';if(dist)dist.textContent='दूरी: '+Number(loc.km).toFixed(2)+' km';if(eta)eta.textContent=Number(loc.km)>5?'डिलीवरी उपलब्ध नहीं':'अनुमानित समय: '+etaFor(Number(loc.km))+' मिनट';if(note)note.textContent=Number(loc.km)>5?'माफ़ कीजिए, आपकी लोकेशन 5 km डिलीवरी क्षेत्र से बाहर है।':'आपकी लोकेशन 5 km डिलीवरी क्षेत्र के अंदर है।';if(btn)btn.textContent='🔄 लोकेशन अपडेट करें';}
   async function reverseName(lat,lng){try{if(window.vgVillageName)return await window.vgVillageName(lat,lng)}catch(e){}return 'वर्तमान लोकेशन';}
   function requestLocation(){if(!navigator.geolocation){window.stvnAlert('इस ब्राउज़र में लोकेशन उपलब्ध नहीं है।');return;}document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='आपकी लोकेशन प्राप्त की जा रही है…');navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lng=pos.coords.longitude,km=distanceKm(SHOP_LAT,SHOP_LNG,lat,lng),name=await reverseName(lat,lng);const loc={lat,lng,km,name,updatedAt:Date.now()};setSaved(loc);window.customerLatitude=lat;window.customerLongitude=lng;window.currentDeliveryDistanceKm=km;window.currentDeliveryAvailable=km<=5;document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);if(typeof window.check5KmAvailability==='function'){/* location is already checked here; avoid a second permission prompt */} },err=>{document.querySelectorAll('.stvn-delivery-location-name').forEach(e=>e.textContent='लोकेशन नहीं मिल पाई। कृपया browser location permission Allow करें और फिर कोशिश करें।');},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
-  function ensureAdminSettings(){const page=$('page-admin'),panel=$('adminPanel');if(!page||!panel||page.querySelector('#stvnDeliveryEtaAdmin'))return;const box=document.createElement('section');box.id='stvnDeliveryEtaAdmin';box.className='stvn-delivery-settings';box.innerHTML='<h3>🚚 Delivery ETA Settings</h3><p class="admin-small">हर दूरी के लिए अनुमानित डिलीवरी मिनट सेट करें। यही समय ग्राहकों को शॉप के लोकेशन बार में “Delivery in X mins” के रूप में दिखेगा।</p><div class="stvn-eta-grid">'+[1,2,3,4,5].map(k=>'<div><label for="stvnEta'+k+'">'+(k-1)+'–'+k+' km ('+k+' km तक)</label><input id="stvnEta'+k+'" type="number" min="1" max="240" step="1" value="'+DEFAULTS[k]+'"></div>').join('')+'</div><div class="stvn-eta-default"><label for="stvnEtaDefault">Default ETA — ग्राहक ने लोकेशन न चुनी हो तब (मिनट)</label><input id="stvnEtaDefault" type="number" min="1" max="240" step="1" value="'+DEFAULTS.d+'"></div><button type="button" id="stvnSaveEtaSettings">💾 Save Delivery Time</button><p class="admin-small" id="stvnEtaSaveMessage" role="status"></p>';panel.appendChild(box);const s=readSettings();[1,2,3,4,5].forEach(k=>{const input=$('stvnEta'+k);if(input)input.value=s[k]});const dIn=$('stvnEtaDefault');if(dIn)dIn.value=s.d;$('stvnSaveEtaSettings').addEventListener('click',()=>{const values={};for(let k=1;k<=5;k++){const n=Number($('stvnEta'+k).value);if(!Number.isFinite(n)||n<1||n>240){$('stvnEtaSaveMessage').textContent='हर समय 1 से 240 मिनट के बीच होना चाहिए।';return;}values[k]=Math.round(n)}const dn=Number(($('stvnEtaDefault')||{}).value||DEFAULTS.d);if(!Number.isFinite(dn)||dn<1||dn>240){$('stvnEtaSaveMessage').textContent='Default समय 1 से 240 मिनट के बीच होना चाहिए।';return;}values.d=Math.round(dn);try{localStorage.setItem(STORE_KEY,JSON.stringify(values));if(window.vgEtaSaveRemote)window.vgEtaSaveRemote(values,$('stvnEtaSaveMessage'));if(window.vgRefreshEta)window.vgRefreshEta();$('stvnEtaSaveMessage').textContent='✅ डिलीवरी समय इस ब्राउज़र में सेव हो गया।';document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);}catch(e){$('stvnEtaSaveMessage').textContent='सेव नहीं हो सका। Browser storage जाँचें।'}});}
+  function ensureAdminSettings(){const page=$('page-admin'),panel=$('adminPanel');if(!page||!panel||page.querySelector('#stvnDeliveryEtaAdmin'))return;const box=document.createElement('section');box.id='stvnDeliveryEtaAdmin';box.className='stvn-delivery-settings';box.innerHTML='<h3>🚚 Delivery ETA Settings</h3><p class="admin-small">Set the estimated delivery minutes for each distance. This time is shown to customers in the shop location bar as “Delivery in X mins”.</p><div class="stvn-eta-grid">'+[1,2,3,4,5].map(k=>'<div><label for="stvnEta'+k+'">'+(k-1)+'–'+k+' km ('+k+' km)</label><input id="stvnEta'+k+'" type="number" min="1" max="240" step="1" value="'+DEFAULTS[k]+'"></div>').join('')+'</div><div class="stvn-eta-default"><label for="stvnEtaDefault">Default ETA — when the customer has not chosen a location (minutes)</label><input id="stvnEtaDefault" type="number" min="1" max="240" step="1" value="'+DEFAULTS.d+'"></div><button type="button" id="stvnSaveEtaSettings">💾 Save Delivery Time</button><p class="admin-small" id="stvnEtaSaveMessage" role="status"></p>';panel.appendChild(box);const s=readSettings();[1,2,3,4,5].forEach(k=>{const input=$('stvnEta'+k);if(input)input.value=s[k]});const dIn=$('stvnEtaDefault');if(dIn)dIn.value=s.d;$('stvnSaveEtaSettings').addEventListener('click',()=>{const values={};for(let k=1;k<=5;k++){const n=Number($('stvnEta'+k).value);if(!Number.isFinite(n)||n<1||n>240){$('stvnEtaSaveMessage').textContent='Each time must be between 1 and 240 minutes.';return;}values[k]=Math.round(n)}const dn=Number(($('stvnEtaDefault')||{}).value||DEFAULTS.d);if(!Number.isFinite(dn)||dn<1||dn>240){$('stvnEtaSaveMessage').textContent='The default time must be between 1 and 240 minutes.';return;}values.d=Math.round(dn);try{localStorage.setItem(STORE_KEY,JSON.stringify(values));if(window.vgEtaSaveRemote)window.vgEtaSaveRemote(values,$('stvnEtaSaveMessage'));if(window.vgRefreshEta)window.vgRefreshEta();$('stvnEtaSaveMessage').textContent='✅ Delivery time saved in this browser.';document.querySelectorAll('.stvn-delivery-location-card').forEach(renderSaved);}catch(e){$('stvnEtaSaveMessage').textContent='Could not save. Check browser storage.'}});}
   function init(){/* Storefront location cards/prompt are hidden by request; checkout keeps its own location step. */ensureAdminSettings();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
   const observer=new MutationObserver(records=>{
@@ -12547,15 +12547,15 @@ function isOwner(){try{const e=String(localStorage.getItem('vedantCustomerEmail'
 function addCustomerBox(pageId){const page=$(pageId);if(!page||page.querySelector('.stvn-customer-offers'))return;const box=document.createElement('section');box.className='stvn-customer-offers';box.setAttribute('aria-label','Latest offers');box.innerHTML='<div class="stvn-customer-offers-head"><div class="stvn-customer-offers-icon">🎁</div><div><h3>आज के खास Offers</h3><p>Vedant Grocery Shop की ताज़ा बचत आपके लिए</p></div></div><div class="stvn-customer-offers-list"><div class="stvn-customer-offer"><p>ऑफर लोड हो रहे हैं…</p></div></div>';const location=page.querySelector('.stvn-delivery-location-card');if(location)location.insertAdjacentElement('afterend',box);else{const anchor=pageId==='page-home'?(page.querySelector('.top.hero')||page.querySelector('.hero')):page.querySelector('.section-head');if(anchor)anchor.insertAdjacentElement('afterend',box);else page.prepend(box)}}
 function renderOffers(offers){document.querySelectorAll('.stvn-customer-offers').forEach(box=>{const list=box.querySelector('.stvn-customer-offers-list');if(!list)return;if(!offers.length){box.style.display='none';return}box.style.display='';list.innerHTML=offers.map(o=>'<article class="stvn-customer-offer"><span class="stvn-customer-offer-badge">'+esc(o.badge||'Special Offer')+'</span><h4>'+esc(o.title)+'</h4><p>'+esc(o.description||'')+'</p>'+(o.code?'<span class="stvn-customer-offer-code">Code: '+esc(o.code)+'</span>':'')+'</article>').join('')})}
 async function loadOffers(){const c=client();if(!c||typeof c.from!=='function'){renderOffers([]);return}try{const {data,error}=await c.from(TABLE).select('id,title,description,badge,code,is_active,created_at').eq('is_active',true).order('created_at',{ascending:false}).limit(12);if(error)throw error;renderOffers(data||[])}catch(e){console.warn('Offers could not be loaded:',e.message);renderOffers([])}}
-function adminMarkup(){const panel=$('adminContent');if(!panel||$('stvnOffersAdmin'))return;const box=document.createElement('section');box.id='stvnOffersAdmin';box.innerHTML='<h3>🎁 Offers Update</h3><p class="stvn-offer-admin-sub">यहाँ offer जोड़ें या Close। Active offer Home और Shop पेज पर delivery location/time box के ठीक नीचे दिखेगा।</p><div class="stvn-offer-form-grid"><div><label for="stvnOfferTitle">Offer का नाम / Headline *</label><input id="stvnOfferTitle" maxlength="90" placeholder="जैसे: आज की खास बचत" required></div><div><label for="stvnOfferBadge">छोटा Badge</label><input id="stvnOfferBadge" maxlength="28" placeholder="जैसे: TODAY DEAL"></div><div class="stvn-offer-full"><label for="stvnOfferDescription">Offer की जानकारी *</label><textarea id="stvnOfferDescription" maxlength="260" placeholder="जैसे: चुनिंदा grocery products पर खास कीमतें" required></textarea></div><div><label for="stvnOfferCode">Coupon Code (optional)</label><input id="stvnOfferCode" maxlength="40" placeholder="जैसे: VEDANT10"></div><div><label for="stvnOfferActive">स्थिति</label><select id="stvnOfferActive"><option value="true">🟢 ग्राहकों को दिखाएँ</option><option value="false">⚪ अभी छिपाएँ</option></select></div></div><div class="stvn-offer-actions"><button type="button" id="stvnOfferSave">＋ Offer जोड़ें</button><button type="button" id="stvnOfferCancel" class="stvn-offer-secondary" style="display:none">Cancel Edit</button><button type="button" id="stvnOfferRefresh" class="stvn-offer-secondary">↻ Refresh</button></div><p id="stvnOfferAdminMessage" role="status" aria-live="polite" class="admin-small"></p><div id="stvnOfferAdminList" class="stvn-offer-admin-list"></div>';const anchor=panel.querySelector('.admin-toolbar');if(anchor)anchor.insertAdjacentElement('afterend',box);else panel.prepend(box);$('stvnOfferSave').addEventListener('click',saveOffer);$('stvnOfferCancel').addEventListener('click',resetForm);$('stvnOfferRefresh').addEventListener('click',loadAdminOffers);loadAdminOffers()}
+function adminMarkup(){const panel=$('adminContent');if(!panel||$('stvnOffersAdmin'))return;const box=document.createElement('section');box.id='stvnOffersAdmin';box.innerHTML='<h3>🎁 Offers Update</h3><p class="stvn-offer-admin-sub">Add or close an offer here. The active offer shows on the Home and Shop pages, right below the delivery location/time box.</p><div class="stvn-offer-form-grid"><div><label for="stvnOfferTitle">Offer name / Headline *</label><input id="stvnOfferTitle" maxlength="90" placeholder="e.g. Today’s special savings" required></div><div><label for="stvnOfferBadge">Small Badge</label><input id="stvnOfferBadge" maxlength="28" placeholder="e.g. TODAY DEAL"></div><div class="stvn-offer-full"><label for="stvnOfferDescription">Offer details *</label><textarea id="stvnOfferDescription" maxlength="260" placeholder="e.g. Special prices on selected grocery products" required></textarea></div><div><label for="stvnOfferCode">Coupon Code (optional)</label><input id="stvnOfferCode" maxlength="40" placeholder="e.g. VEDANT10"></div><div><label for="stvnOfferActive">Status</label><select id="stvnOfferActive"><option value="true">🟢 Show to customers</option><option value="false">⚪ Hide for now</option></select></div></div><div class="stvn-offer-actions"><button type="button" id="stvnOfferSave">＋ Add Offer</button><button type="button" id="stvnOfferCancel" class="stvn-offer-secondary" style="display:none">Cancel Edit</button><button type="button" id="stvnOfferRefresh" class="stvn-offer-secondary">↻ Refresh</button></div><p id="stvnOfferAdminMessage" role="status" aria-live="polite" class="admin-small"></p><div id="stvnOfferAdminList" class="stvn-offer-admin-list"></div>';const anchor=panel.querySelector('.admin-toolbar');if(anchor)anchor.insertAdjacentElement('afterend',box);else panel.prepend(box);$('stvnOfferSave').addEventListener('click',saveOffer);$('stvnOfferCancel').addEventListener('click',resetForm);$('stvnOfferRefresh').addEventListener('click',loadAdminOffers);loadAdminOffers()}
 let editingId=null;
 function msg(t){const e=$('stvnOfferAdminMessage');if(e)e.textContent=t}
-function resetForm(){editingId=null;['stvnOfferTitle','stvnOfferBadge','stvnOfferDescription','stvnOfferCode'].forEach(id=>{if($(id))$(id).value=''});if($('stvnOfferActive'))$('stvnOfferActive').value='true';if($('stvnOfferSave'))$('stvnOfferSave').textContent='＋ Offer जोड़ें';if($('stvnOfferCancel'))$('stvnOfferCancel').style.display='none';msg('')}
-async function saveOffer(){const c=client();if(!c){msg('❌ Supabase client नहीं मिला।');return}const title=$('stvnOfferTitle')?.value.trim(),description=$('stvnOfferDescription')?.value.trim();if(!title||!description){msg('कृपया Offer का नाम और जानकारी भरें।');return}const btn=$('stvnOfferSave');btn.disabled=true;msg('Offer सेव हो रहा है…');try{const {data:sd}=await c.auth.getSession();const email=String(sd?.session?.user?.email||'').toLowerCase();if(email!==OWNER_EMAIL)throw new Error('केवल store owner admin offer update कर सकता है। कृपया सही Admin Login करें।');const payload={title,description,badge:$('stvnOfferBadge').value.trim()||'Special Offer',code:$('stvnOfferCode').value.trim()||null,is_active:$('stvnOfferActive').value==='true',updated_at:new Date().toISOString()};let result;if(editingId)result=await c.from(TABLE).update(payload).eq('id',editingId).select().single();else result=await c.from(TABLE).insert(payload).select().single();if(result.error)throw result.error;msg('✅ Offer सेव हो गया। Customer page पर दिखने के लिए Refresh करें या page reload करें।');resetForm();await loadAdminOffers();await loadOffers()}catch(e){console.error('Offer save failed',e);msg('❌ सेव नहीं हुआ: '+(e.message||'Supabase table/RLS policies जाँचें।'))}finally{btn.disabled=false}}
-async function loadAdminOffers(){const c=client(),list=$('stvnOfferAdminList');if(!list)return;if(!c){list.textContent='Supabase client उपलब्ध नहीं है।';return}list.textContent='Offers लोड हो रहे हैं…';try{const {data:sd}=await c.auth.getSession();if(String(sd?.session?.user?.email||'').toLowerCase()!==OWNER_EMAIL){list.textContent='Offers edit करने के लिए owner Admin Login करें।';return}const {data,error}=await c.from(TABLE).select('id,title,description,badge,code,is_active,created_at').order('created_at',{ascending:false}).limit(30);if(error)throw error;if(!data?.length){list.textContent='अभी कोई offer नहीं है। ऊपर से पहला offer जोड़ें।';return}list.innerHTML=data.map(o=>'<div class="stvn-offer-admin-row"><div><strong>'+esc(o.title)+'</strong><small>'+(o.is_active?'🟢 Active · Customer को दिखेगा':'⚪ Hidden · Customer को नहीं दिखेगा')+(o.code?' · Code: '+esc(o.code):'')+'</small></div><div class="stvn-offer-actions" style="margin:0"><button type="button" data-offer-edit="'+esc(o.id)+'" class="stvn-offer-secondary">✎ Edit</button><button type="button" data-offer-toggle="'+esc(o.id)+'" data-active="'+String(!!o.is_active)+'">'+(o.is_active?'Hide':'Show')+'</button><button type="button" data-offer-delete="'+esc(o.id)+'" class="stvn-offer-secondary">Delete</button></div></div>').join('');list.querySelectorAll('[data-offer-edit]').forEach(b=>b.addEventListener('click',()=>editOffer(data.find(o=>String(o.id)===b.dataset.offerEdit))));list.querySelectorAll('[data-offer-toggle]').forEach(b=>b.addEventListener('click',()=>toggleOffer(b.dataset.offerToggle,b.dataset.active==='true')));list.querySelectorAll('[data-offer-delete]').forEach(b=>b.addEventListener('click',()=>deleteOffer(b.dataset.offerDelete)))}catch(e){console.error(e);list.textContent='Offers लोड नहीं हुए: '+(e.message||'Supabase table/RLS जाँचें।')}}
-function editOffer(o){if(!o)return;editingId=o.id;$('stvnOfferTitle').value=o.title||'';$('stvnOfferBadge').value=o.badge||'';$('stvnOfferDescription').value=o.description||'';$('stvnOfferCode').value=o.code||'';$('stvnOfferActive').value=String(!!o.is_active);$('stvnOfferSave').textContent='💾 Changes सेव करें';$('stvnOfferCancel').style.display='';msg('आप offer edit कर रहे हैं।');$('stvnOffersAdmin').scrollIntoView({behavior:'smooth',block:'start'})}
-async function toggleOffer(id,active){const c=client();try{const {error}=await c.from(TABLE).update({is_active:!active,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;msg('✅ Offer status अपडेट हो गया।');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Status update नहीं हुआ: '+e.message)}}
-async function deleteOffer(id){if(!(await window.stvnConfirm('क्या आप यह offer हमेशा के लिए delete करना चाहते हैं?')))return;const c=client();try{const {error}=await c.from(TABLE).delete().eq('id',id);if(error)throw error;msg('✅ Offer delete हो गया।');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Delete नहीं हुआ: '+e.message)}}
+function resetForm(){editingId=null;['stvnOfferTitle','stvnOfferBadge','stvnOfferDescription','stvnOfferCode'].forEach(id=>{if($(id))$(id).value=''});if($('stvnOfferActive'))$('stvnOfferActive').value='true';if($('stvnOfferSave'))$('stvnOfferSave').textContent='＋ Add Offer';if($('stvnOfferCancel'))$('stvnOfferCancel').style.display='none';msg('')}
+async function saveOffer(){const c=client();if(!c){msg('❌ Supabase client not found.');return}const title=$('stvnOfferTitle')?.value.trim(),description=$('stvnOfferDescription')?.value.trim();if(!title||!description){msg('Please fill in the offer name and details.');return}const btn=$('stvnOfferSave');btn.disabled=true;msg('Saving offer…');try{const {data:sd}=await c.auth.getSession();const email=String(sd?.session?.user?.email||'').toLowerCase();if(email!==OWNER_EMAIL)throw new Error('Only the store owner admin can update offers. Please log in with the correct Admin account.');const payload={title,description,badge:$('stvnOfferBadge').value.trim()||'Special Offer',code:$('stvnOfferCode').value.trim()||null,is_active:$('stvnOfferActive').value==='true',updated_at:new Date().toISOString()};let result;if(editingId)result=await c.from(TABLE).update(payload).eq('id',editingId).select().single();else result=await c.from(TABLE).insert(payload).select().single();if(result.error)throw result.error;msg('✅ Offer saved. Refresh or reload the page to see it on the customer page.');resetForm();await loadAdminOffers();await loadOffers()}catch(e){console.error('Offer save failed',e);msg('❌ Not saved: '+(e.message||'Check the Supabase table/RLS policies.'))}finally{btn.disabled=false}}
+async function loadAdminOffers(){const c=client(),list=$('stvnOfferAdminList');if(!list)return;if(!c){list.textContent='Supabase client is not available.';return}list.textContent='Loading offers…';try{const {data:sd}=await c.auth.getSession();if(String(sd?.session?.user?.email||'').toLowerCase()!==OWNER_EMAIL){list.textContent='Log in as the owner Admin to edit offers.';return}const {data,error}=await c.from(TABLE).select('id,title,description,badge,code,is_active,created_at').order('created_at',{ascending:false}).limit(30);if(error)throw error;if(!data?.length){list.textContent='No offers yet. Add your first offer above.';return}list.innerHTML=data.map(o=>'<div class="stvn-offer-admin-row"><div><strong>'+esc(o.title)+'</strong><small>'+(o.is_active?'🟢 Active · Visible to customers':'⚪ Hidden · Not visible to customers')+(o.code?' · Code: '+esc(o.code):'')+'</small></div><div class="stvn-offer-actions" style="margin:0"><button type="button" data-offer-edit="'+esc(o.id)+'" class="stvn-offer-secondary">✎ Edit</button><button type="button" data-offer-toggle="'+esc(o.id)+'" data-active="'+String(!!o.is_active)+'">'+(o.is_active?'Hide':'Show')+'</button><button type="button" data-offer-delete="'+esc(o.id)+'" class="stvn-offer-secondary">Delete</button></div></div>').join('');list.querySelectorAll('[data-offer-edit]').forEach(b=>b.addEventListener('click',()=>editOffer(data.find(o=>String(o.id)===b.dataset.offerEdit))));list.querySelectorAll('[data-offer-toggle]').forEach(b=>b.addEventListener('click',()=>toggleOffer(b.dataset.offerToggle,b.dataset.active==='true')));list.querySelectorAll('[data-offer-delete]').forEach(b=>b.addEventListener('click',()=>deleteOffer(b.dataset.offerDelete)))}catch(e){console.error(e);list.textContent='Offers failed to load: '+(e.message||'Check the Supabase table/RLS.')}}
+function editOffer(o){if(!o)return;editingId=o.id;$('stvnOfferTitle').value=o.title||'';$('stvnOfferBadge').value=o.badge||'';$('stvnOfferDescription').value=o.description||'';$('stvnOfferCode').value=o.code||'';$('stvnOfferActive').value=String(!!o.is_active);$('stvnOfferSave').textContent='💾 Save changes';$('stvnOfferCancel').style.display='';msg('You are editing an offer.');$('stvnOffersAdmin').scrollIntoView({behavior:'smooth',block:'start'})}
+async function toggleOffer(id,active){const c=client();try{const {error}=await c.from(TABLE).update({is_active:!active,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;msg('✅ Offer status updated.');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Status was not updated: '+e.message)}}
+async function deleteOffer(id){if(!(await window.stvnConfirm('Do you want to delete this offer permanently?')))return;const c=client();try{const {error}=await c.from(TABLE).delete().eq('id',id);if(error)throw error;msg('✅ Offer deleted.');await loadAdminOffers();await loadOffers()}catch(e){msg('❌ Not deleted: '+e.message)}}
 function init(){addCustomerBox('page-home');addCustomerBox('page-shop');adminMarkup();loadOffers()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('focus',()=>{addCustomerBox('page-home');addCustomerBox('page-shop');adminMarkup();loadOffers()});
@@ -20142,7 +20142,7 @@ html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopStatusReasonCard 
 .fx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;margin:12px 0}
 .fx-card{margin:0;padding:8px;display:grid;gap:7px;text-align:left;background:var(--surface,#fff);color:var(--text);border:2px solid var(--border);border-radius:14px;font-size:12px;font-weight:800}
 .fx-card[aria-pressed=true]{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 25%,transparent)}
-.fx-card[aria-pressed=true]:after{content:"✓ चुना गया";color:var(--primary);font-size:11px}
+.fx-card[aria-pressed=true]:after{content:"✓ Selected";color:var(--primary);font-size:11px}
 .fx-sw{height:62px;border-radius:9px;display:grid;place-items:center;background:var(--fh,linear-gradient(135deg,#0e8b1e,#7dbb24));font-size:30px}
 #adminFestMsg,#adminFestMsgHi{max-width:100%;width:100%}
 </style>
@@ -20153,20 +20153,20 @@ html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopStatusReasonCard 
 var K='vedantFestivalTheme',MK='vedantFestivalMessage',D=document,R=D.documentElement,w=window;
 /* [emoji, [title EN, HI], [line EN, HI], admin label, falling items, status-bar colour] */
 var F={
-diwali:['🪔',['Happy Diwali','शुभ दीपावली'],['The festival of lights, with the ones you love.','रोशनी का त्योहार, अपनों के साथ।'],'Diwali · दीपावली',['🪔','✨','🎆','🌼'],'#c2410c'],
-dhanteras:['🪙',['Happy Dhanteras','शुभ धनतेरस'],['Wishing your home prosperity and good fortune.','आपके घर में सुख-समृद्धि आए।'],'Dhanteras · धनतेरस',['🪙','✨','🌟','🪔'],'#1e3a8a'],
-bhaidooj:['🌸',['Happy Bhai Dooj','भाई दूज की शुभकामनाएँ'],['A day to celebrate the bond of brothers and sisters.','भाई-बहन के प्यार का दिन।'],'Bhai Dooj · भाई दूज',['🌸','🌺','✨','🪔'],'#be185d'],
-holi:['🎨',['Happy Holi','होली की हार्दिक शुभकामनाएँ'],['May your life be full of colours.','आपका जीवन रंगों से भरा रहे।'],'Holi · होली','dot','#7e22ce'],
-rakhi:['🧵',['Happy Raksha Bandhan','रक्षाबंधन की शुभकामनाएँ'],['Celebrating the sacred bond of Rakhi.','राखी के पवित्र बंधन का त्योहार।'],'Raksha Bandhan · रक्षाबंधन',['🧵','🌸','🎀','✨'],'#b91c1c'],
-navratri:['🔱',['Happy Navratri','शुभ नवरात्रि'],['Nine nights of devotion and joy.','नौ रातों की भक्ति और उमंग।'],'Navratri · नवरात्रि',['🔱','🪔','🌺','✨'],'#a21caf'],
-dussehra:['🏹',['Happy Dussehra','विजयादशमी की शुभकामनाएँ'],['May good always win over evil.','बुराई पर अच्छाई की जीत मुबारक।'],'Dussehra · दशहरा',['🏹','🔥','✨','🪔'],'#ea580c'],
-ganesh:['🐘',['Ganpati Bappa Morya','गणपति बप्पा मोरया'],['Happy Ganesh Chaturthi to you and your family.','आपको और परिवार को गणेश चतुर्थी की शुभकामनाएँ।'],'Ganesh Chaturthi · गणेश चतुर्थी',['🌼','🐘','🪷','✨'],'#d97706'],
-janmashtami:['🦚',['Happy Janmashtami','जन्माष्टमी की शुभकामनाएँ'],['Hare Krishna! Joy and blessings to your home.','हरे कृष्णा! आपके घर खुशियाँ और आशीर्वाद बना रहे।'],'Janmashtami · जन्माष्टमी',['🦚','💙','✨','🪔'],'#0e7490'],
-eid:['🌙',['Eid Mubarak','ईद मुबारक'],['Joy and blessings to you and your family.','आपको और परिवार को खुशियाँ और बरकत मिले।'],'Eid · ईद',['🌙','⭐','✨'],'#0f766e'],
-christmas:['🎄',['Merry Christmas','मेरी क्रिसमस'],['Warm wishes and happy moments for you.','आपके लिए खुशियों भरी शुभकामनाएँ।'],'Christmas · क्रिसमस',['🎄','❄️','⭐','🎁'],'#14532d'],
-newyear:['🎆',['Happy New Year','नववर्ष की शुभकामनाएँ'],['Wishing you a healthy and happy year ahead.','आने वाला साल सेहत और खुशियों भरा हो।'],'New Year · नया साल',['🎆','🎉','✨','🥂'],'#4338ca'],
-sankranti:['🪁',['Happy Makar Sankranti','मकर संक्रांति की शुभकामनाएँ'],['Sweet moments and high-flying joy! Happy Lohri and Pongal too.','मीठी खुशियाँ और ऊँची उड़ान! लोहड़ी व पोंगल की भी शुभकामनाएँ।'],'Makar Sankranti · मकर संक्रांति',['🪁','☀️','✨','🌾'],'#0284c7'],
-tiranga:['🇮🇳',['Jai Hind','जय हिंद'],['Happy Independence Day / Republic Day. Salute to the Tricolour!','स्वतंत्रता / गणतंत्र दिवस की शुभकामनाएँ। तिरंगे को सलाम!'],'Tiranga · स्वतंत्रता / गणतंत्र दिवस',['🇮🇳','🪁','✨','☸️'],'#1e3a8a']
+diwali:['🪔',['Happy Diwali','शुभ दीपावली'],['The festival of lights, with the ones you love.','रोशनी का त्योहार, अपनों के साथ।'],'Diwali',['🪔','✨','🎆','🌼'],'#c2410c'],
+dhanteras:['🪙',['Happy Dhanteras','शुभ धनतेरस'],['Wishing your home prosperity and good fortune.','आपके घर में सुख-समृद्धि आए।'],'Dhanteras',['🪙','✨','🌟','🪔'],'#1e3a8a'],
+bhaidooj:['🌸',['Happy Bhai Dooj','भाई दूज की शुभकामनाएँ'],['A day to celebrate the bond of brothers and sisters.','भाई-बहन के प्यार का दिन।'],'Bhai Dooj',['🌸','🌺','✨','🪔'],'#be185d'],
+holi:['🎨',['Happy Holi','होली की हार्दिक शुभकामनाएँ'],['May your life be full of colours.','आपका जीवन रंगों से भरा रहे।'],'Holi','dot','#7e22ce'],
+rakhi:['🧵',['Happy Raksha Bandhan','रक्षाबंधन की शुभकामनाएँ'],['Celebrating the sacred bond of Rakhi.','राखी के पवित्र बंधन का त्योहार।'],'Raksha Bandhan',['🧵','🌸','🎀','✨'],'#b91c1c'],
+navratri:['🔱',['Happy Navratri','शुभ नवरात्रि'],['Nine nights of devotion and joy.','नौ रातों की भक्ति और उमंग।'],'Navratri',['🔱','🪔','🌺','✨'],'#a21caf'],
+dussehra:['🏹',['Happy Dussehra','विजयादशमी की शुभकामनाएँ'],['May good always win over evil.','बुराई पर अच्छाई की जीत मुबारक।'],'Dussehra',['🏹','🔥','✨','🪔'],'#ea580c'],
+ganesh:['🐘',['Ganpati Bappa Morya','गणपति बप्पा मोरया'],['Happy Ganesh Chaturthi to you and your family.','आपको और परिवार को गणेश चतुर्थी की शुभकामनाएँ।'],'Ganesh Chaturthi',['🌼','🐘','🪷','✨'],'#d97706'],
+janmashtami:['🦚',['Happy Janmashtami','जन्माष्टमी की शुभकामनाएँ'],['Hare Krishna! Joy and blessings to your home.','हरे कृष्णा! आपके घर खुशियाँ और आशीर्वाद बना रहे।'],'Janmashtami',['🦚','💙','✨','🪔'],'#0e7490'],
+eid:['🌙',['Eid Mubarak','ईद मुबारक'],['Joy and blessings to you and your family.','आपको और परिवार को खुशियाँ और बरकत मिले।'],'Eid',['🌙','⭐','✨'],'#0f766e'],
+christmas:['🎄',['Merry Christmas','मेरी क्रिसमस'],['Warm wishes and happy moments for you.','आपके लिए खुशियों भरी शुभकामनाएँ।'],'Christmas',['🎄','❄️','⭐','🎁'],'#14532d'],
+newyear:['🎆',['Happy New Year','नववर्ष की शुभकामनाएँ'],['Wishing you a healthy and happy year ahead.','आने वाला साल सेहत और खुशियों भरा हो।'],'New Year',['🎆','🎉','✨','🥂'],'#4338ca'],
+sankranti:['🪁',['Happy Makar Sankranti','मकर संक्रांति की शुभकामनाएँ'],['Sweet moments and high-flying joy! Happy Lohri and Pongal too.','मीठी खुशियाँ और ऊँची उड़ान! लोहड़ी व पोंगल की भी शुभकामनाएँ।'],'Makar Sankranti',['🪁','☀️','✨','🌾'],'#0284c7'],
+tiranga:['🇮🇳',['Jai Hind','जय हिंद'],['Happy Independence Day / Republic Day. Salute to the Tricolour!','स्वतंत्रता / गणतंत्र दिवस की शुभकामनाएँ। तिरंगे को सलाम!'],'Tiranga',['🇮🇳','🪁','✨','☸️'],'#1e3a8a']
 };
 var cur='',msg={en:'',hi:''},dirty=false;
 var meta=D.querySelector('meta[name=theme-color]'),origColor=meta?meta.content:'#fbd34a';
@@ -20198,8 +20198,8 @@ function banner(id,compact){
 }
 function banners(){banner('page-home');banner('page-shop',1);banner('page-cart',1)}
 
-var FX={diwali:'burst',newyear:'burst',holi:'splash',eid:'twinkle',dussehra:'rise',sankranti:'rise',tiranga:'confetti'};
-var BC={diwali:['#ffd34d','#ff7a1a','#ff3d3d','#fff3c4'],newyear:['#ffd34d','#a78bfa','#38bdf8','#ffffff']};
+var FX={diwali:'burst',dhanteras:'burst',newyear:'burst',holi:'splash',eid:'twinkle',navratri:'twinkle',dussehra:'rise',sankranti:'rise',janmashtami:'rise',ganesh:'rise',christmas:'snow',tiranga:'confetti'};
+var BC={diwali:['#ffd34d','#ff7a1a','#ff3d3d','#fff3c4'],newyear:['#ffd34d','#a78bfa','#38bdf8','#ffffff'],dhanteras:['#ffd34d','#fff3c4','#60a5fa','#ffffff']};
 var HC=['#ec4899','#f59e0b','#06b6d4','#22c55e','#a855f7','#ef4444'],tm=[];
 function rnd(a,b){return a+Math.random()*(b-a)}
 function fall(){
@@ -20212,6 +20212,7 @@ function fall(){
   if(m==='fall')loop('fx-f',mob?12:18,function(i){return{h:E[i%E.length],a:9,b:17,st:'font-size:'+(rnd(14,24)|0)+'px'}});
   if(m==='confetti'){var C=['#ff9933','#ffffff','#138808'];loop('fx-f',mob?16:24,function(i){return{h:'',a:7,b:13,st:'width:7px;height:12px;border-radius:2px;background:'+C[i%3]+';box-shadow:0 0 0 1px rgba(0,0,0,.18)'}})}
   if(m==='rise')loop('fx-r',mob?8:12,function(i){return{h:E[i%E.length],a:11,b:20,st:'font-size:'+(rnd(16,28)|0)+'px'}});
+  if(m==='snow'){loop('fx-f',mob?22:34,function(i){var s=rnd(4,9)|0;return{h:'',a:11,b:22,st:'width:'+s+'px;height:'+s+'px;border-radius:50%;background:#eef6ff;border:1px solid rgba(120,160,220,.55);opacity:.95;box-shadow:0 0 6px 1px rgba(150,190,255,.6)'}});loop('fx-f',mob?4:7,function(i){return{h:E[i%E.length],a:12,b:22,st:'font-size:'+(rnd(14,22)|0)+'px'}})}
   if(m==='twinkle')for(var t=0;t<(mob?10:16);t++)add('fx-t',E[t%E.length],'left:'+rnd(2,96).toFixed(1)+'%;top:'+rnd(4,90).toFixed(1)+'%;font-size:'+(rnd(14,26)|0)+'px;animation-delay:-'+rnd(0,3).toFixed(1)+'s');
   if(m==='splash'){
     loop('fx-f',mob?10:16,function(i){var s=rnd(7,13)|0;return{h:'',a:10,b:18,st:'width:'+s+'px;height:'+s+'px;border-radius:50%;opacity:.8;background:'+HC[i%6]}});
@@ -20259,7 +20260,7 @@ function pop(n){
 function ui(){
   D.querySelectorAll('#adminFestGrid .fx-card').forEach(function(b){b.setAttribute('aria-pressed',String((b.getAttribute('data-k')||'')===cur))});
   var live=D.getElementById('adminFestLive');
-  if(live)live.textContent=cur?'अभी चुनी हुई थीम: '+F[cur][3]:'अभी चुनी हुई थीम: Normal (सामान्य)';
+  if(live)live.textContent=cur?'Current theme: '+F[cur][3]:'Current theme: Normal';
 }
 function apply(k,m){
   cur=F[k]?k:'';msg=cur&&m?{en:m.en||'',hi:m.hi||''}:{en:'',hi:''};
@@ -20294,7 +20295,7 @@ w.vgFestToggle=function(open){
 };
 w.vgFestPick=function(k){
   dirty=true;apply(k,{en:val('adminFestMsg'),hi:val('adminFestMsgHi')});
-  D.getElementById('adminFestStatus').textContent=cur?'👁️ Preview: '+F[cur][3]+' — सभी customers को दिखाने के लिए Save दबाएँ।':'👁️ Preview: Normal थीम — Save दबाएँ।';
+  D.getElementById('adminFestStatus').textContent=cur?'👁️ Preview: '+F[cur][3]+' — Press Save to show it to all customers.':'👁️ Preview: Normal theme — press Save.';
 };
 w.vgFestMsg=function(){dirty=true;msg=cur?{en:val('adminFestMsg'),hi:val('adminFestMsgHi')}:{en:'',hi:''};banners()};
 w.vgFestSave=async function(){
@@ -20304,7 +20305,7 @@ w.vgFestSave=async function(){
   try{
     if(typeof supabaseClient==='undefined')throw new Error('Supabase उपलब्ध नहीं है।');
     var s=await supabaseClient.auth.getSession();
-    if(!s.data||!s.data.session)throw new Error('पहले Admin Login करें।');
+    if(!s.data||!s.data.session)throw new Error('Please log in as Admin first.');
     var r=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify({f:cur,m:m.en,h:m.hi}),updated_at:new Date().toISOString()},{onConflict:'id'});
     if(r.error)throw r.error;
     store(cur,m);msg=cur?m:{en:'',hi:''};dirty=false;banners();
@@ -20338,6 +20339,105 @@ setInterval(pull,120000);
 })();
 </script>
 
+
+<style id="vedant-vip-v8">
+/* ===== VIP v8: festival extras · admin theme · profile theme · shop-status theme (visual only, no layout/option changes) ===== */
+
+/* ---------- Festival extras ---------- */
+#fxFall:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% -12%,var(--fa,#ffc83d),transparent 55%);opacity:.13;animation:vgAmb 6s ease-in-out infinite alternate}
+@keyframes vgAmb{to{opacity:.26}}
+html[data-festival] .fx-banner:before{background:radial-gradient(circle at 88% 12%,rgba(255,255,255,.28),transparent 38%),radial-gradient(circle at 8% 110%,rgba(255,255,255,.16),transparent 40%),linear-gradient(105deg,transparent 38%,rgba(255,255,255,.4) 50%,transparent 62%);background-size:auto,auto,260% 100%;background-repeat:no-repeat;background-position:0 0,0 0,0% 0;animation:vgSweep 6.5s ease-in-out infinite}
+@keyframes vgSweep{0%,38%{background-position:0 0,0 0,0% 0}100%{background-position:0 0,0 0,100% 0}}
+html[data-festival] .fx-banner .fx-title{animation:vgTitle 3.6s ease-in-out infinite alternate}
+@keyframes vgTitle{from{filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}to{filter:drop-shadow(0 2px 14px var(--fa,#ffc83d))}}
+html[data-festival] .fx-banner .fx-cta{animation:vgCta 2.4s ease-out infinite}
+@keyframes vgCta{0%{box-shadow:0 8px 18px -6px rgba(0,0,0,.45),0 0 0 0 rgba(255,255,255,.6)}70%,100%{box-shadow:0 8px 18px -6px rgba(0,0,0,.45),0 0 0 13px rgba(255,255,255,0)}}
+html[data-festival] .fx-em{animation:vgBob 3.2s ease-in-out infinite}
+@keyframes vgBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes vgSway{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes vgFlame{0%,100%{transform:scale(1) rotate(-2deg);filter:drop-shadow(0 0 8px #ffb300) brightness(1)}50%{transform:scale(1.09) rotate(2deg);filter:drop-shadow(0 0 22px #ffd34d) brightness(1.18)}}
+@keyframes vgKite{0%,100%{transform:translate(0,0) rotate(-10deg)}50%{transform:translate(8px,-10px) rotate(10deg)}}
+@keyframes vgPop{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes vgMoon{0%,100%{filter:drop-shadow(0 0 6px #fde68a)}50%{filter:drop-shadow(0 0 24px #fff7c2)}}
+@keyframes vgHue{to{filter:hue-rotate(360deg)}}
+:is(html[data-festival="diwali"],html[data-festival="dhanteras"],html[data-festival="dussehra"]) .fx-em{animation:vgFlame 1.7s ease-in-out infinite}
+:is(html[data-festival="rakhi"],html[data-festival="bhaidooj"],html[data-festival="christmas"]) .fx-em{animation:vgSway 3.2s ease-in-out infinite;transform-origin:50% 12%}
+html[data-festival="sankranti"] .fx-em{animation:vgKite 3.6s ease-in-out infinite}
+:is(html[data-festival="newyear"],html[data-festival="navratri"],html[data-festival="ganesh"]) .fx-em{animation:vgPop 2.4s ease-in-out infinite}
+html[data-festival="eid"] .fx-em{animation:vgMoon 3.6s ease-in-out infinite,vgBob 4s ease-in-out infinite}
+html[data-festival="holi"] .fx-ring{animation:fxGlow 3.4s ease-in-out infinite,vgHue 6s linear infinite}
+html[data-festival="navratri"] .fx-ring:after{animation-duration:5s}
+html[data-festival="tiranga"] .fx-toran{height:8px!important;background:linear-gradient(90deg,#ff9933 0 33.3%,#fff 33.3% 66.6%,#138808 66.6%)!important}
+html[data-festival="christmas"] .fx-banner{background-image:radial-gradient(circle at 12% 20%,rgba(255,255,255,.9) 0 1.5px,transparent 2.5px),radial-gradient(circle at 34% 70%,rgba(255,255,255,.8) 0 1.5px,transparent 2.5px),radial-gradient(circle at 62% 28%,rgba(255,255,255,.85) 0 2px,transparent 3px),radial-gradient(circle at 80% 76%,rgba(255,255,255,.8) 0 1.5px,transparent 2.5px),var(--fh)}
+.fx-pop-card{animation:vgPopIn .55s cubic-bezier(.2,1.25,.3,1)}
+@keyframes vgPopIn{from{transform:scale(.7) translateY(34px);opacity:0}}
+.fx-card{transition:transform .15s,box-shadow .15s}
+.fx-card:hover{transform:translateY(-2px);box-shadow:0 10px 20px -10px rgba(59,29,143,.5)}
+html body .fx-card[aria-pressed=true]{border-color:#f5c542!important;box-shadow:0 0 0 3px rgba(245,197,66,.35),0 12px 22px -10px rgba(59,29,143,.55)}
+@media (prefers-reduced-motion:reduce){#fxFall:before,html[data-festival] .fx-banner:before,html[data-festival] .fx-title,html[data-festival] .fx-cta,html[data-festival] .fx-em,html[data-festival] .fx-ring,.fx-pop-card{animation:none!important}}
+
+/* ---------- Admin panel theme ---------- */
+html body #page-admin #adminPanel{background:linear-gradient(90deg,#f5c542,#6f42c1 55%,#0e9220) top/100% 4px no-repeat,radial-gradient(circle at 100% 0,rgba(111,66,193,.09),transparent 40%),linear-gradient(180deg,#faf8ff 0,#fff 260px)!important;background-origin:border-box!important;border-top:4px solid transparent!important;box-shadow:0 22px 46px -26px rgba(59,29,143,.55)!important}
+html body #page-admin #adminPanel>h2{color:#2b1670!important;border-left:4px solid #f5c542!important;background:linear-gradient(90deg,rgba(245,197,66,.2),transparent 75%)!important;border-radius:12px;letter-spacing:.2px}
+html body #adminPanel h3{color:#3b1d8f}
+html body #adminPanel .admin-small,html body #adminPanel small{color:#5d5878}
+html body #adminPanel .admin-login{background:linear-gradient(180deg,#fff,#faf7ff)!important;border:1px solid #e3d9fb!important;border-radius:18px;box-shadow:0 14px 30px -20px rgba(59,29,143,.6),inset 0 3px 0 #f5c542}
+html body #adminContent .admin-toolbar{background:linear-gradient(135deg,#1e1140,#3b1d8f)!important;border:1px solid rgba(245,197,66,.5)!important;box-shadow:0 16px 30px -16px rgba(30,17,64,.95),inset 0 1px 0 rgba(255,255,255,.12)!important}
+html body #adminContent .admin-toolbar .admin-small{color:#ffe7a6!important}
+html body #adminContent .admin-toolbar .admin-btn,html body #adminContent .admin-toolbar button,html body #adminPanel .stvn-admin-quick-toggle{background:rgba(255,255,255,.1)!important;color:#fff!important;border:1px solid rgba(255,255,255,.24)!important;transition:background .15s,transform .1s,box-shadow .15s}
+html body #adminContent .admin-toolbar .admin-btn:hover,html body #adminContent .admin-toolbar button:hover{background:rgba(255,255,255,.2)!important}
+html body #adminContent .admin-toolbar .admin-btn[aria-expanded="true"],html body #adminPanel .stvn-admin-quick-toggle[aria-expanded="true"],html body #adminContent .admin-toolbar button[aria-expanded="true"]{background:linear-gradient(135deg,#ffe08a,#f5c542)!important;color:#2b1670!important;border-color:#f5c542!important;box-shadow:0 8px 18px -8px rgba(245,197,66,.9)!important}
+html body #adminContent section,html body #adminContent .section-card{background:linear-gradient(180deg,#fff,#fcfaff)!important;border:1px solid #e6defa!important;border-radius:18px!important;box-shadow:0 12px 28px -20px rgba(59,29,143,.6),inset 4px 0 0 #6f42c1!important}
+html body #adminPanel :is(input,select,textarea){border:1.5px solid #dcd2f5!important;border-radius:12px!important;background:#fffefe}
+html body #adminPanel :is(input,select,textarea):focus{border-color:#6f42c1!important;box-shadow:0 0 0 3px rgba(111,66,193,.18)!important;outline:none}
+html body #adminPanel :is(.admin-section-save-button,#adminFestSave,#adminOtpActionButton,#adminOtpResendButton,.admin-refresh){background:linear-gradient(135deg,#19b83c,#0b7d22)!important;color:#fff!important;box-shadow:0 10px 18px -10px rgba(11,125,34,.85)!important;border-radius:12px}
+html body #adminPanel :is(#adminShopStatusToggle,#adminFestivalToggle){background:linear-gradient(135deg,#5b2fc9,#3b1d8f)!important;color:#fff!important;box-shadow:0 10px 18px -10px rgba(59,29,143,.9)!important;border-radius:12px}
+html body #adminPanel .error{color:#c0264b}
+html body.dark #page-admin #adminPanel{background:linear-gradient(90deg,#f5c542,#8b5cf6 55%,#22c55e) top/100% 4px no-repeat,radial-gradient(circle at 100% 0,rgba(139,92,246,.18),transparent 40%),linear-gradient(180deg,#1b1630 0,#16121f 260px)!important;background-origin:border-box!important}
+html body.dark #page-admin #adminPanel>h2{color:#ffe7a6!important;background:linear-gradient(90deg,rgba(245,197,66,.16),transparent 75%)!important}
+html body.dark #adminPanel h3{color:#e4d8ff}
+html body.dark #adminPanel .admin-small,html body.dark #adminPanel small{color:#b9b0d6}
+html body.dark #adminPanel .admin-login{background:linear-gradient(180deg,#221b3a,#1c1730)!important;border-color:#3b2f66!important}
+html body.dark #adminContent section,html body.dark #adminContent .section-card{background:linear-gradient(180deg,#221b3a,#1c1730)!important;border-color:#3b2f66!important}
+html body.dark #adminPanel :is(input,select,textarea){background:#171227;border-color:#3b2f66!important}
+
+/* ---------- My Profile theme ---------- */
+html body #stvnProfileToggle{border:1.5px solid #f1d58a!important;background:linear-gradient(180deg,#fff,#fffaf0)!important;box-shadow:0 10px 24px -10px rgba(120,80,0,.4),inset 0 0 0 1px rgba(255,255,255,.85)!important}
+html body #stvnProfileToggle .stvn-avatar{background:linear-gradient(135deg,#ffd34d,#f59e0b 45%,#0e9220)!important;box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(245,197,66,.7)!important;animation:vgAvatar 3.2s ease-in-out infinite}
+@keyframes vgAvatar{50%{box-shadow:0 0 0 2px #fff,0 0 0 6px rgba(245,197,66,.35)}}
+html body #stvnProfileMenu{border:1px solid #f1e2b6!important;border-radius:18px!important;box-shadow:0 24px 48px -18px rgba(60,40,0,.5)!important;background:linear-gradient(180deg,#fff,#fffcf4)!important}
+html body #stvnProfileMenu .stvn-profile-email{background:linear-gradient(90deg,#fff3cf,#fff);border-radius:10px;color:#6b5a1e;border-bottom-color:#f3e6bd}
+html body #stvnProfileMenu button:hover{background:linear-gradient(90deg,#fff1c4,#eaf9ec)!important}
+html body #stvnProfileModal{background:radial-gradient(circle at 50% 0,rgba(245,197,66,.26),transparent 55%),rgba(8,22,12,.8)!important}
+html body #stvnProfileModal .stvn-profile-card{background-color:var(--card,#fff)!important;background-image:linear-gradient(90deg,#ffd34d,#13bf2a,#087617,#ffd34d),radial-gradient(circle at 100% 0,rgba(245,197,66,.22),transparent 42%),radial-gradient(circle at 0 100%,rgba(19,191,42,.12),transparent 42%)!important;background-size:100% 5px,auto,auto!important;background-repeat:no-repeat!important;border:1px solid rgba(245,197,66,.6)!important;box-shadow:0 30px 90px -22px rgba(0,0,0,.7),0 0 0 4px rgba(255,255,255,.06)!important;animation:vgPopIn .4s cubic-bezier(.2,1.2,.3,1)}
+html body #stvnProfileModal .stvn-profile-head{border-bottom:1px solid transparent;border-image:linear-gradient(90deg,#f5c542,#13bf2a,transparent) 1}
+html body #stvnProfileModal .stvn-profile-head h2{background:linear-gradient(90deg,#a56a00,#0e9220);-webkit-background-clip:text;background-clip:text;color:transparent}
+html body #stvnProfileClose{background:#fff7de!important;color:#7a5300!important;border:1px solid #f1d58a!important;border-radius:50%}
+html body:not(.dark) #stvnProfileModal .stvn-profile-section label{color:#4a3f1a}
+html body:not(.dark) #stvnProfileModal :is(input,textarea){border:1.5px solid #ecdcae!important;background:#fffdf6!important;border-radius:12px!important}
+html body #stvnProfileModal :is(input,textarea):focus{border-color:#13bf2a!important;box-shadow:0 0 0 3px rgba(19,191,42,.16)!important;outline:none}
+html body #stvnProfileModal .stvn-profile-note{background:rgba(245,197,66,.14);border-radius:8px;padding:5px 9px}
+html body #stvnProfileModal .stvn-profile-save{position:relative;overflow:hidden;background:linear-gradient(135deg,#19b83c,#087c20)!important;color:#fff!important;box-shadow:0 12px 22px -10px rgba(8,124,32,.8)!important}
+html body #stvnProfileModal .stvn-profile-save:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.38) 50%,transparent 60%);transform:translateX(-100%);animation:vgShine 3.6s ease-in-out infinite}
+@keyframes vgShine{0%,55%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@media (prefers-reduced-motion:reduce){html body #stvnProfileToggle .stvn-avatar,html body #stvnProfileModal .stvn-profile-card,html body #stvnProfileModal .stvn-profile-save:after{animation:none!important}}
+
+/* ---------- Shop status (closed / maintenance) VIP theme ---------- */
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) :is(#stvnShopClosedDisplay,#stvnHomeStatusBanner){position:relative;overflow:hidden;background:radial-gradient(circle at 85% 6%,rgba(255,214,120,.3),transparent 42%),radial-gradient(circle at 8% 100%,rgba(190,70,110,.28),transparent 45%),var(--fh,linear-gradient(145deg,#1a0b2e,#3d1252 55%,#7b1f3f))!important;border:1px solid #c99a2e!important;outline:2px solid rgba(255,214,102,.75)!important;outline-offset:-10px!important;box-shadow:0 0 0 4px rgba(255,214,102,.14),0 34px 64px -22px rgba(0,0,0,.75),inset 0 0 90px rgba(255,200,80,.08)!important;color:#ffeec2!important}
+html[data-shop-status="maintenance"] body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) :is(#stvnShopClosedDisplay,#stvnHomeStatusBanner){background:radial-gradient(circle at 85% 6%,rgba(255,214,120,.34),transparent 42%),radial-gradient(circle at 8% 100%,rgba(255,150,40,.2),transparent 45%),var(--fh,linear-gradient(145deg,#1b1608,#4a3a0e 55%,#9a7312))!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #stvnShopClosedDisplay:before{border:1px solid rgba(255,214,102,.4)!important}
+html body #stvnShopClosedDisplay:after,html body #stvnHomeStatusBanner:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(115deg,transparent 40%,rgba(255,224,138,.2) 50%,transparent 60%) 0 0/260% 100% no-repeat,radial-gradient(circle at 12% 22%,rgba(255,224,138,.9) 0 1.4px,transparent 2.6px),radial-gradient(circle at 87% 17%,rgba(255,224,138,.8) 0 1.6px,transparent 2.8px),radial-gradient(circle at 79% 83%,rgba(255,224,138,.75) 0 1.4px,transparent 2.6px),radial-gradient(circle at 17% 79%,rgba(255,224,138,.8) 0 1.6px,transparent 2.8px);animation:vgStatusSheen 7s linear infinite}
+@keyframes vgStatusSheen{0%{background-position:100% 0,0 0,0 0,0 0,0 0}100%{background-position:-60% 0,0 0,0 0,0 0,0 0}}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #stvnShopClosedDisplay .stvn-closed-icon{animation:vgIconGlow 3.2s ease-in-out infinite}
+@keyframes vgIconGlow{0%,100%{box-shadow:0 0 0 2px rgba(255,214,102,.7),0 0 26px rgba(255,214,102,.35)}50%{box-shadow:0 0 0 3px rgba(255,224,138,.95),0 0 46px rgba(255,214,102,.7)}}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) :is(#stvnShopClosedDisplay .stvn-closed-stamp,#stvnHomeStatusBanner .stvn-home-status-stamp){border:3px double #ffd34d!important;color:#ffe9a8!important;text-shadow:0 0 14px rgba(255,200,80,.65);transform:rotate(-2deg);background:linear-gradient(135deg,rgba(255,214,102,.2),rgba(255,214,102,.06))!important;box-shadow:0 8px 20px -10px rgba(0,0,0,.6)}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) :is(#stvnShopClosedDisplay p,#stvnHomeStatusBanner p){color:#ffeec9!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #stvnShopStatusReasonCard{background:rgba(255,255,255,.09)!important;border:1px solid rgba(255,214,102,.55)!important;box-shadow:inset 0 0 26px rgba(255,214,102,.07),0 12px 26px -16px rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+html body #stvnShopStatusReasonTitle:before{content:"✦ ";color:#ffd34d}
+html body #stvnShopStatusReasonTitle:after{content:" ✦";color:#ffd34d}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #stvnShopClosedDisplay .stvn-closed-hours{background:rgba(255,214,102,.14)!important;border:1px solid rgba(255,214,102,.5)!important;color:#ffe9b0!important}
+@media (prefers-reduced-motion:reduce){html body #stvnShopClosedDisplay:after,html body #stvnHomeStatusBanner:after,html body #stvnShopClosedDisplay .stvn-closed-icon{animation:none!important}}
+</style>
 </body>
 </html>
 
@@ -20397,11 +20497,3 @@ html body #stvnCustomerLoginGate .stvn-google-login-action{background:#fff!impor
 }
 @media(max-height:700px) and (max-width:600px){#stvnCustomerLoginGate .stvn-login-hero{padding-top:18px!important;padding-bottom:12px!important}#stvnCustomerLoginGate .stvn-login-benefits{display:none!important}}
 </style>
-
-
-
-
-
-
-
-
