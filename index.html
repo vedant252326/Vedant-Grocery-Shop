@@ -21226,7 +21226,6 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boo
 <style id="vedant-v12-css">
 /* admin toolbar (phone) */
 #admin-shop-status-toolbar-toggle.vgx-sm{font-size:10px!important;padding:5px 8px!important;min-height:28px!important;border-radius:8px!important}
-@media(max-width:700px){#admin-festival-toolbar-toggle,#adminFestivalSection{display:none!important}}
 /* header admin button */
 .vgx-admin-hdr{display:inline-flex;align-items:center;gap:5px;min-height:40px;padding:0 12px;border:0;border-radius:12px;background:linear-gradient(135deg,#f5c542,#e0a100);color:#2b2100;font-weight:900;font-size:13px;cursor:pointer;white-space:nowrap}
 .vgx-admin-hdr:active{transform:scale(.95)}
@@ -21251,7 +21250,7 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boo
 /* ===== VIP rider theme (black + gold) ===== */
 html body #vgRider{background:radial-gradient(120% 60% at 50% 0%,#2b2410 0%,#0d0f0e 55%,#070807 100%);color:#f3efe2}
 html body #vgRider .vgr-top{background:linear-gradient(135deg,#0a0a0a,#1d1a0d);border-bottom:1px solid #e7c34a66;box-shadow:0 4px 18px #000a}
-html body #vgRider .vgr-card,html body #vgRider .vgx-week{background:linear-gradient(160deg,#15181a,#1b1f1c);border:1px solid #e7c34a33;color:#f3efe2;box-shadow:0 8px 22px #0009;animation:vgxUp .45s ease both}
+html body #vgRider .vgr-card,html body #vgRider .vgx-week{background:linear-gradient(160deg,#15181a,#1b1f1c);border:1px solid #e7c34a33;color:#f3efe2;box-shadow:0 8px 22px #0009}
 html body #vgRider .vgr-card h3,html body #vgRider h2,html body #vgRider b,html body #vgRider strong{color:#ffe08a}
 html body #vgRider .vgr-muted,html body #vgRider .vgr-field span,html body #vgRider small{color:#b9b39c}
 html body #vgRider .vgr-stat{background:linear-gradient(135deg,#17201a,#10251a);border:1px solid #2a5a3a;box-shadow:0 6px 16px #0008}
@@ -21265,11 +21264,42 @@ html body #vgRider .vgr-field input,html body #vgRider input{background:#0d100e;
 html body #vgRider .vgr-sheet,html body #vgRider .vgr-rbottom{background:#15181a;color:#f3efe2}
 html body #vgRider .vgr-hist{border-bottom-color:#2b2f2b}html body #vgRider .vgr-pill{background:#262a26;color:#f3efe2}
 html body #vgRider .vgx-week{color:#f3efe2}html body #vgRider .vgx-kpis div{background:#f5c54217}
-html body #vgRider .vgx-hello{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:14px;border-radius:18px;background:linear-gradient(135deg,#2b2410,#15181a);border:1px solid #e7c34a55;animation:vgxUp .4s ease both}
+html body #vgRider .vgx-hello{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:14px;border-radius:18px;background:linear-gradient(135deg,#2b2410,#15181a);border:1px solid #e7c34a55}
 html body #vgRider .vgx-av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:21px;font-weight:900;color:#241a00;background:linear-gradient(135deg,#ffe08a,#d99a00);box-shadow:0 0 0 3px #f5c54233}
 html body #vgRider .vgx-hello small{display:block;opacity:.85}html body #vgRider .vgx-hello b{font-size:17px}
 @keyframes vgxUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){html body #vgRider *{animation:none!important}}
+
+html body #vgRider .vgx-live{display:flex;align-items:center;gap:8px;margin:8px 0;padding:9px 12px;border-radius:12px;background:#16a34a22;border:1px solid #16a34a88;color:#7ff0ab;font-weight:800;font-size:13px}
+html body #vgRider .vgx-live i{width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 #22c55e;animation:vgxPulse 1.4s infinite}
+@keyframes vgxPulse{70%{box-shadow:0 0 0 10px #22c55e00}100%{box-shadow:0 0 0 0 #22c55e00}}
+html body #vgRider .vgx-reveal{animation:vgxReveal .5s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes vgxReveal{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+#vgxPay{position:absolute;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(circle,#0d2a16ee,#000d);animation:vgxFade .25s both}
+#vgxPay.out{animation:vgxFadeOut .35s both}
+@keyframes vgxFade{from{opacity:0}to{opacity:1}}@keyframes vgxFadeOut{to{opacity:0}}
+#vgxPay .box{text-align:center;color:#fff}
+#vgxPay svg{width:130px;height:130px}
+#vgxPay circle{fill:#16a34a;transform-origin:center;animation:vgxPop .5s cubic-bezier(.2,1.4,.4,1) both}
+#vgxPay path{fill:none;stroke:#fff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:vgxDraw .5s .35s ease forwards}
+@keyframes vgxPop{from{transform:scale(0)}to{transform:scale(1)}}@keyframes vgxDraw{to{stroke-dashoffset:0}}
+#vgxPay h2{margin:10px 0 2px;font-size:26px;color:#ffe08a;animation:vgxUp .5s .5s both}#vgxPay p{margin:0;opacity:.9;animation:vgxUp .5s .65s both}
+#vgxPay .c{position:absolute;left:50%;top:42%;font-size:22px;animation:vgxCoin 1.3s ease-out forwards;opacity:0}
+@keyframes vgxCoin{0%{opacity:1;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1.1)}}
+
+html body #vgRider .vgx-off{opacity:.92;background:linear-gradient(160deg,#101826,#16202e)}
+html body #vgRider .vgx-sleep{font-size:34px;animation:vgxSleep 3s ease-in-out infinite}@keyframes vgxSleep{50%{transform:translateY(-5px) rotate(-6deg)}}
+#vgxDuty{position:absolute;inset:0;z-index:50;display:grid;place-items:center;overflow:hidden;background:linear-gradient(180deg,#0a1230,#16204a 60%,#2a2750);animation:vgxFade .3s both}
+#vgxDuty.out{animation:vgxFadeOut .45s both}
+#vgxDuty .box{text-align:center;color:#fff;position:relative;z-index:2}
+#vgxDuty .moon{font-size:84px;animation:vgxMoon 1s cubic-bezier(.2,1.2,.4,1) both;filter:drop-shadow(0 0 22px #ffe08a99)}
+@keyframes vgxMoon{from{transform:translateY(60px) scale(.3);opacity:0}to{transform:none;opacity:1}}
+#vgxDuty h2{margin:6px 0 2px;font-size:26px;color:#c9d6ff;animation:vgxUp .5s .5s both}#vgxDuty p{margin:0;opacity:.85;animation:vgxUp .5s .7s both}
+#vgxDuty .st{position:absolute;font-size:14px;animation:vgxTw 1.6s ease-in-out infinite;opacity:.8}
+@keyframes vgxTw{50%{opacity:.15;transform:scale(.6)}}
+#vgxDuty .bike{position:absolute;bottom:12%;left:-60px;font-size:40px;animation:vgxDrive 1.9s .3s ease-in forwards;z-index:1}
+@keyframes vgxDrive{to{left:112%;opacity:.3}}
+@keyframes vgxUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .vgx-share{width:100%;margin-top:6px;min-height:44px;border:1px solid #ffffff33;border-radius:12px;background:#ffffff14;color:#fff;font-weight:800;font-size:14px}
 #vgxDel{width:100%;margin-top:10px;min-height:44px;border-radius:12px;border:1.5px solid #d93025;background:transparent;color:#d93025;font-weight:900;font-size:14px}
 </style>
@@ -21292,12 +21322,14 @@ window.vgNewOrderId=async function(retry){
 };
 /* ---- admin: header button beside cart ---- */
 function headerAdmin(){
-  var cart=D.querySelector('.vg-cart-action'),b=$('vgxAdminHdr'),on=window.__stvnOwnerAdminAuthorized===true;
+  var h=$('vgxAdminHdr');if(h)h.remove();
+  var nav=D.querySelector('.modern-bottom-nav'),cart=nav&&nav.querySelector('[data-page="cart"]'),b=$('vgxAdminNav'),on=window.__stvnOwnerAdminAuthorized===true;
   if(!on||!cart){if(b)b.remove();return}
-  if(b)return;
-  b=D.createElement('button');b.id='vgxAdminHdr';b.type='button';b.className='vgx-admin-hdr';b.innerHTML='🛠️ <span>Admin</span>';
-  b.onclick=function(){if(typeof window.showPage==='function')window.showPage('admin')};
-  cart.insertAdjacentElement('afterend',b);
+  if(!b){
+    b=D.createElement('button');b.id='vgxAdminNav';b.type='button';b.innerHTML='<span>🛠️</span>Admin<small>एडमिन</small>';
+    b.onclick=function(){if(typeof window.showPage==='function')window.showPage('admin')};
+  }
+  if(cart.nextElementSibling!==b)cart.insertAdjacentElement('afterend',b);
 }
 /* ---- admin toolbar order: ETA | Riders | Shop Status(small) | OTP ---- */
 function toolbar(){
@@ -21306,13 +21338,16 @@ function toolbar(){
   var anchor=rd||eta;
   if(sh){sh.classList.add('vgx-sm');if(anchor&&sh.previousElementSibling!==anchor)anchor.insertAdjacentElement('afterend',sh)}
   if(sh&&otp&&sh.nextElementSibling!==otp)sh.insertAdjacentElement('afterend',otp);
+  var fest=$('admin-festival-toolbar-toggle'),fa=otp||sh;
+  if(fest&&fa&&fa.nextElementSibling!==fest)fa.insertAdjacentElement('afterend',fest);
 }
 /* ---- rider: VIP card ---- */
 var TIERS=[['🥉 Bronze Rider',0],['🥈 Silver Rider',25],['🥇 Gold Rider',100],['💎 Platinum VIP',250]],GOAL=10,lastSig='',W=null,RN='';
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
 function num(id){var e=$(id);return e?parseInt(String(e.textContent).replace(/[^0-9]/g,''))||0:0}
 function vip(){
-  var ex=$('vgrExtra');if(!ex)return;
+  var ex=$('vgxBox'),rx=$('vgrExtra');
+  if(!ex){if(!rx)return;ex=D.createElement('div');ex.id='vgxBox';rx.parentNode.insertBefore(ex,rx)}
   var tot=num('vgrStAc'),today=num('vgrStTc'),earn=($('vgrStToday')||{}).textContent||'₹0';
   var i=0;for(var k=0;k<TIERS.length;k++)if(tot>=TIERS[k][1])i=k;
   var nxt=TIERS[i+1],pct=nxt?Math.min(100,Math.round((tot-TIERS[i][1])/(nxt[1]-TIERS[i][1])*100)):100;
@@ -21320,8 +21355,7 @@ function vip(){
   var sig=[tot,today,earn,RN,JSON.stringify(W),!!ex.querySelector('.vgx-vip')].join('|');if(sig===lastSig)return;lastSig=sig;
   var hr=new Date().getHours(),gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   ex.innerHTML='<div class="vgx-hello"><div class="vgx-av">'+esc((RN||'R').charAt(0).toUpperCase())+'</div><div><small>'+gr+' 👋</small><b>'+esc(RN||'Delivery Partner')+'</b><small>'+TIERS[i][0]+' · Vedant Grocery</small></div></div><div class="vgx-vip"><div class="vgx-top"><span class="vgx-badge">'+TIERS[i][0]+'</span><small>'+(nxt?'Next: '+nxt[0]+' · '+(nxt[1]-tot)+' delivery baaki':'Top tier unlocked 👑')+'</small></div><div class="vgx-bar"><i style="width:'+pct+'%"></i></div>'+
-   '<div class="vgx-row"><span>🎯 Aaj ka goal</span><span>'+Math.min(today,GOAL)+'/'+GOAL+(today>=GOAL?' ✅':'')+'</span></div><div class="vgx-bar g"><i style="width:'+gp+'%"></i></div>'+
-   '<button type="button" class="vgx-share" id="vgxShare">📤 Aaj ki kamai share karo</button></div>'+weekHTML();
+      '<button type="button" class="vgx-share" id="vgxShare">📤 Aaj ki kamai share karo</button></div>'+weekHTML();
   $('vgxShare').onclick=function(){
     var txt='Aaj '+today+' delivery · kamai '+earn+' · '+TIERS[i][0]+' — Vedant Grocery';
     if(navigator.share)navigator.share({text:txt}).catch(function(){});
@@ -21354,6 +21388,23 @@ async function fetchWeek(){
   }catch(e){}
 }
 setInterval(fetchWeek,45000);setTimeout(fetchWeek,2500);
+window.vgxPayFx=function(amount){
+  var host=$('vgRider')||D.body,o=$('vgxPay');if(o)o.remove();
+  o=D.createElement('div');o.id='vgxPay';
+  var coins='';for(var i=0;i<16;i++){var a=Math.random()*6.28,d=110+Math.random()*130;coins+='<span class="c" style="--x:'+Math.round(Math.cos(a)*d)+'px;--y:'+Math.round(Math.sin(a)*d-40)+'px;--r:'+Math.round(Math.random()*360)+'deg;animation-delay:'+(i*35)+'ms">'+(i%3?'🪙':'✨')+'</span>'}
+  o.innerHTML=coins+'<div class="box"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52"/><path d="M36 62 L54 80 L86 44"/></svg><h2>Payment mil gayi!</h2><p>'+(amount||'')+' cash received ✅</p></div>';
+  host.appendChild(o);try{navigator.vibrate&&navigator.vibrate([40,30,40,30,120])}catch(e){}
+  setTimeout(function(){o.classList.add('out');setTimeout(function(){o.remove()},380)},2100);
+};
+window.vgxDutyFx=function(on){
+  var host=$('vgRider')||D.body,o=$('vgxDuty');if(o)o.remove();
+  o=D.createElement('div');o.id='vgxDuty';
+  var st='';for(var i=0;i<18;i++)st+='<span class="st" style="left:'+Math.round(Math.random()*96)+'%;top:'+Math.round(Math.random()*70)+'%;animation-delay:'+(Math.random()*1.5).toFixed(2)+'s">'+(i%4?'✦':'⭐')+'</span>';
+  var earn=($('vgrStToday')||{}).textContent||'';
+  o.innerHTML=st+'<span class="bike">🏍️💨</span><div class="box"><div class="moon">🌙</div><h2>Duty OFF</h2><p>'+(earn&&earn!=='₹0'?'Aaj ki kamai '+earn+' · ':'')+'Aaram karo, shabaash! 😴</p></div>';
+  host.appendChild(o);try{navigator.vibrate&&navigator.vibrate([30,50,90])}catch(e){}
+  setTimeout(function(){o.classList.add('out');setTimeout(function(){o.remove()},460)},2300);
+};
 /* ---- rider: delete own account ---- */
 async function delRider(){
   var msg='Rider account delete karna hai? Ye wapas nahi hoga. Delete ke baad aap normal shop par aa jaoge, aur baad me dobara rider account bana sakte ho.';
@@ -22382,7 +22433,7 @@ async function acceptOrder(id){
     if(/ORDER_TAKEN/.test(m))toast("😕 Ye order dusre rider ne le liya",4000);else toast("❌ "+m,4500);
     tick(true);return;
   }
-  hideIncoming(true);fx("accept","✅ Order accept ho gaya! Pehle shop pe jao","Order uthao aur Start Ride dabao");
+  hideIncoming(true);fx("accept","✅ Order accept ho gaya! Pehle shop pe jao","Order uthao aur I have reached dabao");
   S.active=r.data;S.view="active";await loadDash(true);onActiveChanged();render();
 }
 
@@ -22402,7 +22453,7 @@ async function toggleDuty(){
   if(r.error){toast("❌ "+errMsg(r.error),4500);return}
   S.me=r.data;
   if(want){lsSet("vgrDutyAt",String(Date.now()));getWake();startGeo();fx("duty","🟢 Aap On Duty ho — orders aayenge");tick(true)}
-  else{lsDel("vgrDutyAt");hideIncoming(true);dropWake();if(!S.active)stopGeo();toast("🔴 Aap Off Duty ho",2500)}
+  else{lsDel("vgrDutyAt");hideIncoming(true);dropWake();if(!S.active)stopGeo();if(window.vgxDutyFx)window.vgxDutyFx(false);else toast("🔴 Aap Off Duty ho",2500)}
   checkSoundBar();render();updatePill();
 }
 
@@ -22417,7 +22468,7 @@ function stopGeo(){if(S.watch!=null){try{navigator.geolocation.clearWatch(S.watc
 function onFix(p){
   S.pos={lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy};
   S.reached=S.reached||{};
-  if(S.active&&S.active.rider_stage==="accepted"&&!S.reached[S.active.order_id]&&km(S.pos.lat,S.pos.lng,SHOP.lat,SHOP.lng)<0.1){S.reached[S.active.order_id]=1;fx("reached","📍 Aap shop pe pahunch gaye!","Order uthao aur Start Ride dabao");var gs=$("vgrStart");if(gs)gs.classList.add("vgr-glow")}
+  if(S.active&&S.active.rider_stage==="accepted"&&!S.reached[S.active.order_id]&&km(S.pos.lat,S.pos.lng,SHOP.lat,SHOP.lng)<0.1){S.reached[S.active.order_id]=1;fx("reached","📍 Aap shop pe pahunch gaye!","Order uthao aur I have reached dabao");var gs=$("vgrShopReach");if(gs)gs.classList.add("vgr-glow")}
   if(S.active){
     updateRiderMarkers();
     if(S.active.rider_stage==="picked")pushLocation(false);
@@ -22430,6 +22481,7 @@ async function pushLocation(force){
   if(!force&&((moved<4&&now-S.lastPush<10000)||now-S.lastPush<2500))return;
   S.lastPush=now;S.lastPushPos=[S.pos.lat,S.pos.lng];
   try{
+    try{sb().from("orders").update({delivery_boy_latitude:S.pos.lat,delivery_boy_longitude:S.pos.lng}).eq("order_id",a.order_id).then(function(){},function(){})}catch(e){}   /* auto live-location for customer tracking (no admin toggle needed) */
     var r=await sb().rpc("rider_update_location",{p_order_id:a.order_id,p_lat:S.pos.lat,p_lng:S.pos.lng});
     if(!r.error&&r.data&&r.data.ok===false)tick(true);
   }catch(e){}
@@ -22548,10 +22600,10 @@ async function submitRegister(){
 function renderDash(){
   $("vgrDutyChip").style.display="";
   $("vgrBody").innerHTML=
-  '<div class="vgr-grid2"><div class="vgr-stat"><b id="vgrStToday">₹0</b><span>Aaj ki kamai</span></div><div class="vgr-stat alt"><b id="vgrStTotal">₹0</b><span>Total earning</span></div></div>'+
+  '<div id="vgrWait"></div><div class="vgr-grid2" style="margin-top:12px"><div class="vgr-stat"><b id="vgrStToday">₹0</b><span>Aaj ki kamai</span></div><div class="vgr-stat alt"><b id="vgrStTotal">₹0</b><span>Total earning</span></div></div>'+
   '<div class="vgr-grid2" style="margin-top:10px"><div class="vgr-stat alt"><b id="vgrStTc">0</b><span>Aaj delivered</span></div><div class="vgr-stat"><b id="vgrStAc">0</b><span>Total delivered</span></div></div>'+
   '<div id="vgrExtra"></div><div class="vgr-card" style="margin-top:12px"><div class="vgr-duty"><div><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
-  '<div id="vgrWait"></div><div class="vgr-card"><h3>✅ Delivered Orders</h3><div id="vgrHist"></div></div>';
+  '<div class="vgr-card"><h3>✅ Delivered Orders</h3><div id="vgrHist"></div></div>';
   $("vgrSwitch").onclick=toggleDuty;
   renderDashBody();
 }
@@ -22562,22 +22614,25 @@ function renderDashBody(){
   $("vgrStTc").textContent=st.today_count||0;$("vgrStAc").textContent=st.total_count||0;
   $("vgrSwitch").classList.toggle("on",!!me.on_duty);
   $("vgrDutyTxt").textContent=me.on_duty?"On Duty — naye orders aayenge":"Off Duty — On karo tabhi order aayenge";
-  $("vgrWait").innerHTML=me.on_duty?'<div class="vgr-card vgr-wait"><div class="vgr-pulse">🏍️</div><b>Order ka intezaar…</b><div class="vgr-muted">Screen on rakho aur ye app khula rakho, naya order aate hi ringtone bajegi.</div></div>':'';
+  var ws=me.on_duty?"1":"0",wb=$("vgrWait");
+  if(wb.getAttribute("data-s")!==ws){wb.setAttribute("data-s",ws);wb.innerHTML=ws==="1"?'<div class="vgr-card vgr-wait"><div class="vgr-pulse">🏍️</div><b>Order ka intezaar…</b><div class="vgr-muted">Screen on rakho aur ye app khula rakho, naya order aate hi ringtone bajegi.</div></div>':'<div class="vgr-card vgr-wait vgx-off"><div class="vgx-sleep">😴</div><b>Duty OFF</b><div class="vgr-muted">Duty ON karo tabhi naye orders aayenge.</div></div>'}
   var h=S.hist||[];
-  $("vgrHist").innerHTML=h.length?h.map(function(x){var d=x.at?new Date(x.at):null;return '<div class="vgr-hist"><span>#'+esc(shortId(x.order_id))+(d?' • '+d.toLocaleDateString("en-IN",{day:"2-digit",month:"short"})+' '+d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):'')+'</span><b>+'+money(x.earning)+'</b></div>'}).join(""):'<div class="vgr-muted">Abhi koi delivery nahi hui.</div>';
+  var hhtml=h.length?h.map(function(x){var d=x.at?new Date(x.at):null;return '<div class="vgr-hist"><span>#'+esc(shortId(x.order_id))+(d?' • '+d.toLocaleDateString("en-IN",{day:"2-digit",month:"short"})+' '+d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):'')+'</span><b>+'+money(x.earning)+'</b></div>'}).join(""):'<div class="vgr-muted">Abhi koi delivery nahi hui.</div>';var hh=$("vgrHist");if(hh._h!==hhtml){hh._h=hhtml;hh.innerHTML=hhtml}
 }
 function renderActive(){
   var a=S.active;if(!a)return;
+  var shopRch=false;try{S.rs=S.rs||JSON.parse(localStorage.getItem("vgrRS")||"{}");shopRch=!!S.rs[a.order_id]}catch(e){S.rs=S.rs||{};shopRch=!!S.rs[a.order_id]}
   $("vgrBody").innerHTML=
   '<div class="vgr-card">'+stepper(1)+'<div class="vgr-muted">Order #'+esc(shortId(a.order_id))+'</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><h3 style="margin:0">🏪 Pehle Shop pe jao</h3><b style="font-size:22px;color:#0f6b2d">'+money(a.delivery_charge)+'</b></div>'+
-  '<div class="vgr-muted" style="margin:6px 0">Vedant Grocery Shop se order uthao, phir Start Ride dabao.</div>'+
+  '<div class="vgr-muted" style="margin:6px 0">Vedant Grocery Shop se order uthao, I have reached dabao, phir Out for Delivery.</div>'+
   '<div class="vgr-pill" id="vgrRouteInfo">Route load ho raha hai…</div></div>'+
   '<div class="vgr-map" id="vgrMapA" style="height:48vh;min-height:280px"></div>'+
   '<div class="vgr-card" style="margin-top:12px"><div class="vgr-row"><button class="vgr-btn blue" id="vgrNavShop" type="button">🧭 Google Maps</button><button class="vgr-btn sec" id="vgrRecA" type="button">🎯 Meri location</button></div>'+
-  '<button class="vgr-btn" id="vgrStart" type="button">📍 Shop pahunch gaya — Start Ride</button></div>';
+  (shopRch?'<div class="vgx-reveal"><div class="vgx-live"><i></i>📡 Out for Delivery dabate hi live location AUTO ON ho jayegi</div><button class="vgr-btn vgr-glow" id="vgrStart" type="button">🏍️ Out for Delivery — Start Ride</button></div>':'<button class="vgr-btn gold vgr-glow" id="vgrShopReach" type="button">📍 Main shop pe pahunch gaya — I have reached</button>')+'</div>';
   $("vgrNavShop").onclick=function(){window.open(gmaps({lat:SHOP.lat,lng:SHOP.lng}),"_blank")};
   $("vgrRecA").onclick=function(){S.followPause=0;fitAll()};
-  $("vgrStart").onclick=startRide;if(S.reached&&S.reached[a.order_id])$("vgrStart").classList.add("vgr-glow");
+  var sr=$("vgrShopReach");if(sr)sr.onclick=function(){try{S.rs=S.rs||{};S.rs[a.order_id]=1;localStorage.setItem("vgrRS",JSON.stringify(S.rs))}catch(e){}try{navigator.vibrate&&navigator.vibrate([60,40,60])}catch(e){}fx("reached","📍 Aap shop pe pahunch gaye!","Order uthao aur Out for Delivery dabao");renderActive()};
+  var st=$("vgrStart");if(st)st.onclick=startRide;
   var m=makeMap($("vgrMapA"),"mapA");
   if(m){placeTarget();updateRiderMarkers();refreshRoute(true)}
   startGeo();
@@ -22596,8 +22651,8 @@ async function startRide(){
   var delivery=(typeof window.stvnEncodeDeliveryValue==="function")?window.stvnEncodeDeliveryValue(mins,new Date().toISOString()):(ETA_PREFIX+mins+"|"+new Date().toISOString());
   var p=S.pos||{lat:SHOP.lat,lng:SHOP.lng};
   var r=await sb().rpc("rider_start_ride",{p_order_id:a.order_id,p_delivery:delivery,p_lat:p.lat,p_lng:p.lng});
-  if(r.error){toast("❌ "+errMsg(r.error),4500);if(b){b.disabled=false;b.textContent="📍 Shop pahunch gaya — Start Ride"}return}
-  S.active=r.data;S.lastPush=0;destroyMaps();S.layers={};render();pushLocation(true);fx("ride","🏍️ Ride shuru! Customer ke paas chalo","Order sahi salamat deliver karo");
+  if(r.error){toast("❌ "+errMsg(r.error),4500);if(b){b.disabled=false;b.textContent="🏍️ Out for Delivery — Start Ride"}return}
+  S.active=r.data;S.lastPush=0;try{if(r.data&&!/^(out_for_delivery|shipped)$/i.test(String(r.data.order_status||"")))sb().from("orders").update({order_status:"out_for_delivery"}).eq("order_id",a.order_id).not("order_status","in","(delivered,cancelled,cancelled_by_admin)").then(function(){},function(){})}catch(e){}destroyMaps();S.layers={};render();pushLocation(true);fx("ride","🏍️ Ride shuru! Customer ke paas chalo","Order sahi salamat deliver karo");
 }
 function renderRide(){
   var a=S.active;if(!a)return;
@@ -22605,17 +22660,21 @@ function renderRide(){
   var paidOk=!cod||a.rider_payment_confirmed;
   var addr=esc(a.customer_address||"");
   var tel=digits(a.customer_phone);
+  var rch=true;
+  var payBox='<div class="vgr-pay '+(paidOk?'ok':'cod')+'" id="vgrPayBox">'+(cod?(a.rider_payment_confirmed?'✅ Cash '+money(a.total)+' mil gaya':'💵 Customer se Cash lo: '+money(a.total)):'✅ Online paid — cash nahi lena')+'</div>';
+  var payBtn=(cod&&!a.rider_payment_confirmed?'<button class="vgr-btn gold" id="vgrPayOk" type="button">💵 Payment mil gayi — Confirm</button>':'');
+  var doneBtn='<button class="vgr-btn" id="vgrDone" type="button" '+(paidOk?'':'disabled')+'>🏁 Delivery Complete</button>';
   $("vgrRideBottom").innerHTML=
    stepper(2)+'<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div style="min-width:0"><b style="font-size:17px">🏠 '+esc(a.customer_name||"Customer")+'</b><div class="vgr-muted" style="margin-top:2px">'+addr+'</div></div><b style="color:#0f6b2d;font-size:20px;white-space:nowrap">'+money(a.delivery_charge)+'</b></div>'+
-   '<div class="vgr-pay '+(paidOk?'ok':'cod')+'" id="vgrPayBox">'+(cod?(a.rider_payment_confirmed?'✅ Cash '+money(a.total)+' mil gaya':'💵 Customer se Cash lo: '+money(a.total)):'✅ Online paid — cash nahi lena')+'</div>'+
+   '<div class="vgx-live"><i></i>📡 Live location AUTO ON — customer ko aapki location dikh rahi hai</div>'+
    '<div class="vgr-row">'+(tel?'<button class="vgr-btn sec" id="vgrCallC" type="button">📞 Call</button>':'')+'<button class="vgr-btn blue" id="vgrNavC" type="button">🧭 Google Maps</button></div>'+
-   (cod&&!a.rider_payment_confirmed?'<button class="vgr-btn gold" id="vgrPayOk" type="button">💵 Payment mil gayi — Confirm</button>':'')+
-   '<button class="vgr-btn" id="vgrDone" type="button" '+(paidOk?'':'disabled')+'>🏁 Delivery Complete</button>';
+   (rch?'<div>'+payBox+payBtn+doneBtn+'</div>':'<button class="vgr-btn gold vgr-glow" id="vgrReach" type="button">📍 Main pahunch gaya — I have reached</button>');
   $("vgrRide").classList.add("show");
   if(tel)$("vgrCallC").onclick=function(){location.href="tel:"+tel};
   $("vgrNavC").onclick=function(){var t=curTarget();if(t)window.open(gmaps(t),"_blank")};
   var pb=$("vgrPayOk");if(pb)pb.onclick=confirmPay;
-  $("vgrDone").onclick=completeOrder;
+  S.fresh=null;
+  var dn=$("vgrDone");if(dn)dn.onclick=completeOrder;
   if(!S.mapB||!document.getElementById("vgrRideMap")||!S.mapB.getContainer||S.mapB.getContainer()!==$("vgrRideMap")){
     var m=makeMap($("vgrRideMap"),"mapB");
     if(m){placeTarget();updateRiderMarkers();refreshRoute(true)}
@@ -22627,7 +22686,7 @@ async function confirmPay(){
   var ok=await ask("Kya customer se "+money(a.total)+" cash mil gaya?","Haan, mil gaya","Nahi");if(!ok)return;
   var r=await sb().rpc("rider_confirm_payment",{p_order_id:a.order_id});
   if(r.error)return toast("❌ "+errMsg(r.error),4500);
-  S.active=r.data;toast("✅ Payment confirm ho gayi",2500);renderRide();
+  S.active=r.data;if(window.vgxPayFx)window.vgxPayFx(money(a.total));else toast("✅ Payment confirm ho gayi",2500);renderRide();
 }
 async function completeOrder(){
   var a=S.active;if(!a)return;
@@ -22870,7 +22929,7 @@ function watchdog(){
 var TR=[
 ["Order ki ringtone chalu karne ke liye yahan tap karo","Tap here to enable the order ringtone","ऑर्डर की रिंगटोन चालू करने के लिए यहाँ टैप करें"],
 ["Screen on rakho aur ye app khula rakho, naya order aate hi ringtone bajegi.","Keep the screen on and this app open. The ringtone plays as soon as a new order arrives.","स्क्रीन ऑन रखें और ऐप खुला रखें, नया ऑर्डर आते ही रिंगटोन बजेगी।"],
-["Vedant Grocery Shop se order uthao, phir Start Ride dabao.","Pick up the order from Vedant Grocery Shop, then tap Start Ride.","वेदांत ग्रोसरी शॉप से ऑर्डर उठाएँ, फिर स्टार्ट राइड दबाएँ।"],
+["Vedant Grocery Shop se order uthao, I have reached dabao, phir Out for Delivery.","Pick up the order from Vedant Grocery Shop, then tap Start Ride.","वेदांत ग्रोसरी शॉप से ऑर्डर उठाएँ, फिर स्टार्ट राइड दबाएँ।"],
 ["Order customer ko deliver ho gaya? Complete karne ke baad delivery charge aapke account me add ho jayega.","Order delivered to the customer? The delivery charge is added to your account once completed.","ऑर्डर कस्टमर को डिलीवर हो गया? पूरा करने के बाद डिलीवरी चार्ज आपके अकाउंट में जुड़ जाएगा।"],
 ["Customer ki location order me nahi mili, admin se baat karo","Customer location missing in the order. Contact admin.","ऑर्डर में कस्टमर की लोकेशन नहीं मिली, एडमिन से बात करें"],
 ["Pehle chalta hua order complete karo, phir logout karo","Finish the running order first, then log out","पहले चल रहा ऑर्डर पूरा करें, फिर लॉग आउट करें"],
@@ -22927,7 +22986,7 @@ var TR=[
 ["Naam likho","Enter your name","नाम लिखें"],["Pehle login karo","Please log in first","पहले लॉगिन करें"],["Order #","Order #","ऑर्डर #"],
 [" khatam ho gaya"," is finished"," पूरा हो गया"],["✅ Cash ","✅ Cash ","✅ कैश "],[" mil gaya"," received"," मिल गया"],["Nahi","No","नहीं"],["Login: ","Login: ","लॉगिन: "]
 ];
-TR.push(["🏍️ Ride shuru! Customer ke paas chalo","🏍️ Ride started! Head to the customer","🏍️ राइड शुरू! कस्टमर के पास चलें"],["📍 Aap shop pe pahunch gaye!","📍 You have reached the shop!","📍 आप शॉप पर पहुँच गए!"],["Order uthao aur Start Ride dabao","Pick up the order and tap Start Ride","ऑर्डर उठाएँ और स्टार्ट राइड दबाएँ"],["Order sahi salamat deliver karo","Deliver the order safely","ऑर्डर सुरक्षित डिलीवर करें"],["Shabaash! Delivery complete","Well done! Delivery complete","शाबाश! डिलीवरी पूरी हुई"],["🎯 Aaj ka target","🎯 Today’s goal","🎯 आज का टारगेट"],["Target badalne ke liye tap karo","Tap to change target","टारगेट बदलने के लिए टैप करें"],["🎉 Target poora! Shabaash","🎉 Goal reached! Well done","🎉 टारगेट पूरा! शाबाश"],[" Avg / delivery "," Avg / delivery "," औसत / डिलीवरी "],["🥉 Bronze Rider","🥉 Bronze Rider","🥉 ब्रॉन्ज़ राइडर"],["🥈 Silver Rider","🥈 Silver Rider","🥈 सिल्वर राइडर"],["🥇 Gold Rider","🥇 Gold Rider","🥇 गोल्ड राइडर"],["💎 Platinum Rider","💎 Platinum Rider","💎 प्लैटिनम राइडर"],["Accepted","Accepted","स्वीकारा"],["At shop","At shop","शॉप पर"],["On the way","On the way","रास्ते में"],["Done","Done","पूरा"]);
+TR.push(["🏍️ Ride shuru! Customer ke paas chalo","🏍️ Ride started! Head to the customer","🏍️ राइड शुरू! कस्टमर के पास चलें"],["📍 Aap shop pe pahunch gaye!","📍 You have reached the shop!","📍 आप शॉप पर पहुँच गए!"],["Order uthao aur I have reached dabao","Pick up the order and tap Start Ride","ऑर्डर उठाएँ और स्टार्ट राइड दबाएँ"],["Order sahi salamat deliver karo","Deliver the order safely","ऑर्डर सुरक्षित डिलीवर करें"],["Shabaash! Delivery complete","Well done! Delivery complete","शाबाश! डिलीवरी पूरी हुई"],["🎯 Aaj ka target","🎯 Today’s goal","🎯 आज का टारगेट"],["Target badalne ke liye tap karo","Tap to change target","टारगेट बदलने के लिए टैप करें"],["🎉 Target poora! Shabaash","🎉 Goal reached! Well done","🎉 टारगेट पूरा! शाबाश"],[" Avg / delivery "," Avg / delivery "," औसत / डिलीवरी "],["🥉 Bronze Rider","🥉 Bronze Rider","🥉 ब्रॉन्ज़ राइडर"],["🥈 Silver Rider","🥈 Silver Rider","🥈 सिल्वर राइडर"],["🥇 Gold Rider","🥇 Gold Rider","🥇 गोल्ड राइडर"],["💎 Platinum Rider","💎 Platinum Rider","💎 प्लैटिनम राइडर"],["Accepted","Accepted","स्वीकारा"],["At shop","At shop","शॉप पर"],["On the way","On the way","रास्ते में"],["Done","Done","पूरा"]);
 var TRX=null,TRM={};
 function lang(){var R=document.documentElement,l=String(R.dataset.language||R.lang||"en").toLowerCase();return l.indexOf("hi")===0?2:1}
 function tr(s){
