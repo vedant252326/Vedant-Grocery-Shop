@@ -38,6 +38,8 @@
 <link rel="apple-touch-icon" href="https://vedantgrocery.shop/logo.png">
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#fbd34a">
+<style>html{background:#fbd34a}</style>
+<script>(function(){try{var k=localStorage.getItem('vedantFestivalTheme');if(k)document.documentElement.setAttribute('data-festival',k)}catch(e){}window.vgT=function(e,h){var l=String(document.documentElement.dataset.language||document.documentElement.lang||'en').toLowerCase();return l.indexOf('hi')===0?h:e}})();</script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="application-name" content="Vedant Grocery Shop">
@@ -2074,55 +2076,49 @@ body.stvn-detail-open{overflow:hidden}
 @media(max-width:520px){.stvn-product-detail-modal{padding:0;align-items:flex-end}.stvn-product-detail-sheet{width:100%;max-height:94vh;border-radius:20px 20px 0 0;padding:14px}.stvn-detail-gallery{height:36vh;min-height:210px}.stvn-detail-name{font-size:20px}.stvn-detail-price{font-size:19px}}
 </style>
 
-<link rel="preload" as="image" href="https://vedantgrocery.shop/logo.png">
 <script>(function(){
   // Always play the branded entry animation on every launch, including installed PWA launches.
   // Do not set vg-nosplash based on sessionStorage or auth callback parameters.
   document.documentElement.classList.remove('vg-nosplash');
 })();</script>
 
-<style id="vg-mobile-entry-performance-fix">
-@media (max-width:700px){
-  #vgSplash{transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden;}
-  #vgSplash .vgs-glow{animation-duration:3.2s!important;opacity:.72!important;}
-  #vgSplash .vgs-food span{animation-duration:4.8s!important;}
-  #vgSplash.out{transform:translate3d(105%,0,0)!important;transition:transform .48s cubic-bezier(.22,.75,.25,1)!important;}
-}
-</style>
+<link rel="preload" as="image" href="https://vedantgrocery.shop/logo.png">
 <style id="vgSplashCss">
-/* Splash paints on the very first frame (no logo flash, no blank screen). */
-#vgSplash{position:fixed;inset:0;z-index:2147483600;visibility:visible!important;overflow:hidden;display:flex;align-items:center;justify-content:center;
+/* Entry animation v2: no logo tile, paints on first frame, transform/opacity only (GPU smooth). Total ~2.1s */
+html{background:#fbd34a}
+#vgSplash{position:fixed;left:0;top:0;right:0;width:100%;height:100%;height:100dvh;z-index:2147483600;visibility:visible!important;overflow:hidden;display:flex;align-items:center;justify-content:center;
 font-family:Inter,"Segoe UI",Arial,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;
-background:radial-gradient(circle at 50% 40%,#ffe45c 0%,#fbd34a 42%,#f5b800 100%);
-transform:translate3d(0,0,0);transition:transform .6s cubic-bezier(.72,0,.18,1);will-change:transform;contain:layout paint}
+background:radial-gradient(circle at 50% 40%,#ffe45c 0%,#fbd34a 45%,#f5b800 100%);
+transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden;
+transition:transform .55s cubic-bezier(.65,0,.2,1);will-change:transform}
 html.vg-nosplash #vgSplash{display:none!important}
-#vgSplash.out{transform:translate3d(104%,0,0);pointer-events:none;box-shadow:-30px 0 50px rgba(60,40,0,.22)}
-#vgSplash .vgs-glow{position:absolute;left:50%;top:42%;width:min(130vw,720px);height:min(130vw,720px);margin:calc(min(130vw,720px)/-2) 0 0 calc(min(130vw,720px)/-2);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.7),rgba(255,255,255,0) 62%);animation:vgsBreath 2s ease-in-out infinite}
+#vgSplash.out{transform:translate3d(100%,0,0);pointer-events:none}
+#vgSplash .vgs-glow{position:absolute;left:50%;top:44%;width:120vmax;height:120vmax;margin:-60vmax 0 0 -60vmax;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.55),rgba(255,255,255,0) 55%);opacity:0;transform:scale(.6);animation:vgsGlow 1.1s cubic-bezier(.2,.8,.2,1) both;will-change:transform,opacity}
 #vgSplash .vgs-food{position:absolute;inset:0;pointer-events:none}
-#vgSplash .vgs-food span{position:absolute;bottom:-50px;opacity:0;animation:vgsRise 3s ease-in infinite}
-#vgSplash .vgs-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 18px;margin-top:-4vh}
-#vgSplash .vgs-logo{position:relative;width:clamp(104px,26vmin,150px);height:clamp(104px,26vmin,150px);animation:vgsPop .8s cubic-bezier(.2,1.4,.35,1) both}
-#vgSplash .vgs-tile{position:absolute;inset:0;display:grid;place-items:center;border-radius:30%;background:linear-gradient(145deg,#fff,#e9fbea);box-shadow:0 14px 34px rgba(88,60,0,.3),0 0 0 6px rgba(255,255,255,.55);overflow:hidden;padding:11%}
+#vgSplash .vgs-food span{position:absolute;bottom:-50px;opacity:0;will-change:transform,opacity;animation:vgsRise 2.6s ease-out both}
+#vgSplash .vgs-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 18px 6vh}
+#vgSplash .vgs-logo{position:relative;width:clamp(104px,28vw,150px);height:clamp(104px,28vw,150px);margin-bottom:clamp(12px,2.6vh,22px);will-change:transform,opacity;animation:vgsPop .7s cubic-bezier(.2,1.3,.35,1) both}
+#vgSplash .vgs-tile{position:absolute;inset:0;display:grid;place-items:center;border-radius:30%;background:linear-gradient(145deg,#fff,#e9fbea);box-shadow:0 14px 30px rgba(88,60,0,.28),0 0 0 6px rgba(255,255,255,.55);overflow:hidden;padding:11%}
 #vgSplash .vgs-tile img{width:100%;height:100%;object-fit:contain}
 #vgSplash .vgs-tile i{display:none;font-style:normal;font-size:clamp(46px,12vmin,70px)}
 #vgSplash .vgs-tile.noimg i{display:block}
-#vgSplash .vgs-ring{position:absolute;inset:-8%;border-radius:36%;border:3px solid rgba(12,131,31,.5);animation:vgsRing 1.6s ease-out .5s infinite}
-#vgSplash .vgs-word{margin:clamp(12px,2.6vmin,22px) 0 0;display:flex;font-size:clamp(46px,14.5vmin,96px);line-height:1;font-weight:900;letter-spacing:-.02em;color:#0c831f;text-shadow:0 3px 0 #fff,0 8px 16px rgba(80,55,0,.28)}
-#vgSplash .vgs-word b{display:inline-block;font-weight:inherit;opacity:0;animation:vgsDrop .55s cubic-bezier(.2,1.5,.4,1) both}
-#vgSplash .vgs-sub{margin-top:10px;padding:5px 16px;border-radius:999px;background:#0a5a17;color:#fff;font-weight:900;font-size:clamp(12px,2.6vmin,16px);letter-spacing:.42em;text-indent:.42em;animation:vgsSlide .5s cubic-bezier(.2,1.3,.4,1) .95s both}
-#vgSplash .vgs-badge{margin-top:16px;padding:9px 18px;border-radius:999px;background:#fff;color:#111;font-weight:800;font-size:clamp(13px,3vmin,18px);box-shadow:0 10px 22px rgba(90,60,0,.22);animation:vgsSlide .5s cubic-bezier(.2,1.4,.4,1) 1.15s both}
-#vgSplash .vgs-tag{margin:10px 0 0;font-weight:800;font-size:clamp(12px,2.4vmin,15px);color:#5a3f00;letter-spacing:.06em;animation:vgsSlide .5s ease 1.4s both}
-#vgSplash .vgs-road{position:absolute;left:0;right:0;bottom:calc(clamp(46px,9vh,84px) + env(safe-area-inset-bottom,0px));height:56px;z-index:2;overflow:hidden}
-#vgSplash .vgs-scooter{position:absolute;bottom:2px;left:0;font-size:clamp(38px,8vmin,52px);transform:translate3d(-90px,0,0) scaleX(-1);animation:vgsDrive 2.2s cubic-bezier(.45,.05,.3,1) .45s both}
-#vgSplash .vgs-lines{position:absolute;left:0;right:0;bottom:12px;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95));transform-origin:left;transform:scaleX(0);animation:vgsTrail 2.2s cubic-bezier(.45,.05,.3,1) .45s both}
-#vgSplash .vgs-bar{position:absolute;left:50%;bottom:calc(clamp(22px,4.5vh,40px) + env(safe-area-inset-bottom,0px));width:min(64vw,320px);height:7px;margin-left:min(-32vw,-160px);border-radius:7px;background:rgba(10,90,23,.18);overflow:hidden;z-index:2}
-#vgSplash .vgs-bar i{display:block;height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#0c831f,#27d447);transform-origin:left;transform:scaleX(0);animation:vgsLoad 2.2s cubic-bezier(.4,.1,.2,1) .3s forwards}
-@keyframes vgsBreath{50%{transform:scale(1.08);opacity:.85}}
-@keyframes vgsPop{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.14) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}
-@keyframes vgsRing{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.5);opacity:0}}
-@keyframes vgsDrop{0%{transform:translate3d(0,-60px,0) scale(.6);opacity:0}100%{transform:none;opacity:1}}
-@keyframes vgsSlide{from{transform:translate3d(0,14px,0) scale(.85);opacity:0}to{transform:none;opacity:1}}
-@keyframes vgsRise{0%{transform:translate3d(0,0,0) rotate(0);opacity:0}15%{opacity:1}100%{transform:translate3d(0,-112vh,0) rotate(280deg);opacity:0}}
+#vgSplash .vgs-ring{position:absolute;inset:-8%;border-radius:36%;border:3px solid rgba(12,131,31,.5);will-change:transform,opacity;animation:vgsRing 1.5s ease-out .5s 1 both}
+@keyframes vgsPop{0%{transform:scale(.2) rotate(-18deg);opacity:0}60%{transform:scale(1.1) rotate(4deg);opacity:1}100%{transform:none;opacity:1}}
+@keyframes vgsRing{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.45);opacity:0}}
+#vgSplash .vgs-word{margin:0;display:flex;font-size:clamp(52px,17vw,104px);line-height:1;font-weight:900;letter-spacing:-.02em;color:#0c831f;text-shadow:0 3px 0 #fff,0 8px 16px rgba(80,55,0,.25)}
+#vgSplash .vgs-word b{display:inline-block;font-weight:inherit;opacity:0;will-change:transform,opacity;animation:vgsDrop .6s cubic-bezier(.2,1.35,.4,1) both}
+#vgSplash .vgs-sub{margin-top:12px;padding:6px 16px;border-radius:999px;background:#0a5a17;color:#fff;font-weight:900;font-size:clamp(12px,3.4vw,16px);letter-spacing:.42em;text-indent:.42em;opacity:0;animation:vgsSlide .5s cubic-bezier(.2,1,.3,1) .5s both}
+#vgSplash .vgs-badge{margin-top:18px;padding:9px 18px;border-radius:999px;background:#fff;color:#111;font-weight:800;font-size:clamp(13px,3.7vw,18px);box-shadow:0 8px 18px rgba(90,60,0,.2);opacity:0;animation:vgsSlide .5s cubic-bezier(.2,1,.3,1) .7s both}
+#vgSplash .vgs-tag{margin:12px 0 0;font-weight:800;font-size:clamp(12px,3.3vw,15px);color:#5a3f00;letter-spacing:.06em;opacity:0;animation:vgsSlide .5s ease .9s both}
+#vgSplash .vgs-road{position:absolute;left:0;right:0;bottom:calc(54px + env(safe-area-inset-bottom,0px));height:56px;z-index:2;overflow:hidden}
+#vgSplash .vgs-scooter{position:absolute;bottom:2px;left:0;font-size:clamp(38px,10vw,52px);transform:translate3d(-90px,0,0) scaleX(-1);will-change:transform;animation:vgsDrive 1.8s cubic-bezier(.4,.1,.3,1) .2s both}
+#vgSplash .vgs-lines{position:absolute;left:0;right:0;bottom:12px;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95));transform-origin:left;transform:scaleX(0);will-change:transform,opacity;animation:vgsTrail 1.8s cubic-bezier(.4,.1,.3,1) .2s both}
+#vgSplash .vgs-bar{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));width:min(64vw,320px);height:7px;margin-left:min(-32vw,-160px);border-radius:7px;background:rgba(10,90,23,.18);overflow:hidden;z-index:2}
+#vgSplash .vgs-bar i{display:block;height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#0c831f,#27d447);transform-origin:left;transform:scaleX(0);will-change:transform;animation:vgsLoad 1.9s cubic-bezier(.4,.1,.2,1) .1s both}
+@keyframes vgsGlow{to{opacity:.8;transform:scale(1)}}
+@keyframes vgsDrop{0%{transform:translate3d(0,-50px,0) scale(.7);opacity:0}100%{transform:none;opacity:1}}
+@keyframes vgsSlide{from{transform:translate3d(0,14px,0) scale(.9);opacity:0}to{transform:none;opacity:1}}
+@keyframes vgsRise{0%{transform:translate3d(0,0,0) rotate(0);opacity:0}15%{opacity:1}100%{transform:translate3d(0,-105vh,0) rotate(240deg);opacity:0}}
 @keyframes vgsDrive{from{transform:translate3d(-90px,0,0) scaleX(-1)}to{transform:translate3d(calc(100vw + 80px),0,0) scaleX(-1)}}
 @keyframes vgsTrail{0%{transform:scaleX(0);opacity:1}85%{transform:scaleX(.9);opacity:1}100%{transform:scaleX(1);opacity:0}}
 @keyframes vgsLoad{to{transform:scaleX(1)}}
@@ -2521,7 +2517,7 @@ button,input,select,textarea{font:inherit}
 </head>
 
 <body>
-<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.80s;font-size:26px">🍅</span><span style="left:18%;animation-delay:0.35s;animation-duration:3.30s;font-size:32px">🥬</span><span style="left:30%;animation-delay:0.70s;animation-duration:3.80s;font-size:38px">🥕</span><span style="left:42%;animation-delay:1.05s;animation-duration:2.80s;font-size:26px">🍎</span><span style="left:54%;animation-delay:0.00s;animation-duration:3.30s;font-size:32px">🥛</span><span style="left:66%;animation-delay:0.35s;animation-duration:3.80s;font-size:38px">🍞</span><span style="left:78%;animation-delay:0.70s;animation-duration:2.80s;font-size:26px">🍌</span><span style="left:90%;animation-delay:1.05s;animation-duration:3.30s;font-size:32px">🥔</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="https://vedantgrocery.shop/logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.45s">V</b><b style="animation-delay:0.52s">E</b><b style="animation-delay:0.59s">D</b><b style="animation-delay:0.66s">A</b><b style="animation-delay:0.73s">N</b><b style="animation-delay:0.80s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Best prices</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div>
+<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="https://vedantgrocery.shop/logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Best prices</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div>
 
 <div id="stvnCustomerLoginGate" class="notranslate" translate="no" lang="en" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
   <div class="stvn-customer-login-card">
@@ -2541,14 +2537,10 @@ button,input,select,textarea{font:inherit}
       </div>
       <div class="stvn-login-field" id="stvnCustomerOtpWrap" style="display:none">
         <label for="stvnCustomerOtp">Email verification code / OTP</label>
-        <div class="vg-otp-boxes" id="vgCustomerOtpBoxes" role="group" aria-label="8 digit email verification code">
-          <span class="vg-otp-digit" aria-hidden="true"></span><span class="vg-otp-digit" aria-hidden="true"></span>
-          <span class="vg-otp-digit" aria-hidden="true"></span><span class="vg-otp-digit" aria-hidden="true"></span>
-          <span class="vg-otp-digit" aria-hidden="true"></span><span class="vg-otp-digit" aria-hidden="true"></span>
-          <span class="vg-otp-digit" aria-hidden="true"></span><span class="vg-otp-digit" aria-hidden="true"></span>
-          <input id="vgCustomerOtpEntry" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="one-time-code" aria-label="Enter 8 digit OTP" />
+        <div class="vg-otp-single" id="vgOtpSingle">
+          <input id="vgCustomerOtpEntry" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" enterkeyhint="done" placeholder="••••••" aria-label="Enter email OTP">
         </div>
-        <input id="stvnCustomerOtp" type="hidden" inputmode="numeric" autocomplete="one-time-code" maxlength="8" aria-label="Complete OTP">
+        <input id="stvnCustomerOtp" type="hidden" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="Complete OTP">
         <p class="stvn-login-otp-help">Check your Gmail Inbox, Spam, and All Mail folders for the code.</p>
       </div>
       <button id="stvnCustomerLoginButton" class="stvn-customer-login-action" type="submit">Continue with Email →</button>
@@ -2892,10 +2884,10 @@ required>
 <input
 type="text"
 id="adminOtp"
-placeholder="Enter 8-digit email OTP"
+placeholder="Enter 6-digit email OTP"
 inputmode="numeric"
 autocomplete="one-time-code"
-maxlength="8"
+maxlength="6"
 style="display:none;"
 aria-label="Email OTP">
 
@@ -2997,6 +2989,7 @@ onclick="toggleAdminOrdersView()">
 <button id="admin-sound-email-toggle" class="admin-btn" type="button" aria-expanded="false" aria-controls="adminSoundEmailSection" onclick="toggleAdminPanel('adminSoundEmailSection','admin-sound-email-toggle','🔔 Sound & Email','✕ Close Sound & Email');loadOrderNotificationSettings()">🔔 Sound & Email</button>
 <button id="admin-shop-status-toolbar-toggle" class="admin-btn" type="button" onclick="toggleShopStatusPanel();document.getElementById('adminShopStatusSection')?.scrollIntoView({behavior:'smooth',block:'nearest'})">🏪 Shop Status</button>
 <button id="admin-view-withdrawal-status" class="admin-btn" type="button" aria-expanded="false" aria-controls="stvnWithdrawalAdmin" onclick="window.toggleWithdrawalStatusPanel()">💸 Withdrawal Status</button>
+<button id="admin-festival-toolbar-toggle" class="admin-btn stvn-admin-quick-toggle" type="button" aria-expanded="false" aria-controls="adminFestivalPanel" onclick="vgFestToggle();var p=document.getElementById('adminFestivalPanel');if(p&&!p.hidden)document.getElementById('adminFestivalSection')?.scrollIntoView({behavior:'smooth',block:'nearest'})">🎉 Festival</button>
 
 <select
 id="adminOrderFilter"
@@ -3097,6 +3090,21 @@ Logout
       <button type="button" id="adminShopStatusSave" class="shop-btn" onclick="saveShopStatus()">💾 Save Status</button>
     </div>
     <p id="adminShopStatusMessage" class="admin-small" role="status" aria-live="polite">दुकान की स्थिति लोड हो रही है…</p>
+  </div>
+</section>
+
+<section id="adminFestivalSection" class="section-card" style="margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+  <button type="button" id="adminFestivalToggle" class="admin-btn" aria-expanded="false" aria-controls="adminFestivalPanel" onclick="vgFestToggle()">🎉 Festival Theme / त्योहार थीम <span id="adminFestivalIcon" aria-hidden="true">＋</span></button>
+  <div id="adminFestivalPanel" hidden>
+    <p class="admin-small">त्योहार चुनें। चुनते ही इस फ़ोन पर Preview दिखेगा। Save दबाने पर Home, Shop, Cart और Bottom Menu की थीम सभी customers के लिए बदल जाएगी। वापस सामान्य करने के लिए "Normal" चुनकर Save करें।</p>
+    <p id="adminFestLive" class="admin-small" role="status"></p>
+    <div id="adminFestGrid" class="fx-grid"></div>
+    <label class="admin-small" for="adminFestMsg">Message in English (optional)</label>
+    <input id="adminFestMsg" type="text" maxlength="110" placeholder="e.g. Happy Diwali from Vedant Grocery family!" oninput="vgFestMsg()">
+    <label class="admin-small" for="adminFestMsgHi">हिंदी संदेश (optional)</label>
+    <input id="adminFestMsgHi" type="text" maxlength="110" placeholder="जैसे: वेदांत ग्रोसरी परिवार की ओर से दीपावली की शुभकामनाएँ" oninput="vgFestMsg()">
+    <button type="button" id="adminFestSave" class="shop-btn" onclick="vgFestSave()">💾 Save करें और सभी Customers को दिखाएँ</button>
+    <p id="adminFestStatus" class="admin-small" role="status" aria-live="polite"></p>
   </div>
 </section>
 
@@ -3499,11 +3507,11 @@ async function stvnCustomerSendOtp(){
 async function stvnCustomerVerifyOtp(){
   const email=(document.getElementById("stvnCustomerEmail").value || "").trim().toLowerCase();
   const otpInput=document.getElementById("stvnCustomerOtp");
-  const token=(otpInput.value || "").replace(/\D/g,"").slice(0,8);
+  const token=(otpInput.value || "").replace(/\D/g,"").slice(0,6);
   const button=document.getElementById("stvnCustomerLoginButton");
   otpInput.value=token;
-  if(!email || email!==stvnCustomerOtpSentForEmail || !/^\d{8}$/.test(token)){
-    stvnCustomerLoginMessage("उसी email का 8 अंकों वाला OTP डालें।","error"); otpInput.focus(); return;
+  if(!email || email!==stvnCustomerOtpSentForEmail || !/^\d{6}$/.test(token)){
+    stvnCustomerLoginMessage("उसी email पर आया पूरा OTP डालें।","error"); otpInput.focus(); return;
   }
   button.disabled=true;
   stvnCustomerLoginMessage("⏳ OTP verify हो रहा है…");
@@ -3548,7 +3556,7 @@ async function stvnCustomerResendOtp(){
 }
 
 document.addEventListener("input",function(event){
-  if(event.target && event.target.id==="stvnCustomerOtp") event.target.value=event.target.value.replace(/\D/g,"").slice(0,8);
+  if(event.target && event.target.id==="stvnCustomerOtp") event.target.value=event.target.value.replace(/\D/g,"").slice(0,6);
 });
 
 function stvnCustomerChangeEmail(shouldFocus){
@@ -6675,7 +6683,7 @@ async function adminLogin(){
     emailInput.readOnly = true;
     button.textContent = "Verify OTP and Login";
     if (resendButton) resendButton.style.display = "inline-block";
-    message.textContent = "✅ OTP भेज दिया गया है. Inbox/Spam में email देखें, फिर 8 अंकों का OTP डालकर Verify दबाएँ.";
+    message.textContent = "✅ OTP भेज दिया गया है. Inbox/Spam में email देखें, फिर 6 अंकों का OTP डालकर Verify दबाएँ.";
     otpInput.focus();
   } catch (error) {
     console.error("Admin OTP send error:", error);
@@ -6728,8 +6736,8 @@ async function adminVerifyOtp(){
     document.getElementById("adminLoginBox").style.display = "block";
     return;
   }
-  if (!email || email !== adminOtpSentForEmail || !/^\d{8}$/.test(token)) {
-    message.textContent = "❌ उसी Owner email के साथ 8 अंकों का OTP डालो जिससे OTP भेजा था. अगर email में केवल login link आता है, तो Supabase Email Template में {{ .Token }} इस्तेमाल करो.";
+  if (!email || email !== adminOtpSentForEmail || !/^\d{6}$/.test(token)) {
+    message.textContent = "❌ उसी Owner email के साथ 6 अंकों का OTP डालो जिससे OTP भेजा था. अगर email में केवल login link आता है, तो Supabase Email Template में {{ .Token }} इस्तेमाल करो.";
     return;
   }
 
@@ -12124,18 +12132,18 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
       const reasonTitle=box?.querySelector('#stvnShopStatusReasonTitle');
       const reasonText=box?.querySelector('#stvnShopStatusReasonText');
       if(reasonText)reasonText.textContent=savedReason.trim();
-      if(reasonTitle)reasonTitle.textContent=savedStatus==='maintenance'?'मेंटेनेंस की वजह / समस्या':'दुकान बंद होने का कारण';
+      if(reasonTitle)reasonTitle.textContent=savedStatus==='maintenance'?vgT('Reason for maintenance','मेंटेनेंस की वजह / समस्या'):vgT('Reason the shop is closed','दुकान बंद होने का कारण');
       if(reasonCard)reasonCard.classList.toggle('is-visible',savedStatus!=='open' && !!savedReason.trim());
       if(savedStatus==='maintenance'){
-        if(heading)heading.textContent='दुकान अभी Under Maintenance में है';
+        if(heading)heading.textContent=vgT('The shop is under maintenance','दुकान अभी Under Maintenance में है');
         if(stamp)stamp.textContent='UNDER MAINTENANCE';
-        if(description)description.textContent='हमारी दुकान में कुछ जरूरी सुधार का काम चल रहा है। इस समय ऑर्डर उपलब्ध नहीं हैं। कृपया थोड़ी देर बाद दोबारा आएँ।';
-        if(footer)footer.textContent='🔧 आपकी सुविधा के लिए काम जारी है';
+        if(description)description.textContent=vgT('We are carrying out some important improvements. Orders are unavailable right now. Please check back shortly.','हमारी दुकान में कुछ जरूरी सुधार का काम चल रहा है। इस समय ऑर्डर उपलब्ध नहीं हैं। कृपया थोड़ी देर बाद दोबारा आएँ।');
+        if(footer)footer.textContent=vgT('🔧 We are working to serve you better','🔧 आपकी सुविधा के लिए काम जारी है');
       }else if(savedStatus==='closed'){
-        if(heading)heading.textContent='अभी दुकान बंद है';
+        if(heading)heading.textContent=vgT('The shop is closed right now','अभी दुकान बंद है');
         if(stamp)stamp.textContent='SHOP CLOSED';
-        if(description)description.textContent='आपके आने के लिए धन्यवाद! हमारी दुकान इस समय बंद है। कृपया थोड़ी देर बाद फिर पधारें। दुकान खुलते ही हमारे सभी प्रोडक्ट और कैटेगरी फिर से उपलब्ध हो जाएँगे।';
-        if(footer)footer.textContent='✨ आपकी सुविधा हमारे लिए महत्वपूर्ण है ✨';
+        if(description)description.textContent=vgT('Thank you for visiting! Our shop is closed at the moment. Please visit again soon. All products and categories will be back as soon as we open.','आपके आने के लिए धन्यवाद! हमारी दुकान इस समय बंद है। कृपया थोड़ी देर बाद फिर पधारें। दुकान खुलते ही हमारे सभी प्रोडक्ट और कैटेगरी फिर से उपलब्ध हो जाएँगे।');
+        if(footer)footer.textContent=vgT('✨ Your convenience matters to us ✨','✨ आपकी सुविधा हमारे लिए महत्वपूर्ण है ✨');
       }
     }
     document.documentElement.dataset.shopStatus=savedStatus;
@@ -12150,6 +12158,7 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
       if(msg)msg.textContent=savedStatus==='closed'?'🔴 अभी दुकान बंद है। Customer side पर SHOP CLOSED display दिख रहा है।':savedStatus==='maintenance'?'🛠️ दुकान Under Maintenance में है। Customer side पर maintenance display दिख रहा है।':'🟢 दुकान खुली है। Customer side सामान्य है।';
     }
   }
+  window.__vgReapplyStatus=function(){applyStatus(savedStatus,savedReason)};
   window.toggleShopStatusPanel=function(){
     const panel=document.getElementById('adminShopStatusPanel');
     const button=document.getElementById('adminShopStatusToggle');
@@ -12235,7 +12244,7 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
     const action=target.closest('.cart-btn,.stvn-add-cart-btn,.stvn-qty-control button,#proceed-checkout-btn,.place-order');
     if(action){
       event.preventDefault();event.stopImmediatePropagation();
-      window.stvnAlert(savedStatus==='maintenance'?'दुकान अभी Under Maintenance में है। कृपया थोड़ी देर बाद कोशिश करें।':'अभी दुकान बंद है। दुकान खुलने के बाद आप सामान कार्ट में जोड़ सकते हैं।');
+      window.stvnAlert(savedStatus==='maintenance'?vgT('The shop is under maintenance. Please try again shortly.','दुकान अभी Under Maintenance में है। कृपया थोड़ी देर बाद कोशिश करें।'):vgT('The shop is closed right now. You can add items to your cart once we reopen.','अभी दुकान बंद है। दुकान खुलने के बाद आप सामान कार्ट में जोड़ सकते हैं।'));
     }
   },true);
   const originalReady=()=>{ensureClosedDisplay();fetchRemoteStatus();};
@@ -13564,7 +13573,7 @@ html[data-shop-status="closed"] #page-home .stvn-home-hide-when-closed,html[data
 (function(){
 'use strict';
 function addHomeBanner(){const home=document.getElementById('page-home');if(!home||document.getElementById('stvnHomeStatusBanner'))return;const b=document.createElement('section');b.id='stvnHomeStatusBanner';b.setAttribute('role','status');b.setAttribute('aria-live','polite');b.innerHTML='<div style="font-size:38px">🏪</div><h2 id="stvnHomeStatusTitle">दुकान अभी बंद है</h2><div class="stvn-home-status-stamp" id="stvnHomeStatusStamp">SHOP CLOSED</div><p id="stvnHomeStatusText">कृपया थोड़ी देर बाद फिर आएँ।</p><p id="stvnHomeStatusReason" style="font-weight:800"></p>';const anchor=home.querySelector('.stvn-delivery-location-card')||home.querySelector('.top.hero')||home.querySelector('.hero');if(anchor)anchor.insertAdjacentElement('afterend',b);else home.prepend(b)}
-function syncBanner(){addHomeBanner();const status=document.documentElement.dataset.shopStatus||'open';const b=document.getElementById('stvnHomeStatusBanner');if(!b)return;const title=b.querySelector('#stvnHomeStatusTitle'),stamp=b.querySelector('#stvnHomeStatusStamp'),txt=b.querySelector('#stvnHomeStatusText'),reason=b.querySelector('#stvnHomeStatusReason');if(status==='maintenance'){title.textContent='दुकान Under Maintenance में है';stamp.textContent='UNDER MAINTENANCE';txt.textContent='हमारी दुकान में जरूरी सुधार का काम चल रहा है। फिलहाल ऑर्डर उपलब्ध नहीं हैं। कृपया थोड़ी देर बाद दोबारा आएँ।';}else{title.textContent='अभी दुकान बंद है';stamp.textContent='SHOP CLOSED';txt.textContent='हमारी दुकान इस समय बंद है। दुकान खुलते ही आप फिर से सामान ऑर्डर कर सकेंगे।'}const r=document.getElementById('adminShopStatusReason');reason.textContent=(status!=='open'&&r&&r.value.trim())?r.value.trim():'';}
+window.__vgSyncBanner=function(){syncBanner()};function syncBanner(){addHomeBanner();const status=document.documentElement.dataset.shopStatus||'open';const b=document.getElementById('stvnHomeStatusBanner');if(!b)return;const title=b.querySelector('#stvnHomeStatusTitle'),stamp=b.querySelector('#stvnHomeStatusStamp'),txt=b.querySelector('#stvnHomeStatusText'),reason=b.querySelector('#stvnHomeStatusReason');if(status==='maintenance'){title.textContent=vgT('The shop is under maintenance','दुकान Under Maintenance में है');stamp.textContent='UNDER MAINTENANCE';txt.textContent=vgT('We are doing some important work. Orders are unavailable for now. Please check back shortly.','हमारी दुकान में जरूरी सुधार का काम चल रहा है। फिलहाल ऑर्डर उपलब्ध नहीं हैं। कृपया थोड़ी देर बाद दोबारा आएँ।');}else{title.textContent=vgT('The shop is closed right now','अभी दुकान बंद है');stamp.textContent='SHOP CLOSED';txt.textContent=vgT('Our shop is closed at the moment. You can order again as soon as we open.','हमारी दुकान इस समय बंद है। दुकान खुलते ही आप फिर से सामान ऑर्डर कर सकेंगे।')}const r=document.getElementById('adminShopStatusReason');reason.textContent=(status!=='open'&&r&&r.value.trim())?r.value.trim():'';}
 function collapseOffers(){const box=document.getElementById('stvnOffersAdmin');if(!box||box.dataset.collapsible==='yes')return;const content=document.createElement('div');content.className='stvn-offer-collapse-content';while(box.firstChild)content.appendChild(box.firstChild);const btn=document.createElement('button');btn.type='button';btn.className='stvn-offer-collapse-button';btn.innerHTML='<span>🎁 Offers Update <small style="display:block;font-size:12px;font-weight:500;opacity:.9">ऑफर जोड़ने, बदलने या छिपाने के लिए क्लिक करें</small></span><span class="stvn-offer-collapse-icon">＋</span>';content.hidden=true;btn.setAttribute('aria-expanded','false');btn.addEventListener('click',()=>{content.hidden=!content.hidden;btn.setAttribute('aria-expanded',String(!content.hidden));btn.querySelector('.stvn-offer-collapse-icon').textContent=content.hidden?'＋':'－'});box.append(btn,content);box.dataset.collapsible='yes'}
 function init(){addHomeBanner();collapseOffers();syncBanner();const target=document.documentElement;new MutationObserver(()=>syncBanner()).observe(target,{attributes:true,attributeFilter:['data-shop-status']});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
@@ -14443,7 +14452,7 @@ Object.assign(enDict,{
       unlockLang();                       /* next screen is ready underneath while splash slides away */
       splash.classList.add('out');
       splash.addEventListener('transitionend',function(e){if(e.target===splash)cleanup()});
-      setTimeout(cleanup,900);
+      setTimeout(cleanup,1000);
     }
     function tryLeave(){
       // Do not wait for every image/map/font request: that stalls the entry on mobile.
@@ -14452,9 +14461,9 @@ Object.assign(enDict,{
       else leave();
     }
     splash.addEventListener('click',leave,{passive:true});
-    setTimeout(tryLeave,reduce?650:1750);
+    setTimeout(tryLeave,reduce?650:2100);
     // Fallback if the browser throttles animation frames while backgrounded.
-    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,750)},3000);
+    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,750)},3600);
   })();
 })();
 </script>
@@ -18248,35 +18257,8 @@ html body:not(#vq1):not(#vq2):not(#vq3):not(#vq4):not(#vq5) .vg-store-header .vg
 #stvnCustomerLoginGate .stvn-login-message{overflow-wrap:anywhere}
 @media(max-width:380px){#stvnCustomerLoginGate .vg-otp-boxes{gap:4px}#stvnCustomerLoginGate .vg-otp-digit{height:45px!important;min-height:45px!important;border-radius:9px!important;font-size:18px!important}}
 @media(max-width:600px){#stvnCustomerLoginGate{min-height:100dvh;padding:0!important}#stvnCustomerLoginGate .stvn-customer-login-card{min-height:100dvh;min-height:100svh}#stvnCustomerLoginGate .stvn-login-hero{padding-left:18px;padding-right:18px}#stvnCustomerLoginGate .stvn-login-sheet{padding-left:18px;padding-right:18px}}
-/* Avoid mobile compositor jitter on the intro when it is shown in a browser. */
-#vgSplash{width:100%;height:100%;height:100dvh;min-height:100svh;left:0;right:0;transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
-#vgSplash.out{transform:translate3d(100%,0,0)}
-#vgSplash .vgs-scooter{will-change:transform;animation-timing-function:linear}
-@media(max-width:600px){#vgSplash .vgs-center{margin-top:0;padding-bottom:8vh}#vgSplash .vgs-road{bottom:calc(54px + env(safe-area-inset-bottom,0px))}#vgSplash .vgs-bar{bottom:calc(22px + env(safe-area-inset-bottom,0px))}#vgSplash .vgs-food span{animation-duration:3.8s!important}}
 </style>
-<script id="vg-customer-otp-box-controller">
-(function(){
-  function init(){
-    var wrap=document.getElementById('vgCustomerOtpBoxes'), hidden=document.getElementById('stvnCustomerOtp');
-    if(!wrap||!hidden||wrap.dataset.ready==='1')return;
-    wrap.dataset.ready='1';
-    var cells=Array.from(wrap.querySelectorAll('.vg-otp-digit'));
-    function sync(){hidden.value=cells.map(function(c){return c.value;}).join('').replace(/\D/g,'').slice(0,8);}
-    function focusFirst(){(cells.find(function(c){return !c.value;})||cells[0]).focus();}
-    function fill(value){var digits=String(value||'').replace(/\D/g,'').slice(0,8).split('');cells.forEach(function(c,i){c.value=digits[i]||'';});sync();var next=cells.find(function(c){return !c.value;});(next||cells[7]).focus();}
-    cells.forEach(function(cell,index){
-      cell.addEventListener('input',function(){var digits=cell.value.replace(/\D/g,'');if(digits.length>1){fill(digits);return;}cell.value=digits.slice(-1);sync();if(cell.value&&index<7)cells[index+1].focus();});
-      cell.addEventListener('keydown',function(e){if(e.key==='Backspace'){if(cell.value){cell.value='';sync();}else if(index>0){cells[index-1].value='';cells[index-1].focus();sync();}}else if(e.key==='ArrowLeft'&&index>0){e.preventDefault();cells[index-1].focus();}else if(e.key==='ArrowRight'&&index<7){e.preventDefault();cells[index+1].focus();}});
-      cell.addEventListener('paste',function(e){var data=(e.clipboardData||window.clipboardData).getData('text');if(data){e.preventDefault();fill(data);}});
-    });
-    window.stvnCustomerOtpBoxFocus=focusFirst;
-    hidden.addEventListener('input',function(){var digits=hidden.value.replace(/\D/g,'').slice(0,8);cells.forEach(function(c,i){c.value=digits[i]||'';});});
-    var resend=document.getElementById('stvnCustomerResendButton');
-    if(resend)resend.addEventListener('click',function(){cells.forEach(function(c){c.value='';});sync();});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();
-</script>
+
 
 </body>
 </html>
@@ -19869,81 +19851,490 @@ html.vg-navigating,html.vg-navigating body{overflow-x:hidden!important}
 </script>
 
 
-<style id="vg-otp-visible-final-hotfix">
-/* Final OTP rendering fix: force entered digits to remain visible on mobile browsers. */
-#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit,
-#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit:focus,
-#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit:active{
-  display:block!important;visibility:visible!important;opacity:1!important;
-  color:#102f18!important;-webkit-text-fill-color:#102f18!important;
-  caret-color:#087c20!important;text-shadow:none!important;
-  font-family:Arial,Helvetica,sans-serif!important;font-size:22px!important;
-  font-weight:900!important;line-height:1!important;text-align:center!important;
-  letter-spacing:0!important;text-indent:0!important;
-  background:#fff!important;appearance:none!important;-webkit-appearance:none!important;
+
+
+
+
+<style id="vg-vip-login-final">
+/* ===== VIP LOGIN (phone first). Loaded last so it wins over older login styles. ===== */
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate{padding:0!important;align-items:stretch!important;justify-content:center!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;backdrop-filter:none!important;
+ background:radial-gradient(120% 60% at 90% -8%,rgba(255,206,70,.30),transparent 58%),radial-gradient(90% 55% at -5% 105%,rgba(52,222,98,.22),transparent 58%),linear-gradient(165deg,#07401d 0%,#04260f 55%,#021509 100%)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate::before,html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate::after{display:none!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-customer-login-card{position:relative!important;display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;min-height:100vh;min-height:100dvh;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important;animation:none!important;contain:none!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-customer-login-card::before,html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-customer-login-card::after{display:none!important}
+
+/* back button */
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-back-action{position:absolute!important;top:calc(env(safe-area-inset-top,0px) + 14px)!important;left:16px!important;z-index:5;margin:0!important;padding:9px 15px!important;border-radius:999px!important;border:1px solid rgba(255,255,255,.26)!important;background:rgba(255,255,255,.12)!important;color:#fff!important;font-size:13px!important;font-weight:700!important;box-shadow:none!important}
+
+/* hero */
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-hero{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;background:transparent!important;color:#fff!important;padding:calc(env(safe-area-inset-top,0px) + 62px) 22px 30px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-hero>div[style]{order:1!important;display:flex!important;align-items:center;gap:10px;color:#ffd54a!important;font-size:11px!important;font-weight:900!important;letter-spacing:.34em!important;margin:0 0 4px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-hero>div[style]::before,html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-hero>div[style]::after{content:"";width:22px;height:1px;background:linear-gradient(90deg,transparent,#ffd54a)}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-hero>div[style]::after{transform:scaleX(-1)}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .vg-login-hero-logo{position:relative;order:0!important;display:flex!important;align-items:center;justify-content:center;width:88px!important;height:88px!important;margin:0 auto 20px!important;padding:9px!important;border-radius:28px!important;background:#fff!important;border:0!important;box-shadow:0 0 0 3px #ffd54a,0 0 0 9px rgba(255,213,74,.16),0 20px 44px rgba(0,0,0,.45)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .vg-login-hero-logo img{width:100%!important;height:100%!important;object-fit:contain!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .vg-login-hero-logo::after{content:"";position:absolute;inset:-12px;border-radius:36px;border:2px solid rgba(255,213,74,.55);pointer-events:none;will-change:transform,opacity;animation:vgVipRing 2.6s ease-out 1s infinite}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #stvnCustomerLoginTitle{order:2!important;color:#fff!important;font-size:clamp(26px,7.6vw,32px)!important;line-height:1.15!important;font-weight:900!important;letter-spacing:-.03em;margin:8px 0 8px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-subtitle{order:3!important;color:rgba(255,255,255,.74)!important;font-size:14px!important;line-height:1.5!important;max-width:300px;margin:0 auto 16px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-benefits{order:4!important;display:flex!important;flex-wrap:wrap;justify-content:center;gap:7px;margin:0!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-benefits span{background:rgba(255,255,255,.09)!important;border:1px solid rgba(255,213,74,.38)!important;color:#ffe9a3!important;padding:7px 11px!important;font-size:11.5px!important;font-weight:800!important}
+
+/* sheet */
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-sheet{position:relative;flex:1 1 auto!important;background:#fff!important;color:#223027!important;text-align:left;border-radius:34px 34px 0 0!important;padding:30px 22px calc(24px + env(safe-area-inset-bottom,0px))!important;box-shadow:0 -18px 50px rgba(0,0,0,.38)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-sheet::before{content:"";position:absolute;left:50%;top:10px;width:44px;height:4px;margin-left:-22px;border-radius:4px;background:linear-gradient(90deg,#ffd54a,#f5a800)}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-field label{font-size:12px!important;font-weight:900!important;letter-spacing:.06em;text-transform:uppercase;color:#4a5f50!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate input{height:56px;padding:0 16px!important;font-size:16px!important;border:1.5px solid #dbe8de!important;border-radius:16px!important;background:#f5faf6!important;color:#1b2a1f!important;box-shadow:none}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate input:focus{border-color:#12b928!important;background:#fff!important;box-shadow:0 0 0 4px rgba(18,185,40,.14)!important;outline:none}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-customer-login-action{position:relative;overflow:hidden;min-height:58px!important;border:0!important;border-radius:18px!important;background:linear-gradient(135deg,#22d24b 0%,#0b9a25 55%,#066b18 100%)!important;color:#fff!important;font-size:16.5px!important;font-weight:800!important;box-shadow:0 12px 26px rgba(11,154,37,.38),inset 0 1px 0 rgba(255,255,255,.35)!important;transition:transform .15s ease}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-customer-login-action:active,html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-google-login-action:active{transform:scale(.98)}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #stvnCustomerLoginButton::after{content:"";position:absolute;top:0;left:0;width:38%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:translate3d(-160%,0,0) skewX(-20deg);will-change:transform;animation:vgVipShine 3.4s ease-in-out 1.4s infinite;pointer-events:none}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #stvnCustomerResendButton{background:#edf8ee!important;color:#176c22!important;box-shadow:none!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-divider{color:#8a998e!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-google-login-action{min-height:56px!important;border:1.5px solid #dbe6de!important;border-radius:18px!important;background:#fff!important;color:#26332a!important;font-size:15px!important;font-weight:800!important;box-shadow:0 4px 14px rgba(24,48,30,.07)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-trust{justify-content:center;margin-top:18px!important;color:#6f8174!important;font-size:12px!important}
+
+/* entrance: transform + opacity only */
+@keyframes vgVipSheet{from{opacity:0;transform:translate3d(0,44px,0)}to{opacity:1;transform:none}}
+@keyframes vgVipFade{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:none}}
+@keyframes vgVipPop{0%{opacity:0;transform:scale(.6)}65%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:none}}
+@keyframes vgVipRing{0%{transform:scale(.95);opacity:.8}100%{transform:scale(1.3);opacity:0}}
+@keyframes vgVipShine{0%,55%{transform:translate3d(-160%,0,0) skewX(-20deg)}100%{transform:translate3d(420%,0,0) skewX(-20deg)}}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-sheet{animation:vgVipSheet .6s cubic-bezier(.2,.85,.25,1) .12s both}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-hero>div[style]{animation:vgVipFade .5s ease .05s both}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .vg-login-hero-logo{animation:vgVipPop .6s cubic-bezier(.2,1.2,.35,1) .08s both}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #stvnCustomerLoginTitle{animation:vgVipFade .5s ease .2s both}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-subtitle{animation:vgVipFade .5s ease .28s both}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-benefits{animation:vgVipFade .5s ease .36s both}
+
+/* short phones */
+@media(max-width:600px) and (max-height:700px){
+ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-subtitle,html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-benefits{display:none!important}
+ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-hero{padding-top:calc(env(safe-area-inset-top,0px) + 54px)!important;padding-bottom:20px!important}
+ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .vg-login-hero-logo{width:68px!important;height:68px!important;margin-bottom:14px!important;border-radius:22px!important}
 }
-#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit::placeholder{color:transparent!important;}
-@media(max-width:390px){#stvnCustomerLoginGate #vgCustomerLoginForm #vgCustomerOtpBoxes .vg-otp-digit{font-size:18px!important;}}
+@media(max-width:380px){ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-sheet{padding-left:16px!important;padding-right:16px!important} }
+
+/* bigger screens: centred card */
+@media(min-width:601px){
+ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate{padding:24px!important;align-items:center!important}
+ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-customer-login-card{max-width:440px!important;min-height:0;margin:auto!important;border-radius:32px!important;overflow:hidden!important;background:rgba(2,21,9,.55)!important;box-shadow:0 30px 80px rgba(0,0,0,.5)!important}
+ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-sheet{border-radius:32px 32px 0 0!important}
+}
+
+/* dark mode */
+html body.dark:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-sheet{background:#151a16!important;color:#f1f5f2!important}
+html body.dark:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-field label{color:#b7c6bb!important}
+html body.dark:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate input{background:#0f1411!important;border-color:#2c382f!important;color:#f1f5f2!important}
+html body.dark:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-google-login-action{background:#1d241f!important;color:#f1f5f2!important;border-color:#2c382f!important}
+
+@media(prefers-reduced-motion:reduce){ html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate *,html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate *::before,html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate *::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important} }
 </style>
-<script id="vg-otp-single-controller-final">
+
+<script id="vg-otp-clean-controller">
 (function(){
  function init(){
-  const wrap=document.getElementById('vgCustomerOtpBoxes');
-  const hidden=document.getElementById('stvnCustomerOtp');
-  if(!wrap||!hidden||wrap.dataset.singleController==='1')return;
-  wrap.dataset.singleController='1';
-  // Replace each input to remove conflicting handlers from earlier OTP patches.
-  let cells=Array.from(wrap.querySelectorAll('.vg-otp-digit')).map(old=>{
-    const fresh=old.cloneNode(true); fresh.type='text'; fresh.inputMode='numeric'; fresh.autocomplete='off';
-    old.replaceWith(fresh); return fresh;
-  });
-  cells[0].autocomplete='one-time-code';
-  const msg=document.getElementById('stvnCustomerLoginMessage');
-  function sync(){
-    const value=cells.map(c=>(c.value||'').replace(/\D/g,'').slice(0,1)).join('').slice(0,8);
-    hidden.value=value;
-    hidden.dispatchEvent(new Event('change',{bubbles:true}));
-    if(msg && msg.classList.contains('error')){
-      msg.textContent=''; msg.className='stvn-login-message';
-    }
-    return value;
-  }
-  function setDigits(raw,focus=true){
-    const digits=String(raw||'').replace(/\D/g,'').slice(0,8);
-    cells.forEach((c,i)=>{c.value=digits[i]||'';});
-    sync();
-    if(focus){const target=cells.find(c=>!c.value)||cells[cells.length-1]; if(target)target.focus();}
-  }
-  cells.forEach((cell,index)=>{
-    cell.addEventListener('input',()=>{
-      const raw=String(cell.value||'').replace(/\D/g,'');
-      if(raw.length>1){setDigits(raw);return;}
-      cell.value=raw.slice(0,1); sync();
-      if(cell.value&&cells[index+1])cells[index+1].focus();
-    });
-    cell.addEventListener('keydown',e=>{
-      if(e.key==='Backspace'){
-        if(cell.value){cell.value='';sync();}
-        else if(cells[index-1]){cells[index-1].value='';cells[index-1].focus();sync();}
-      } else if(e.key==='ArrowLeft'&&cells[index-1]){e.preventDefault();cells[index-1].focus();}
-      else if(e.key==='ArrowRight'&&cells[index+1]){e.preventDefault();cells[index+1].focus();}
-    });
-    cell.addEventListener('paste',e=>{
-      const raw=(e.clipboardData||window.clipboardData).getData('text');
-      if(raw){e.preventDefault();setDigits(raw);}
-    });
-  });
-  // Keep OTP autofill/paste into the hidden compatibility field synchronized too.
-  hidden.addEventListener('input',()=>setDigits(hidden.value,false));
-  window.stvnCustomerOtpBoxFocus=function(){const target=cells.find(c=>!c.value)||cells[0];if(target)target.focus();};
-  const resend=document.getElementById('stvnCustomerResendButton');
-  if(resend){resend.addEventListener('click',()=>{setDigits('',false);});}
-  // Keep the hidden verification token current immediately before Supabase verification.
-  const form=document.getElementById('stvnCustomerLoginForm');
+  var entry=document.getElementById('vgCustomerOtpEntry'),hidden=document.getElementById('stvnCustomerOtp'),form=document.getElementById('stvnCustomerLoginForm');
+  if(!entry||!hidden||entry.dataset.clean==='1')return;
+  entry.dataset.clean='1';
+  function sync(){var d=String(entry.value||'').replace(/\D/g,'').slice(0,6);if(entry.value!==d)entry.value=d;hidden.value=d;
+    var msg=document.getElementById('stvnCustomerLoginMessage');if(d.length>=6&&msg&&msg.classList.contains('error')){msg.textContent='';msg.className='stvn-login-message';}return d;}
+  entry.addEventListener('input',sync);
+  entry.addEventListener('change',sync);
+  entry.addEventListener('paste',function(){setTimeout(sync,0);});
+  entry.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();sync();if(form&&form.requestSubmit)form.requestSubmit();}});
+  hidden.addEventListener('input',function(){entry.value=String(hidden.value||'').replace(/\D/g,'').slice(0,6);});
   if(form)form.addEventListener('submit',sync,true);
+  window.stvnCustomerOtpBoxFocus=function(){setTimeout(function(){try{entry.focus();}catch(e){}},80);};
+  window.stvnCustomerOtpClear=function(){entry.value='';hidden.value='';};
+  var resend=document.getElementById('stvnCustomerResendButton');
+  if(resend)resend.addEventListener('click',window.stvnCustomerOtpClear);
+  var wrap=document.getElementById('stvnCustomerOtpWrap');
+  if(wrap&&!wrap.querySelector('.vg-change-email')){
+    var b=document.createElement('button');b.type='button';b.className='vg-change-email';b.textContent='✏️ Change email';
+    b.addEventListener('click',function(){if(typeof stvnCustomerChangeEmail==='function')stvnCustomerChangeEmail(true);});
+    wrap.appendChild(b);
+  }
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true}); else init();
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
  window.addEventListener('load',init,{once:true});
+})();
+</script>
+
+<style id="vg-otp-offers-status-vip">
+/* ===== OTP: one real input, always typeable ===== */
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #vgOtpSingle{position:relative;display:block!important;width:100%;margin:8px 0 6px}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #vgOtpSingle #vgCustomerOtpEntry{display:block!important;position:static!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;width:100%!important;height:64px!important;min-height:64px!important;margin:0!important;padding:0 10px!important;text-align:center!important;text-indent:.4em;
+ font:900 26px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;letter-spacing:.4em!important;font-variant-numeric:tabular-nums;color:#0d3d18!important;-webkit-text-fill-color:#0d3d18!important;caret-color:#0e9b2b!important;
+ background:linear-gradient(180deg,#f7fdf8,#eaf7ed)!important;border:2px solid #b9e0c2!important;border-radius:18px!important;box-shadow:inset 0 2px 6px rgba(12,70,26,.06)!important;-webkit-user-select:text;user-select:text;-webkit-appearance:none;appearance:none}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #vgOtpSingle #vgCustomerOtpEntry::placeholder{color:#a9c4af!important;-webkit-text-fill-color:#a9c4af!important;letter-spacing:.35em}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #vgOtpSingle #vgCustomerOtpEntry:focus{border-color:#12b928!important;background:#fff!important;box-shadow:0 0 0 4px rgba(18,185,40,.16)!important;outline:none!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .stvn-login-otp-help{margin:8px 0 0;padding:9px 11px;border-radius:12px;background:#fff8e4;border:1px solid #f5e4ae;color:#66521b!important;font-size:12px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate .vg-change-email{display:inline-flex;align-items:center;margin:9px 0 0;padding:7px 12px;border:1px solid #cfe5d3;border-radius:10px;background:#f1faf3;color:#087c20;font-size:12px;font-weight:800;cursor:pointer}
+html body.dark:not(#vz1):not(#vz2):not(#vz3) #stvnCustomerLoginGate #vgOtpSingle #vgCustomerOtpEntry{background:#0f1411!important;border-color:#2c382f!important;color:#e9fbed!important;-webkit-text-fill-color:#e9fbed!important}
+
+/* ===== SHOP OFFERS: VIP emerald + gold ===== */
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers{position:relative;margin:14px 0 20px!important;padding:16px 14px 14px!important;border-radius:24px!important;border:1px solid rgba(255,213,74,.45)!important;color:#fff!important;overflow:hidden;
+ background:radial-gradient(120% 90% at 100% 0%,rgba(255,206,70,.24),transparent 55%),linear-gradient(150deg,#0b4a21 0%,#06301a 60%,#041f10 100%)!important;box-shadow:0 16px 36px rgba(4,40,16,.32),inset 0 1px 0 rgba(255,255,255,.08)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers-head{display:flex;align-items:center;gap:11px;margin:0 0 12px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers-icon{display:grid!important;place-items:center;width:42px!important;height:42px!important;flex:0 0 42px;border-radius:14px!important;background:linear-gradient(135deg,#ffe27a,#f5a800)!important;color:#5a3a00!important;font-size:21px;box-shadow:0 6px 16px rgba(245,168,0,.4)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers-head h3{margin:0!important;color:#ffe9a3!important;font-size:17px!important;font-weight:900!important;letter-spacing:.01em}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers-head p{margin:2px 0 0!important;color:rgba(255,255,255,.72)!important;font-size:11.5px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers-list{display:flex!important;gap:10px!important;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 6px;scrollbar-width:none;grid-template-columns:none!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers-list::-webkit-scrollbar{display:none}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offer{position:relative;flex:0 0 min(80%,280px);scroll-snap-align:start;padding:14px 14px 13px!important;border-radius:18px!important;border:1px solid #f3d27a!important;background:linear-gradient(150deg,#ffffff 0%,#fff8e1 100%)!important;box-shadow:0 8px 20px rgba(0,0,0,.22)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offer:only-child{flex-basis:100%}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offer-badge{display:inline-flex!important;margin:0 0 8px!important;padding:5px 11px!important;border-radius:999px!important;background:linear-gradient(135deg,#ffe27a,#f5a800)!important;color:#5a3a00!important;font-size:10px!important;font-weight:900!important;letter-spacing:.12em;text-transform:uppercase}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offer h4{margin:0 0 4px!important;color:#14391f!important;font-size:16px!important;line-height:1.3;font-weight:900!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offer p{margin:0!important;color:#5d5a47!important;font-size:12.5px!important;line-height:1.5}
+html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offer-code{display:inline-flex!important;margin-top:11px;padding:6px 12px;border:1.5px dashed #c98f00;border-radius:10px;background:#fff3c9;color:#8a5a00;font:900 12px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em}
+@media(min-width:700px){ html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offers-list{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important;overflow:visible} html body:not(#vz1):not(#vz2):not(#vz3) .stvn-customer-offer{flex:none} }
+html body:not(#vz1):not(#vz2):not(#vz3) .vg-promo-card{background:radial-gradient(120% 90% at 100% 0%,rgba(255,206,70,.22),transparent 55%),linear-gradient(150deg,#0b4a21,#041f10)!important;border:1px solid rgba(255,213,74,.45)!important;color:#fff!important;box-shadow:0 12px 28px rgba(4,40,16,.28)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) .vg-promo-card strong{display:inline-block;align-self:flex-start;padding:5px 11px;border-radius:999px;background:linear-gradient(135deg,#ffe27a,#f5a800);color:#5a3a00!important;font-size:10.5px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+html body:not(#vz1):not(#vz2):not(#vz3) .vg-promo-card h3{color:#fff!important} html body:not(#vz1):not(#vz2):not(#vz3) .vg-promo-card p{color:rgba(255,255,255,.78)!important}
+
+/* ===== SHOP STATUS (closed / maintenance): VIP ===== */
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner,html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay{position:relative;border-radius:26px!important;border:1px solid rgba(255,138,138,.5)!important;color:#fff!important;overflow:hidden;
+ background:radial-gradient(120% 80% at 50% -10%,rgba(255,90,90,.30),transparent 62%),linear-gradient(160deg,#3a0f14 0%,#240a0e 60%,#150608 100%)!important;box-shadow:0 18px 40px rgba(60,5,10,.42),inset 0 1px 0 rgba(255,255,255,.07)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner{margin:14px 0 20px!important;padding:28px 20px!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner h2,html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay h2{color:#fff!important;font-size:clamp(22px,6vw,32px)!important;font-weight:900!important;letter-spacing:-.01em}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner p,html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay p{color:rgba(255,255,255,.8)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner .stvn-home-status-stamp,html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay .stvn-closed-stamp{display:inline-flex!important;align-items:center;gap:9px;transform:none!important;margin:4px 0!important;padding:9px 20px!important;border:1.5px solid #ff9a9a!important;border-radius:999px!important;background:rgba(255,90,90,.14)!important;color:#ffc4c4!important;font-size:12.5px!important;font-weight:900!important;letter-spacing:.22em!important;box-shadow:none!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner .stvn-home-status-stamp::before,html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay .stvn-closed-stamp::before{content:"";width:9px;height:9px;border-radius:50%;background:#ff5a5f;animation:vgStatusDot 1.6s ease-out infinite}
+@keyframes vgStatusDot{0%{transform:scale(.8);opacity:1}70%{transform:scale(1.5);opacity:.35}100%{transform:scale(.8);opacity:1}}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusReason{margin:12px auto 0!important;max-width:560px;padding:11px 14px;border-radius:14px;border-left:3px solid #ffd54a;background:rgba(255,255,255,.08);text-align:left;color:#fff!important;font-size:14px}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusReason:empty{display:none}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay::before{border:1px dashed rgba(255,213,74,.35)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay .stvn-closed-icon{background:linear-gradient(135deg,#ff6a6f,#c4202c)!important;box-shadow:0 12px 26px rgba(196,32,44,.45)!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay .stvn-closed-hours{background:rgba(255,255,255,.1)!important;border:1px solid rgba(255,213,74,.35)!important;color:#ffe9a3!important}
+html[data-shop-status="maintenance"] html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner,html[data-shop-status="maintenance"] html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay,html body:not(#vz1):not(#vz2):not(#vz3) #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay{border-color:rgba(255,213,74,.55)!important;background:radial-gradient(120% 80% at 50% -10%,rgba(255,206,70,.30),transparent 62%),linear-gradient(160deg,#3b2a05 0%,#271c04 60%,#171002 100%)!important}
+html[data-shop-status="maintenance"] html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner .stvn-home-status-stamp,html body:not(#vz1):not(#vz2):not(#vz3) #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay .stvn-closed-stamp{border-color:#ffd54a!important;background:rgba(255,213,74,.14)!important;color:#ffe9a3!important}
+html[data-shop-status="maintenance"] html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner .stvn-home-status-stamp::before,html body:not(#vz1):not(#vz2):not(#vz3) #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay .stvn-closed-stamp::before{background:#ffd54a}
+html body:not(#vz1):not(#vz2):not(#vz3) #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay h2{color:#fff!important}
+html body:not(#vz1):not(#vz2):not(#vz3) #page-shop.stvn-shop-is-maintenance #stvnShopClosedDisplay .stvn-closed-icon{background:linear-gradient(135deg,#ffe27a,#f5a800)!important;color:#5a3a00}
+@media(prefers-reduced-motion:reduce){ html body:not(#vz1):not(#vz2):not(#vz3) #stvnHomeStatusBanner *,html body:not(#vz1):not(#vz2):not(#vz3) #stvnShopClosedDisplay *{animation:none!important} }
+</style>
+<!-- ===== FESTIVAL THEME MODULE (admin-controlled) ===== -->
+<style id="vedant-festival-theme-css">
+[data-fx-theme],html[data-festival]{--fon:#fff;--ftg:linear-gradient(#fff6d6,#ffc83d)}
+[data-fx-theme="diwali"],html[data-festival="diwali"]{--fp:#c2410c;--fq:#7c2d12;--fa:#ffc83d;--fs:#fff3de;--fs2:#ffe0ae;--fbg:#fff7ea;--fh:linear-gradient(135deg,#3b0a1a,#8a1c1c 52%,#e8590c);--fb:linear-gradient(135deg,#e8590c,#a8380a)}
+[data-fx-theme="dhanteras"],html[data-festival="dhanteras"]{--fp:#1d4ed8;--fq:#1e3a8a;--fa:#ffc83d;--fs:#eaf0ff;--fs2:#cddafd;--fbg:#f1f5ff;--fh:linear-gradient(135deg,#0a1744,#1e3a8a 55%,#3b5bdb);--fb:linear-gradient(135deg,#2f55e0,#1b2f8f)}
+[data-fx-theme="bhaidooj"],html[data-festival="bhaidooj"]{--fp:#be185d;--fq:#831843;--fa:#ffd166;--fs:#ffeaf3;--fs2:#fbcfe3;--fbg:#fff2f8;--fh:linear-gradient(135deg,#4a0b2e,#be185d 58%,#f472b6);--fb:linear-gradient(135deg,#d6246e,#9d174d)}
+[data-fx-theme="holi"],html[data-festival="holi"]{--fp:#7e22ce;--fq:#581c87;--fa:#22d3ee;--fs:#f5ebff;--fs2:#e6cffc;--fbg:#f9f2ff;--fh:linear-gradient(135deg,#3b1170,#a21caf 40%,#ec4899 72%,#f59e0b);--fb:linear-gradient(135deg,#9333ea,#5b21b6);--ftg:linear-gradient(#fff,#fde68a)}
+[data-fx-theme="rakhi"],html[data-festival="rakhi"]{--fp:#b91c1c;--fq:#7f1d1d;--fa:#ffd34d;--fs:#ffecea;--fs2:#fdc9c4;--fbg:#fff3f1;--fh:linear-gradient(135deg,#5c0a14,#b91c1c 55%,#f59e0b);--fb:linear-gradient(135deg,#d42525,#8f1414)}
+[data-fx-theme="eid"],html[data-festival="eid"]{--fp:#0f766e;--fq:#134e4a;--fa:#fde68a;--fs:#e3f8f4;--fs2:#bdeee6;--fbg:#effcf9;--fh:linear-gradient(135deg,#042f2c,#0f766e 58%,#2dd4bf);--fb:linear-gradient(135deg,#119488,#0b5f58)}
+[data-fx-theme="tiranga"],html[data-festival="tiranga"]{--fp:#1e40af;--fq:#172554;--fa:#1e3a8a;--fcta:#fff;--fs:#fff1de;--fs2:#d5f0d3;--fbg:#fff9f1;--fh:linear-gradient(135deg,#ff9933,#ffd7a8 32%,#fff 50%,#b6e8b3 68%,#138808);--fb:linear-gradient(135deg,#2a52cf,#172554);--fon:#0b1f5c;--ftg:linear-gradient(#0b1f5c,#1e3a8a)}
+[data-fx-theme="navratri"],html[data-festival="navratri"]{--fp:#a21caf;--fq:#701a75;--fa:#ffd34d;--fs:#fbeaff;--fs2:#f1c9f7;--fbg:#fdf3ff;--fh:linear-gradient(135deg,#2e0a4f,#a21caf 52%,#f97316);--fb:linear-gradient(135deg,#bd2ccb,#7a1a85)}
+[data-fx-theme="dussehra"],html[data-festival="dussehra"]{--fp:#ea580c;--fq:#7c2d12;--fa:#fbbf24;--fs:#fff0e3;--fs2:#fdd5b0;--fbg:#fff6ee;--fh:linear-gradient(135deg,#240808,#9a2412 50%,#f97316);--fb:linear-gradient(135deg,#f06a1c,#b8400a)}
+[data-fx-theme="ganesh"],html[data-festival="ganesh"]{--fp:#d97706;--fq:#78350f;--fa:#fde047;--fs:#fff6d9;--fs2:#fde7a3;--fbg:#fffbea;--fh:linear-gradient(135deg,#7c2d12,#ea580c 50%,#facc15);--fb:linear-gradient(135deg,#e88a0c,#a85a04)}
+[data-fx-theme="janmashtami"],html[data-festival="janmashtami"]{--fp:#0e7490;--fq:#164e63;--fa:#fde68a;--fs:#e4f7fb;--fs2:#bfeaf3;--fbg:#effafd;--fh:linear-gradient(135deg,#0b1a44,#0e7490 55%,#22d3ee);--fb:linear-gradient(135deg,#1090b1,#0b5a72)}
+[data-fx-theme="christmas"],html[data-festival="christmas"]{--fp:#b91c1c;--fq:#14532d;--fa:#fde68a;--fs:#ffeceb;--fs2:#c9ecd3;--fbg:#f5fbf6;--fh:linear-gradient(135deg,#0f3d22,#166534 48%,#b91c1c);--fb:linear-gradient(135deg,#d02525,#14532d)}
+[data-fx-theme="newyear"],html[data-festival="newyear"]{--fp:#4338ca;--fq:#1e1b4b;--fa:#f5d36b;--fs:#ecebff;--fs2:#d2d0fa;--fbg:#f4f3ff;--fh:linear-gradient(135deg,#0a0a18,#1e1b4b 50%,#5b21b6);--fb:linear-gradient(135deg,#4f46e5,#2c2597)}
+[data-fx-theme="sankranti"],html[data-festival="sankranti"]{--fp:#0284c7;--fq:#0c4a6e;--fa:#fde047;--fs:#e6f5fe;--fs2:#fde9b0;--fbg:#f1faff;--fh:linear-gradient(135deg,#075985,#38bdf8 52%,#fbbf24);--fb:linear-gradient(135deg,#0a95e0,#075985)}
+
+html[data-festival]{--primary:var(--fp);--primary-dark:var(--fq);--accent:var(--fa)}
+html[data-festival] .vg-hero{display:none!important}
+html[data-festival] body:not(.dark){background:radial-gradient(circle at 10% 0,var(--fs2),transparent 30%),var(--fbg)!important}
+html[data-festival] body:not(.dark) :is(#page-home,#page-shop,#page-cart,#page-checkout).active{background:linear-gradient(165deg,var(--fs) 0,#fff 46%,var(--fs2) 150%)!important;border-color:var(--fs2)!important}
+
+/* header */
+html[data-festival] body:not(.dark) .vg-store-header{background:radial-gradient(circle at 10px 100%,var(--fa) 4px,transparent 4.6px) 0 100%/20px 8px repeat-x,linear-gradient(180deg,#fff,var(--fs))!important;border-color:var(--fs2)!important;border-bottom:0!important;padding-bottom:13px!important;box-shadow:0 12px 26px -14px var(--fq)!important}
+html[data-festival] .vg-brand,html[data-festival] .vg-location b{color:var(--fp)!important}
+html[data-festival] .vg-brand-mark{background:var(--fs2)!important;box-shadow:inset 0 0 0 1px var(--fa)!important}
+html[data-festival] .vg-action{border-color:var(--fp)!important;color:var(--fq)!important}
+html[data-festival] .vg-action:hover{background:var(--fs)!important}
+html[data-festival] .vg-search{border-color:var(--fs2)!important}
+
+/* banner */
+.fx-banner{position:relative;overflow:hidden;margin:10px 0 14px;padding:clamp(18px,4vw,38px);min-height:172px;border-radius:22px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--fh);color:var(--fon);box-shadow:0 16px 34px -14px var(--fq)}
+.fx-banner:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 88% 12%,rgba(255,255,255,.28),transparent 38%),radial-gradient(circle at 8% 110%,rgba(255,255,255,.16),transparent 40%)}
+.fx-banner:after{content:"";position:absolute;inset:7px;border:1.5px solid var(--fa);border-radius:16px;opacity:.7;pointer-events:none}
+.fx-copy{position:relative;z-index:1;min-width:0;flex:1}
+.fx-title{margin:0 0 6px!important;font:400 clamp(27px,7.4vw,50px)/1.15 'Tiro Devanagari Hindi',Georgia,serif!important;background:var(--ftg);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.fx-sub{margin:0 0 14px;font-size:clamp(12px,3.3vw,16px);line-height:1.45;font-weight:600}
+.fx-cta{margin:0;padding:11px 20px;border-radius:30px;background:var(--fcta,var(--fa))!important;color:var(--fq)!important;font-weight:900;font-size:13px;box-shadow:0 8px 18px -6px rgba(0,0,0,.45)}
+.fx-art{position:relative;z-index:1;flex:0 0 auto;width:clamp(92px,26vw,150px);aspect-ratio:1;display:grid;place-items:center}
+.fx-ring{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.34),rgba(255,255,255,.06) 62%,transparent 70%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 0 38px 4px rgba(255,255,255,.22);animation:fxGlow 3.4s ease-in-out infinite}
+.fx-em{position:relative;font-style:normal;font-size:clamp(46px,13vw,76px);filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+@keyframes fxGlow{50%{transform:scale(1.07);opacity:.8}}
+.fx-compact{min-height:0;padding:12px 16px;margin:8px 0 10px;border-radius:16px}
+.fx-compact:after{inset:5px;border-radius:12px}
+.fx-compact .fx-title{font-size:clamp(20px,5.4vw,28px)!important;margin:0 0 2px!important}
+.fx-compact .fx-sub{margin:0;font-size:12px}.fx-compact .fx-cta{display:none}
+.fx-compact .fx-art{width:54px}.fx-compact .fx-em{font-size:34px}
+
+/* home / shop */
+html[data-festival] .vg-category-tile{background:linear-gradient(145deg,var(--fs2),#fff)!important}
+html[data-festival] .vg-category-tile span{background:var(--fs)!important;color:var(--fq)!important}
+html[data-festival] .vg-section-title h2:before{color:var(--fp)!important}
+html[data-festival] .vg-section-title button{color:var(--fp)!important}
+html[data-festival] .vg-shop-products-head h2{color:var(--fq)!important}
+html[data-festival] :is(.vg-shop-now,.vg-promo-card button){background:var(--fb)!important;color:#fff!important;box-shadow:0 8px 18px -6px var(--fq)!important}
+html[data-festival] body:not(.dark) .vg-promo-card{background:linear-gradient(135deg,var(--fs2),#fff 60%,var(--fs))!important;border-color:var(--fa)!important}
+html[data-festival] .vg-promo-card strong{background:var(--fp)!important}
+html[data-festival] body:not(.dark) #page-shop .stvn-category-card{border-color:var(--fs2)!important;background:linear-gradient(145deg,var(--fs),#fff 55%,var(--fs2))!important}
+html[data-festival] #page-shop .stvn-category-card.active{border:2px solid var(--fp)!important}
+html[data-festival] #page-shop .stvn-category-card:after{color:var(--fa)!important}
+html[data-festival] body:not(.dark) :is(#page-shop,#page-home) .product{border:1px solid var(--fs2)!important;border-top:3px solid var(--fa)!important}
+html[data-festival] body:not(.dark) :is(#page-shop,#page-home) .product-icon{background:linear-gradient(145deg,var(--fs),#fff)!important}
+html[data-festival] :is(#page-shop,#page-home) .price{color:var(--fq)!important}
+html[data-festival] :is(#page-shop,#page-home) :is(.cart-btn,.stvn-add-cart-btn){background:var(--fb)!important;box-shadow:0 6px 12px -4px var(--fq)!important}
+
+/* cart */
+html[data-festival] #page-cart #cart{border-top:4px solid var(--fp)!important}
+html[data-festival] body:not(.dark) #page-cart .summary{background:linear-gradient(145deg,var(--fs),#fff)!important;border-color:var(--fs2)!important}
+html[data-festival] body:not(.dark) #page-cart .cart-item{border-color:var(--fs2)!important}
+html[data-festival] #page-cart .total{color:var(--fq)}
+html[data-festival] :is(.place-order,#proceed-checkout-btn){background:var(--fb)!important;box-shadow:0 10px 20px -8px var(--fq)!important;color:#fff!important}
+html[data-festival] .stvn-cart-back{color:var(--fp)!important}
+
+/* bottom nav */
+html[data-festival] body:not(.dark) .modern-bottom-nav{background:rgba(255,255,255,.97)!important;border-top:2px solid var(--fa)!important;box-shadow:0 -12px 26px -12px var(--fq)!important}
+html[data-festival] .modern-bottom-nav button.active{color:var(--fp)!important;background:var(--fs)!important;box-shadow:0 6px 14px -6px var(--fp)}
+
+/* festival effects */
+#fxFall{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1100}
+#fxFall span{position:absolute;line-height:1;pointer-events:none}
+.fx-f{top:-8%;animation:fxDrop linear infinite;will-change:transform}
+.fx-r{bottom:-8%;animation:fxRise linear infinite;will-change:transform}
+.fx-t{animation:fxTw 3s ease-in-out infinite}
+@keyframes fxDrop{0%{transform:translate3d(0,0,0) rotate(0)}25%{transform:translate3d(var(--dx),28vh,0) rotate(90deg)}50%{transform:translate3d(0,56vh,0) rotate(180deg)}75%{transform:translate3d(var(--dx),84vh,0) rotate(270deg)}100%{transform:translate3d(0,112vh,0) rotate(360deg)}}
+@keyframes fxRise{to{transform:translate3d(var(--dx),-112vh,0) rotate(24deg)}}
+.fx-rk{top:100%;width:3px;height:18px;border-radius:3px;background:linear-gradient(#fff,transparent);animation:fxRk .62s ease-in forwards}
+@keyframes fxRk{to{transform:translateY(var(--rise));opacity:.3}}
+.fx-p{border-radius:50%;width:5px;height:5px;box-shadow:0 0 7px 1px currentColor;animation:fxBst 1s ease-out forwards}
+@keyframes fxBst{from{transform:translate(0,0) scale(1.3);opacity:1}to{transform:translate(var(--bx),calc(var(--by) + 28px)) scale(.3);opacity:0}}
+.fx-spl{border-radius:50%;transform:translate(-50%,-50%) scale(.2);opacity:0;animation:fxSpl 1.6s ease-out forwards}
+@keyframes fxSpl{18%{opacity:.85;transform:translate(-50%,-50%) scale(1)}to{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}
+@media (prefers-reduced-motion:reduce){#fxFall{display:none}}
+
+/* shop closed / maintenance: no categories, VIP card */
+html:is([data-shop-status="closed"],[data-shop-status="maintenance"]) :is(#page-home,#page-shop) :is(.vg-category-panel,.vg-shop-products-head,.vg-promo-row,.stvn-category-list,.stvn-category-intro,.categories,#products,.stvn-customer-offers,.vg-hero,.fx-cta),
+html:is([data-shop-status="closed"],[data-shop-status="maintenance"]) #fxPop .fx-cta{display:none!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopClosedDisplay,#stvnHomeStatusBanner){background:radial-gradient(circle at 85% 8%,rgba(255,214,120,.28),transparent 42%),var(--fh,linear-gradient(145deg,#2a0f14,#6b1a22 58%,#a82d36))!important;border:0!important;outline:1.5px solid rgba(255,214,102,.65);outline-offset:-9px;box-shadow:0 22px 44px -18px rgba(0,0,0,.6)!important}
+html[data-shop-status="maintenance"] body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopClosedDisplay,#stvnHomeStatusBanner){background:radial-gradient(circle at 85% 8%,rgba(255,214,120,.3),transparent 42%),var(--fh,linear-gradient(145deg,#1d1a12,#4d3a10 58%,#a67a16))!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) #stvnShopClosedDisplay .stvn-closed-icon{background:rgba(255,255,255,.14)!important;box-shadow:0 0 0 2px rgba(255,214,102,.7),0 0 34px rgba(255,214,102,.45)!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopClosedDisplay .stvn-closed-stamp,#stvnHomeStatusBanner .stvn-home-status-stamp){border-color:rgba(255,214,102,.85)!important;background:rgba(255,214,102,.14)!important;color:#ffe29a!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopClosedDisplay .stvn-closed-stamp,#stvnHomeStatusBanner .stvn-home-status-stamp)::before{background:#ffd34d!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopClosedDisplay h2,#stvnHomeStatusBanner h2){font-family:'Tiro Devanagari Hindi',Georgia,serif!important;font-weight:400!important;background:linear-gradient(#fff6d6,#ffc83d);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) #stvnShopStatusReasonCard{background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,214,102,.5)!important}
+html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4) :is(#stvnShopStatusReasonCard h3,#stvnShopStatusReasonCard p,#stvnShopClosedDisplay .stvn-closed-hours){color:#ffe9b0!important}
+
+/* VIP details */
+.fx-banner{padding-top:clamp(28px,5vw,46px)}
+.fx-compact{padding-top:20px}
+.fx-toran{position:absolute;left:0;right:0;top:0;height:16px;z-index:1;pointer-events:none;background:radial-gradient(circle at 11px 0,var(--fa) 8px,transparent 9px) 0 0/22px 16px repeat-x}
+.fx-compact .fx-toran{height:10px;background:radial-gradient(circle at 8px 0,var(--fa) 5.5px,transparent 6.5px) 0 0/16px 10px repeat-x}
+.fx-title{filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+.fx-ring:after{content:"";position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(var(--fa),transparent 25%,var(--fa) 50%,transparent 75%,var(--fa));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));animation:fxSpin 16s linear infinite}
+@keyframes fxSpin{to{transform:rotate(360deg)}}
+.fx-sp{position:absolute;z-index:1;font-style:normal;font-size:15px;color:var(--fa);pointer-events:none;animation:fxTw 2.8s ease-in-out infinite}
+@keyframes fxTw{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.15)}}
+.fx-compact .fx-sp{display:none}
+@media (prefers-reduced-motion:reduce){.fx-ring:after,.fx-sp{animation:none}}
+#fxPop{position:fixed;inset:0;z-index:6000;display:grid;place-items:center;padding:20px;background:rgba(10,8,20,.62);backdrop-filter:blur(4px);animation:fxIn .35s ease-out}
+@keyframes fxIn{from{opacity:0}}
+.fx-pop-card{position:relative;overflow:hidden;width:min(360px,100%);padding:38px 22px 24px;text-align:center;border-radius:26px;background:var(--fh);color:var(--fon);box-shadow:0 30px 60px -20px #000,0 0 0 2px var(--fa)}
+.fx-pop-card .fx-em{display:block;font-size:76px;margin-bottom:8px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.4))}
+.fx-pop-card .fx-title{font-size:32px!important}
+.fx-pop-x{position:absolute;right:10px;top:16px;z-index:2;margin:0;width:34px;height:34px;padding:0;border-radius:50%;background:rgba(255,255,255,.25);color:inherit;font-size:16px}
+
+/* admin picker */
+.fx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;margin:12px 0}
+.fx-card{margin:0;padding:8px;display:grid;gap:7px;text-align:left;background:var(--surface,#fff);color:var(--text);border:2px solid var(--border);border-radius:14px;font-size:12px;font-weight:800}
+.fx-card[aria-pressed=true]{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 25%,transparent)}
+.fx-card[aria-pressed=true]:after{content:"✓ चुना गया";color:var(--primary);font-size:11px}
+.fx-sw{height:62px;border-radius:9px;display:grid;place-items:center;background:var(--fh,linear-gradient(135deg,#0e8b1e,#7dbb24));font-size:30px}
+#adminFestMsg,#adminFestMsgHi{max-width:100%;width:100%}
+</style>
+
+<script id="vedant-festival-theme-js">
+(function(){
+'use strict';
+var K='vedantFestivalTheme',MK='vedantFestivalMessage',D=document,R=D.documentElement,w=window;
+/* [emoji, [title EN, HI], [line EN, HI], admin label, falling items, status-bar colour] */
+var F={
+diwali:['🪔',['Happy Diwali','शुभ दीपावली'],['The festival of lights, with the ones you love.','रोशनी का त्योहार, अपनों के साथ।'],'Diwali · दीपावली',['🪔','✨','🎆','🌼'],'#c2410c'],
+dhanteras:['🪙',['Happy Dhanteras','शुभ धनतेरस'],['Wishing your home prosperity and good fortune.','आपके घर में सुख-समृद्धि आए।'],'Dhanteras · धनतेरस',['🪙','✨','🌟','🪔'],'#1e3a8a'],
+bhaidooj:['🌸',['Happy Bhai Dooj','भाई दूज की शुभकामनाएँ'],['A day to celebrate the bond of brothers and sisters.','भाई-बहन के प्यार का दिन।'],'Bhai Dooj · भाई दूज',['🌸','🌺','✨','🪔'],'#be185d'],
+holi:['🎨',['Happy Holi','होली की हार्दिक शुभकामनाएँ'],['May your life be full of colours.','आपका जीवन रंगों से भरा रहे।'],'Holi · होली','dot','#7e22ce'],
+rakhi:['🧵',['Happy Raksha Bandhan','रक्षाबंधन की शुभकामनाएँ'],['Celebrating the sacred bond of Rakhi.','राखी के पवित्र बंधन का त्योहार।'],'Raksha Bandhan · रक्षाबंधन',['🧵','🌸','🎀','✨'],'#b91c1c'],
+navratri:['🔱',['Happy Navratri','शुभ नवरात्रि'],['Nine nights of devotion and joy.','नौ रातों की भक्ति और उमंग।'],'Navratri · नवरात्रि',['🔱','🪔','🌺','✨'],'#a21caf'],
+dussehra:['🏹',['Happy Dussehra','विजयादशमी की शुभकामनाएँ'],['May good always win over evil.','बुराई पर अच्छाई की जीत मुबारक।'],'Dussehra · दशहरा',['🏹','🔥','✨','🪔'],'#ea580c'],
+ganesh:['🐘',['Ganpati Bappa Morya','गणपति बप्पा मोरया'],['Happy Ganesh Chaturthi to you and your family.','आपको और परिवार को गणेश चतुर्थी की शुभकामनाएँ।'],'Ganesh Chaturthi · गणेश चतुर्थी',['🌼','🐘','🪷','✨'],'#d97706'],
+janmashtami:['🦚',['Happy Janmashtami','जन्माष्टमी की शुभकामनाएँ'],['Hare Krishna! Joy and blessings to your home.','हरे कृष्णा! आपके घर खुशियाँ और आशीर्वाद बना रहे।'],'Janmashtami · जन्माष्टमी',['🦚','💙','✨','🪔'],'#0e7490'],
+eid:['🌙',['Eid Mubarak','ईद मुबारक'],['Joy and blessings to you and your family.','आपको और परिवार को खुशियाँ और बरकत मिले।'],'Eid · ईद',['🌙','⭐','✨'],'#0f766e'],
+christmas:['🎄',['Merry Christmas','मेरी क्रिसमस'],['Warm wishes and happy moments for you.','आपके लिए खुशियों भरी शुभकामनाएँ।'],'Christmas · क्रिसमस',['🎄','❄️','⭐','🎁'],'#14532d'],
+newyear:['🎆',['Happy New Year','नववर्ष की शुभकामनाएँ'],['Wishing you a healthy and happy year ahead.','आने वाला साल सेहत और खुशियों भरा हो।'],'New Year · नया साल',['🎆','🎉','✨','🥂'],'#4338ca'],
+sankranti:['🪁',['Happy Makar Sankranti','मकर संक्रांति की शुभकामनाएँ'],['Sweet moments and high-flying joy! Happy Lohri and Pongal too.','मीठी खुशियाँ और ऊँची उड़ान! लोहड़ी व पोंगल की भी शुभकामनाएँ।'],'Makar Sankranti · मकर संक्रांति',['🪁','☀️','✨','🌾'],'#0284c7'],
+tiranga:['🇮🇳',['Jai Hind','जय हिंद'],['Happy Independence Day / Republic Day. Salute to the Tricolour!','स्वतंत्रता / गणतंत्र दिवस की शुभकामनाएँ। तिरंगे को सलाम!'],'Tiranga · स्वतंत्रता / गणतंत्र दिवस',['🇮🇳','🪁','✨','☸️'],'#1e3a8a']
+};
+var cur='',msg={en:'',hi:''},dirty=false;
+var meta=D.querySelector('meta[name=theme-color]'),origColor=meta?meta.content:'#fbd34a';
+
+function L(){return String(R.dataset.language||R.lang||'en').toLowerCase().indexOf('hi')===0?1:0}
+function val(id){var e=D.getElementById(id);return e?e.value.trim().slice(0,110):''}
+function store(k,m){try{k?localStorage.setItem(K,k):localStorage.removeItem(K);(k&&(m.en||m.hi))?localStorage.setItem(MK,JSON.stringify(m)):localStorage.removeItem(MK)}catch(e){}}
+function font(){if(D.getElementById('fxFont'))return;var l=D.createElement('link');l.id='fxFont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&display=swap';D.head.appendChild(l)}
+
+function fill(b){
+  var f=F[cur],i=L(),c=i?msg.hi:msg.en;
+  b.querySelector('.fx-title').textContent=f[1][i];
+  b.querySelector('.fx-sub').textContent=c||f[2][i];
+  b.querySelector('.fx-em').textContent=f[0];
+  b.querySelector('.fx-cta').textContent=i?'अभी खरीदें':'Shop Now';
+}
+function banner(id,compact){
+  var p=D.getElementById(id);if(!p)return;
+  var b=p.querySelector(':scope>.fx-banner');
+  if(!cur){if(b)b.remove();return}
+  if(!b){
+    b=D.createElement('section');b.className='fx-banner notranslate';b.setAttribute('translate','no');
+    b.innerHTML='<i class="fx-toran"></i><i class="fx-sp" style="left:46%;top:26px">✦</i><i class="fx-sp" style="left:58%;bottom:16px;animation-delay:.9s">✦</i><i class="fx-sp" style="right:24%;top:30px;font-size:11px;animation-delay:1.6s">✦</i><div class="fx-copy"><h2 class="fx-title"></h2><p class="fx-sub"></p><button type="button" class="fx-cta" onclick="showPage(\'shop\')"></button></div><div class="fx-art" aria-hidden="true"><i class="fx-ring"></i><i class="fx-em"></i></div>';
+    var h=p.querySelector(':scope>.vg-store-header')||p.querySelector(':scope>.section-head');
+    h?h.after(b):p.prepend(b);
+  }
+  b.classList.toggle('fx-compact',!!compact);
+  fill(b);
+}
+function banners(){banner('page-home');banner('page-shop',1);banner('page-cart',1)}
+
+var FX={diwali:'burst',newyear:'burst',holi:'splash',eid:'twinkle',dussehra:'rise',sankranti:'rise',tiranga:'confetti'};
+var BC={diwali:['#ffd34d','#ff7a1a','#ff3d3d','#fff3c4'],newyear:['#ffd34d','#a78bfa','#38bdf8','#ffffff']};
+var HC=['#ec4899','#f59e0b','#06b6d4','#22c55e','#a855f7','#ef4444'],tm=[];
+function rnd(a,b){return a+Math.random()*(b-a)}
+function fall(){
+  tm.forEach(clearInterval);tm=[];var old=D.getElementById('fxFall');if(old)old.remove();
+  if(!cur||(w.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches))return;
+  var m=FX[cur]||'fall',E=F[cur][4],mob=innerWidth<700,o=D.createElement('div');
+  o.id='fxFall';o.setAttribute('aria-hidden','true');D.body.appendChild(o);
+  function add(cls,txt,st,life){var e=D.createElement('span');e.className=cls;e.style.cssText=st;e.textContent=txt||'';o.appendChild(e);if(life)setTimeout(function(){e.remove()},life)}
+  function loop(cls,n,build){for(var i=0;i<n;i++){var s=build(i);add(cls,s.h,'left:'+rnd(0,100).toFixed(1)+'%;animation-duration:'+rnd(s.a,s.b).toFixed(1)+'s;animation-delay:-'+rnd(0,s.b).toFixed(1)+'s;--dx:'+(rnd(-40,40)|0)+'px;'+s.st)}}
+  if(m==='fall')loop('fx-f',mob?12:18,function(i){return{h:E[i%E.length],a:9,b:17,st:'font-size:'+(rnd(14,24)|0)+'px'}});
+  if(m==='confetti'){var C=['#ff9933','#ffffff','#138808'];loop('fx-f',mob?16:24,function(i){return{h:'',a:7,b:13,st:'width:7px;height:12px;border-radius:2px;background:'+C[i%3]+';box-shadow:0 0 0 1px rgba(0,0,0,.18)'}})}
+  if(m==='rise')loop('fx-r',mob?8:12,function(i){return{h:E[i%E.length],a:11,b:20,st:'font-size:'+(rnd(16,28)|0)+'px'}});
+  if(m==='twinkle')for(var t=0;t<(mob?10:16);t++)add('fx-t',E[t%E.length],'left:'+rnd(2,96).toFixed(1)+'%;top:'+rnd(4,90).toFixed(1)+'%;font-size:'+(rnd(14,26)|0)+'px;animation-delay:-'+rnd(0,3).toFixed(1)+'s');
+  if(m==='splash'){
+    loop('fx-f',mob?10:16,function(i){var s=rnd(7,13)|0;return{h:'',a:10,b:18,st:'width:'+s+'px;height:'+s+'px;border-radius:50%;opacity:.8;background:'+HC[i%6]}});
+    tm.push(setInterval(function(){
+      if(D.hidden||o.children.length>44)return;
+      var c=HC[(Math.random()*6)|0],s=rnd(110,190)|0,x=rnd(8,92),y=rnd(12,78);
+      add('fx-spl','','left:'+x.toFixed(1)+'%;top:'+y.toFixed(1)+'%;width:'+s+'px;height:'+s+'px;background:radial-gradient(circle,'+c+'dd 0,'+c+'88 40%,transparent 70%)',1700);
+      for(var k=0;k<7;k++){var a=rnd(0,6.28),d=rnd(s*.4,s*.8);add('fx-p','','left:'+x.toFixed(1)+'%;top:'+y.toFixed(1)+'%;width:7px;height:7px;color:'+c+';background:'+c+';--bx:'+(Math.cos(a)*d|0)+'px;--by:'+(Math.sin(a)*d|0)+'px',1100)}
+    },1100));
+  }
+  if(m==='burst'){
+    var cols=BC[cur];
+    loop('fx-r',mob?5:8,function(){return{h:'✨',a:12,b:20,st:'font-size:14px;opacity:.8'}});
+    var go=function(){
+      if(D.hidden||o.querySelectorAll('.fx-rk').length>2)return;
+      var x=rnd(14,86),y=rnd(14,44);
+      add('fx-rk','','left:'+x.toFixed(1)+'%;--rise:-'+(100-y).toFixed(1)+'vh',650);
+      setTimeout(function(){
+        if(!o.isConnected)return;
+        for(var j=0;j<2;j++){var n=j?9:16,r=j?rnd(26,40):rnd(52,84),c=cols[(Math.random()*cols.length)|0];
+          for(var k=0;k<n;k++){var a=k/n*6.283+j*.3;add('fx-p','','left:'+x.toFixed(1)+'%;top:'+y.toFixed(1)+'vh;color:'+c+';background:'+c+';--bx:'+(Math.cos(a)*r|0)+'px;--by:'+(Math.sin(a)*r|0)+'px',1100)}}
+      },620);
+    };
+    setTimeout(go,500);tm.push(setInterval(go,1500));
+  }
+}
+
+/* ---- once-a-day greeting popup (customers only) ---- */
+function vis(id){var e=D.getElementById(id);if(!e)return false;var s=getComputedStyle(e);return s.display!=='none'&&s.visibility!=='hidden'}
+function pop(n){
+  if(!cur||D.getElementById('fxPop')||dirty)return;
+  var a=D.getElementById('page-admin');if(a&&a.classList.contains('active'))return;
+  if(vis('vLangGate')||vis('stvnCustomerLoginGate')){if(n<6)setTimeout(function(){pop(n+1)},4000);return}
+  var key='vedantFestSeen:'+cur+':'+new Date().toISOString().slice(0,10);
+  try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
+  var o=D.createElement('div');o.id='fxPop';o.className='notranslate';o.setAttribute('translate','no');o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+  o.innerHTML='<div class="fx-pop-card"><i class="fx-toran"></i><button type="button" class="fx-pop-x" aria-label="Close">✕</button><i class="fx-em"></i><h2 class="fx-title"></h2><p class="fx-sub"></p><button type="button" class="fx-cta"></button></div>';
+  fill(o);
+  function close(){o.remove()}
+  o.addEventListener('click',function(e){if(e.target===o||e.target.closest('.fx-pop-x'))close()});
+  o.querySelector('.fx-cta').addEventListener('click',function(){close();if(typeof showPage==='function')showPage('shop')});
+  D.body.appendChild(o);
+}
+
+function ui(){
+  D.querySelectorAll('#adminFestGrid .fx-card').forEach(function(b){b.setAttribute('aria-pressed',String((b.getAttribute('data-k')||'')===cur))});
+  var live=D.getElementById('adminFestLive');
+  if(live)live.textContent=cur?'अभी चुनी हुई थीम: '+F[cur][3]:'अभी चुनी हुई थीम: Normal (सामान्य)';
+}
+function apply(k,m){
+  cur=F[k]?k:'';msg=cur&&m?{en:m.en||'',hi:m.hi||''}:{en:'',hi:''};
+  cur?R.setAttribute('data-festival',cur):R.removeAttribute('data-festival');
+  if(meta)meta.content=cur?F[cur][5]:origColor;
+  if(cur)font();
+  banners();fall();ui();
+}
+function parseMsg(v){try{var j=JSON.parse(v);return {en:j.en||'',hi:j.hi||''}}catch(e){return {en:'',hi:''}}}
+
+/* ---- customers: read the current festival from Supabase ---- */
+async function pull(){
+  if(dirty||typeof supabaseClient==='undefined')return;
+  try{
+    var r=await supabaseClient.from('shop_settings').select('maintenance_reason').eq('id',3).maybeSingle();
+    if(r.error)return;
+    var o={f:'',m:{en:'',hi:''}};
+    if(r.data){try{var j=JSON.parse(r.data.maintenance_reason);o={f:j.f||'',m:{en:j.m||'',hi:j.h||''}}}catch(e){}}
+    var changed=o.f!==cur;
+    store(o.f,o.m);apply(o.f,o.m);
+    if(changed&&cur)setTimeout(function(){pop(0)},2500);
+  }catch(e){console.warn('Festival theme load failed',e)}
+}
+
+/* ---- admin ---- */
+w.vgFestToggle=function(open){
+  var p=D.getElementById('adminFestivalPanel'),b=D.getElementById('adminFestivalToggle');if(!p||!b)return;
+  var o=typeof open==='boolean'?open:p.hidden;
+  p.hidden=!o;b.setAttribute('aria-expanded',String(o));
+  D.getElementById('adminFestivalIcon').textContent=o?'－':'＋';var tb=D.getElementById('admin-festival-toolbar-toggle');if(tb)tb.setAttribute('aria-expanded',String(o));
+  if(o){D.getElementById('adminFestMsg').value=msg.en;D.getElementById('adminFestMsgHi').value=msg.hi;ui()}
+};
+w.vgFestPick=function(k){
+  dirty=true;apply(k,{en:val('adminFestMsg'),hi:val('adminFestMsgHi')});
+  D.getElementById('adminFestStatus').textContent=cur?'👁️ Preview: '+F[cur][3]+' — सभी customers को दिखाने के लिए Save दबाएँ।':'👁️ Preview: Normal थीम — Save दबाएँ।';
+};
+w.vgFestMsg=function(){dirty=true;msg=cur?{en:val('adminFestMsg'),hi:val('adminFestMsgHi')}:{en:'',hi:''};banners()};
+w.vgFestSave=async function(){
+  var st=D.getElementById('adminFestStatus'),b=D.getElementById('adminFestSave');
+  var m={en:val('adminFestMsg'),hi:val('adminFestMsgHi')};
+  b.disabled=true;st.textContent='⏳ Save हो रहा है…';
+  try{
+    if(typeof supabaseClient==='undefined')throw new Error('Supabase उपलब्ध नहीं है।');
+    var s=await supabaseClient.auth.getSession();
+    if(!s.data||!s.data.session)throw new Error('पहले Admin Login करें।');
+    var r=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify({f:cur,m:m.en,h:m.hi}),updated_at:new Date().toISOString()},{onConflict:'id'});
+    if(r.error)throw r.error;
+    store(cur,m);msg=cur?m:{en:'',hi:''};dirty=false;banners();
+    st.textContent=cur?'✅ '+F[cur][3]+' थीम सेव हो गई। अब सभी customers को दिखेगी।':'✅ Normal थीम सेव हो गई।';
+  }catch(x){
+    store(cur,m);
+    st.textContent='❌ Database में सेव नहीं हुआ ('+((x&&x.message)||x)+')। इस फ़ोन पर थीम लगी है; सभी customers के लिए Supabase की shop_settings table policy जाँचें।';
+  }
+  b.disabled=false;
+};
+
+function buildGrid(){
+  var g=D.getElementById('adminFestGrid');if(!g)return;
+  var h='<button type="button" class="fx-card" data-k="" aria-pressed="false" onclick="vgFestPick(\'\')"><span class="fx-sw">🛒</span><span>Normal · सामान्य</span></button>';
+  Object.keys(F).forEach(function(k){
+    h+='<button type="button" class="fx-card" data-k="'+k+'" data-fx-theme="'+k+'" aria-pressed="false" onclick="vgFestPick(\''+k+'\')"><span class="fx-sw">'+F[k][0]+'</span><span>'+F[k][3]+'</span></button>';
+  });
+  g.innerHTML=h;
+}
+
+buildGrid();
+try{apply(localStorage.getItem(K)||'',parseMsg(localStorage.getItem(MK)||''))}catch(e){apply('',null)}
+function place(){var wd=D.getElementById('admin-view-withdrawal-status'),b=D.getElementById('admin-festival-toolbar-toggle');if(wd&&b&&wd.nextElementSibling!==b)wd.after(b)}
+place();setInterval(function(){place();if(cur)banners()},1500);
+new MutationObserver(function(){banners();if(w.__vgReapplyStatus)w.__vgReapplyStatus();if(w.__vgSyncBanner)w.__vgSyncBanner()}).observe(R,{attributes:true,attributeFilter:['lang','data-language']});
+setTimeout(function(){pop(0)},6000);
+(function wait(n){typeof supabaseClient!=='undefined'?pull():(n<40&&setTimeout(function(){wait(n+1)},500))})(0);
+w.addEventListener('focus',pull);
+D.addEventListener('visibilitychange',function(){if(!D.hidden)pull()});
+setInterval(pull,120000);
 })();
 </script>
 
@@ -20008,85 +20399,9 @@ html body #stvnCustomerLoginGate .stvn-google-login-action{background:#fff!impor
 </style>
 
 
-<style id="vg-login-otp-email-final-fix">
-#stvnCustomerLoginGate .stvn-login-hero{display:flex!important;flex-direction:column!important;align-items:center!important}
-#stvnCustomerLoginGate .vg-login-hero-logo{display:flex!important;order:0!important;margin:0 auto 12px!important;width:76px!important;height:76px!important;padding:6px!important;border-radius:22px!important;align-items:center!important;justify-content:center!important}
-#stvnCustomerLoginGate .vg-login-hero-logo img{width:100%!important;height:100%!important;object-fit:contain!important}
-#stvnCustomerLoginGate #stvnCustomerLoginTitle{order:2!important;margin-top:0!important}
-#stvnCustomerLoginGate .stvn-login-hero>div[style]{order:1!important}
-#stvnCustomerLoginGate .stvn-login-subtitle{order:3!important}
-#stvnCustomerLoginGate .stvn-login-benefits{order:4!important}
-#stvnCustomerLoginGate #vgCustomerOtpBoxes{display:grid!important;grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:5px!important;width:100%!important;direction:ltr!important;visibility:visible!important;opacity:1!important}
-#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:2!important;width:100%!important;min-width:0!important;height:52px!important;min-height:52px!important;padding:0!important;margin:0!important;border:2px solid #a9d8b2!important;border-radius:11px!important;background:#fff!important;color:#123d1b!important;-webkit-text-fill-color:#123d1b!important;caret-color:#087c20!important;text-align:center!important;font-family:Arial,sans-serif!important;font-size:22px!important;font-weight:900!important;line-height:1!important;letter-spacing:0!important;box-sizing:border-box!important;appearance:none!important;-webkit-appearance:none!important}
-#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit:focus{border-color:#078b27!important;box-shadow:0 0 0 3px rgba(7,139,39,.15)!important;outline:none!important}
-#stvnCustomerLoginGate .vg-change-email{display:inline-flex;align-items:center;justify-content:center;margin:7px 0 0 auto;padding:7px 11px;border:1px solid #cfe5d3;border-radius:9px;background:#f1faf3;color:#087c20;font-size:12px;font-weight:800;cursor:pointer}
-@media(max-width:390px){#stvnCustomerLoginGate #vgCustomerOtpBoxes{gap:3px!important}#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit{height:44px!important;min-height:44px!important;font-size:18px!important;border-radius:8px!important}}
-</style>
-<script id="vg-otp-visibility-and-email-edit-fix">
-(function(){
- function setup(){
-  const wrap=document.getElementById('vgCustomerOtpBoxes');
-  const hidden=document.getElementById('stvnCustomerOtp');
-  if(!wrap||!hidden||wrap.dataset.finalFix==='1')return;
-  wrap.dataset.finalFix='1';
-  const cells=Array.from(wrap.querySelectorAll('.vg-otp-digit'));
-  function sync(){hidden.value=cells.map(c=>String(c.value||'').replace(/\D/g,'').slice(-1)).join('').slice(0,8);}
-  function putDigits(value){const digits=String(value||'').replace(/\D/g,'').slice(0,8);cells.forEach((c,i)=>{c.value=digits[i]||'';});sync();const target=cells.find(c=>!c.value)||cells[cells.length-1];if(target)target.focus();}
-  cells.forEach((cell,index)=>{
-   cell.addEventListener('input',()=>{const v=String(cell.value||'').replace(/\D/g,'');if(v.length>1){putDigits(v);return;}cell.value=v.slice(-1);sync();if(cell.value&&cells[index+1])cells[index+1].focus();});
-   cell.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!cell.value&&cells[index-1]){cells[index-1].value='';cells[index-1].focus();sync();}else if(e.key==='ArrowLeft'&&cells[index-1]){e.preventDefault();cells[index-1].focus();}else if(e.key==='ArrowRight'&&cells[index+1]){e.preventDefault();cells[index+1].focus();}});
-   cell.addEventListener('paste',e=>{const val=(e.clipboardData||window.clipboardData).getData('text');if(val){e.preventDefault();putDigits(val);}});
-   cell.addEventListener('focus',()=>{cell.style.webkitTextFillColor='#123d1b';});
-  });
-  window.stvnCustomerOtpBoxFocus=function(){const target=cells.find(c=>!c.value)||cells[0];if(target)target.focus();};
-  const resend=document.getElementById('stvnCustomerResendButton');
-  if(resend)resend.addEventListener('click',()=>{cells.forEach(c=>c.value='');sync();});
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
- window.addEventListener('load',setup);
-})();
-</script>
 
 
-<style id="vg-otp-real-input-display-fix">
-#stvnCustomerLoginGate #vgCustomerOtpBoxes{position:relative!important;display:grid!important;grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:5px!important;width:100%!important;direction:ltr!important;overflow:visible!important;}
-#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;height:50px!important;box-sizing:border-box!important;border:1.5px solid #a9d8b2!important;border-radius:11px!important;background:#fff!important;color:#123d1b!important;font:900 21px/1 Arial,Helvetica,sans-serif!important;-webkit-text-fill-color:#123d1b!important;}
-#stvnCustomerLoginGate #vgCustomerOtpBoxes #vgCustomerOtpEntry{position:absolute!important;inset:0!important;z-index:5!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:transparent!important;-webkit-text-fill-color:transparent!important;caret-color:transparent!important;opacity:.015!important;box-shadow:none!important;outline:none!important;font-size:16px!important;letter-spacing:0!important;cursor:text!important;}
-#stvnCustomerLoginGate #vgCustomerOtpBoxes:focus-within .vg-otp-digit{border-color:#078b27!important;box-shadow:0 0 0 2px rgba(7,139,39,.10)!important;}
-@media(max-width:390px){#stvnCustomerLoginGate #vgCustomerOtpBoxes{gap:3px!important}#stvnCustomerLoginGate #vgCustomerOtpBoxes .vg-otp-digit{height:44px!important;font-size:18px!important;border-radius:8px!important}}
-</style>
-<script id="vg-otp-render-controller-final">
-(function(){
- function init(){
-  const wrap=document.getElementById('vgCustomerOtpBoxes');
-  const entry=document.getElementById('vgCustomerOtpEntry');
-  const hidden=document.getElementById('stvnCustomerOtp');
-  if(!wrap||!entry||!hidden||entry.dataset.bound==='1')return;
-  entry.dataset.bound='1';
-  const boxes=Array.from(wrap.querySelectorAll('.vg-otp-digit'));
-  function render(){
-   const digits=String(entry.value||'').replace(/[^0-9]/g,'').slice(0,8);
-   if(entry.value!==digits)entry.value=digits;
-   hidden.value=digits;
-   boxes.forEach((box,i)=>{box.textContent=digits[i]||'';});
-   const msg=document.getElementById('stvnCustomerLoginMessage');
-   if(digits.length===8 && msg && msg.classList.contains('error')){msg.textContent='';msg.className='stvn-login-message';}
-   return digits;
-  }
-  entry.addEventListener('input',render);
-  entry.addEventListener('change',render);
-  entry.addEventListener('paste',()=>setTimeout(render,0));
-  entry.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const form=document.getElementById('stvnCustomerLoginForm');if(form)form.requestSubmit();}});
-  wrap.addEventListener('click',()=>entry.focus());
-  window.stvnCustomerOtpBoxFocus=function(){entry.focus();};
-  window.stvnCustomerOtpClear=function(){entry.value='';hidden.value='';render();};
-  const resend=document.getElementById('stvnCustomerResendButton');
-  if(resend)resend.addEventListener('click',()=>window.stvnCustomerOtpClear());
-  const form=document.getElementById('stvnCustomerLoginForm');
-  if(form)form.addEventListener('submit',render,true);
-  render();
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
- window.addEventListener('load',init,{once:true});
-})();
-</script>
+
+
+
+
