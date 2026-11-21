@@ -22845,3 +22845,506 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 })();
 </script>
 <!-- ===================== END VEDANT RIDER MODULE ===================== -->
+
+<!-- Vedant Grocery Shop: MOBILE header v9 - My Account removed from header, Cart + Dark mode shown neatly. Desktop untouched. -->
+<style id="vedant-mobile-header-cart-dark-v9">
+@media (max-width:700px){
+  /* 1) My Account hidden in the mobile header (still available from bottom-nav "Account") */
+  html body .vg-store-header > #stvnProfileBar,
+  html body .vg-store-header #stvnProfileBar,
+  html body .vg-store-header #stvnProfileToggle,
+  html body .vg-store-header > .vg-account-action,
+  html body .vg-store-header .stvn-account-host{
+    display:none!important;visibility:hidden!important;pointer-events:none!important;
+    width:0!important;min-width:0!important;height:0!important;margin:0!important;padding:0!important;border:0!important;
+  }
+  /* 2) Header row 1 = Brand | Cart | Dark mode. Other rows keep their original positions. */
+  html body .vg-store-header{
+    grid-template-columns:minmax(0,1fr) 44px 44px!important;
+    column-gap:8px!important;
+  }
+  html body .vg-store-header > .vg-brand{grid-column:1!important;grid-row:1!important;min-width:0!important}
+  html body .vg-store-header > .vg-cart-action{
+    grid-column:2!important;grid-row:1!important;justify-self:center!important;align-self:center!important;
+    width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;margin:0!important;
+  }
+  html body .vg-store-header > .vg-theme-action{
+    display:inline-grid!important;place-items:center!important;
+    grid-column:3!important;grid-row:1!important;justify-self:center!important;align-self:center!important;
+    width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+    margin:0!important;padding:0!important;font-size:20px!important;border-radius:50%!important;
+    visibility:visible!important;opacity:1!important;pointer-events:auto!important;order:0!important;
+  }
+  /* the small duplicate dark-mode button that sat inside the brand block is hidden (header one replaces it) */
+  html body .vg-store-header .vg-brand .vg11-theme{display:none!important}
+  /* Location / Track / My Orders / Search rows stay as they were, just span the new 3 columns */
+  html body .vg-store-header > .vg-location-button{grid-column:1/4!important}
+  html body .vg-store-header > .vg-search{grid-column:1/4!important}
+  html body .vg-store-header > .vg-orders-action{grid-column:2/4!important}
+}
+@media (max-width:380px){
+  html body .vg-store-header{grid-template-columns:minmax(0,1fr) 40px 40px!important;column-gap:6px!important}
+  html body .vg-store-header > .vg-cart-action,
+  html body .vg-store-header > .vg-theme-action{width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important}
+  html body .vg-store-header > .vg-theme-action{font-size:18px!important}
+}
+</style>
+
+<!-- ===================== VEDANT v10: Delivery OTP + GPS accuracy + Rider/Track polish (additive) ===================== -->
+<style id="vedant-v10-style">
+/* ---------- customer: delivery PIN card (Track page) ---------- */
+.vgotp-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 14px;padding:16px;border-radius:20px;color:#fff;background:linear-gradient(135deg,#0b3d24,#16a34a 62%,#f5b82e);box-shadow:0 12px 28px rgba(15,61,36,.35);animation:vgoIn .55s cubic-bezier(.2,1.2,.3,1) both}
+.vgotp-card:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-120%);animation:vgoShine 3.6s ease-in-out infinite;pointer-events:none}
+.vgotp-lock{font-size:34px;width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.18);animation:vgoPulse 2.2s ease-in-out infinite}
+.vgotp-body{flex:1 1 150px;min-width:0}
+.vgotp-body b{display:block;font-size:17px;letter-spacing:.2px}
+.vgotp-body small{display:block;margin-top:3px;font-size:12px;line-height:1.35;opacity:.92}
+.vgotp-digits{display:flex;gap:7px;margin-left:auto}
+.vgotp-digits i{font-style:normal;display:grid;place-items:center;width:42px;height:50px;border-radius:13px;background:#fff;color:#0b3d24;font-size:26px;font-weight:900;box-shadow:0 5px 12px rgba(0,0,0,.2);animation:vgoDigit .5s cubic-bezier(.2,1.6,.4,1) both}
+.vgotp-digits i:nth-child(2){animation-delay:.08s}.vgotp-digits i:nth-child(3){animation-delay:.16s}.vgotp-digits i:nth-child(4){animation-delay:.24s}
+@media(max-width:420px){.vgotp-digits{margin-left:0;width:100%;justify-content:center}.vgotp-digits i{width:52px;height:58px}}
+/* My Orders mini badge */
+.vgotp-mini{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;padding:10px 13px;border-radius:14px;background:linear-gradient(135deg,#e8f8ee,#fff4d6);border:1.5px dashed #16a34a;color:#0b3d24;font-weight:800;animation:vgoIn .45s ease both}
+.vgotp-mini .vgotp-pin{font-size:22px;letter-spacing:7px;padding:3px 10px;border-radius:10px;background:#0b3d24;color:#fff}
+body.dark .vgotp-mini{background:linear-gradient(135deg,#12261a,#2a2410);color:#e8f6ec;border-color:#e7c34a}
+body.dark .vgotp-mini .vgotp-pin{background:#f5b82e;color:#10200f}
+@keyframes vgoIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes vgoShine{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes vgoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1) rotate(-4deg)}}
+@keyframes vgoDigit{from{opacity:0;transform:translateY(16px) scale(.6)}to{opacity:1;transform:none}}
+
+/* ---------- admin: OTP toggle ---------- */
+#vgOtpAdminBtn{margin:4px;font-weight:900;border-radius:12px;transition:transform .15s,background .25s}
+#vgOtpAdminBtn:active{transform:scale(.94)}
+#vgOtpAdminBtn.on{background:linear-gradient(135deg,#0f9d3a,#0b6b27)!important;color:#fff!important}
+#vgOtpAdminBtn.off{background:linear-gradient(135deg,#6b7280,#374151)!important;color:#fff!important}
+#vgOtpAdminBtn.busy{opacity:.6;pointer-events:none}
+@media(max-width:600px){#vgOtpAdminBtn{font-size:10px!important;padding:7px 8px!important}}
+
+/* ---------- rider: PIN flow overlay ---------- */
+#vgOtpRider{position:fixed;inset:0;z-index:2147483300;display:none;align-items:flex-end;justify-content:center;background:rgba(6,12,9,.78);backdrop-filter:blur(6px);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+#vgOtpRider.show{display:flex}
+#vgOtpRider .vgo-scene{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:24px}
+#vgOtpRider.s1 .vgo-scene{display:flex}
+.vgo-track{position:relative;width:min(92vw,420px);height:90px;margin-bottom:18px}
+.vgo-road{position:absolute;left:0;right:0;bottom:12px;height:6px;border-radius:6px;background:repeating-linear-gradient(90deg,#fbbf24 0 18px,transparent 18px 34px);opacity:.85;animation:vgoRoad .6s linear infinite}
+.vgo-bike{position:absolute;bottom:14px;left:0;font-size:46px;transform:scaleX(-1);animation:vgoRide 1.55s cubic-bezier(.45,.05,.3,1) forwards;filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+.vgo-house{position:absolute;bottom:14px;right:0;font-size:54px;animation:vgoHouse .6s .9s cubic-bezier(.2,1.8,.4,1) both}
+.vgo-ring{position:absolute;right:-6px;bottom:2px;width:70px;height:70px;border-radius:50%;border:3px solid #fbbf24;opacity:0;animation:vgoRing 1s 1.1s ease-out 2}
+#vgOtpRider .vgo-scene h2{margin:0;font-size:22px;animation:vgoIn .5s .5s both}
+#vgOtpRider .vgo-scene p{margin:6px 0 0;color:#cbd5e1;font-weight:600;animation:vgoIn .5s .7s both}
+@keyframes vgoRide{from{left:0}to{left:calc(100% - 92px)}}
+@keyframes vgoRoad{from{background-position:0 0}to{background-position:-34px 0}}
+@keyframes vgoHouse{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+@keyframes vgoRing{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.8);opacity:0}}
+#vgOtpRider .vgo-sheet{display:none;width:100%;max-width:440px;background:#fff;color:#14221a;border-radius:26px 26px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;border-top:4px solid #fbbf24;box-shadow:0 -14px 40px rgba(0,0,0,.4)}
+#vgOtpRider.s2 .vgo-sheet{display:block;animation:vgoSheet .45s cubic-bezier(.2,1.1,.3,1) both}
+@keyframes vgoSheet{from{transform:translateY(100%)}to{transform:none}}
+.vgo-lock{font-size:42px;display:inline-grid;place-items:center;width:74px;height:74px;border-radius:24px;background:linear-gradient(135deg,#e8f8ee,#fff4d6);animation:vgoPulse 2s ease-in-out infinite}
+#vgOtpRider h3{margin:10px 0 2px;font-size:21px}
+.vgo-sub{margin:0 0 14px;color:#5b6b60;font-size:13px;font-weight:600}
+.vgo-digits{display:flex;justify-content:center;gap:10px}
+.vgo-digits input{width:56px;height:64px;border-radius:16px;border:2px solid #cfe3d5;background:#f6fbf7;text-align:center;font-size:30px;font-weight:900;color:#0b3d24;outline:0;transition:border-color .15s,transform .15s,box-shadow .15s;-moz-appearance:textfield}
+.vgo-digits input:focus{border-color:#16a34a;transform:translateY(-3px) scale(1.06);box-shadow:0 8px 18px rgba(22,163,74,.28)}
+.vgo-digits input.filled{background:#e8f8ee;border-color:#16a34a}
+.vgo-digits.shake{animation:vgoShake .5s}
+.vgo-digits.bad input{border-color:#ef4444;background:#fee2e2;color:#b91c1c}
+.vgo-digits.good input{border-color:#16a34a;background:#bbf7d0;animation:vgoGood .5s both}
+@keyframes vgoShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-12px)}30%{transform:translateX(11px)}45%{transform:translateX(-9px)}60%{transform:translateX(7px)}80%{transform:translateX(-4px)}}
+@keyframes vgoGood{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+.vgo-msg{min-height:26px;margin:12px 0 4px;font-weight:900;font-size:16px}
+.vgo-msg.bad{color:#dc2626;animation:vgoIn .25s both}
+.vgo-msg.good{color:#15803d;animation:vgoIn .25s both}
+.vgo-row{display:flex;gap:10px;margin-top:8px}
+.vgo-btn{flex:1;padding:15px;border:0;border-radius:15px;font-weight:900;font-size:16px;color:#fff;background:linear-gradient(135deg,#16a34a,#0b6b27);box-shadow:0 8px 18px rgba(0,0,0,.22);cursor:pointer;transition:transform .12s}
+.vgo-btn:active{transform:scale(.95)}
+.vgo-btn.sec{background:#e5e7eb;color:#1f2937;box-shadow:none}
+.vgo-btn:disabled{opacity:.5}
+.vgo-ok{display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-weight:900;font-size:24px;text-align:center}
+#vgOtpRider.s3 .vgo-ok{display:flex}
+#vgOtpRider.s3 .vgo-sheet{display:none}
+.vgo-ok i{font-style:normal;font-size:92px;animation:vgoPop .7s cubic-bezier(.2,1.8,.4,1) both;filter:drop-shadow(0 0 22px #22c55e)}
+@keyframes vgoPop{from{transform:scale(0) rotate(-40deg)}to{transform:none}}
+/* rider: PIN hint above Delivery button */
+.vgotp-rhint{margin:8px 0;padding:11px 13px;border-radius:14px;font-weight:800;font-size:13px;line-height:1.35;background:linear-gradient(135deg,#fff7d6,#e8f8ee);border:1.5px dashed #d99a06;color:#6b4a00;animation:vgoIn .4s both}
+
+/* ---------- rider page polish + click animations ---------- */
+#vgRider .vgr-top{background-size:200% 200%;animation:vgrHd 9s ease infinite}
+@keyframes vgrHd{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+#vgRider .vgr-card{animation:vgoIn .5s cubic-bezier(.2,.9,.3,1) both;transition:transform .2s,box-shadow .2s}
+#vgRider .vgr-card:active{transform:scale(.99)}
+#vgRider .vgr-stat{position:relative;overflow:hidden;transition:transform .2s;animation:vgoIn .5s both}
+#vgRider .vgr-stat:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-120%);animation:vgoShine 5s ease-in-out infinite;pointer-events:none}
+#vgRider .vgr-stat:active{transform:scale(.96)}
+#vgRider .vgr-stat b{display:inline-block;animation:vgoDigit .6s cubic-bezier(.2,1.6,.4,1) both}
+#vgRider .vgr-btn{position:relative;overflow:hidden;transition:transform .14s,box-shadow .2s,filter .2s}
+#vgRider .vgr-btn:active:not(:disabled){transform:scale(.95);filter:brightness(1.1)}
+#vgRider #vgrDone:not(:disabled){animation:vgoGlow 2.2s ease-in-out infinite}
+@keyframes vgoGlow{0%,100%{box-shadow:0 8px 18px rgba(0,0,0,.25)}50%{box-shadow:0 0 0 6px rgba(34,197,94,.28),0 10px 24px rgba(0,0,0,.3)}}
+#vgRider .vgr-st.now i{display:inline-block;animation:vgoBounce 1.3s ease-in-out infinite}
+@keyframes vgoBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#vgRider .vgr-hist{animation:vgoIn .4s both;transition:transform .15s}
+#vgRider .vgr-hist:active{transform:translateX(4px)}
+.vgr-rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:vgoRip .6s ease-out forwards;pointer-events:none}
+@keyframes vgoRip{to{transform:scale(2.6);opacity:0}}
+body.dark #vgOtpRider .vgo-sheet{background:#151d18;color:#eef4ef}
+body.dark .vgo-sub{color:#9bb0a1}
+body.dark .vgo-digits input{background:#0f1612;border-color:#2c3a31;color:#f5c94a}
+@media(prefers-reduced-motion:reduce){.vgotp-card *,.vgotp-card:before,#vgRider *,#vgOtpRider *{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+
+<script id="vedant-v10-script">
+(function(){
+'use strict';
+if(window.__vgV10)return;window.__vgV10=true;
+var D=document;
+function $(id){return D.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+function sbc(){return window.supabaseClient||null}
+
+/* =====================================================
+   1) GPS ACCURACY: best-of-window fix + jitter smoothing
+   (applies to customer location capture, tracking and rider)
+   ===================================================== */
+(function(){
+  var g=navigator.geolocation;if(!g||g.__vgBest)return;
+  var origGet=g.getCurrentPosition.bind(g),origWatch=g.watchPosition.bind(g),origClear=g.clearWatch.bind(g);
+  function dist(a,b,c,d){var R=6371000,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.min(1,Math.sqrt(h)))}
+  g.getCurrentPosition=function(ok,err,opt){
+    if(!opt||!opt.enableHighAccuracy||typeof ok!=='function')return origGet(ok,err,opt);
+    var best=null,fin=false,wid=null,t1=null,t2=null,tmax=Math.min(Number(opt.timeout)||20000,20000);
+    function stop(){clearTimeout(t1);clearTimeout(t2);try{origClear(wid)}catch(e){}}
+    function done(){if(fin)return;fin=true;stop();if(best)ok(best);else if(typeof err==='function')err({code:3,message:'Timeout expired',PERMISSION_DENIED:1,POSITION_UNAVAILABLE:2,TIMEOUT:3})}
+    wid=origWatch(function(p){
+      if(fin)return;
+      if(!best||p.coords.accuracy<best.coords.accuracy)best=p;
+      if(p.coords.accuracy<=20)done();
+      else if(!t1)t1=setTimeout(done,6000);
+    },function(e){
+      if(fin)return;
+      if(e&&e.code===1){fin=true;stop();if(typeof err==='function')err(e)}
+    },{enableHighAccuracy:true,maximumAge:0,timeout:tmax});
+    t2=setTimeout(done,tmax);
+  };
+  g.watchPosition=function(ok,err,opt){
+    if(!opt||!opt.enableHighAccuracy||typeof ok!=='function')return origWatch(ok,err,opt);
+    var last=null;
+    return origWatch(function(p){
+      var c=p.coords,acc=c.accuracy||9999,now=p.timestamp||Date.now(),lat=c.latitude,lng=c.longitude,outAcc=acc;
+      if(last){
+        var dt=Math.max(.001,(now-last.t)/1000),d=dist(last.lat,last.lng,lat,lng);
+        if(acc>150&&last.acc<60&&dt<25)return;                 /* wild low-quality fix */
+        if(d/dt>40&&acc>40&&dt<30)return;                       /* teleport jump */
+        var moving=(c.speed&&c.speed>1.2)||d>Math.max(25,acc);
+        if(!moving){                                            /* standing still: smooth GPS jitter */
+          var a2=last.acc*last.acc,w=a2/(a2+acc*acc);
+          lat=last.lat+(lat-last.lat)*w;lng=last.lng+(lng-last.lng)*w;outAcc=Math.min(acc,last.acc);
+        }
+      }
+      last={lat:lat,lng:lng,acc:outAcc,t:now};
+      ok({coords:{latitude:lat,longitude:lng,accuracy:outAcc,altitude:c.altitude,altitudeAccuracy:c.altitudeAccuracy,heading:c.heading,speed:c.speed},timestamp:now});
+    },err,{enableHighAccuracy:true,maximumAge:0,timeout:opt.timeout||30000});
+  };
+  g.__vgBest=true;
+})();
+
+/* =====================================================
+   2) DELIVERY OTP: setting (ON/OFF) + per-order 4-digit PIN
+   ===================================================== */
+var KEY='vgOtpOn',ROW=4;
+function otpOn(){try{return localStorage.getItem(KEY)==='1'}catch(e){return false}}
+function setCache(v){try{localStorage.setItem(KEY,v?'1':'0')}catch(e){}}
+function pinFor(id){
+  var s='vedant-delivery-pin|'+String(id||'').trim(),h=2166136261>>>0;
+  for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}
+  h^=h>>>15;h=Math.imul(h,2246822519)>>>0;h^=h>>>13;
+  return String(h%10000).padStart(4,'0');
+}
+function withTimeout(p,ms){return Promise.race([p,new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},ms)})])}
+async function fetchOtp(){
+  var c=sbc();if(!c)return otpOn();
+  try{
+    var r=await withTimeout(c.from('shop_settings').select('maintenance_reason').eq('id',ROW).maybeSingle(),5000);
+    if(r&&!r.error){
+      var on=false;
+      if(r.data&&r.data.maintenance_reason){try{on=!!JSON.parse(r.data.maintenance_reason).otp}catch(e){}}
+      var changed=on!==otpOn();setCache(on);if(changed)refreshAll();return on;
+    }
+  }catch(e){}
+  return otpOn();
+}
+async function saveOtp(on){
+  var c=sbc();if(!c)throw new Error('Database not ready');
+  var r=await c.from('shop_settings').upsert({id:ROW,is_open:true,maintenance_reason:JSON.stringify({otp:!!on}),updated_at:new Date().toISOString()},{onConflict:'id'});
+  if(r.error)throw r.error;
+  setCache(on);
+}
+
+/* ---------- admin ON/OFF button ---------- */
+function paintAdminBtn(){
+  var b=$('vgOtpAdminBtn');if(!b)return;
+  var on=otpOn();b.classList.toggle('on',on);b.classList.toggle('off',!on);
+  b.textContent='🔐 Delivery OTP: '+(on?'ON':'OFF');
+  b.title=on?'Riders must enter the customer PIN to complete delivery':'Riders can complete delivery without a PIN';
+}
+function ensureAdminBtn(){
+  var anchor=$('admin-shop-status-toolbar-toggle');
+  if(!anchor||$('vgOtpAdminBtn'))return;
+  var b=D.createElement('button');
+  b.id='vgOtpAdminBtn';b.type='button';b.className='admin-btn';
+  b.addEventListener('click',async function(){
+    if(b.classList.contains('busy'))return;
+    var want=!otpOn();b.classList.add('busy');
+    try{await saveOtp(want);paintAdminBtn();refreshAll();
+      if(window.stvnAlert)window.stvnAlert(want?'✅ Delivery OTP is now ON. Riders must enter the customer PIN.':'⚪ Delivery OTP is now OFF. Riders can deliver without a PIN.');
+    }catch(e){
+      if(window.stvnAlert)window.stvnAlert('❌ Could not save OTP setting: '+((e&&e.message)||e)+'. Check the shop_settings table policy in Supabase.');
+    }
+    b.classList.remove('busy');paintAdminBtn();
+  });
+  anchor.insertAdjacentElement('afterend',b);
+  paintAdminBtn();
+  fetchOtp().then(paintAdminBtn);
+}
+
+/* ---------- customer: Track page PIN card ---------- */
+function isOpenStatus(st){st=String(st||'').toLowerCase();return ['delivered','completed','cancelled','canceled','cancelled_by_admin','rejected'].indexOf(st)<0}
+function pinCardHTML(id){
+  var p=pinFor(id);
+  return '<div class="vgotp-lock">🔐</div><div class="vgotp-body"><b>Delivery PIN</b><small>Share this 4-digit PIN with the delivery partner only when your order is in your hands.</small></div><div class="vgotp-digits">'+p.split('').map(function(d){return '<i>'+d+'</i>'}).join('')+'</div>';
+}
+var lastTrack=null;
+function injectTrackPin(order,box){
+  if(!box)return;
+  var old=box.querySelector(':scope > .vgotp-card');if(old)old.remove();
+  if(!order||box.closest('.history-item'))return;
+  if(!otpOn()||!isOpenStatus(order.order_status))return;
+  var id=order.order_id||order.id;if(!id)return;
+  var s=D.createElement('section');s.className='vgotp-card';s.setAttribute('data-oid',String(id));s.innerHTML=pinCardHTML(id);
+  box.insertBefore(s,box.firstChild);
+}
+(function wrapTrack(){
+  var o=window.renderCustomerTracking;
+  if(typeof o!=='function'||o.__vgW){if(typeof o!=='function')setTimeout(wrapTrack,500);return}
+  var w=function(order,targetBox){
+    var r=o.apply(this,arguments);
+    try{
+      var box=targetBox||(typeof activeTrackingBoxId!=='undefined'&&$(activeTrackingBoxId))||$('tracking-status');
+      lastTrack={order:order,box:box};injectTrackPin(order,box);
+    }catch(e){}
+    return r;
+  };
+  w.__vgW=true;window.renderCustomerTracking=w;
+})();
+
+/* ---------- customer: My Orders PIN badge ---------- */
+function scanOrders(){
+  var box=$('order-history');if(!box)return;
+  var on=otpOn();
+  box.querySelectorAll('.history-item').forEach(function(card){
+    var mini=card.querySelector(':scope > .vgotp-mini');
+    var ps=card.querySelectorAll(':scope > p'),idP=null,stP=null;
+    for(var i=0;i<ps.length;i++){var t=ps[i].textContent;if(!idP&&/^\s*Order ID:/i.test(t))idP=ps[i];if(!stP&&/^\s*Order Status:/i.test(t))stP=ps[i]}
+    if(!idP||!stP){if(mini)mini.remove();return}
+    var id=idP.textContent.replace(/^\s*Order ID:\s*/i,'').trim();
+    var stText=stP.textContent.replace(/^\s*Order Status:\s*/i,'').trim().toLowerCase().replace(/\s+/g,'_');
+    var show=on&&id&&id!=='N/A'&&isOpenStatus(stText)&&!/cancelled/.test(stText);
+    if(!show){if(mini)mini.remove();return}
+    var pin=pinFor(id);
+    if(mini&&mini.getAttribute('data-oid')===id)return;
+    if(mini)mini.remove();
+    mini=D.createElement('div');mini.className='vgotp-mini';mini.setAttribute('data-oid',id);
+    mini.innerHTML='<span>🔐 Delivery PIN<br><small style="font-weight:600;opacity:.8">Tell it to the delivery partner on receiving</small></span><b class="vgotp-pin">'+pin+'</b>';
+    stP.insertAdjacentElement('afterend',mini);
+  });
+}
+function refreshAll(){
+  paintAdminBtn();
+  try{if(lastTrack&&lastTrack.box&&D.body.contains(lastTrack.box))injectTrackPin(lastTrack.order,lastTrack.box)}catch(e){}
+  scanOrders();riderHint();
+}
+
+/* =====================================================
+   3) RIDER: PIN check before "Delivery Complete"
+   ===================================================== */
+var ACT=null,verifiedAt={};
+(function wrapRpc(){
+  var c=sbc();if(!c||!c.rpc){setTimeout(wrapRpc,400);return}
+  if(c.__vgRpcW)return;c.__vgRpcW=true;
+  var orig=c.rpc.bind(c);
+  c.rpc=function(name,args){
+    if(typeof name!=='string'||name.indexOf('rider_')!==0)return orig(name,args);
+    if(args&&args.p_order_id&&name!=='rider_complete_order')ACT=String(args.p_order_id);
+    if(name==='rider_complete_order')ACT=null;
+    return Promise.resolve(orig(name,args)).then(function(r){
+      try{
+        var d=r&&r.data;
+        if(d&&name!=='rider_complete_order'){
+          if(d.active&&d.active.order_id)ACT=String(d.active.order_id);
+          else if(name==='rider_dashboard'&&d.active===null)ACT=null;
+          else if(d.order_id&&d.rider_stage)ACT=String(d.order_id);
+        }
+      }catch(e){}
+      return r;
+    });
+  };
+})();
+async function findActive(){
+  if(ACT)return ACT;
+  try{
+    var c=sbc(),u=await c.auth.getUser(),uid=u&&u.data&&u.data.user&&u.data.user.id;
+    if(!uid)return null;
+    var r=await withTimeout(c.from('orders').select('order_id').eq('rider_id',uid).eq('rider_stage','picked').limit(1),5000);
+    if(r&&!r.error&&r.data&&r.data[0])ACT=String(r.data[0].order_id);
+  }catch(e){}
+  return ACT;
+}
+function buildRiderUI(){
+  var w=$('vgOtpRider');if(w)return w;
+  w=D.createElement('div');w.id='vgOtpRider';
+  w.innerHTML='<div class="vgo-scene"><div class="vgo-track"><div class="vgo-road"></div><span class="vgo-bike">🏍️</span><span class="vgo-house">🏠</span><div class="vgo-ring"></div></div><h2>Customer ke paas pahunch gaye! 🎉</h2><p>Ab delivery PIN verify karo…</p></div>'+
+  '<div class="vgo-sheet"><div class="vgo-lock">🔐</div><h3>Enter Delivery PIN</h3><p class="vgo-sub">Customer ke Track page / My Orders me dikhne wala 4-digit PIN lo</p>'+
+  '<div class="vgo-digits" id="vgoDigits"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="one-time-code" aria-label="PIN digit 1"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="PIN digit 2"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="PIN digit 3"><input inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="PIN digit 4"></div>'+
+  '<div class="vgo-msg" id="vgoMsg"></div><div class="vgo-row"><button type="button" class="vgo-btn sec" id="vgoCancel">Cancel</button><button type="button" class="vgo-btn" id="vgoOk">✓ Verify &amp; Deliver</button></div></div>'+
+  '<div class="vgo-ok"><i>✅</i><div>PIN sahi hai!</div></div>';
+  D.body.appendChild(w);return w;
+}
+function pinFlow(orderId){
+  return new Promise(function(resolve){
+    var w=buildRiderUI(),ins=[].slice.call(w.querySelectorAll('#vgoDigits input')),dg=$('vgoDigits'),msg=$('vgoMsg'),okb=$('vgoOk'),cb=$('vgoCancel');
+    var want=pinFor(orderId),tries=0,closed=false;
+    function reset(){ins.forEach(function(i){i.value='';i.classList.remove('filled')});dg.classList.remove('bad','good','shake');msg.className='vgo-msg';msg.textContent=''}
+    function close(v){if(closed)return;closed=true;w.classList.remove('show','s1','s2','s3');resolve(v)}
+    reset();w.className='show s1';
+    try{navigator.vibrate&&navigator.vibrate([60])}catch(e){}
+    setTimeout(function(){if(closed)return;w.className='show s2';setTimeout(function(){ins[0].focus()},350)},1700);
+    function val(){return ins.map(function(i){return i.value}).join('')}
+    function check(){
+      var v=val();if(v.length<4){msg.className='vgo-msg bad';msg.textContent='4 digit ka PIN daalo';return}
+      if(v===want){
+        dg.classList.remove('bad');dg.classList.add('good');msg.className='vgo-msg good';msg.textContent='✅ PIN verified';
+        try{navigator.vibrate&&navigator.vibrate([40,40,120])}catch(e){}
+        setTimeout(function(){w.className='show s3';setTimeout(function(){close(true)},1000)},350);
+      }else{
+        tries++;dg.classList.remove('shake');void dg.offsetWidth;dg.classList.add('bad','shake');
+        msg.className='vgo-msg bad';msg.textContent='❌ Wrong OTP'+(tries>1?' (attempt '+tries+')':'');
+        try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(e){}
+        setTimeout(function(){ins.forEach(function(i){i.value='';i.classList.remove('filled')});dg.classList.remove('bad');ins[0].focus()},750);
+      }
+    }
+    ins.forEach(function(inp,idx){
+      inp.value='';
+      inp.oninput=function(){
+        inp.value=inp.value.replace(/\D/g,'').slice(-1);
+        inp.classList.toggle('filled',!!inp.value);
+        if(inp.value&&idx<3)ins[idx+1].focus();
+        if(val().length===4)setTimeout(check,180);
+      };
+      inp.onkeydown=function(e){if(e.key==='Backspace'&&!inp.value&&idx>0){ins[idx-1].value='';ins[idx-1].classList.remove('filled');ins[idx-1].focus()}if(e.key==='Enter')check()};
+      inp.onpaste=function(e){var t=((e.clipboardData||window.clipboardData).getData('text')||'').replace(/\D/g,'').slice(0,4);if(!t)return;e.preventDefault();t.split('').forEach(function(ch,i){ins[i].value=ch;ins[i].classList.add('filled')});ins[Math.min(t.length,3)].focus();if(t.length===4)setTimeout(check,180)};
+    });
+    okb.onclick=check;cb.onclick=function(){close(false)};
+  });
+}
+function passThrough(btn){
+  btn.__vgPass=true;
+  try{btn.click()}finally{btn.__vgPass=false}
+  var sheet=$('vgrAskSheet'),yes=$('vgrAskYes');
+  if(sheet&&yes&&/deliver ho gaya/i.test(sheet.textContent))yes.click();   /* PIN already confirmed delivery: skip the 2nd confirm */
+}
+var busy=false;
+D.addEventListener('click',async function(e){
+  var t=e.target&&e.target.closest?e.target.closest('#vgrDone'):null;
+  if(!t||t.disabled||t.__vgPass)return;
+  e.stopImmediatePropagation();e.preventDefault();
+  if(busy)return;busy=true;
+  try{
+    var on=await fetchOtp();
+    if(!on){passThrough(t);return}
+    var id=await findActive();
+    if(!id){if(window.stvnAlert)window.stvnAlert('Order ID nahi mila. Page refresh karke dobara try karo.');else alert('Order ID not found. Refresh and try again.');return}
+    if(verifiedAt[id]&&Date.now()-verifiedAt[id]<600000){passThrough(t);return}
+    var ok=await pinFlow(id);
+    if(ok){verifiedAt[id]=Date.now();passThrough(t)}
+  }finally{busy=false}
+},true);
+
+/* rider: PIN hint above the Delivery button + ripple on buttons */
+function riderHint(){
+  var btn=$('vgrDone'),h=D.querySelector('.vgotp-rhint');
+  if(!btn){if(h)h.remove();return}
+  if(otpOn()){
+    if(!h){h=D.createElement('div');h.className='vgotp-rhint';h.textContent='🔐 Customer se 4-digit Delivery PIN lo — PIN ke bina delivery complete nahi hogi';btn.parentNode.insertBefore(h,btn)}
+  }else if(h)h.remove();
+}
+D.addEventListener('pointerdown',function(e){
+  var b=e.target&&e.target.closest?e.target.closest('#vgRider .vgr-btn'):null;
+  if(!b||b.disabled)return;
+  var r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),sp=D.createElement('span');
+  sp.className='vgr-rip';sp.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(e.clientX-r.left-s/2)+'px;top:'+(e.clientY-r.top-s/2)+'px';
+  b.appendChild(sp);setTimeout(function(){sp.remove()},650);
+  try{navigator.vibrate&&navigator.vibrate(12)}catch(x){}
+},true);
+
+/* ---------- boot ---------- */
+function boot(){
+  fetchOtp().then(refreshAll);
+  setInterval(function(){ensureAdminBtn();scanOrders();riderHint()},1200);
+  setInterval(function(){fetchOtp()},20000);
+}
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+<!-- ===================== END VEDANT v10 ===================== -->
+
+<!-- ===================== VEDANT v11: email the delivery PIN to the customer (additive) ===================== -->
+<script id="vedant-v11-pin-email">
+(function(){
+'use strict';
+if(window.__vgPinMail)return;window.__vgPinMail=true;
+function pinFor(id){
+  var s='vedant-delivery-pin|'+String(id||'').trim(),h=2166136261>>>0;
+  for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}
+  h^=h>>>15;h=Math.imul(h,2246822519)>>>0;h^=h>>>13;
+  return String(h%10000).padStart(4,'0');
+}
+async function otpIsOn(){
+  try{
+    var c=window.supabaseClient,r=await c.from('shop_settings').select('maintenance_reason').eq('id',4).maybeSingle();
+    if(r&&!r.error&&r.data&&r.data.maintenance_reason)return !!JSON.parse(r.data.maintenance_reason).otp;
+  }catch(e){}
+  try{return localStorage.getItem('vgOtpOn')==='1'}catch(e){return false}
+}
+async function sendPinMail(order,email){
+  try{
+    var id=String(order&&(order.id||order.order_id)||'').trim();
+    if(!id||!email)return;
+    var k='vgPinMailed:'+id;
+    try{if(localStorage.getItem(k))return}catch(e){}
+    if(!(await otpIsOn()))return;
+    var res=await window.supabaseClient.functions.invoke('send-delivery-pin',{body:{
+      orderId:id,email:String(email).trim().toLowerCase(),pin:pinFor(id),
+      name:order.name||order.customer_name||'',total:order.total
+    }});
+    if(!res.error&&res.data&&res.data.success){try{localStorage.setItem(k,'1')}catch(e){}}
+    else console.warn('PIN email not sent:',(res.error&&res.error.message)||(res.data&&res.data.error));
+  }catch(e){console.warn('PIN email error',e)}
+}
+(function wrap(){
+  var o=window.vgSendOrderInvoiceEmail;
+  if(typeof o!=='function'){setTimeout(wrap,500);return}
+  if(o.__vgPM)return;
+  var w=async function(order,customerEmail){
+    var r;
+    try{r=await o.apply(this,arguments)}finally{
+      var em=customerEmail;
+      if(!em){try{var u=await window.supabaseClient.auth.getUser();em=u&&u.data&&u.data.user&&u.data.user.email}catch(e){}}
+      sendPinMail(order,em);
+    }
+    return r;
+  };
+  w.__vgPM=true;window.vgSendOrderInvoiceEmail=w;
+})();
+})();
+</script>
+<!-- ===================== END VEDANT v11 ===================== -->
