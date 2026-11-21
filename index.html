@@ -39,7 +39,34 @@
 <link rel="apple-touch-icon" href="https://vedantgrocery.shop/logo.png">
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#fbd34a">
-<style>html{background:#fbd34a}</style>
+<style>html{background:var(--vgy,#fbd34a)}</style>
+<script id="vg-brand-color-early">
+/* Brand yellow (header + phone top/bottom bar). Admin can change it from Admin Panel > Header Color. */
+(function(){
+  var KEY='vgBrandYellow',DEF='#fbd34a',cur='',saved='';
+  function ok(h){return /^#[0-9a-f]{6}$/i.test(h||'')}
+  function rgb(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+  function hex(a){return '#'+a.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16)}).join('')}
+  function mix(h,p){return hex(rgb(h).map(function(v){return v+(255-v)*p}))}
+  function lum(h){var a=rgb(h).map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*a[0]+.7152*a[1]+.0722*a[2]}
+  window.vgBrandYellowCur=function(){return cur||DEF};
+  window.vgBrandYellowChosen=function(){return cur};
+  window.vgBrandYellowSaved=function(){return saved};
+  window.vgBrandYellowApply=function(h,persist,fromServer){
+    h=ok(h)?h.toLowerCase():'';cur=h;if(fromServer)saved=h;
+    var R=document.documentElement,st=R.style;
+    if(h){
+      var dk=lum(h)<.42;
+      st.setProperty('--vgy',h);st.setProperty('--vgy1',h);st.setProperty('--vgy2',mix(h,.12));st.setProperty('--vgy3',mix(h,.42));
+      st.setProperty('--vgy-ink',dk?'#ffffff':'#1c1c1c');st.setProperty('--vgy-ink2',dk?'rgba(255,255,255,.88)':'#4a4a4a');
+    }else{['--vgy','--vgy1','--vgy2','--vgy3','--vgy-ink','--vgy-ink2'].forEach(function(k){st.removeProperty(k)})}
+    var m=document.querySelector('meta[name=theme-color]');
+    if(m&&!(document.body&&document.body.classList.contains('dark'))&&!R.getAttribute('data-festival'))m.setAttribute('content',h||DEF);
+    if(persist){try{h?localStorage.setItem(KEY,h):localStorage.removeItem(KEY)}catch(e){}}
+  };
+  try{var c=localStorage.getItem(KEY);if(ok(c))window.vgBrandYellowApply(c,false,false)}catch(e){}
+})();
+</script>
 <script id="vgr-boot">try{if(localStorage.getItem("vgRiderMode")==="rider"){document.documentElement.classList.add("vgr-boot");setTimeout(function(){document.documentElement.classList.remove("vgr-boot")},7000)}}catch(e){}</script>
 <style id="vgFestEarly">
 html[data-festival]{--fon:#fff;--ftg:linear-gradient(#fff6d6,#ffc83d)}
@@ -2147,7 +2174,7 @@ body.stvn-detail-open{overflow:hidden}
 <link rel="preload" as="image" href="https://vedantgrocery.shop/logo.png">
 <style id="vgSplashCss">
 /* Entry animation v2: no logo tile, paints on first frame, transform/opacity only (GPU smooth). Total ~2.1s */
-html{background:#fbd34a}
+html{background:var(--vgy,#fbd34a)}
 #vgSplash{position:fixed;left:0;top:0;right:0;width:100%;height:100%;height:100dvh;z-index:2147483600;visibility:visible!important;overflow:hidden;display:flex;align-items:center;justify-content:center;
 font-family:Inter,"Segoe UI",Arial,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;
 background:radial-gradient(circle at 50% 40%,#ffe45c 0%,#fbd34a 45%,#f5b800 100%);
@@ -3052,6 +3079,7 @@ onclick="toggleAdminOrdersView()">
 <button id="admin-shop-status-toolbar-toggle" class="admin-btn" type="button" onclick="toggleShopStatusPanel();document.getElementById('adminShopStatusSection')?.scrollIntoView({behavior:'smooth',block:'nearest'})">🏪 Shop Status</button>
 <button id="admin-view-withdrawal-status" class="admin-btn" type="button" aria-expanded="false" aria-controls="stvnWithdrawalAdmin" onclick="window.toggleWithdrawalStatusPanel()">💸 Withdrawal Status</button>
 <button id="admin-festival-toolbar-toggle" class="admin-btn stvn-admin-quick-toggle" type="button" aria-expanded="false" aria-controls="adminFestivalPanel" onclick="vgFestToggle();var p=document.getElementById('adminFestivalPanel');if(p&&!p.hidden)document.getElementById('adminFestivalSection')?.scrollIntoView({behavior:'smooth',block:'nearest'})">🎉 Festival</button>
+<button id="admin-header-color-toggle" class="admin-btn stvn-admin-quick-toggle" type="button" aria-expanded="false" aria-controls="adminHeaderColorSection" onclick="toggleAdminPanel('adminHeaderColorSection','admin-header-color-toggle','🎨 Header Color','✕ Close Header Color')">🎨 Header Color</button>
 
 <select
 id="adminOrderFilter"
@@ -3138,8 +3166,9 @@ Logout
 
 <!-- ===== SHOP STATUS (collapsible; existing shop status feature) ===== -->
 <section id="adminShopStatusSection" class="section-card" style="margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
-  <button type="button" id="adminShopStatusToggle" class="admin-btn stvn-shop-status-toggle" aria-expanded="false" aria-controls="adminShopStatusPanel" onclick="toggleShopStatusPanel()">🏪 Shop Status <span id="adminShopStatusToggleIcon" aria-hidden="true">＋</span></button>
+  <button type="button" id="adminShopStatusToggle" hidden class="admin-btn stvn-shop-status-toggle" aria-expanded="false" aria-controls="adminShopStatusPanel" onclick="toggleShopStatusPanel()">🏪 Shop Status <span id="adminShopStatusToggleIcon" aria-hidden="true">＋</span></button>
   <div id="adminShopStatusPanel" hidden>
+    <div class="admin-section-heading-row"><h3>🏪 Shop Status</h3><button type="button" class="admin-btn vg-panel-x" onclick="toggleShopStatusPanel()">✕ Close</button></div>
     <p class="admin-small">Choose the shop status. If the shop is closed, write the reason below. After Save, customers will see this message in a large, clear format and products/categories will be hidden.</p>
     <div class="stvn-shop-status-controls" role="group" aria-label="Shop status">
       <button type="button" id="adminShopOpenChoice" class="admin-btn" aria-pressed="false" onclick="selectShopStatus('open')">🟢 Shop Open</button>
@@ -3156,18 +3185,35 @@ Logout
 </section>
 
 <section id="adminFestivalSection" class="section-card" style="margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
-  <button type="button" id="adminFestivalToggle" class="admin-btn" aria-expanded="false" aria-controls="adminFestivalPanel" onclick="vgFestToggle()">🎉 Festival Theme <span id="adminFestivalIcon" aria-hidden="true">＋</span></button>
+  <button type="button" id="adminFestivalToggle" hidden class="admin-btn" aria-expanded="false" aria-controls="adminFestivalPanel" onclick="vgFestToggle()">🎉 Festival Theme <span id="adminFestivalIcon" aria-hidden="true">＋</span></button>
   <div id="adminFestivalPanel" hidden>
+    <div class="admin-section-heading-row"><h3>🎉 Festival Theme</h3><button type="button" class="admin-btn vg-panel-x" onclick="vgFestToggle(false)">✕ Close</button></div>
     <p class="admin-small">Choose a festival. A preview shows on this phone as soon as you pick one. Press Save to change the Home, Shop, Cart and Bottom Menu theme for all customers. To go back to normal, choose “Normal” and Save.</p>
     <p id="adminFestLive" class="admin-small" role="status"></p>
     <div id="adminFestGrid" class="fx-grid"></div>
     <label class="admin-small" for="adminFestMsg">Message in English (optional)</label>
     <input id="adminFestMsg" type="text" maxlength="110" placeholder="e.g. Happy Diwali from Vedant Grocery family!" oninput="vgFestMsg()">
-    <label class="admin-small" for="adminFestMsgHi">Hindi message (optional)</label>
-    <input id="adminFestMsgHi" type="text" maxlength="110" placeholder="e.g. (in Hindi) वेदांत ग्रोसरी परिवार की ओर से दीपावली की शुभकामनाएँ" oninput="vgFestMsg()">
+    <label class="admin-small" for="adminFestMsgHi">Hindi message (optional, shown to customers using Hindi)</label>
+    <input id="adminFestMsgHi" type="text" maxlength="110" placeholder="e.g. वेदांत ग्रोसरी परिवार की ओर से दीपावली की शुभकामनाएँ" oninput="vgFestMsg()">
     <button type="button" id="adminFestSave" class="shop-btn" onclick="vgFestSave()">💾 Save &amp; show to all Customers</button>
     <p id="adminFestStatus" class="admin-small" role="status" aria-live="polite"></p>
   </div>
+</section>
+
+<section id="adminHeaderColorSection" class="section-card" hidden aria-labelledby="vghcHeading" style="margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+  <div class="admin-section-heading-row"><h3 id="vghcHeading">🎨 Header Color</h3><button type="button" class="admin-btn vg-panel-x" onclick="toggleAdminPanel('adminHeaderColorSection','admin-header-color-toggle','🎨 Header Color','✕ Close Header Color')">✕ Close</button></div>
+  <p class="admin-small">Change only the yellow color of the shop header and the phone's top/bottom bar. Pick any color to preview it on this phone, then press Save to show it to all customers.</p>
+  <div class="vghc-prev" aria-hidden="true"><b>Vedant Grocery Shop</b><small>Fresh • Fast • Local</small></div>
+  <div class="vghc-row">
+    <input type="color" id="vghcPicker" value="#f8cb46" aria-label="Pick header color">
+    <input type="text" id="vghcHex" maxlength="7" placeholder="#F8CB46" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Color code (hex)">
+  </div>
+  <div class="vghc-sw" id="vghcSwatches" role="group" aria-label="Quick colors"></div>
+  <div class="vghc-actions">
+    <button type="button" id="vghcSave" class="shop-btn">💾 Save &amp; show to all Customers</button>
+    <button type="button" id="vghcReset" class="admin-btn">↺ Back to default yellow</button>
+  </div>
+  <p id="vghcStatus" class="admin-small" role="status" aria-live="polite"></p>
 </section>
 
 <!-- ===== PRODUCT MANAGEMENT ===== -->
@@ -18633,13 +18679,13 @@ html body:not(#bk1):not(#bk2):not(#bk3) .page,html body:not(#bk1):not(#bk2):not(
 
 /* ---- Header: Blinkit yellow ---- */
 html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header{
-  background:linear-gradient(180deg,#f8cb46 0%,#fad552 62%,#fde38b 100%)!important;
+  background:linear-gradient(180deg,var(--vgy1,#f8cb46) 0%,var(--vgy2,#fad552) 62%,var(--vgy3,#fde38b) 100%)!important;
   border:0!important;border-bottom:1px solid rgba(0,0,0,.06)!important;
   box-shadow:0 2px 10px rgba(0,0,0,.10)!important;
   grid-template-rows:none!important;grid-auto-rows:auto!important;
 }
-html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-brand,html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-brand-name{color:#1c1c1c!important}
-html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-brand-name small{color:#4a4a4a!important}
+html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-brand,html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-brand-name{color:var(--vgy-ink,#1c1c1c)!important}
+html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-brand-name small{color:var(--vgy-ink2,#4a4a4a)!important}
 html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-brand-mark{background:#fff!important;border:1px solid rgba(0,0,0,.06)!important}
 html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-search{background:#fff!important;border:1px solid #e0e0e0!important;border-radius:12px!important;box-shadow:0 1px 3px rgba(0,0,0,.06)!important}
 html body:not(#bk1):not(#bk2):not(#bk3) .vg-store-header .vg-search span{color:#666!important}
@@ -20463,7 +20509,7 @@ function apply(k,m){
   cur=nk;msg=nm;
   if(same){ui();return}               /* nothing changed: no rebuild, no flicker */
   if((R.getAttribute('data-festival')||'')!==nk){nk?R.setAttribute('data-festival',nk):R.removeAttribute('data-festival')}
-  if(meta)meta.content=cur?F[cur][5]:origColor;
+  if(meta)meta.content=cur?F[cur][5]:(window.vgBrandYellowCur?window.vgBrandYellowCur():origColor);
   if(cur)font();
   banners();
   if(!applied||nk!==prev)fall();
@@ -20477,10 +20523,10 @@ async function pull(){
   try{
     var r=await supabaseClient.from('shop_settings').select('maintenance_reason').eq('id',3).maybeSingle();
     if(r.error)return;
-    var o={f:'',m:{en:'',hi:''}};
-    if(r.data){try{var j=JSON.parse(r.data.maintenance_reason);o={f:j.f||'',m:{en:j.m||'',hi:j.h||''}}}catch(e){}}
+    var o={f:'',m:{en:'',hi:''},c:''};
+    if(r.data){try{var j=JSON.parse(r.data.maintenance_reason);o={f:j.f||'',m:{en:j.m||'',hi:j.h||''},c:j.c||''}}catch(e){}}
     var changed=o.f!==cur;
-    store(o.f,o.m);apply(o.f,o.m);
+    store(o.f,o.m);apply(o.f,o.m);try{if(!window.__vgColorDirty&&window.vgBrandYellowApply)window.vgBrandYellowApply(o.c,true,true)}catch(e){}
     if(changed&&cur)setTimeout(function(){pop(0)},2500);
   }catch(e){console.warn('Festival theme load failed',e)}
 }
@@ -20501,25 +20547,25 @@ w.vgFestMsg=function(){dirty=true;msg=cur?{en:val('adminFestMsg'),hi:val('adminF
 w.vgFestSave=async function(){
   var st=D.getElementById('adminFestStatus'),b=D.getElementById('adminFestSave');
   var m={en:val('adminFestMsg'),hi:val('adminFestMsgHi')};
-  b.disabled=true;st.textContent='⏳ Save हो रहा है…';
+  b.disabled=true;st.textContent='⏳ Saving…';
   try{
-    if(typeof supabaseClient==='undefined')throw new Error('Supabase उपलब्ध नहीं है।');
+    if(typeof supabaseClient==='undefined')throw new Error('Supabase is not available.');
     var s=await supabaseClient.auth.getSession();
     if(!s.data||!s.data.session)throw new Error('Please log in as Admin first.');
-    var r=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify({f:cur,m:m.en,h:m.hi}),updated_at:new Date().toISOString()},{onConflict:'id'});
+    var r=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify({f:cur,m:m.en,h:m.hi,c:(window.vgBrandYellowSaved?window.vgBrandYellowSaved():'')}),updated_at:new Date().toISOString()},{onConflict:'id'});
     if(r.error)throw r.error;
     store(cur,m);msg=cur?m:{en:'',hi:''};dirty=false;banners();
-    st.textContent=cur?'✅ '+F[cur][3]+' थीम सेव हो गई। अब सभी customers को दिखेगी।':'✅ Normal थीम सेव हो गई।';
+    st.textContent=cur?'✅ '+F[cur][3]+' theme saved. All customers will now see it.':'✅ Normal theme saved. All customers will see the normal look.';
   }catch(x){
     store(cur,m);
-    st.textContent='❌ Database में सेव नहीं हुआ ('+((x&&x.message)||x)+')। इस फ़ोन पर थीम लगी है; सभी customers के लिए Supabase की shop_settings table policy जाँचें।';
+    st.textContent='❌ Could not save to the database ('+((x&&x.message)||x)+'). The theme is applied on this phone only. Check the Supabase shop_settings table policy so it saves for all customers.';
   }
   b.disabled=false;
 };
 
 function buildGrid(){
   var g=D.getElementById('adminFestGrid');if(!g)return;
-  var h='<button type="button" class="fx-card" data-k="" aria-pressed="false" onclick="vgFestPick(\'\')"><span class="fx-sw">🛒</span><span>Normal · सामान्य</span></button>';
+  var h='<button type="button" class="fx-card" data-k="" aria-pressed="false" onclick="vgFestPick(\'\')"><span class="fx-sw">🛒</span><span>Normal</span></button>';
   Object.keys(F).forEach(function(k){
     h+='<button type="button" class="fx-card" data-k="'+k+'" data-s="'+(k+' '+F[k][1][0]+' '+F[k][1][1]+' '+F[k][3]).toLowerCase().replace(/"/g,'')+'" data-fx-theme="'+k+'" aria-pressed="false" onclick="vgFestPick(\''+k+'\')"><span class="fx-sw">'+F[k][0]+'</span><span>'+F[k][3]+'</span></button>';
   });
@@ -20827,7 +20873,7 @@ function syncToggleButtons(){
   });
   if(R)R.setAttribute('data-vg-dark',dark?'1':'0');
   var m=D.querySelector('meta[name=theme-color]');
-  if(m){var f=R.getAttribute('data-festival');m.setAttribute('content',dark?'#0e1210':(f&&FEST_COLOR[f]?FEST_COLOR[f]:baseColor))}
+  if(m){var f=R.getAttribute('data-festival');m.setAttribute('content',dark?'#0e1210':(f&&FEST_COLOR[f]?FEST_COLOR[f]:(window.vgBrandYellowCur?window.vgBrandYellowCur():baseColor)))}
 }
 function setDark(on){
   if(!D.body)return;
@@ -21484,10 +21530,16 @@ setInterval(function(){try{headerAdmin();toolbar();vip();menu()}catch(e){}},1000
 </script>
 <style id="vg-final-grade-20261121">
 /* festival search */
-.vgfs{position:sticky;top:0;z-index:3;margin:10px 0;padding:8px;border-radius:18px;background:linear-gradient(135deg,#fff,var(--fs,#f1faf3));border:2px solid var(--fp,#16a34a);box-shadow:0 8px 20px -10px var(--fq,#0b3d24)}
-.vgfs label{display:flex;align-items:center;gap:8px}
-.vgfs input{flex:1;min-width:0;height:44px;border:0;outline:0;background:transparent;font:700 15px system-ui;color:#10281a}
-.vgfs b{font-size:18px}.vgfs small{display:block;margin:4px 6px 0;color:#52665a;font-weight:700}
+.vgfs{position:sticky;top:0;z-index:3;margin:10px 0 8px;padding:10px;border-radius:18px;background:linear-gradient(135deg,#fff,var(--fs,#f4efff));border:2px solid var(--fp,#7c3aed);box-shadow:0 10px 22px -12px var(--fq,#2b1670)}
+.vgfs .vgfs-box{display:flex;align-items:center;gap:8px;height:48px;padding:0 6px 0 12px;border-radius:14px;background:#fff;border:1.5px solid #dcd2f5;margin:0}
+.vgfs .vgfs-box:focus-within{border-color:#6f42c1;box-shadow:0 0 0 3px rgba(111,66,193,.2)}
+.vgfs .vgfs-ico{font-size:18px;line-height:1}
+html body #adminPanel .vgfs #vgFestSearch{flex:1;min-width:0;width:100%;height:44px;border:0!important;outline:0!important;box-shadow:none!important;border-radius:0!important;background:transparent!important;font:700 15px system-ui;color:#10281a;padding:0}
+html body #adminPanel .vgfs .vgfs-clear{flex:0 0 34px;width:34px;height:34px;min-height:0;border:0!important;border-radius:50%!important;background:#efe9fd!important;background-image:none!important;color:#4c2fa3!important;box-shadow:none!important;font:900 14px system-ui;cursor:pointer;padding:0!important;margin:0}
+#vgFestSearch::-webkit-search-cancel-button,#vgFestSearch::-webkit-search-decoration{-webkit-appearance:none;display:none}
+.vgfs .vgfs-clear[hidden]{display:none}
+.vgfs small{display:block;margin:7px 4px 0;color:#52665a;font-weight:800}
+.vgfs-empty{margin:8px 4px;padding:12px;border-radius:12px;background:#fff6e0;color:#7a4b00;font-weight:800;text-align:center}
 #adminFestGrid.fx-grid{max-height:min(56vh,430px);overflow:auto;-webkit-overflow-scrolling:touch;padding:4px}
 .fx-card[hidden]{display:none!important}
 /* PIN: exactly 4 boxes */
@@ -21517,10 +21569,23 @@ html body :is(.place-order,#proceed-checkout-btn),html[data-festival] body :is(.
 /* festival search bar */
 function fs(){var g=D.getElementById('adminFestGrid');if(!g||D.getElementById('vgFestSearch'))return;
  var w=D.createElement('div');w.className='vgfs';
- w.innerHTML='<label><b>🔎</b><input id="vgFestSearch" type="search" placeholder="Festival search · जैसे Diwali, होली, Eid…" autocomplete="off"></label><small id="vgFestCount"></small>';
- g.parentNode.insertBefore(w,g);var i=w.querySelector('input'),c=w.querySelector('small');
- function f(){var q=i.value.trim().toLowerCase(),n=0;g.querySelectorAll('.fx-card').forEach(function(b){var s=(b.getAttribute('data-s')||b.textContent).toLowerCase(),ok=!q||s.indexOf(q)>-1||!b.getAttribute('data-k')&&'normal सामान्य'.indexOf(q)>-1;b.hidden=!ok;if(ok)n++});c.textContent=n?n+' festival mile':'Koi festival nahi mila'}
- i.addEventListener('input',f);f()}
+ w.innerHTML='<label class="vgfs-box"><span class="vgfs-ico" aria-hidden="true">🔎</span><input id="vgFestSearch" type="search" placeholder="Search festival name…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search festivals"><button type="button" class="vgfs-clear" aria-label="Clear search" hidden>✕</button></label><small id="vgFestCount" role="status" aria-live="polite"></small>';
+ var em=D.createElement('p');em.className='vgfs-empty';em.hidden=true;em.textContent='No festival found. Try another name.';
+ g.parentNode.insertBefore(w,g);g.parentNode.insertBefore(em,g.nextSibling);
+ var i=w.querySelector('input'),c=w.querySelector('small'),x=w.querySelector('.vgfs-clear');
+ function f(){var q=i.value.trim().toLowerCase(),n=0,t=0,sh=0;
+  g.querySelectorAll('.fx-card').forEach(function(b){var isF=!!b.getAttribute('data-k');if(isF)t++;
+   var s=(b.getAttribute('data-s')||b.textContent).toLowerCase(),
+       ok=!q||s.indexOf(q)>-1||(!isF&&'normal default सामान्य'.indexOf(q)>-1);
+   b.hidden=!ok;if(ok){sh++;if(isF)n++}});
+  x.hidden=!q;em.hidden=sh>0||!t;
+  c.textContent=q?(n?n+' of '+t+' festivals':(sh?'Normal theme':'No festivals found')):(t?t+' festivals':'');
+  if(q)g.scrollTop=0}
+ i.addEventListener('input',f);
+ x.addEventListener('click',function(){i.value='';f();i.focus()});
+ i.addEventListener('keydown',function(e){if(e.key==='Escape'){i.value='';f()}});
+ new MutationObserver(function(){f()}).observe(g,{childList:true});
+ f()}
 /* delivery PIN: always exactly 4 */
 function pin(){D.querySelectorAll('#vgoDigits').forEach(function(d){var x=d.querySelectorAll('input');for(var k=x.length-1;k>=4;k--)x[k].remove()});
  D.querySelectorAll('.vgotp-digits').forEach(function(d){var x=d.querySelectorAll('i');for(var k=x.length-1;k>=4;k--)x[k].remove()})}
@@ -22561,7 +22626,7 @@ async function toggleDuty(){
   if(r.error){toast("❌ "+errMsg(r.error),4500);return}
   S.me=r.data;
   if(want){lsSet("vgrDutyAt",String(Date.now()));getWake();startGeo();fx("duty","🟢 Aap On Duty ho — orders aayenge");tick(true)}
-  else{lsDel("vgrDutyAt");hideIncoming(true);dropWake();if(!S.active)stopGeo();if(window.vgxDutyFx)window.vgxDutyFx(false);else toast("🔴 Aap Off Duty ho",2500)}
+  else{lsDel("vgrDutyAt");unlockAudio();chime("dutyoff");hideIncoming(true);dropWake();if(!S.active)stopGeo();if(window.vgxDutyFx)window.vgxDutyFx(false);else toast("🔴 Aap Off Duty ho",2500)}
   checkSoundBar();render();updatePill();
 }
 
@@ -23118,8 +23183,30 @@ function i18nStart(){
 /* ---------- animations + extra features ---------- */
 var fxT=null;
 function chime(kind){
-  if(!S.ctx||S.ctx.state!=="running")return;
-  var c=S.ctx,t=c.currentTime,seq=kind==="done"?[523,659,784,1047]:kind==="duty"?[523,784]:[659,880];
+  if(!S.ctx)return;
+  if(S.ctx.state!=="running"){
+    /* audio was asleep: wake it, then play (so Duty ON / OFF sounds are not missed) */
+    try{S.ctx.resume().then(function(){if(S.ctx&&S.ctx.state==="running")chime(kind)},function(){})}catch(e){}
+    return;
+  }
+  var c=S.ctx,t=c.currentTime;
+  if(kind==="duty"||kind==="dutyoff"){
+    /* soft bell-like arpeggio: rising = Duty START, falling = Duty OFF */
+    var on=kind==="duty",
+        nt=on?[523.25,659.25,783.99,1046.5,1318.51]:[1046.5,783.99,659.25,523.25,392],
+        gap=on?.12:.17,mg=c.createGain();
+    mg.gain.value=.6;mg.connect(c.destination);
+    nt.forEach(function(f,i){
+      var st=t+i*gap,len=i===nt.length-1?1.1:.45;
+      [[f,"sine",1],[f*2,"triangle",.25],[f*3,"sine",.08]].forEach(function(p){
+        var o=c.createOscillator(),g=c.createGain();o.type=p[1];o.frequency.value=p[0];
+        g.gain.setValueAtTime(.0001,st);g.gain.exponentialRampToValueAtTime(.55*p[2],st+.02);g.gain.exponentialRampToValueAtTime(.0001,st+len);
+        o.connect(g);g.connect(mg);o.start(st);o.stop(st+len+.05);
+      });
+    });
+    return;
+  }
+  var seq=kind==="done"?[523,659,784,1047]:[659,880];
   seq.forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t+i*.14);g.gain.exponentialRampToValueAtTime(.5,t+i*.14+.03);g.gain.exponentialRampToValueAtTime(.0001,t+i*.14+.3);o.connect(g);g.connect(c.destination);o.start(t+i*.14);o.stop(t+i*.14+.32)});
 }
 function fx(kind,title,sub,amt){
@@ -23743,3 +23830,94 @@ html body #vgRider .vgr-dutycard .vgr-switch.on:after{left:40px}
 @media(max-width:360px){.vgotp-card .vgotp-digits{gap:8px}.vgotp-card .vgotp-digits i{width:46px;height:54px;font-size:26px}.vgo-digits input{width:50px;height:58px}}
 
 </style>
+
+<style id="vg-admin-tidy-20261121">
+/* lower "Shop Status" and "Festival Theme" bars are gone: the top buttons open the panels */
+html body #adminContent #adminShopStatusToggle,html body #adminContent #adminFestivalToggle{display:none!important}
+html body #adminContent #adminShopStatusSection.vg-closed,html body #adminContent #adminFestivalSection.vg-closed,
+html body #adminContent #adminShopStatusSection:has(#adminShopStatusPanel[hidden]),html body #adminContent #adminFestivalSection:has(#adminFestivalPanel[hidden]){display:none!important}
+html body #adminContent #adminShopStatusSection .admin-section-heading-row,html body #adminContent #adminFestivalSection .admin-section-heading-row,html body #adminContent #adminHeaderColorSection .admin-section-heading-row{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:10px;margin:0 0 8px}
+html body #adminContent #adminShopStatusSection .admin-section-heading-row h3,html body #adminContent #adminFestivalSection .admin-section-heading-row h3,html body #adminContent #adminHeaderColorSection .admin-section-heading-row h3{margin:0;text-align:left}
+html body #adminContent .vg-panel-x{flex:0 0 auto;width:auto;padding:8px 12px;font-size:13px;min-height:0;margin:0}
+/* header color panel */
+.vghc-prev{margin:10px 0;padding:14px 16px;border-radius:16px;text-align:left;background:linear-gradient(180deg,var(--vgy1,#f8cb46) 0%,var(--vgy2,#fad552) 62%,var(--vgy3,#fde38b) 100%);box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.vghc-prev b{display:block;font-size:18px;font-weight:900;color:var(--vgy-ink,#1c1c1c)}
+html body #adminPanel .vghc-prev small{display:block;margin-top:2px;font-weight:700;color:var(--vgy-ink2,#4a4a4a)}
+html body #adminPanel .vghc-prev b{color:var(--vgy-ink,#1c1c1c)}
+.vghc-row{display:flex;align-items:center;gap:10px;margin:10px 0}
+html body #adminPanel .vghc-row #vghcPicker{width:64px;height:48px;padding:3px;border-radius:12px;cursor:pointer;flex:0 0 64px}
+html body #adminPanel .vghc-row #vghcHex{flex:1;min-width:0;height:48px;font:800 16px system-ui;letter-spacing:1px;text-transform:uppercase;padding:0 12px}
+.vghc-sw{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:6px 0 12px}
+html body #adminPanel .vghc-sw button{height:42px;min-height:0;border-radius:12px!important;border:2px solid rgba(0,0,0,.14)!important;box-shadow:none!important;cursor:pointer;padding:0!important;margin:0;position:relative}
+html body #adminPanel .vghc-sw button[aria-pressed=true]{border-color:#2b1670!important;box-shadow:0 0 0 3px rgba(111,66,193,.35)!important}
+.vghc-sw button[aria-pressed=true]:after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;font-weight:900;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.vghc-actions{display:flex;flex-wrap:wrap;gap:8px}
+.vghc-actions .shop-btn{flex:1 1 220px}
+</style>
+<script id="vg-admin-tidy-20261121-js">
+(function(){'use strict';
+var D=document;
+/* ---- keep the Shop Status / Festival sections hidden while their panel is closed ---- */
+function sync(){[['adminShopStatusSection','adminShopStatusPanel'],['adminFestivalSection','adminFestivalPanel']].forEach(function(p){
+  var s=D.getElementById(p[0]),b=D.getElementById(p[1]);if(s&&b)s.classList.toggle('vg-closed',b.hidden)})}
+function watch(){['adminShopStatusPanel','adminFestivalPanel'].forEach(function(id){var e=D.getElementById(id);
+  if(e&&!e.__vgw){e.__vgw=1;new MutationObserver(sync).observe(e,{attributes:true,attributeFilter:['hidden']})}});sync()}
+/* ---- header colour changer ---- */
+var DEF='#f8cb46',PRESETS=[['Classic yellow','#f8cb46'],['Sunshine','#ffd60a'],['Orange','#ff9f1c'],['Red','#e23744'],['Pink','#ec4899'],['Purple','#7c3aed'],['Blue','#2563eb'],['Teal','#0d9488'],['Green','#0c831f'],['Black','#1c1c1c']];
+var chosen='',busy=false;
+function ok(h){return /^#[0-9a-f]{6}$/i.test(h||'')}
+function norm(v){v=String(v||'').trim();if(v&&v[0]!=='#')v='#'+v;if(/^#[0-9a-f]{3}$/i.test(v))v='#'+v[1]+v[1]+v[2]+v[2]+v[3]+v[3];return v.toLowerCase()}
+function $(i){return D.getElementById(i)}
+function paint(){
+  var pk=$('vghcPicker'),hx=$('vghcHex');if(!pk||!hx)return;
+  pk.value=ok(chosen)?chosen:DEF;
+  if(D.activeElement!==hx)hx.value=ok(chosen)?chosen.toUpperCase():'';
+  D.querySelectorAll('#vghcSwatches button').forEach(function(b){b.setAttribute('aria-pressed',String(!!chosen&&b.getAttribute('data-c')===chosen))});
+}
+function msg(t){var e=$('vghcStatus');if(e)e.textContent=t}
+function preview(h){
+  chosen=ok(h)?h.toLowerCase():'';window.__vgColorDirty=true;
+  if(window.vgBrandYellowApply)window.vgBrandYellowApply(chosen,false,false);
+  paint();
+  msg(chosen?'👁️ Preview: '+chosen.toUpperCase()+'. Press Save to show it to all customers.':'👁️ Preview: default yellow. Press Save to restore it for all customers.');
+}
+async function save(){
+  if(busy)return;busy=true;var b=$('vghcSave');if(b)b.disabled=true;msg('⏳ Saving…');
+  try{
+    if(typeof supabaseClient==='undefined')throw new Error('Supabase is not available.');
+    var s=await supabaseClient.auth.getSession();
+    if(!s.data||!s.data.session)throw new Error('Please log in as Admin first.');
+    var r=await supabaseClient.from('shop_settings').select('maintenance_reason').eq('id',3).maybeSingle();
+    var o={f:'',m:'',h:''};
+    if(r&&r.data){try{var j=JSON.parse(r.data.maintenance_reason||'{}');o.f=j.f||'';o.m=j.m||'';o.h=j.h||''}catch(e){}}
+    o.c=chosen;
+    var u=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify(o),updated_at:new Date().toISOString()},{onConflict:'id'});
+    if(u.error)throw u.error;
+    window.vgBrandYellowApply(chosen,true,true);window.__vgColorDirty=false;
+    msg(chosen?'✅ Header color saved. All customers will now see '+chosen.toUpperCase()+'.':'✅ Default yellow restored for all customers.');
+  }catch(x){
+    window.vgBrandYellowApply(chosen,true,false);
+    msg('❌ Could not save to the database ('+((x&&x.message)||x)+'). The color is applied on this phone only. Check the Supabase shop_settings table policy so it saves for all customers.');
+  }
+  busy=false;if(b)b.disabled=false;
+}
+function initColor(){
+  var sw=$('vghcSwatches');if(!sw||sw.__vgi)return;sw.__vgi=1;
+  sw.innerHTML=PRESETS.map(function(p){return '<button type="button" data-c="'+p[1]+'" style="background-color:'+p[1]+'!important;background-image:none!important" aria-label="'+p[0]+'" title="'+p[0]+'" aria-pressed="false"></button>'}).join('');
+  sw.addEventListener('click',function(e){var b=e.target.closest('button[data-c]');if(b)preview(b.getAttribute('data-c'))});
+  $('vghcPicker').addEventListener('input',function(e){preview(e.target.value)});
+  $('vghcHex').addEventListener('input',function(e){var v=norm(e.target.value);if(ok(v))preview(v)});
+  $('vghcHex').addEventListener('blur',function(){paint()});
+  $('vghcSave').addEventListener('click',save);
+  $('vghcReset').addEventListener('click',function(){preview('')});
+  var tb=$('admin-header-color-toggle');
+  if(tb)tb.addEventListener('click',function(){setTimeout(function(){if(!window.__vgColorDirty)chosen=(window.vgBrandYellowChosen&&window.vgBrandYellowChosen())||'';paint()},0)});
+  chosen=(window.vgBrandYellowChosen&&window.vgBrandYellowChosen())||'';paint();
+}
+/* keep the Header Color button right after the Festival button */
+function place(){var f=$('admin-festival-toolbar-toggle'),b=$('admin-header-color-toggle');if(f&&b&&f.nextElementSibling!==b)f.after(b)}
+function run(){watch();initColor();place()}
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',run);else run();
+setInterval(place,2500);
+})();
+</script>
