@@ -14940,12 +14940,15 @@ Object.assign(enDict,{
     splash.addEventListener('click',leave,{passive:true});
     /* PERF: hold the splash until the home screen is really built (header, hero, buttons) so no blank page shows after it. Max ~3s. */
     (function(){
-      var minMs=(reduce||seen)?250:900,maxMs=9000,t0=Date.now();
+      var minMs=(reduce||seen)?250:450,maxMs=9000,t0=Date.now();
       function ready(){
         try{
           if(document.readyState==='loading')return false;
           var h=document.querySelector('#page-home .vg-store-header');
-          return !!(h&&h.querySelector('.vg-orders-action')&&document.querySelector('#page-home .vg-hero'));
+          if(!(h&&h.querySelector('.vg-orders-action')&&document.querySelector('#page-home .vg-hero')))return false;
+          if(document.querySelectorAll('.modern-bottom-nav button').length<4)return false;
+          var cfgOk=window.vgCfgReady;if(!cfgOk){try{cfgOk=!!localStorage.getItem('vgDelCfg')}catch(e){cfgOk=true}}
+          return !!cfgOk;
         }catch(e){return true}
       }
       (function poll(){
@@ -25307,7 +25310,7 @@ window.vgDelGet=function(){return cfg};
 window.stvnGetDeliveryCharge=function(d){d=Number(d);if(!isFinite(d)||d<0)return 0;var s=cfg.slabs;for(var i=0;i<s.length;i++)if(d<=s[i].to)return s[i].c;return d<=R()?s[s.length-1].c:null};
 function tick(){var f=cfg.free,h='\u26A1 <strong>Free delivery</strong> on orders above \u20B9'+f,it=D.querySelectorAll('.vgp-item>span:first-child');it.forEach(function(e){e.innerHTML=h});var p=D.querySelector('.promo-strip');if(p){p.setAttribute('aria-label','Free delivery on orders above '+f+' rupees, delivery in 10 to 20 minutes');if(!it.length)p.innerHTML=h+' \u2022 10\u201320 min'}}
 function applyCfg(){tick();try{if(typeof updateCart==='function')updateCart()}catch(e){}}
-async function loadCfg(n){try{var o=clean(await getRow(6));if(o){cfg=o;try{localStorage.setItem('vgDelCfg',JSON.stringify(o))}catch(e){}applyCfg();paintDel()}else if(!sbc()&&n<20)setTimeout(function(){loadCfg(n+1)},500)}catch(e){}}
+async function loadCfg(n){try{var o=clean(await getRow(6));if(o){cfg=o;try{localStorage.setItem('vgDelCfg',JSON.stringify(o))}catch(e){}applyCfg();paintDel();window.vgCfgReady=true}else if(!sbc()&&n<20)setTimeout(function(){loadCfg(n+1)},500);else window.vgCfgReady=true}catch(e){window.vgCfgReady=true}}
 [600,2000,4500].forEach(function(t){setTimeout(tick,t)});
 function paintDel(o){
   o=o||cfg;var f=$('vgDelFree'),r=$('vgDelRows');if(!f||!r)return;f.value=o.free;var p=0;
