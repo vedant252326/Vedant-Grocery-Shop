@@ -1,9 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+<script id="vg-perf-governor">
+(function(){
+  var si=window.setInterval;
+  window.setInterval=function(fn,ms){
+    var a=[].slice.call(arguments,2);
+    if(typeof fn!=='function')return si.apply(window,arguments);
+    return si.apply(window,[function(){if(document.hidden&&ms<10000)return;return fn.apply(this,arguments)},ms].concat(a));
+  };
+})();
+</script>
 <meta charset="UTF-8">
-
+<script id="vg-perf-shim">
+/* PERF: ~20 observers watch the whole page and each one re-ran on every tiny DOM change (that was the "processing" lag).
+   Whole-page observers now get ONE batched call per frame; small/local observers stay instant. */
+(function(){
+  var Native=window.MutationObserver;if(!Native||Native.__vgPatched)return;
+  function Batched(cb){
+    var self=this,recs=[],pending=false,heavy=false;
+    function run(){if(!pending)return;pending=false;var q=recs;recs=[];if(q.length){try{cb.call(self,q,self)}catch(e){try{console.error(e)}catch(_){}}}}
+    var mo=new Native(function(r){
+      if(!heavy){cb.call(self,r,self);return}
+      for(var i=0;i<r.length;i++)recs.push(r[i]);
+      if(pending)return;pending=true;
+      if(window.requestAnimationFrame)requestAnimationFrame(run);
+      setTimeout(run,120); /* background-tab safety */
+    });
+    self.observe=function(t,o){
+      heavy=!!(o&&o.subtree&&t&&(t===document.body||t===document.documentElement));
+      return mo.observe(t,o);
+    };
+    self.disconnect=function(){recs=[];pending=false;return mo.disconnect()};
+    self.takeRecords=function(){var a=recs.concat(mo.takeRecords());recs=[];return a};
+  }
+  Batched.__vgPatched=true;
+  window.MutationObserver=Batched;
+})();
+</script>
 <!-- FAST START: splash logo + blocking script are requested before the big inline CSS is parsed -->
 <link rel="preload" as="image" href="logo.png" fetchpriority="high">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -2615,7 +2649,6 @@ button,input,select,textarea{font:inherit}
   .modern-bottom-nav { width:min(100%,1180px)!important; }
 }
 </style>
-
 </head>
 
 <body>
