@@ -3183,6 +3183,17 @@ Logout
       </label>
       <button type="button" id="adminShopStatusSave" class="shop-btn" onclick="saveShopStatus()">💾 Save Status</button>
     </div>
+    <div id="adminShopSchedule" style="margin-top:14px;padding:14px;border:1px dashed var(--border);border-radius:14px">
+      <strong>⏰ Auto Open / Close Timing</strong>
+      <p class="admin-small" style="margin:6px 0 10px">The shop closes automatically at the close time and reopens at the open time every day (India time). The SHOP CLOSED banner shows by itself during that period.</p>
+      <label style="display:flex;gap:8px;align-items:center;margin:8px 0;font-weight:700"><input type="checkbox" id="adminShopAutoOn" checked> Auto open/close ON</label>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:700">Close shop at<input type="time" id="adminShopCloseAt" value="21:30" style="min-height:40px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font:inherit"></label>
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:700">Open shop at<input type="time" id="adminShopOpenAt" value="08:30" style="min-height:40px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font:inherit"></label>
+        <button type="button" id="adminShopScheduleSave" class="admin-btn" style="min-height:40px" onclick="saveShopSchedule()">💾 Save Timing</button>
+      </div>
+      <p id="adminShopScheduleMsg" class="admin-small" role="status" aria-live="polite" style="margin-top:8px"></p>
+    </div>
     <p id="adminShopStatusMessage" class="admin-small" role="status" aria-live="polite">Loading shop status…</p>
   </div>
 </section>
@@ -3408,6 +3419,15 @@ Clear
   <div class="admin-section-heading-actions">
     <button type="button" class="admin-refresh admin-section-save-button" onclick="loadAdminOrders()">🔄 Refresh Orders</button>
   </div>
+</div>
+<div id="vgAdminOrderSearch" class="vgaos">
+  <div class="vgaos-top"><span class="vgaos-badge">🔎</span><div><b>Find an Order</b><small>Type the Order ID to see only that order</small></div></div>
+  <label class="vgaos-box">
+    <span class="vgaos-hash" aria-hidden="true">#</span>
+    <input id="vgAdminOrderSearchInput" type="search" inputmode="search" placeholder="Enter Order ID…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search orders by Order ID">
+    <button type="button" id="vgAdminOrderSearchClear" class="vgaos-clear" aria-label="Clear search" hidden>✕</button>
+  </label>
+  <div class="vgaos-foot"><span id="vgAdminOrderSearchCount" class="vgaos-count" role="status" aria-live="polite"></span></div>
 </div>
 <div id="adminOrders">
 
@@ -12287,6 +12307,26 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
   let shopStatusReady=false;
   let savedReason='';
   let statusRequest=Promise.resolve();
+  const SCHED_ROW=5;
+  let sched={on:true,close:'21:30',open:'08:30'};
+  try{const ls=JSON.parse(localStorage.getItem('vedantShopSchedule')||'null');if(ls&&ls.close&&ls.open)sched={on:ls.on!==false,close:ls.close,open:ls.open};}catch(_e){}
+  function toMin(t){const a=String(t||'').split(':');return (parseInt(a[0],10)||0)*60+(parseInt(a[1],10)||0);}
+  function nowMinIST(){
+    try{
+      const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date());
+      const h=parseInt(parts.find(x=>x.type==='hour').value,10)%24;
+      const m=parseInt(parts.find(x=>x.type==='minute').value,10);
+      return h*60+m;
+    }catch(_e){const d=new Date();return d.getHours()*60+d.getMinutes();}
+  }
+  function scheduleClosedNow(){
+    if(!sched.on)return false;
+    const c=toMin(sched.close),o=toMin(sched.open),n=nowMinIST();
+    if(c===o)return false;
+    return c>o?(n>=c||n<o):(n>=c&&n<o);
+  }
+  function fmt12(t){const m=toMin(t);let h=Math.floor(m/60)%24;const mm=String(m%60).padStart(2,'0');const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+mm+' '+ap;}
+  function effectiveStatus(){return(savedStatus==='open'&&scheduleClosedNow())?'closed':savedStatus;}
 
   function getShop(){return document.getElementById('page-shop');}
   function ensureClosedDisplay(){
@@ -12306,11 +12346,13 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
     savedStatus=['closed','maintenance'].includes(status)?status:'open';
     if(typeof reason==='string')savedReason=reason;
     const shop=getShop();
+    const shown=effectiveStatus();
+    const autoClosed=(shown==='closed'&&savedStatus==='open');
     if(shop){
       const box=ensureClosedDisplay();
-      shop.classList.toggle('stvn-shop-is-closed',savedStatus==='closed');
+      shop.classList.toggle('stvn-shop-is-closed',shown==='closed');
       shop.classList.toggle('stvn-shop-is-maintenance',savedStatus==='maintenance');
-      shop.setAttribute('data-shop-status',savedStatus);
+      shop.setAttribute('data-shop-status',shown);
       const heading=box?.querySelector('#stvnShopStatusHeading');
       const stamp=box?.querySelector('#stvnShopStatusStamp');
       const description=box?.querySelector('#stvnShopStatusDescription');
@@ -12320,20 +12362,20 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
       const reasonText=box?.querySelector('#stvnShopStatusReasonText');
       if(reasonText)reasonText.textContent=savedReason.trim();
       if(reasonTitle)reasonTitle.textContent=savedStatus==='maintenance'?vgT('Reason for maintenance','मेंटेनेंस की वजह / समस्या'):vgT('Reason the shop is closed','दुकान बंद होने का कारण');
-      if(reasonCard)reasonCard.classList.toggle('is-visible',savedStatus!=='open' && !!savedReason.trim());
+      if(reasonCard)reasonCard.classList.toggle('is-visible',shown!=='open' && !autoClosed && !!savedReason.trim());
       if(savedStatus==='maintenance'){
         if(heading)heading.textContent=vgT('The shop is under maintenance','दुकान अभी Under Maintenance में है');
         if(stamp)stamp.textContent='UNDER MAINTENANCE';
         if(description)description.textContent=vgT('We are carrying out some important improvements. Orders are unavailable right now. Please check back shortly.','हमारी दुकान में कुछ जरूरी सुधार का काम चल रहा है। इस समय ऑर्डर उपलब्ध नहीं हैं। कृपया थोड़ी देर बाद दोबारा आएँ।');
         if(footer)footer.textContent=vgT('🔧 We are working to serve you better','🔧 आपकी सुविधा के लिए काम जारी है');
-      }else if(savedStatus==='closed'){
+      }else if(shown==='closed'){
         if(heading)heading.textContent=vgT('The shop is closed right now','अभी दुकान बंद है');
         if(stamp)stamp.textContent='SHOP CLOSED';
         if(description)description.textContent=vgT('Thank you for visiting! Our shop is closed at the moment. Please visit again soon. All products and categories will be back as soon as we open.','आपके आने के लिए धन्यवाद! हमारी दुकान इस समय बंद है। कृपया थोड़ी देर बाद फिर पधारें। दुकान खुलते ही हमारे सभी प्रोडक्ट और कैटेगरी फिर से उपलब्ध हो जाएँगे।');
-        if(footer)footer.textContent=vgT('✨ Your convenience matters to us ✨','✨ आपकी सुविधा हमारे लिए महत्वपूर्ण है ✨');
+        if(footer)footer.textContent=autoClosed?vgT('🕒 We open every day at '+fmt12(sched.open),'🕒 दुकान रोज़ '+fmt12(sched.open)+' बजे खुलती है'):vgT('✨ Your convenience matters to us ✨','✨ आपकी सुविधा हमारे लिए महत्वपूर्ण है ✨');
       }
     }
-    document.documentElement.dataset.shopStatus=savedStatus;
+    document.documentElement.dataset.shopStatus=shown;
     const openBtn=document.getElementById('adminShopOpenChoice');
     const closeBtn=document.getElementById('adminShopCloseChoice');
     const maintenanceBtn=document.getElementById('adminShopMaintenanceChoice');
@@ -12422,8 +12464,53 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
       window.stvnAlert('Shop Status सेव नहीं हुआ। '+(error.message||'Supabase shop_settings table और policies जाँचें।'));
     }finally{if(button)button.disabled=false;}
   };
+  function fillScheduleInputs(){
+    const a=document.getElementById('adminShopAutoOn'),c=document.getElementById('adminShopCloseAt'),o=document.getElementById('adminShopOpenAt');
+    if(a)a.checked=!!sched.on;if(c)c.value=sched.close;if(o)o.value=sched.open;
+  }
+  async function loadSchedule(){
+    try{
+      if(typeof supabaseClient==='undefined')return;
+      const {data,error}=await supabaseClient.from(TABLE).select('maintenance_reason').eq('id',SCHED_ROW).maybeSingle();
+      if(error)throw error;
+      if(data&&data.maintenance_reason){
+        const j=JSON.parse(data.maintenance_reason);
+        if(j&&/^\d{1,2}:\d{2}$/.test(j.close||'')&&/^\d{1,2}:\d{2}$/.test(j.open||'')){
+          sched={on:j.on!==false,close:j.close,open:j.open};
+          try{localStorage.setItem('vedantShopSchedule',JSON.stringify(sched));}catch(_e){}
+        }
+      }
+    }catch(error){console.error('Shop schedule load failed:',error);}
+    fillScheduleInputs();
+    applyStatus(savedStatus,savedReason);
+  }
+  window.saveShopSchedule=async function(){
+    const btn=document.getElementById('adminShopScheduleSave');
+    const msg=document.getElementById('adminShopScheduleMsg');
+    const on=!!document.getElementById('adminShopAutoOn')?.checked;
+    const close=document.getElementById('adminShopCloseAt')?.value||'';
+    const open=document.getElementById('adminShopOpenAt')?.value||'';
+    if(!close||!open){if(msg)msg.textContent='❌ Please choose both the close time and the open time.';return;}
+    if(btn)btn.disabled=true;
+    if(msg)msg.textContent='⏳ Saving timing…';
+    try{
+      const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+      if(sessionError)throw sessionError;
+      if(!sessionData?.session)throw new Error('Please log in as Admin first.');
+      const value=JSON.stringify({on:on,close:close,open:open});
+      const {error}=await supabaseClient.from(TABLE).upsert({id:SCHED_ROW,is_open:true,maintenance_reason:value,updated_at:new Date().toISOString()},{onConflict:'id'});
+      if(error)throw error;
+      sched={on:on,close:close,open:open};
+      try{localStorage.setItem('vedantShopSchedule',JSON.stringify(sched));}catch(_e){}
+      applyStatus(savedStatus,savedReason);
+      if(msg)msg.textContent=on?('✅ Saved. The shop closes automatically at '+fmt12(close)+' and reopens at '+fmt12(open)+' every day.'):'✅ Saved. Auto open/close is OFF.';
+    }catch(error){
+      console.error('Shop schedule save failed:',error);
+      if(msg)msg.textContent='❌ Not saved: '+(error.message||'please check the Supabase shop_settings table and policies.');
+    }finally{if(btn)btn.disabled=false;}
+  };
   // Block cart/order actions while closed, without changing their existing implementations.
-  function isClosed(){return savedStatus!=='open';}
+  function isClosed(){return effectiveStatus()!=='open';}
   document.addEventListener('click',function(event){
     if(!isClosed())return;
     const target=event.target instanceof Element?event.target:null;
@@ -12434,12 +12521,12 @@ body.dark #stvnShopClosedDisplay p,body.dark #stvnShopClosedDisplay .stvn-closed
       window.stvnAlert(savedStatus==='maintenance'?vgT('The shop is under maintenance. Please try again shortly.','दुकान अभी Under Maintenance में है। कृपया थोड़ी देर बाद कोशिश करें।'):vgT('The shop is closed right now. You can add items to your cart once we reopen.','अभी दुकान बंद है। दुकान खुलने के बाद आप सामान कार्ट में जोड़ सकते हैं।'));
     }
   },true);
-  const originalReady=()=>{ensureClosedDisplay();fetchRemoteStatus();};
+  const originalReady=()=>{ensureClosedDisplay();fetchRemoteStatus();loadSchedule();setInterval(function(){applyStatus(savedStatus,savedReason);},20000);};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',originalReady,{once:true});
   else originalReady();
   // Status changes should reflect for visitors already viewing the page.
-  window.addEventListener('focus',()=>{fetchRemoteStatus();});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)fetchRemoteStatus();});
+  window.addEventListener('focus',()=>{fetchRemoteStatus();loadSchedule();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){fetchRemoteStatus();loadSchedule();}});
 })();
 </script>
 
@@ -21638,14 +21725,8 @@ function fs(){var g=D.getElementById('adminFestGrid');if(!g||D.getElementById('v
 /* delivery PIN: always exactly 4 */
 function pin(){D.querySelectorAll('#vgoDigits').forEach(function(d){var x=d.querySelectorAll('input');for(var k=x.length-1;k>=4;k--)x[k].remove()});
  D.querySelectorAll('.vgotp-digits').forEach(function(d){var x=d.querySelectorAll('i');for(var k=x.length-1;k>=4;k--)x[k].remove()})}
-/* order id search */
-function os(){var p=D.getElementById('page-orders');if(!p||p.querySelector('.vgos'))return;
- var w=D.createElement('div');w.className='vgos';
- w.innerHTML='<label><b>🔎</b><input type="search" inputmode="search" placeholder="Order ID se search karo" autocomplete="off"><button type="button">Find</button></label><small></small>';
- var h=p.querySelector('.section-head');h?h.after(w):p.prepend(w);var i=w.querySelector('input'),m=w.querySelector('small');
- function f(){var q=i.value.trim().toLowerCase().replace(/^#/,''),n=0,t=0;p.querySelectorAll('.history-item').forEach(function(e){t++;var ok=!q||e.textContent.toLowerCase().indexOf(q)>-1;e.style.display=ok?'':'none';if(ok)n++});m.textContent=q?(n?n+' order mila':'Is ID ka koi order nahi mila'):t+' orders'}
- i.addEventListener('input',f);w.querySelector('button').onclick=f;
- new MutationObserver(function(){if(i.value)f()}).observe(p,{childList:true,subtree:true});f()}
+/* customer order-id search bar removed (admin-only now) */
+function os(){var p=D.getElementById('page-orders');if(!p)return;p.querySelectorAll('.vgos').forEach(function(e){e.remove()})}
 function run(){fs();pin();os()}
 new MutationObserver(function(){clearTimeout(run.t);run.t=setTimeout(run,120)}).observe(D.body,{childList:true,subtree:true});
 D.addEventListener('DOMContentLoaded',run);run();
@@ -21833,6 +21914,49 @@ function wrap(name,admin){
   f.__vgLo=true;window[name]=f;
 }
 wrap('stvnCustomerLogout',false);wrap('adminLogout',true);
+})();
+</script>
+<style id="vg-admin-order-search-css">
+#vgAdminOrderSearch.vgaos{margin:6px 0 16px;padding:16px;border-radius:24px;background:radial-gradient(120% 120% at 0 0,#3b1d8f,#140a30 72%);border:1px solid #f5c54299;box-shadow:0 16px 34px -14px rgba(20,10,48,.8),inset 0 1px 0 rgba(255,255,255,.12);color:#fff}
+#vgAdminOrderSearch .vgaos-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+#vgAdminOrderSearch .vgaos-badge{display:grid;place-items:center;width:44px;height:44px;border-radius:15px;font-size:22px;background:linear-gradient(135deg,#ffe08a,#f5c542 55%,#d99a00);box-shadow:0 6px 16px rgba(0,0,0,.35)}
+#vgAdminOrderSearch .vgaos-top b{display:block;font-size:17px;font-weight:900;letter-spacing:.3px;color:#ffe08a}
+#vgAdminOrderSearch .vgaos-top small{display:block;margin-top:2px;font-size:12.5px;font-weight:600;color:#d9d2f3}
+#vgAdminOrderSearch .vgaos-box{display:flex;align-items:center;gap:8px;padding:5px 8px 5px 14px;border-radius:18px;background:#fff;border:2px solid transparent;box-shadow:0 8px 20px -10px rgba(0,0,0,.6);transition:border-color .2s,box-shadow .2s}
+#vgAdminOrderSearch .vgaos-box:focus-within{border-color:#f5c542;box-shadow:0 0 0 4px rgba(245,197,66,.28),0 8px 20px -10px rgba(0,0,0,.6)}
+#vgAdminOrderSearch .vgaos-hash{font-weight:900;font-size:20px;color:#6b46c1}
+#vgAdminOrderSearch #vgAdminOrderSearchInput{flex:1;min-width:0;height:46px;border:0;outline:0;background:transparent;font:800 16px system-ui,sans-serif;letter-spacing:.3px;color:#1b1233}
+#vgAdminOrderSearch #vgAdminOrderSearchInput::placeholder{color:#8a82a8;font-weight:700}
+#vgAdminOrderSearch .vgaos-clear{border:0;width:34px;height:34px;border-radius:50%;background:#efeaff;color:#4c2d9a;font-weight:900;cursor:pointer;flex:none}
+#vgAdminOrderSearch .vgaos-clear[hidden]{display:none}
+#vgAdminOrderSearch .vgaos-foot{margin-top:10px;min-height:24px}
+#vgAdminOrderSearch .vgaos-count{display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(255,224,138,.16);border:1px solid rgba(245,197,66,.5);color:#ffe08a;font-size:12.5px;font-weight:800}
+#vgAdminOrderSearch .vgaos-count.none{background:rgba(255,120,120,.16);border-color:rgba(255,140,140,.6);color:#ffc9c9}
+#adminOrders .vgaos-hidden{display:none!important}
+</style>
+<script id="vg-admin-order-search-js">
+(function(){'use strict';
+var D=document;
+function init(){
+  var box=D.getElementById('adminOrders'),inp=D.getElementById('vgAdminOrderSearchInput');
+  if(!box||!inp||inp.dataset.ready)return;inp.dataset.ready='1';
+  var clr=D.getElementById('vgAdminOrderSearchClear'),cnt=D.getElementById('vgAdminOrderSearchCount');
+  function run(){
+    var q=inp.value.trim().toLowerCase().replace(/^#/,'');
+    var list=box.querySelectorAll('.admin-order'),n=0,t=list.length;
+    list.forEach(function(e){var ok=!q||e.textContent.toLowerCase().indexOf(q)>-1;e.classList.toggle('vgaos-hidden',!ok);if(ok)n++;});
+    clr.hidden=!q;
+    cnt.classList.toggle('none',!!q&&!n&&t>0);
+    cnt.textContent=!t?'':q?(n?n+' of '+t+' orders found':'No order found with this ID'):t+' orders';
+  }
+  inp.addEventListener('input',run);
+  inp.addEventListener('keydown',function(e){if(e.key==='Escape'){inp.value='';run();}});
+  clr.addEventListener('click',function(){inp.value='';run();inp.focus();});
+  var timer;
+  new MutationObserver(function(){clearTimeout(timer);timer=setTimeout(run,60);}).observe(box,{childList:true,subtree:true});
+  run();
+}
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>
