@@ -14939,7 +14939,7 @@ Object.assign(enDict,{
     splash.addEventListener('click',leave,{passive:true});
     /* PERF: hold the splash until the home screen is really built (header, hero, buttons) so no blank page shows after it. Max ~3s. */
     (function(){
-      var minMs=(reduce||seen)?250:900,maxMs=1700,t0=Date.now();
+      var minMs=(reduce||seen)?250:900,maxMs=9000,t0=Date.now();
       function ready(){
         try{
           if(document.readyState==='loading')return false;
@@ -14955,7 +14955,7 @@ Object.assign(enDict,{
       })();
     })();
     // Fallback if the browser throttles animation frames while backgrounded.
-    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,600)},2300);
+    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,600)},9500);
   })();
 })();
 </script>
