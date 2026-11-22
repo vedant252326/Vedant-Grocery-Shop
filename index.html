@@ -33,6 +33,9 @@
 
 <!-- Canonical Link -->
 <link rel="canonical" href="https://vedantgrocery.shop/">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://dpkffmprgqaadlpkoiqd.supabase.co" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
 
 <!-- Browser tab, supported search previews, and Apple touch icon -->
 <link rel="icon" type="image/png" sizes="32x32" href="https://vedantgrocery.shop/logo.png">
@@ -2353,7 +2356,7 @@ button,input,select,textarea{font:inherit}
 .admin-order .stvn-order-whatsapp-btn{min-height:42px}
 @media(max-width:700px){.admin-order .admin-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}.admin-order .admin-actions button,.admin-order .admin-actions select,.admin-order .admin-actions input{width:100%!important;min-width:0!important;min-height:44px!important;box-sizing:border-box!important}.admin-order .stvn-order-whatsapp-btn{font-size:14px!important}.admin-order .admin-grid{grid-template-columns:1fr!important}.admin-order{overflow-wrap:anywhere!important}}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" referrerpolicy="no-referrer"></script>
+<script>window.vgLoadPdf=function(){return new Promise(function(ok){if(typeof window.html2pdf==='function')return ok(true);var t=document.createElement('script');t.src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js';t.referrerPolicy='no-referrer';t.onload=function(){ok(true)};t.onerror=function(){ok(false)};document.head.appendChild(t)})};</script>
 
 <style id="vedant-mobile-header-autosave-layout-v1">
 @media(max-width:600px){
@@ -5962,6 +5965,7 @@ function vgInvoiceMarkup(order,language){
   </div></div>`;
 }
 async function vgCreateInvoicePdf(order,language){
+  await window.vgLoadPdf();
   if(typeof html2pdf!=='function')throw new Error('PDF library load नहीं हुई। Internet connection जाँचें और दोबारा कोशिश करें।');
   if(!order || typeof order!=='object')throw new Error('Invoice के लिए order details उपलब्ध नहीं हैं।');
   const holder=document.createElement('div');
@@ -17667,6 +17671,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const old=button?.innerHTML; if(button){button.disabled=true;button.textContent='⏳ Preparing PDF…';}
    let blobUrl='';
    try{
+     await window.vgLoadPdf();
      if(typeof html2pdf!=='function')throw new Error('PDF library load नहीं हुई। Internet connection जाँचें।');
      const {data:order,error}=await supabaseClient.from('orders').select('*').eq('order_id',id).maybeSingle();
      if(error)throw error; if(!order)throw new Error('Supabase में यह order नहीं मिला।');
@@ -21628,7 +21633,7 @@ html body #vgRider .vgr-top:after{content:"";position:absolute;inset:0;backgroun
 html body #vgRider .vgr-brand{background:linear-gradient(90deg,#fff3c4,#f5c542,#fff3c4);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;font-weight:900;letter-spacing:.6px}
 html body #vgRider .vgr-card,html body #vgRider .vgx-week{border-radius:24px;border:1px solid #f5c54244;background:linear-gradient(160deg,#171a1c,#1d211d 60%,#232010);box-shadow:0 14px 30px #000a,inset 0 1px 0 #ffffff12;position:relative}
 html body #vgRider .vgr-card:before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#f5c542,transparent);opacity:.8}
-html body #vgRider .vgr-stat{border-radius:22px;backdrop-filter:blur(8px)}
+html body #vgRider .vgr-stat{border-radius:22px}
 html body #vgRider .vgr-stat b{font-size:26px;text-shadow:0 0 16px currentColor}
 html body #vgRider .vgr-btn:not(.vgr-swipe){border-radius:18px;min-height:54px;font-weight:900;letter-spacing:.2px}
 html body #vgRider .vgr-pay{border-radius:16px;padding:12px 14px;font-weight:800}
@@ -21640,7 +21645,7 @@ html body #vgRider .vgr-sheet{border-radius:28px 28px 0 0}
 html body #adminContent .admin-toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;padding:14px!important;border-radius:22px!important;background:radial-gradient(120% 90% at 0 0,#3b1d8f,#140a30 70%)!important;border:1px solid #f5c54299!important;position:relative}
 html body #adminContent .admin-toolbar:before{content:"👑 VIP Admin Control";grid-column:1/-1;order:-100;color:#ffe08a;font-weight:900;font-size:14px;letter-spacing:.8px}
 html body #adminContent .admin-toolbar>#admin-save-status{order:-90;grid-column:1/-1}
-html body #adminContent .admin-toolbar>.admin-btn,html body #adminContent .admin-toolbar>button{height:56px!important;min-height:56px!important;max-height:56px!important;padding:6px 8px!important;display:flex!important;align-items:center;justify-content:center;text-align:center;font-size:12.5px!important;line-height:1.2!important;font-weight:800;border-radius:15px!important;white-space:normal;overflow:hidden;box-sizing:border-box;margin:0!important;width:100%!important;transition:background .2s,box-shadow .2s!important;transform:none!important;backdrop-filter:blur(6px)}
+html body #adminContent .admin-toolbar>.admin-btn,html body #adminContent .admin-toolbar>button{height:56px!important;min-height:56px!important;max-height:56px!important;padding:6px 8px!important;display:flex!important;align-items:center;justify-content:center;text-align:center;font-size:12.5px!important;line-height:1.2!important;font-weight:800;border-radius:15px!important;white-space:normal;overflow:hidden;box-sizing:border-box;margin:0!important;width:100%!important;transition:background .2s,box-shadow .2s!important;transform:none!important}
 html body #adminContent .admin-toolbar>.admin-btn:active{filter:brightness(1.3)}
 html body #adminContent .admin-toolbar>#admin-shop-status-toolbar-toggle{font-size:12.5px!important;padding:6px 8px!important;min-height:56px!important;border-radius:15px!important}
 html body #adminContent .admin-toolbar>select,html body #adminContent .admin-toolbar>.admin-logout{grid-column:1/-1;order:200}
@@ -21660,6 +21665,130 @@ html body #page-account .vga-card{border-radius:26px!important;border:1px solid 
 html body #page-account .vga-row i,html body #page-account .vga-card summary i{border-radius:16px;box-shadow:0 4px 10px #0001}
 @media(prefers-reduced-motion:reduce){html body #vgRider .vgr-swipe *,html body #vgRider .vgr-top:after{animation:none!important}}
 </style>
+<style id="vg-account-tiles-fix">
+html body #page-account .vga-hero{padding-bottom:64px!important;border-radius:0 0 30px 30px!important}
+html body #page-account .vga-user{margin-bottom:0}
+html body #page-account .vga-tiles{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;margin:-40px 14px 0!important;align-items:stretch;position:relative;z-index:3}
+html body #page-account .vga-tile{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-width:0;height:108px;padding:10px 4px!important;margin:0!important;box-sizing:border-box;font-size:13px!important;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-tap-highlight-color:transparent}
+html body #page-account .vga-tile span{flex:none;margin:0 auto 6px!important}
+html body #page-account .vga-rider{margin-top:14px!important}
+@media(max-width:340px){html body #page-account .vga-tile{height:98px;font-size:12px!important}html body #page-account .vga-tile span{width:42px;height:42px;font-size:22px}}
+</style>
+<style id="vg-offline-css">
+#vgOff{position:fixed;left:12px;right:12px;top:max(12px,env(safe-area-inset-top));z-index:2147483646;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:22px;background:linear-gradient(135deg,#1b0f0f,#3a1212 60%,#5a1a12);border:1px solid #f5c54299;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-shadow:0 18px 40px #000a,0 0 0 1px #ffffff10 inset;transform:translateY(-140%);opacity:0;transition:transform .55s cubic-bezier(.2,1.2,.3,1),opacity .35s;pointer-events:none;max-width:520px;margin:0 auto}
+html body #vgOff.show{transform:none;opacity:1;pointer-events:auto;visibility:visible!important;display:flex!important}
+#vgOff .vgo-ic{flex:none;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,#ffe08a,#f5c542 55%,#d99a00);box-shadow:0 6px 16px #0007;animation:vgoPulse 1.8s ease-in-out infinite}
+#vgOff .vgo-t{flex:1;min-width:0;line-height:1.25}
+#vgOff .vgo-t b{display:block;font-size:16px;font-weight:900;color:#ffe08a;letter-spacing:.2px}
+#vgOff .vgo-t small{display:block;font-size:12px;opacity:.85;margin-top:2px}
+#vgOff .vgo-btn{flex:none;border:0;border-radius:14px;padding:10px 13px;font-weight:900;font-size:13px;color:#241a00;background:linear-gradient(135deg,#ffe08a,#f5c542);cursor:pointer}
+#vgOff .vgo-btn:active{transform:scale(.94)}
+html body #vgOff .vgo-btn{background:linear-gradient(135deg,#ffe08a,#f5c542)!important;color:#241a00!important;border:0!important;border-radius:14px!important;padding:10px 14px!important;min-height:0!important;width:auto!important;margin:0!important;box-shadow:0 6px 14px #0006!important;font-size:13px!important;font-weight:900!important}
+html body #vgOff .vgo-x{background:#ffffff26!important;color:#fff!important;border:0!important;width:28px!important;height:28px!important;min-height:0!important;padding:0!important;margin:0!important;border-radius:50%!important;box-shadow:none!important;line-height:28px}
+#vgOff .vgo-x{flex:none;border:0;background:#ffffff1f;color:#fff;width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer}
+#vgOff.ok{background:linear-gradient(135deg,#06210f,#0f5a26);border-color:#4ade80aa}
+#vgOff.ok .vgo-t b{color:#8af0b3}#vgOff.ok .vgo-ic{background:linear-gradient(135deg,#8af0b3,#16a34a);animation:none}
+#vgOff.shake{animation:vgoShake .4s}
+@keyframes vgoPulse{50%{transform:scale(1.08);box-shadow:0 0 0 7px #f5c54233,0 6px 16px #0007}}
+@keyframes vgoShake{20%{translate:-6px 0}60%{translate:6px 0}}
+@media(prefers-reduced-motion:reduce){#vgOff,#vgOff .vgo-ic{animation:none!important;transition:none}}
+</style>
+<script id="vg-offline-banner">
+(function(){
+if(window.__vgOffline)return;window.__vgOffline=true;
+var el,hideT,off=!navigator.onLine,dismissed=false;
+function hi(){var r=document.documentElement,l=(r.getAttribute('data-language')||r.lang||'').toLowerCase();return l.indexOf('hi')===0}
+function build(){
+  if(el)return el;
+  el=document.createElement('div');el.id='vgOff';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+  el.innerHTML='<div class="vgo-ic">📡</div><div class="vgo-t"><b></b><small></small></div><button type="button" class="vgo-btn"></button><button type="button" class="vgo-x" aria-label="Close">✕</button>';
+  document.body.appendChild(el);
+  el.querySelector('.vgo-x').onclick=function(){dismissed=true;el.classList.remove('show')};
+  el.querySelector('.vgo-btn').onclick=retry;
+  return el;
+}
+function paint(ok){
+  build();var h=hi();
+  el.classList.toggle('ok',!!ok);
+  el.querySelector('.vgo-ic').textContent=ok?'✅':'📡';
+  el.querySelector('b').textContent=ok?(h?'इंटरनेट वापस आ गया':'Back online'):(h?'आप ऑफ़लाइन हैं':'You are offline');
+  el.querySelector('small').textContent=ok?(h?'अब आप ऑर्डर कर सकते हैं':'You can continue shopping'):(h?'इंटरनेट बंद है। कनेक्शन चालू करें, तब ऑर्डर और ट्रैकिंग चलेगी।':'No internet. Turn on Wi-Fi or mobile data to order and track.');
+  el.querySelector('.vgo-btn').textContent=h?'फिर कोशिश':'Retry';
+  el.querySelector('.vgo-btn').style.display=ok?'none':'';
+  el.querySelector('.vgo-x').style.display=ok?'none':'';
+}
+function whenReady(fn){ /* only after the entry animation is gone */
+  (function w(){if(document.body&&!document.getElementById('vgSplash'))fn();else setTimeout(w,250)})();
+}
+function showOff(){
+  clearTimeout(hideT);dismissed=false;
+  whenReady(function(){if(!off||dismissed)return;paint(false);void el.offsetWidth;el.classList.add('show');try{navigator.vibrate&&navigator.vibrate([40,40,40])}catch(e){}});
+}
+function showOn(){
+  clearTimeout(hideT);
+  if(!el||!el.classList.contains('show')){return}
+  paint(true);hideT=setTimeout(function(){el.classList.remove('show')},2600);
+}
+function retry(){
+  var b=el.querySelector('.vgo-btn');b.textContent='⏳';
+  var done=function(ok){setTimeout(function(){if(ok){off=false;showOn()}else{paint(false);el.classList.add('shake');setTimeout(function(){el.classList.remove('shake')},420)}},500)};
+  if(!navigator.onLine)return done(false);
+  fetch(location.protocol==='file:'?'data:,':'https://dpkffmprgqaadlpkoiqd.supabase.co/auth/v1/health',{mode:'no-cors',cache:'no-store'}).then(function(){done(true)},function(){done(false)});
+}
+window.addEventListener('offline',function(){off=true;showOff()});
+window.addEventListener('online',function(){off=false;showOn()});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&!navigator.onLine){off=true;showOff()}});
+if(off){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showOff);else showOff()}
+})();
+</script>
+<style id="vg-logout-confirm-css">
+#vgLo{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,10,8,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html body #vgLo.show{opacity:1;pointer-events:auto;visibility:visible!important;display:flex!important}
+#vgLo .vgl-box{width:100%;max-width:340px;border-radius:28px;padding:26px 22px 20px;text-align:center;background:linear-gradient(160deg,#171a1c,#1d211d 60%,#232010);border:1px solid #f5c54277;box-shadow:0 26px 60px #000c,inset 0 1px 0 #ffffff14;color:#f3efe2;transform:translateY(30px) scale(.92);transition:transform .35s cubic-bezier(.2,1.3,.4,1);position:relative;overflow:hidden}
+#vgLo.show .vgl-box{transform:none}
+#vgLo .vgl-box:before{content:"";position:absolute;left:22px;right:22px;top:0;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#f5c542,transparent)}
+#vgLo .vgl-ic{width:68px;height:68px;margin:0 auto 12px;border-radius:22px;display:grid;place-items:center;font-size:32px;background:linear-gradient(135deg,#ffe08a,#f5c542 55%,#d99a00);box-shadow:0 10px 24px #0008,0 0 0 6px #f5c54222}
+#vgLo h3{margin:0 0 6px;font-size:21px;font-weight:900;color:#ffe08a}
+#vgLo p{margin:0 0 18px;font-size:14px;line-height:1.45;color:#c9c4b0}
+#vgLo .vgl-row{display:flex;gap:10px}
+html body #vgLo button{flex:1;min-height:50px;margin:0;padding:12px 8px;border:0;border-radius:16px;font-size:15px;font-weight:900;cursor:pointer;width:auto;transition:transform .12s}
+html body #vgLo button:active{transform:scale(.95)}
+html body #vgLo button.vgl-no{background:#2b302c!important;color:#f3efe2!important;border:1px solid #ffffff1f!important;box-shadow:none!important}
+html body #vgLo button.vgl-yes{background:linear-gradient(135deg,#ef4444,#b91c1c)!important;color:#fff!important;border:0!important;box-shadow:0 8px 18px #b91c1c55!important}
+@media(prefers-reduced-motion:reduce){#vgLo,#vgLo .vgl-box{transition:none}}
+</style>
+<script id="vg-logout-confirm">
+(function(){
+if(window.__vgLo)return;window.__vgLo=true;
+var el,res;
+function hi(){var r=document.documentElement,l=(r.getAttribute('data-language')||r.lang||'').toLowerCase();return l.indexOf('hi')===0}
+function close(v){if(!el)return;el.classList.remove('show');var r=res;res=null;if(r)r(v)}
+function ask(admin){
+  return new Promise(function(ok){
+    if(res)close(false);res=ok;var h=hi();
+    if(!el){el=document.createElement('div');el.id='vgLo';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');
+      el.innerHTML='<div class="vgl-box"><div class="vgl-ic">🚪</div><h3></h3><p></p><div class="vgl-row"><button type="button" class="vgl-no"></button><button type="button" class="vgl-yes"></button></div></div>';
+      document.body.appendChild(el);
+      el.addEventListener('click',function(e){if(e.target===el)close(false)});
+      el.querySelector('.vgl-no').onclick=function(){close(false)};
+      el.querySelector('.vgl-yes').onclick=function(){try{navigator.vibrate&&navigator.vibrate(20)}catch(x){}close(true)};
+      document.addEventListener('keydown',function(e){if(e.key==='Escape'&&el.classList.contains('show'))close(false)});
+    }
+    el.querySelector('h3').textContent=h?'लॉग आउट करें?':'Log out?';
+    el.querySelector('p').textContent=admin?(h?'क्या आप एडमिन पैनल से लॉग आउट करना चाहते हैं?':'Do you want to log out of the Admin panel?'):(h?'क्या आप सच में अपने अकाउंट से लॉग आउट करना चाहते हैं?':'Are you sure you want to log out of your account?');
+    el.querySelector('.vgl-no').textContent=h?'नहीं':'No';
+    el.querySelector('.vgl-yes').textContent=h?'हाँ, लॉग आउट':'Yes, Log out';
+    void el.offsetWidth;el.classList.add('show');
+  });
+}
+function wrap(name,admin){
+  var o=window[name];if(typeof o!=='function'||o.__vgLo)return;
+  var f=function(){var a=arguments,t=this;ask(admin).then(function(y){if(y)o.apply(t,a)})};
+  f.__vgLo=true;window[name]=f;
+}
+wrap('stvnCustomerLogout',false);wrap('adminLogout',true);
+})();
+</script>
 </body>
 </html>
 
