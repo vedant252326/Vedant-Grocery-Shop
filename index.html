@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<!-- Safe cleanup: all active feature JavaScript and feature CSS retained; removed only retired placeholders and duplicate hints. -->
-
 <html lang="en">
 <head>
 <script id="vg-perf-governor">
@@ -42,6 +40,8 @@
 </script>
 <!-- FAST START: splash logo + blocking script are requested before the big inline CSS is parsed -->
 <link rel="preload" as="image" href="logo.png" fetchpriority="high">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://unpkg.com">
 <link rel="preload" as="script" href="supabase.js">
 <script id="vg-range-early">(function(){var r=5;try{var v=Number(localStorage.getItem("vgRange"));if(v>=1&&v<=50)r=v}catch(e){}window.vgRadius=function(){return r};window.vgRadiusBoot=r})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2230,7 +2230,7 @@ html.vg-nosplash #vgSplash{display:none!important}
 #vgSplash.out{transform:translate3d(100%,0,0);pointer-events:none}
 #vgSplash .vgs-glow{position:absolute;left:50%;top:44%;width:120vmax;height:120vmax;margin:-60vmax 0 0 -60vmax;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.55),rgba(255,255,255,0) 55%);opacity:0;transform:scale(.6);animation:vgsGlow 1.1s cubic-bezier(.2,.8,.2,1) both;will-change:transform,opacity}
 #vgSplash .vgs-food{position:absolute;inset:0;pointer-events:none}
-#vgSplash .vgs-food span{position:absolute;bottom:-50px;opacity:0;will-change:transform,opacity;animation:vgsRise 1.7s ease-out both}
+#vgSplash .vgs-food span{position:absolute;bottom:-50px;opacity:0;will-change:transform,opacity;animation:vgsRise 2.6s ease-out both}
 #vgSplash .vgs-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 18px 6vh}
 #vgSplash .vgs-logo{position:relative;width:clamp(104px,28vw,150px);height:clamp(104px,28vw,150px);margin-bottom:clamp(12px,2.6vh,22px);will-change:transform,opacity;animation:vgsPop .7s cubic-bezier(.2,1.3,.35,1) both}
 #vgSplash .vgs-tile{position:absolute;inset:0;display:grid;place-items:center;border-radius:30%;background:linear-gradient(145deg,#fff,#e9fbea);box-shadow:0 14px 30px rgba(88,60,0,.28),0 0 0 6px rgba(255,255,255,.55);overflow:hidden;padding:11%}
@@ -2249,7 +2249,7 @@ html.vg-nosplash #vgSplash{display:none!important}
 #vgSplash .vgs-scooter{position:absolute;bottom:2px;left:0;font-size:clamp(38px,10vw,52px);transform:translate3d(-90px,0,0) scaleX(-1);will-change:transform;animation:vgsDrive 1.8s cubic-bezier(.4,.1,.3,1) .2s both}
 #vgSplash .vgs-lines{position:absolute;left:0;right:0;bottom:12px;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95));transform-origin:left;transform:scaleX(0);will-change:transform,opacity;animation:vgsTrail 1.8s cubic-bezier(.4,.1,.3,1) .2s both}
 #vgSplash .vgs-bar{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));width:min(64vw,320px);height:7px;margin-left:min(-32vw,-160px);border-radius:7px;background:rgba(10,90,23,.18);overflow:hidden;z-index:2}
-#vgSplash .vgs-bar i{display:block;height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#0c831f,#27d447);transform-origin:left;transform:scaleX(0);will-change:transform;animation:vgsLoad 1.35s cubic-bezier(.4,.1,.2,1) .05s both}
+#vgSplash .vgs-bar i{display:block;height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#0c831f,#27d447);transform-origin:left;transform:scaleX(0);will-change:transform;animation:vgsLoad 1.9s cubic-bezier(.4,.1,.2,1) .1s both}
 @keyframes vgsGlow{to{opacity:.8;transform:scale(1)}}
 @keyframes vgsDrop{0%{transform:translate3d(0,-50px,0) scale(.7);opacity:0}100%{transform:none;opacity:1}}
 @keyframes vgsSlide{from{transform:translate3d(0,14px,0) scale(.9);opacity:0}to{transform:none;opacity:1}}
@@ -2261,9 +2261,7 @@ html.vg-nosplash #vgSplash{display:none!important}
 </style>
 <script>(function(){var d=document.documentElement;try{var e=(localStorage.getItem('vedantCustomerEmail')||'').trim().toLowerCase(),v=e?localStorage.getItem('vedantLanguage:'+e):null;if(v!=='en'&&v!=='hi')v=localStorage.getItem('vedantLanguagePreference');if(v!=='en'&&v!=='hi')v=localStorage.getItem('vedantLanguage:guest');d.classList.add(v==='en'||v==='hi'?'v-lang-saved':'v-lang-wait')}catch(x){d.classList.add('v-lang-wait')}setTimeout(function(){d.classList.remove('v-lang-wait')},6000)})();</script>
 <style id="vedant-first-paint-language-guard">
-/* Keep the storefront rendered underneath the intro; the splash covers it until the Home UI is ready.
-   Hiding the root here caused a blank white interval after the splash was removed. */
-html{visibility:visible}
+html{visibility:hidden}
 #vLangGate{visibility:visible;display:flex}
 /* Saved language: never show the chooser. First visit: show it only after the intro animation ends. */
 html.v-lang-saved #vLangGate,html.v-lang-wait #vLangGate{display:none!important}
@@ -2651,33 +2649,11 @@ button,input,select,textarea{font:inherit}
   .modern-bottom-nav { width:min(100%,1180px)!important; }
 }
 </style>
-<!-- Temporary speed-test overlay removed; it was diagnostic-only and is not part of the storefront. -->
+<!-- Removed temporary 50ms speed-diagnostic polling overlay from production build. -->
 </head>
 
 <body>
-<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script id="vg-splash-failsafe">(function(){
-  var finished=false;
-  function homeReady(){
-    var home=document.getElementById('page-home');
-    var header=home&&home.querySelector('.vg-store-header');
-    var hero=home&&home.querySelector('.vg-hero');
-    return !!(header&&header.querySelector('.vg-brand, .vg-cart-action')&&hero);
-  }
-  function finish(){
-    if(finished)return;
-    var splash=document.getElementById('vgSplash');
-    if(!splash){finished=true;return;}
-    /* Never uncover a blank page: wait until the real Home header and hero exist. */
-    if(!homeReady()){setTimeout(finish,180);return;}
-    finished=true;
-    splash.classList.add('out');
-    setTimeout(function(){
-      try{splash.remove()}catch(e){}
-      document.documentElement.classList.remove('v-lang-wait');
-    },550);
-  }
-  setTimeout(finish,Math.max(900,4200-Math.round(performance.now())));
-})();</script><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
+<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script id="vg-splash-failsafe">(function(){var s=document.getElementById('vgSplash');if(!s)return;var root=document.documentElement;var saved=root.classList.contains('v-lang-saved');var left=Math.max(1200,3500-Math.round(performance.now()));setTimeout(function(){var x=document.getElementById('vgSplash');if(x){x.classList.add('out');setTimeout(function(){try{x.parentNode&&x.parentNode.removeChild(x)}catch(e){}},600)}root.classList.remove('v-lang-wait');if(saved){root.style.visibility='visible'}},left)})();</script><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
 
 <div id="stvnCustomerLoginGate" class="notranslate" translate="no" lang="en" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
   <div class="stvn-customer-login-card">
@@ -13680,7 +13656,9 @@ body > .modern-nav, .modern-nav{display:none!important}
   100% { transform:translateX(-4px) scaleX(-1); }
 }
 </style>
-
+<script id="vedant-truck-real-element-final-script">
+/* Replaced by the unified responsive truck controller at end of file. */
+</script>
 
 
 <style id="vedant-truck-position-motion-final">
@@ -13698,7 +13676,9 @@ body > .modern-nav, .modern-nav{display:none!important}
  #page-shop #customer-products-status .vedant-real-truck{display:none!important}
 }
 </style>
-
+<script id="vedant-truck-position-motion-final-script">
+/* Replaced by the unified responsive truck controller at end of file. */
+</script>
 
 
 <style id="vedant-mobile-shop-status-focus-fix">
@@ -14958,35 +14938,25 @@ Object.assign(enDict,{
       else leave();
     }
     splash.addEventListener('click',leave,{passive:true});
-    /* Keep the intro over the page until the real Home header and hero are present. */
+    /* PERF: hold the splash until the home screen is really built (header, hero, buttons) so no blank page shows after it. Max ~3s. */
     (function(){
-      var minMs=(reduce||seen)?120:350,t0=Date.now();
+      var minMs=(reduce||seen)?250:900,maxMs=1700,t0=Date.now();
       function ready(){
         try{
           if(document.readyState==='loading')return false;
-          var home=document.getElementById('page-home');
-          var h=home&&home.querySelector('.vg-store-header');
-          var hero=home&&home.querySelector('.vg-hero');
-          /* The orders/wallet buttons are attached by a separate delayed decorator.
-             They are not needed to show a complete first screen. */
-          return !!(h&&h.querySelector('.vg-brand, .vg-cart-action')&&hero);
-        }catch(e){return false}
+          var h=document.querySelector('#page-home .vg-store-header');
+          return !!(h&&h.querySelector('.vg-orders-action')&&document.querySelector('#page-home .vg-hero'));
+        }catch(e){return true}
       }
       (function poll(){
         if(gone)return;
         var el=Date.now()-t0;
-        if(el>=minMs&&ready()){setTimeout(tryLeave,40);return}
+        if(el>=minMs&&(ready()||el>=maxMs)){setTimeout(tryLeave,60);return}
         setTimeout(poll,100);
       })();
     })();
-    // Background-tab fallback: leave only when Home is actually ready; polling continues otherwise.
-    setTimeout(function(){
-      if(gone)return;
-      var home=document.getElementById('page-home');
-      var header=home&&home.querySelector('.vg-store-header');
-      var hero=home&&home.querySelector('.vg-hero');
-      if(header&&header.querySelector('.vg-brand, .vg-cart-action')&&hero)leave();
-    },4200);
+    // Fallback if the browser throttles animation frames while backgrounded.
+    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,600)},2300);
   })();
 })();
 </script>
@@ -15434,7 +15404,9 @@ Object.assign(enDict,{
   100%{transform:translateX(-90px) scaleX(-1)}
 }
 </style>
-
+<script id="vedant-real-truck-loader-dom-script">
+/* Replaced by the unified responsive truck controller at end of file. */
+</script>
 
 
 
@@ -21195,18 +21167,7 @@ function splashFailsafe(){
   var gate=$('vLangGate');
   var gateShown=gate&&getComputedStyle(gate).display!=='none'&&gate.style.visibility!=='hidden';
   var sp=$('vgSplash');
-  if(sp){
-    var home=$('page-home');
-    var header=home&&home.querySelector('.vg-store-header');
-    var hero=home&&home.querySelector('.vg-hero');
-    /* Do not remove the splash while Home is still blank; retry after the UI is mounted. */
-    if(!(header&&header.querySelector('.vg-brand, .vg-cart-action')&&hero)){
-      setTimeout(splashFailsafe,500);
-      return;
-    }
-    try{sp.remove()}catch(e){}
-    var c=$('vgSplashCss');if(c)try{c.remove()}catch(e){}
-  }
+  if(sp){try{sp.remove()}catch(e){}var c=$('vgSplashCss');if(c)try{c.remove()}catch(e){}}
   if(!gateShown&&getComputedStyle(R).visibility==='hidden')R.style.visibility='visible';
 }
 setTimeout(splashFailsafe,4800);
