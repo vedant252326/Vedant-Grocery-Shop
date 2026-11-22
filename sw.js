@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'vedant-grocery-pwa-v7';
+const CACHE_NAME = 'vedant-grocery-pwa-v8';
 const APP_ROOT = new URL('./', self.registration.scope);
 const OFFLINE_PAGE = new URL('index.html', APP_ROOT).href;
 
@@ -46,16 +46,27 @@ self.addEventListener('fetch', event => {
   if (/\/(rest\/v1|auth|functions|storage\/v1)\//.test(url.pathname)) return;
 
   if (request.mode === 'navigate') {
+    // Login/redirect links with ?query always go to the network
+    if (url.search) return;
+
     event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const cached = await cache.match(OFFLINE_PAGE);
+
+      const update = fetch(request).then(response => {
+        if (response.ok) cache.put(OFFLINE_PAGE, response.clone());
+        return response;
+      });
+
+      if (cached) {
+        event.waitUntil(update.catch(() => {}));
+        return cached;
+      }
+
       try {
-        return await fetch(request);
+        return await update;
       } catch (error) {
-        const cache = await caches.open(CACHE_NAME);
-        return (
-          await cache.match(OFFLINE_PAGE) ||
-          await cache.match(APP_ROOT.href) ||
-          Response.error()
-        );
+        return (await cache.match(APP_ROOT.href)) || Response.error();
       }
     })());
     return;
