@@ -21404,7 +21404,7 @@ html body #vgRider .vgx-sleep{font-size:34px;animation:vgxSleep 3s ease-in-out i
 @keyframes vgxDrive{to{left:112%;opacity:.3}}
 @keyframes vgxUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .vgx-share{width:100%;margin-top:6px;min-height:44px;border:1px solid #ffffff33;border-radius:12px;background:#ffffff14;color:#fff;font-weight:800;font-size:14px}
-#vgxDel{width:100%;margin-top:10px;min-height:44px;border-radius:12px;border:1.5px solid #d93025;background:transparent;color:#d93025;font-weight:900;font-size:14px}
+#vgxDel{display:block;width:100%;margin-top:10px;min-height:46px;border-radius:12px;border:0;background:#d93025!important;color:#fff!important;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 6px 14px -6px rgba(217,48,37,.7);position:relative;z-index:5;-webkit-tap-highlight-color:transparent}#vgxDel:active{background:#b3261e!important;transform:scale(.98)}#vgxDel:disabled{opacity:.6}
 </style>
 <script id="vedant-v12-script">
 (function(){
@@ -22936,20 +22936,18 @@ function renderRegister(){
   '<label class="vgr-field"><span>Poora naam *</span><input id="vgrfName" autocomplete="name" maxlength="60"></label>'+
   '<label class="vgr-field"><span>Age * (18+)</span><input id="vgrfAge" type="number" inputmode="numeric" min="18" max="70"></label>'+
   '<label class="vgr-field"><span>Mobile number * (10 digit)</span><input id="vgrfPhone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel"></label>'+
-  '<label class="vgr-field"><span>Driving Licence (DL) — Optional</span><input id="vgrfDl" maxlength="20" style="text-transform:uppercase"></label>'+
-  '<label class="vgr-field"><span>Vehicle number</span><input id="vgrfVeh" maxlength="15" style="text-transform:uppercase" placeholder="UP78 AB 1234"></label>'+
   '<button class="vgr-btn" id="vgrfGo" type="button">Rider Account banao</button>'+
   '<button class="vgr-btn sec" id="vgrfBack" type="button">🏪 Wapas Shop</button></div>';
   $("vgrfBack").onclick=goShop;
   $("vgrfGo").onclick=submitRegister;
 }
 async function submitRegister(){
-  var n=$("vgrfName").value.trim(),age=parseInt($("vgrfAge").value,10),ph=digits($("vgrfPhone").value),ve=$("vgrfVeh").value.trim();
+  var n=$("vgrfName").value.trim(),age=parseInt($("vgrfAge").value,10),ph=digits($("vgrfPhone").value);
   if(n.length<2)return toast("Naam likho");
   if(!(age>=18&&age<=70))return toast("Age 18 se 70 ke beech honi chahiye");
   if(!/^[6-9][0-9]{9}$/.test(ph))return toast("Sahi 10 digit mobile number likho");
   var b=$("vgrfGo");b.disabled=true;b.textContent="Ban raha hai…";
-  var r=await sb().rpc("rider_register",{p_name:n,p_age:age,p_phone:ph,p_dl:($("vgrfDl")?$("vgrfDl").value.trim():""),p_vehicle:ve});
+  var r=await sb().rpc("rider_register",{p_name:n,p_age:age,p_phone:ph,p_dl:"",p_vehicle:""});
   if(r.error){b.disabled=false;b.textContent="Rider Account banao";var m=errMsg(r.error);
     if(/ALREADY_RIDER/.test(m)){await loadMe();$("vgrDutyChip").style.display="";render();return}
     toast("❌ "+m,4500);return}
@@ -23091,7 +23089,7 @@ async function completeOrder(){
 function showMenu(){
   var me=S.me,w=$("vgrMenu"),s=$("vgrMenuSheet");
   s.innerHTML='<h3 style="margin:0 0 4px">👤 Rider Account</h3>'+
-   (me?'<div class="vgr-muted" style="line-height:1.7"><b>'+esc(me.full_name)+'</b><br>📧 '+esc(S.email)+'<br>📞 '+esc(me.phone)+(me.vehicle_no?'<br>🏍️ '+esc(me.vehicle_no):'')+'</div>':'<div class="vgr-muted">'+esc(S.email)+'</div>')+
+   (me?'<div class="vgr-muted" style="line-height:1.7"><b>'+esc(me.full_name)+'</b><br>📧 '+esc(S.email)+'<br>📞 '+esc(me.phone)+'</div>':'<div class="vgr-muted">'+esc(S.email)+'</div>')+
    '<button class="vgr-btn sec" id="vgrMShop" type="button" style="margin-top:12px">🏪 Shop (Customer view)</button>'+
    '<button class="vgr-btn warn" id="vgrMOut" type="button">🚪 Log out</button>'+
    '<button class="vgr-btn sec" id="vgrMClose" type="button">Band karo</button>';
@@ -23283,9 +23281,12 @@ async function adminLoadRiders(){
   msg.textContent=rows.length?(rows.length+" rider(s) • "+rows.filter(function(r){return r.on_duty}).length+" On Duty"):"Abhi koi rider account nahi bana.";
   list.innerHTML=rows.map(function(r){
     var st=by[r.user_id]||{total:0,count:0,today:0,active:null};
-    return '<div class="vgr-ar"><div><b>'+esc(r.full_name)+'</b> '+(r.on_duty?'🟢':'⚪')+(r.blocked?' <span style="color:#b91c1c">• BLOCKED</span>':'')+'<br><span class="admin-small">📞 '+esc(r.phone)+' • Age '+esc(r.age)+(r.vehicle_no?' • 🏍️ '+esc(r.vehicle_no):'')+'<br>📧 '+esc(r.email||"")+'</span></div>'+
-      '<div class="admin-small" style="text-align:right">Aaj '+money(st.today)+'<br>Total '+money(st.total)+' ('+st.count+' orders)'+(st.active?'<br>Live: #'+esc(shortId(st.active)):'')+'</div>'+
-      '<button class="admin-btn" type="button" data-vgr-block="'+esc(r.user_id)+'" data-b="'+(r.blocked?1:0)+'">'+(r.blocked?'Unblock':'Block')+'</button></div>';
+    var dutyTag=r.on_duty?'<span class="vgr-tag on">🟢 On Duty</span>':'<span class="vgr-tag off">⚪ Off Duty</span>';
+    return '<div class="vgr-ar"><div class="vgr-ar-top"><b class="vgr-ar-name">'+esc(r.full_name)+'</b><span class="vgr-ar-tags">'+dutyTag+(r.blocked?'<span class="vgr-tag blk">⛔ BLOCKED</span>':'')+'</span></div>'+
+      '<div class="vgr-ar-info"><div><span>📞 Mobile</span><b>'+esc(r.phone)+'</b></div><div><span>🎂 Age</span><b>'+esc(r.age)+'</b></div><div class="wide"><span>📧 Email</span><b>'+esc(r.email||"—")+'</b></div></div>'+
+      '<div class="vgr-ar-stats"><div><b>'+money(st.today)+'</b><span>Aaj</span></div><div><b>'+money(st.total)+'</b><span>Total</span></div><div><b>'+st.count+'</b><span>Orders</span></div></div>'+
+      (st.active?'<div class="vgr-ar-live">🔴 Live order: #'+esc(shortId(st.active))+'</div>':'')+
+      '<button class="admin-btn vgr-ar-btn" type="button" data-vgr-block="'+esc(r.user_id)+'" data-b="'+(r.blocked?1:0)+'">'+(r.blocked?'✅ Unblock':'⛔ Block')+'</button></div>';
   }).join("");
 }
 document.addEventListener("click",async function(e){
@@ -24128,3 +24129,26 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',run);else run(
 setInterval(place,2500);
 })();
 </script>
+
+<style id="vg-rider-fix-20261122">
+/* Admin > Riders: clear cards on mobile */
+#vgrAdminList .vgr-ar{display:block;padding:12px;margin:0 0 12px;border:1.5px solid #d5e3da;border-radius:16px;background:#fff;box-shadow:0 4px 12px -8px rgba(0,0,0,.35);font-size:14px;color:#1b2a21}
+#vgrAdminList .vgr-ar-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}
+#vgrAdminList .vgr-ar-name{font-size:17px;font-weight:900;word-break:break-word;min-width:0}
+#vgrAdminList .vgr-ar-tags{display:flex;flex-wrap:wrap;gap:6px}
+#vgrAdminList .vgr-tag{padding:3px 9px;border-radius:999px;font-size:12px;font-weight:800;background:#eef1ef;color:#4b5a51}
+#vgrAdminList .vgr-tag.on{background:#dcfce7;color:#166534}
+#vgrAdminList .vgr-tag.blk{background:#fee2e2;color:#b91c1c}
+#vgrAdminList .vgr-ar-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+#vgrAdminList .vgr-ar-info>div{padding:8px 10px;border-radius:12px;background:#f4f8f5;min-width:0}
+#vgrAdminList .vgr-ar-info>div.wide{grid-column:1/-1}
+#vgrAdminList .vgr-ar-info span{display:block;font-size:12px;font-weight:700;color:#5d6e64;margin-bottom:2px}
+#vgrAdminList .vgr-ar-info b{display:block;font-size:14px;font-weight:800;word-break:break-all}
+#vgrAdminList .vgr-ar-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+#vgrAdminList .vgr-ar-stats>div{text-align:center;padding:8px 4px;border-radius:12px;background:#fff8e1;border:1px solid #f3dfa0}
+#vgrAdminList .vgr-ar-stats b{display:block;font-size:15px;font-weight:900}
+#vgrAdminList .vgr-ar-stats span{font-size:12px;font-weight:700;color:#6b5a1e}
+#vgrAdminList .vgr-ar-live{margin-bottom:10px;padding:7px 10px;border-radius:10px;background:#fee2e2;color:#991b1b;font-weight:800;font-size:13px}
+#vgrAdminList .vgr-ar-btn{width:100%;min-height:42px;font-weight:800}
+@media(max-width:360px){#vgrAdminList .vgr-ar-info{grid-template-columns:1fr}}
+</style>
