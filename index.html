@@ -13210,8 +13210,15 @@ body > .modern-nav, .modern-nav{display:none!important}
   const appBase = new URL('./', manifest.href);
   const workerUrl = new URL('sw.js', appBase);
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register(workerUrl.href, { scope: appBase.pathname })
-      .then(function(registration){ console.info('Vedant PWA service worker ready:', registration.scope); })
+    var hadController = !!navigator.serviceWorker.controller;
+    // When a NEW service worker takes over an already-open old page, reload once so the newest index.html is used.
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if(!hadController) return;
+      try{ if(sessionStorage.getItem('vgSwReloaded')) return; sessionStorage.setItem('vgSwReloaded','1'); }catch(e){ return; }
+      location.reload();
+    });
+    navigator.serviceWorker.register(workerUrl.href, { scope: appBase.pathname, updateViaCache: 'none' })
+      .then(function(registration){ try{ registration.update(); }catch(e){} console.info('Vedant PWA service worker ready:', registration.scope); })
       .catch(function(error){ console.error('PWA service worker registration failed:', error); });
   }, { once: true });
 })();
@@ -14257,6 +14264,20 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     document.body.classList.add('stvn-qr-entry-flow');
     document.documentElement.classList.add('stvn-qr-html');
     ensureModal();
+    // Safety net: if anything stalls, still show the install banner (never leave a frozen screen).
+    setTimeout(function(){
+      if(finished)return;
+      ensureModal();
+      var m=document.getElementById(modalId);
+      if(m&&getComputedStyle(m).display==='none'){
+        var sp=document.getElementById('vgSplash');if(sp)sp.remove();
+        var g=document.getElementById('vLangGate');if(g)g.remove();
+        document.documentElement.classList.remove('v-lang-wait');
+        document.documentElement.style.visibility='visible';
+        document.body.classList.add('stvn-qr-install-step');
+        m.style.display='flex';
+      }
+    },8000);
     // Keep the language gate as the only first screen; do not reveal the shop.
     window.stvnQrLanguageComplete=function(){
       if(finished)return;
