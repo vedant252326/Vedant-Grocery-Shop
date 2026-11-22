@@ -14920,7 +14920,23 @@ Object.assign(enDict,{
       else leave();
     }
     splash.addEventListener('click',leave,{passive:true});
-    setTimeout(tryLeave,reduce?650:1500);
+    /* PERF: hold the splash until the home screen is really built (header, hero, buttons) so no blank page shows after it. Max ~3s. */
+    (function(){
+      var minMs=reduce?650:1300,maxMs=3000,t0=Date.now();
+      function ready(){
+        try{
+          if(document.readyState!=='complete')return false;
+          var h=document.querySelector('#page-home .vg-store-header');
+          return !!(h&&h.querySelector('.vg-orders-action')&&document.querySelector('#page-home .vg-hero'));
+        }catch(e){return true}
+      }
+      (function poll(){
+        if(gone)return;
+        var el=Date.now()-t0;
+        if(el>=minMs&&(ready()||el>=maxMs)){setTimeout(tryLeave,250);return}
+        setTimeout(poll,100);
+      })();
+    })();
     // Fallback if the browser throttles animation frames while backgrounded.
     setTimeout(function(){if(!gone)leave();setTimeout(cleanup,750)},3600);
   })();
@@ -22205,6 +22221,23 @@ setInterval(function(){var b=D.getElementById('stvn-live-order-bar');if(!b||!b.c
 body.dark .vg-rider{background:#151e18;border-color:#2f4232;color:#eaf2ec}body.dark .vg-rin small{color:#9db2a3}.vg-rav{overflow:hidden}.vg-rav img{width:100%;height:100%;object-fit:cover;border-radius:50%}</style>
 <script>document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vgrc]');if(!b)return;var id=b.getAttribute('data-vgrc'),o=window.stvnCustomerOrdersById&&window.stvnCustomerOrdersById[id];if(window.VGChat)window.VGChat.open('customer',id,o&&o.rider_name)});</script>
 </body>
+<script id="vg-prewarm-products">
+/* PERF: products used to start loading only after the customer tapped "Shop" -> blank list, then slow fill.
+   Now they load quietly in the background right after the page is up, so the list is already there. */
+(function(){
+  function go(){
+    try{
+      if(typeof loadCustomerProducts==='function'&&typeof supabaseClient!=='undefined'){
+        var p=loadCustomerProducts();if(p&&p.catch)p.catch(function(){});return true;
+      }
+    }catch(e){}
+    return false;
+  }
+  function start(){var n=0;(function t(){if(go()||++n>40)return;setTimeout(t,250)})()}
+  function run(){(window.requestIdleCallback||function(f){setTimeout(f,300)})(start,{timeout:2000})}
+  if(document.readyState==='complete')run();else window.addEventListener('load',run);
+})();
+</script>
 </html>
 
 <style id="vg-login-final-corrections">
