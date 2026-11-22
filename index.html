@@ -22428,6 +22428,7 @@ function render(){
    '<div class="vga-user"><div class="vga-av">'+esc(ini)+'</div><div><small>'+greet()+' 👋</small><b>'+esc(nm||T('Vedant Customer','वेदांत ग्राहक'))+'</b><small>'+esc(pr.phone?'📞 '+pr.phone:'')+'</small><small>'+esc(em)+'</small></div></div></div>'+
    '<div class="vga-tiles"><button type="button" class="vga-tile" data-vga="orders"><span>🛍️</span>'+T('Orders','ऑर्डर')+'</button><button type="button" class="vga-tile" data-vga="wishlist"><span>💖</span>'+T('Wishlist','पसंदीदा')+'</button><button type="button" class="vga-tile" data-vga="track"><span>🛵</span>'+T('Track','ट्रैक')+'</button></div>'+
    '<button type="button" class="vga-rider" data-vga="rider"><b>🏍️</b><div><strong>'+(isRider?T('Rider Mode','राइडर मोड'):T('Create Rider Account','राइडर अकाउंट बनाएँ'))+'</strong><small>'+(isRider?T('Open delivery partner page','डिलीवरी पार्टनर पेज खोलें'):T('Deliver orders & earn money','ऑर्डर डिलीवर करें और कमाएँ'))+'</small></div><em>›</em></button>'+
+   
    '<div class="vga-sec"><h3>'+T('Your information','आपकी जानकारी')+'</h3><div class="vga-card">'+
    '<details id="vgaD1"><summary><i>👤</i>'+T('Edit profile','प्रोफ़ाइल बदलें')+'</summary><div class="vga-form"><label>'+T('Full name','पूरा नाम')+'</label><input id="vgaName" autocomplete="name" value="'+esc(nm)+'"><label>'+T('Mobile number','मोबाइल नंबर')+'</label><input id="vgaPhone" type="tel" inputmode="numeric" maxlength="10" value="'+esc(pr.phone||'')+'"><label>Email</label><input value="'+esc(em)+'" disabled><button type="button" class="vga-save" data-vga="saveP">'+T('Save Profile','प्रोफ़ाइल सेव करें')+'</button></div></details>'+
    '<details id="vgaD2"><summary><i>📍</i><span>'+T('Saved address','सेव किया पता')+'<small>'+esc(firstLine(ad))+'</small></span></summary><div class="vga-form">'+addrList(ad)+'<label>'+T('House / Street / Area','घर / गली / इलाका')+'</label><textarea id="vgaLine" rows="2">'+esc(ad.line||'')+'</textarea><label>'+T('City','शहर')+'</label><input id="vgaCity" value="'+esc(ad.city||'')+'"><label>'+T('PIN code','पिन कोड')+'</label><input id="vgaPin" inputmode="numeric" maxlength="6" value="'+esc(ad.pincode||'')+'"><label>'+T('Landmark (optional)','लैंडमार्क (वैकल्पिक)')+'</label><input id="vgaLand" value="'+esc(ad.landmark||'')+'"><button type="button" class="vga-save" data-vga="saveA">'+T('Save Address','पता सेव करें')+'</button></div></details>'+
@@ -22439,6 +22440,7 @@ function render(){
    '</div></div>'+
    '<div class="vga-sec"><h3>'+T('Help & more','मदद और अन्य')+'</h3><div class="vga-card">'+
    row('care','🎧',T('Customer Care','ग्राहक सहायता'),T('Orders, payments, complaints','ऑर्डर, पेमेंट, शिकायत'))+row('share','🎁',T('Share Vedant Grocery','दोस्तों को बताएँ'),T('Invite family & friends','परिवार और दोस्तों को बुलाएँ'))+
+   (isRider?row('deleteRider','🗑️',T('Delete Rider Account','राइडर अकाउंट डिलीट करें'),T('Remove your rider profile','अपनी राइडर प्रोफ़ाइल हटाएँ')):'')+
    
    (admin?row('admin','🛡️',T('Admin Panel','एडमिन पैनल'),T('Owner only','सिर्फ मालिक')):'')+
    '<button type="button" class="vga-row vga-out" data-vga="logout"><i>↪</i><div>'+T('Log out','लॉग आउट')+'</div></button></div></div>'+
@@ -22458,6 +22460,7 @@ D.addEventListener('click',function(e){
   else if(a==='loc'){if(window.vgRequestHeaderLocation)window.vgRequestHeaderLocation()}
   else if(a==='share'){var d={title:'Vedant Grocery Shop',text:T('Order fresh groceries from Vedant Grocery Shop','वेदांत ग्रोसरी शॉप से ताज़ा सामान मँगाएँ'),url:location.origin};if(navigator.share)navigator.share(d).catch(function(){});else{try{navigator.clipboard.writeText(d.url);msg(T('Link copied','लिंक कॉपी हो गया'))}catch(x){}}}
   else if(a==='rider'){var rb=$('vgMenuRider');if(rb)rb.click()}
+  else if(a==='deleteRider'){if(window.vgRiderDelete)window.vgRiderDelete()}
   else if(a==='admin')go('admin');
   else if(a==='logout'){if(window.stvnCustomerLogout)window.stvnCustomerLogout()}
   else if(a==='saveP'){var n=$('vgaName').value.trim(),ph=$('vgaPhone').value.replace(/\D/g,'');if(n.length<2)return msg(T('Please enter your name','अपना नाम लिखें'));if(ph&&!/^[6-9]\d{9}$/.test(ph))return msg(T('Enter a valid 10 digit mobile number','सही 10 अंकों का मोबाइल नंबर लिखें'));try{localStorage.setItem(window.stvnCustomerStorageKey('profile'),JSON.stringify({name:n,phone:ph}));if(window.stvnRefreshCustomerProfile)window.stvnRefreshCustomerProfile();msg(T('Profile saved','प्रोफ़ाइल सेव हो गई'));render()}catch(x){msg(T('Could not save','सेव नहीं हो पाया'))}}
@@ -22538,7 +22541,7 @@ html body.dark #page-account .vga-row{border-bottom-color:#26342a!important}
 html body.dark #page-account .vga-card details{border-color:#26342a}
 html body.dark #page-account .vga-row small,html body.dark #page-account .vga-card summary small{color:#9bb0a1!important}
 html body #page-account .vga-row i,html body #page-account .vga-card summary i{width:42px;height:42px;border-radius:14px;font-size:22px;background:rgba(22,163,74,.16)}
-html body #page-account [data-vga=orders] i{background:rgba(255,150,60,.2)}html body #page-account [data-vga=wishlist] i{background:rgba(255,80,140,.2)}html body #page-account [data-vga=track] i{background:rgba(60,140,255,.2)}html body #page-account [data-vga=dark] i{background:rgba(110,90,255,.2)}html body #page-account [data-vga=lang] i{background:rgba(0,170,200,.2)}html body #page-account [data-vga=loc] i{background:rgba(235,60,60,.18)}html body #page-account [data-vga=care] i{background:rgba(150,90,255,.2)}html body #page-account [data-vga=share] i{background:rgba(245,184,46,.28)}html body #page-account [data-vga=admin] i{background:rgba(90,100,120,.22)}html body #page-account [data-vga=logout] i{background:rgba(220,40,40,.16)}
+html body #page-account [data-vga=orders] i{background:rgba(255,150,60,.2)}html body #page-account [data-vga=wishlist] i{background:rgba(255,80,140,.2)}html body #page-account [data-vga=track] i{background:rgba(60,140,255,.2)}html body #page-account [data-vga=dark] i{background:rgba(110,90,255,.2)}html body #page-account [data-vga=lang] i{background:rgba(0,170,200,.2)}html body #page-account [data-vga=loc] i{background:rgba(235,60,60,.18)}html body #page-account [data-vga=care] i{background:rgba(150,90,255,.2)}html body #page-account [data-vga=share] i{background:rgba(245,184,46,.28)}html body #page-account [data-vga=admin] i{background:rgba(90,100,120,.22)}html body #page-account [data-vga=deleteRider] i{background:rgba(220,40,40,.16)}html body #page-account [data-vga=deleteRider],html body #page-account [data-vga=deleteRider] div{color:#d32f2f!important}html body #page-account [data-vga=logout] i{background:rgba(220,40,40,.16)}
 html body #page-account #vgaD1 summary i{background:rgba(22,163,74,.2)}html body #page-account #vgaD2 summary i{background:rgba(235,60,60,.18)}
 html body #page-account .vga-out,html body #page-account .vga-out div{color:#d32f2f!important}
 .vga-addr{margin:6px 14px 0;padding:11px 13px;border-radius:14px;background:rgba(245,184,46,.14);border:1px dashed rgba(184,134,11,.5)}
@@ -22796,7 +22799,7 @@ body.dark #vgFlow input[type=number],body.dark #vgFlow textarea{background:#1b25
 <script id="vg-track-extras">
 (function(){
 'use strict';
-var D=document,S=null,busy=false,flowOpen=false,sel={tip:0,rate:0,tags:{}};
+var D=document,S=null,busy=false,flowOpen=false,sel={tip:0,rate:0,tags:{}},PH={};
 function sb(){return window.supabaseClient||(typeof supabaseClient!=='undefined'?supabaseClient:null)}
 function T(e,h){return window.VGChat.T(e,h)}
 function esc(s){return window.VGChat.esc(s)}
@@ -22810,13 +22813,13 @@ function card(s){
   var page=D.getElementById('page-track'),c=D.getElementById('vgTrackRider');
   if(!page||!s||!s.has_rider||/cancel/i.test(s.order_status||'')){if(c)c.remove();return}
   var id=s.id,un=window.VGChat.unread('customer',id),done=isDone(s),nm=s.rider_name||T('Your rider','आपका राइडर');
-  var h='<div class="vgt-top"><div class="vgt-av">🏍️</div><div><b>'+esc(nm)+'</b><small>'+(done?T('Delivered your order ✅','आपका ऑर्डर डिलीवर किया ✅'):(s.rider_stage==='picked'?T('On the way to you 🛵','आपकी ओर आ रहे हैं 🛵'):T('Going to the shop to pick up your order','आपका ऑर्डर लेने शॉप जा रहे हैं')))+'</small></div></div>';
+  var h='<div class="vgt-top"><div class="vgt-av">'+(PH[id]?'<img src="'+esc(PH[id])+'" alt="">':'🏍️')+'</div><div><b>'+esc(nm)+'</b><small>'+(done?T('Delivered your order ✅','आपका ऑर्डर डिलीवर किया ✅'):(s.rider_stage==='picked'?T('On the way to you 🛵','आपकी ओर आ रहे हैं 🛵'):T('Going to the shop to pick up your order','आपका ऑर्डर लेने शॉप जा रहे हैं')))+'</small></div></div>';
   if(!done){h+='<div class="vgt-act">'+(s.rider_phone?'<a class="vgt-btn call" href="tel:'+esc(s.rider_phone)+'">📞 '+T('Call','कॉल')+'</a>':'')+'<button type="button" class="vgt-btn" data-vgt="chat">💬 '+T('Message','मैसेज')+'<span class="vgt-badge'+(un?' on':'')+'">'+un+'</span></button></div>'}
   else{
     h+=(s.tip>0?'<span class="vgt-chip">🎁 '+T('Tip','टिप')+' '+money(s.tip)+'</span>':'')+(s.rating?'<span class="vgt-chip">'+'★'.repeat(s.rating)+' '+T('Rated','रेटिंग')+'</span>':'');
     h+='<div class="vgt-act">'+(s.tip>0?'':'<button type="button" class="vgt-btn gold" data-vgt="tip">🎁 '+T('Give tip','टिप दें')+'</button>')+(s.rating?'':'<button type="button" class="vgt-btn" data-vgt="rate">⭐ '+T('Rate rider','रेटिंग दें')+'</button>')+'</div>';
   }
-  if(!c){c=D.createElement('section');c.id='vgTrackRider';var box=D.getElementById('customer-tracking-box');if(box&&box.parentNode===page)page.insertBefore(c,box.nextSibling);else page.appendChild(c)}
+  if(!c){c=D.createElement('section');c.id='vgTrackRider';var box=D.getElementById('customer-tracking-box');if(box&&box.parentNode===page)page.insertBefore(c,box);else page.appendChild(c)}
   if(c._h!==h){c._h=h;c.innerHTML=h}
 }
 /* ---------- polling ---------- */
@@ -22825,7 +22828,9 @@ async function tick(){
   try{
     var r=await c.rpc('customer_order_state',{p_order_id:id}),s=r&&r.data;
     if(!r||r.error||!s||!s.found){card(null);return}
-    s.id=id;S=s;card(s);
+    s.id=id;S=s;
+    if(s.has_rider&&PH[id]===undefined){PH[id]='';c.rpc('customer_rider_photo',{p_order_id:id}).then(function(x){if(x&&x.data&&x.data.photo){PH[id]=x.data.photo;card(S)}})}
+    card(s);
     if(s.has_rider&&!isDone(s)&&!/cancel/i.test(s.order_status||''))await window.VGChat.poll('customer',id);
     if(isDone(s)&&s.has_rider)maybeFlow(s,id);
   }catch(e){}finally{busy=false}
@@ -22865,12 +22870,13 @@ function setAmt(v){
   D.querySelectorAll('#vgFlow .vgf-chip').forEach(function(b){b.classList.toggle('on',Number(b.getAttribute('data-a'))===sel.tip)});
   var p=D.getElementById('vgfPay');if(p){p.disabled=!sel.tip;p.textContent=sel.tip?T('Pay ₹'+sel.tip+' tip','₹'+sel.tip+' टिप दें'):T('Choose an amount','राशि चुनें')}
 }
-function payTip(){
+async function payTip(){
   var o=D.getElementById('vgFlow'),id=o._id,s=o._s;if(!sel.tip)return;
-  var upi=(typeof VEDANT_UPI_ID!=='undefined'?VEDANT_UPI_ID:'');
+  var info=null;try{var c0=sb(),x0=c0&&await c0.rpc('customer_tip_info',{p_order_id:id});info=x0&&x0.data}catch(e){}
+  var own=!!(info&&info.upi_id),upi=own?info.upi_id:(typeof VEDANT_UPI_ID!=='undefined'?VEDANT_UPI_ID:'');
   var url='upi://pay?pa='+encodeURIComponent(upi)+'&pn='+encodeURIComponent('Vedant Grocery Shop')+'&am='+sel.tip+'&cu=INR&tn='+encodeURIComponent('Rider tip '+id);
   var card=o.querySelector('.vgf-card');
-  card.innerHTML='<div class="vgf-av">💸</div><h2>'+T('Pay ₹'+sel.tip+' in your UPI app','अपने UPI ऐप में ₹'+sel.tip+' दें')+'</h2><p>'+T('After paying, come back and tap the green button','पेमेंट के बाद वापस आकर हरा बटन दबाएँ')+'</p><div class="vgf-upi">UPI: <b>'+esc(upi)+'</b></div><div class="vgf-msg" id="vgfMsg"></div>'+
+  card.innerHTML='<div class="vgf-av">💸</div><h2>'+T('Pay ₹'+sel.tip+' in your UPI app','अपने UPI ऐप में ₹'+sel.tip+' दें')+'</h2><p>'+T('After paying, come back and tap the green button','पेमेंट के बाद वापस आकर हरा बटन दबाएँ')+'</p><div class="vgf-upi">'+(own?T('Goes straight to ','सीधे पहुँचेगी ')+esc(s.rider_name||T('your rider','आपके राइडर'))+' • ':T('Goes to the shop, then to the rider • ','दुकान से राइडर तक पहुँचेगी • '))+'UPI: <b>'+esc(upi)+'</b></div><div class="vgf-msg" id="vgfMsg"></div>'+
    '<a class="vgf-main" href="'+url+'" style="display:block;text-decoration:none;box-sizing:border-box;padding:17px;border-radius:18px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;font-size:18px;font-weight:900;margin-bottom:10px">📲 '+T('Open UPI app','UPI ऐप खोलें')+'</a>'+
    '<button type="button" class="vgf-main" data-f="paid">✅ '+T('I have paid the tip','मैंने टिप दे दी')+'</button><button type="button" class="vgf-sec" data-f="back">↩ '+T('Change amount','राशि बदलें')+'</button>';
 }
@@ -22919,6 +22925,22 @@ setTimeout(tick,1500);
 })();
 </script>
 <!-- ===================== END TRACK EXTRAS ===================== -->
+<style id="vgr-style4">
+.stvn-call-delivery-btn{display:none!important}
+#vgTrackRider .vgt-av{overflow:hidden}#vgTrackRider .vgt-av img,.vgr-pav img,.vgr-ar-img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+#vgRider .vgr-prof{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+#vgRider .vgr-pav{position:relative;display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--gold,#fbbf24),#fff);font-size:34px;box-shadow:0 0 0 3px var(--ac,#16a34a);cursor:pointer;margin:0}
+#vgRider .vgr-pav.big{width:96px;height:96px;margin:4px auto 12px;font-size:44px}
+#vgRider .vgr-pav i{position:absolute;right:-4px;bottom:-4px;width:28px;height:28px;border-radius:50%;background:var(--ac,#16a34a);color:#fff;font-size:14px;display:grid;place-items:center;font-style:normal;border:2px solid #fff}
+#vgRider .vgr-pinfo b{display:block;font-size:18px}#vgRider .vgr-pinfo small{display:block;color:#5f7066;font-weight:700;font-size:12px;margin-top:2px}
+#vgRider .vgr-pedit{grid-column:1/-1;min-height:44px;margin-top:4px}
+body.dark #vgRider .vgr-pinfo small{color:#9db2a3}
+#vgRider .vgr-det{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+#vgRider .vgr-det div{padding:9px 10px;border-radius:13px;background:rgba(22,163,74,.1);font-size:13px;font-weight:800;word-break:break-word}
+#vgRider .vgr-det div span{display:block;font-size:11px;color:#6a7b70;font-weight:700}#vgRider .vgr-det .wide{grid-column:1/-1}
+body.dark #vgRider .vgr-det div{background:#1b2a20}body.dark #vgRider .vgr-det div span{color:#9db2a3}
+.vgr-ar-top{align-items:center}.vgr-ar-img{width:46px;height:46px;border-radius:50%;margin-right:10px;flex:0 0 auto}
+</style>
 <!-- ===================== VEDANT RIDER MODULE (additive, does not edit older code) ===================== -->
 <style id="vgr-style">
 html.vgr-boot::before{content:"";position:fixed;inset:0;background:#0b1220;z-index:2147481000}
@@ -23405,9 +23427,12 @@ function renderRegister(){
   '<label class="vgr-field"><span>Poora naam *</span><input id="vgrfName" autocomplete="name" maxlength="60"></label>'+
   '<label class="vgr-field"><span>Age * (18+)</span><input id="vgrfAge" type="number" inputmode="numeric" min="18" max="70"></label>'+
   '<label class="vgr-field"><span>Mobile number * (10 digit)</span><input id="vgrfPhone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel"></label>'+
+  '<label class="vgr-field"><span>Tip UPI ID — Optional</span><input id="vgrfUpi" maxlength="60" autocapitalize="none" placeholder="name@ybl"></label>'+
+  '<div style="text-align:center"><label class="vgr-pav big" id="vgrfPv" for="vgrfPh">🏍️<i>📷</i></label><div class="vgr-muted" style="margin:-4px 0 10px">Profile photo — Optional</div><input id="vgrfPh" type="file" accept="image/*" hidden></div>'+
   '<button class="vgr-btn" id="vgrfGo" type="button">Rider Account banao</button>'+
   '<button class="vgr-btn sec" id="vgrfBack" type="button">🏪 Wapas Shop</button></div>';
-  $("vgrfBack").onclick=goShop;
+  $("vgrfBack").onclick=goShop;S._rph=null;
+  $("vgrfPh").onchange=async function(){var f=this.files&&this.files[0];if(!f)return;try{S._rph=await shrink(f);$("vgrfPv").innerHTML='<img src="'+S._rph+'" alt=""><i>📷</i>'}catch(e){toast("❌ Photo nahi lagi")}};
   $("vgrfGo").onclick=submitRegister;
 }
 async function submitRegister(){
@@ -23416,26 +23441,29 @@ async function submitRegister(){
   if(!(age>=18&&age<=70))return toast("Age 18 se 70 ke beech honi chahiye");
   if(!/^[6-9][0-9]{9}$/.test(ph))return toast("Sahi 10 digit mobile number likho");
   var b=$("vgrfGo");b.disabled=true;b.textContent="Ban raha hai…";
+  var up=$("vgrfUpi").value.trim();if(up&&!/^[A-Za-z0-9._-]{2,}@[A-Za-z]{2,}$/.test(up)){b.disabled=false;b.textContent="Rider Account banao";return toast("UPI ID sahi likho (jaise name@ybl)")}
   var r=await sb().rpc("rider_register",{p_name:n,p_age:age,p_phone:ph,p_dl:"",p_vehicle:""});
   if(r.error){b.disabled=false;b.textContent="Rider Account banao";var m=errMsg(r.error);
     if(/ALREADY_RIDER/.test(m)){await loadMe();$("vgrDutyChip").style.display="";render();return}
     toast("❌ "+m,4500);return}
-  S.me=r.data;lsSet(MODE_KEY,"rider");$("vgrDutyChip").style.display="";ensureMenu();startPolling();
+  S.me=r.data;try{if(up){var u2=await sb().rpc("rider_update_profile",{p_name:n,p_phone:ph,p_vehicle:"",p_dl:"",p_upi:up});if(!u2.error)S.me=u2.data}if(S._rph)await savePhoto(S._rph)}catch(e){}
+  lsSet(MODE_KEY,"rider");$("vgrDutyChip").style.display="";ensureMenu();startPolling();
   toast("🎉 Rider account ban gaya!",3500);render();
 }
 function renderDash(){
   $("vgrDutyChip").style.display="";
   $("vgrBody").innerHTML=
-  '<div class="vgr-card vgr-dutycard off" id="vgrDutyCard"><div class="vgr-duty"><div class="vgr-dutyico" id="vgrDutyIco">😴</div><div style="flex:1;min-width:0"><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
+  '<div id="vgrProfile"></div><div class="vgr-card vgr-dutycard off" id="vgrDutyCard"><div class="vgr-duty"><div class="vgr-dutyico" id="vgrDutyIco">😴</div><div style="flex:1;min-width:0"><h3 style="margin:0">Duty Status</h3><div class="vgr-muted" id="vgrDutyTxt"></div></div><button class="vgr-switch" id="vgrSwitch" type="button" aria-label="Toggle duty"></button></div></div>'+
   '<div id="vgrWait"></div><div class="vgr-grid2" style="margin-top:12px"><div class="vgr-stat"><b id="vgrStToday">₹0</b><span>Aaj ki kamai</span></div><div class="vgr-stat alt"><b id="vgrStTotal">₹0</b><span>Total earning</span></div></div>'+
   '<div class="vgr-grid2" style="margin-top:10px"><div class="vgr-stat alt"><b id="vgrStTc">0</b><span>Aaj delivered</span></div><div class="vgr-stat"><b id="vgrStAc">0</b><span>Total delivered</span></div></div>'+
+  '<div class="vgr-grid2" style="margin-top:10px"><div class="vgr-stat alt"><b id="vgrTipToday">₹0</b><span>🎁 Today’s tips</span></div><div class="vgr-stat"><b id="vgrTipTotal">₹0</b><span>🎁 Total tips</span></div></div>'+
   '<div id="vgrExtra"></div>'+
   '<div class="vgr-card"><h3>✅ Delivered Orders</h3><div id="vgrHist"></div></div>';
   $("vgrSwitch").onclick=toggleDuty;
   renderDashBody();
 }
 function renderDashBody(){
-  var me=S.me;if(!me||!$("vgrStToday"))return;renderExtra();
+  var me=S.me;if(!me||!$("vgrStToday"))return;renderExtra();renderProfile();if($("vgrTipToday")){$("vgrTipToday").textContent=money((S.stats||{}).today_tips);$("vgrTipTotal").textContent=money((S.stats||{}).total_tips)}
   var st=S.stats||{};
   $("vgrStToday").textContent=money(st.today_earning);$("vgrStTotal").textContent=money(st.total_earning);
   $("vgrStTc").textContent=st.today_count||0;$("vgrStAc").textContent=st.total_count||0;
@@ -23555,16 +23583,55 @@ async function completeOrder(){
 }
 
 /* ---------- account menu inside rider page ---------- */
-function showMenu(){
-  var me=S.me,w=$("vgrMenu"),s=$("vgrMenuSheet");
+
+function shrink(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){var s=256,c=document.createElement("canvas");c.width=c.height=s;var x=c.getContext("2d"),m=Math.min(im.width,im.height);x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,s,s);res(c.toDataURL("image/jpeg",.78))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
+async function savePhoto(dataUrl){
+  var r=await sb().rpc("rider_set_photo",{p_photo:dataUrl});
+  if(r.error){toast("❌ "+errMsg(r.error),4000);return false}
+  S.me=r.data;return true;
+}
+function avImg(me){return me&&me.photo?'<img src="'+esc(me.photo)+'" alt="">':'<span>🏍️</span>'}
+function renderProfile(){
+  var b=$("vgrProfile"),me=S.me;if(!b||!me)return;var st=S.stats||{};
+  var h='<div class="vgr-card vgr-prof"><label class="vgr-pav" for="vgrPhotoIn">'+avImg(me)+'<i>📷</i></label><input id="vgrPhotoIn" type="file" accept="image/*" hidden><div class="vgr-pinfo"><b>'+esc(me.full_name)+'</b><small>'+(st.rating_count?'⭐ '+Number(st.rating_avg).toFixed(1)+' ('+st.rating_count+')':'✨ New rider')+' • 📦 '+(st.total_count||0)+' Orders done</small><small>🎁 '+money(st.total_tips)+' Tips earned</small></div><button class="vgr-btn sec vgr-pedit" id="vgrPEdit" type="button">✏️ Edit profile</button></div>';
+  if(b._h!==h){b._h=h;b.innerHTML=h;
+    $("vgrPhotoIn").onchange=async function(){var f=this.files&&this.files[0];if(!f)return;try{var d=await shrink(f);if(await savePhoto(d)){toast("✅ Photo updated");b._h="";renderProfile()}}catch(e){toast("❌ Photo nahi lagi")}};
+    $("vgrPEdit").onclick=function(){showMenu(true)}}
+}
+function editProfile(){
+  var me=S.me,w=$("vgrMenu"),s=$("vgrMenuSheet");S._ph=undefined;
+  s.innerHTML='<h3 style="margin:0 0 6px">✏️ Edit profile</h3><div style="text-align:center"><label class="vgr-pav big" id="vgrEPv" for="vgrEPh">'+avImg(me)+'<i>📷</i></label><input id="vgrEPh" type="file" accept="image/*" hidden></div>'+
+   '<label class="vgr-field"><span>Poora naam *</span><input id="vgrEName" maxlength="60" value="'+esc(me.full_name)+'"></label>'+
+   '<label class="vgr-field"><span>Mobile number * (10 digit)</span><input id="vgrEPhone" type="tel" inputmode="numeric" maxlength="10" value="'+esc(me.phone)+'"></label>'+
+   '<label class="vgr-field"><span>Tip UPI ID — Optional</span><input id="vgrEUpi" maxlength="60" autocapitalize="none" placeholder="name@ybl" value="'+esc(me.upi_id||"")+'"></label>'+
+   '<button class="vgr-btn" id="vgrESave" type="button">💾 Save</button><button class="vgr-btn sec" id="vgrEBack" type="button">↩ Wapas</button>';
+  w.classList.add("show");
+  $("vgrEPh").onchange=async function(){var f=this.files&&this.files[0];if(!f)return;try{S._ph=await shrink(f);$("vgrEPv").innerHTML='<img src="'+S._ph+'" alt=""><i>📷</i>'}catch(e){toast("❌ Photo nahi lagi")}};
+  $("vgrEBack").onclick=function(){showMenu()};
+  $("vgrESave").onclick=async function(){
+    var n=$("vgrEName").value.trim(),ph=digits($("vgrEPhone").value),up=$("vgrEUpi").value.trim();
+    if(n.length<2)return toast("Naam likho");if(!/^[6-9][0-9]{9}$/.test(ph))return toast("Sahi 10 digit mobile number likho");
+    if(up&&!/^[A-Za-z0-9._-]{2,}@[A-Za-z]{2,}$/.test(up))return toast("UPI ID sahi likho (jaise name@ybl)");
+    var b=$("vgrESave");b.disabled=true;b.textContent="Ho raha hai…";
+    var r=await sb().rpc("rider_update_profile",{p_name:n,p_phone:ph,p_vehicle:me.vehicle_no||"",p_dl:me.dl_number||"",p_upi:up});
+    if(r.error){b.disabled=false;b.textContent="💾 Save";return toast("❌ "+errMsg(r.error),4500)}
+    S.me=r.data;if(S._ph!==undefined)await savePhoto(S._ph);
+    toast("✅ Profile saved");var p=$("vgrProfile");if(p)p._h="";renderDashBody();showMenu();
+  };
+}
+function showMenu(edit){
+  if(edit===true&&S.me)return editProfile();
+  var me=S.me,w=$("vgrMenu"),s=$("vgrMenuSheet"),st=S.stats||{};
   s.innerHTML='<h3 style="margin:0 0 4px">👤 Rider Account</h3>'+
-   (me?'<div class="vgr-muted" style="line-height:1.7"><b>'+esc(me.full_name)+'</b><br>📧 '+esc(S.email)+'<br>📞 '+esc(me.phone)+'</div>':'<div class="vgr-muted">'+esc(S.email)+'</div>')+
+   (me?'<div class="vgr-prof" style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;margin:6px 0"><div class="vgr-pav">'+avImg(me)+'</div><div class="vgr-pinfo"><b>'+esc(me.full_name)+'</b><small>'+(st.rating_count?'⭐ '+Number(st.rating_avg).toFixed(1)+' ('+st.rating_count+')':'✨ New rider')+'</small></div></div>'+
+ '<div class="vgr-det"><div><span>📦 Orders done</span>'+(st.total_count||0)+'</div><div><span>🎁 Tips earned</span>'+money(st.total_tips)+'</div><div><span>📞 Mobile</span>'+esc(me.phone)+'</div><div><span>🎂 Age</span>'+esc(me.age||"—")+'</div><div class="wide"><span>📧 Email</span>'+esc(S.email)+'</div><div class="wide"><span>💸 Tip UPI ID</span>'+esc(me.upi_id||"—")+'</div></div>'+
+ '<button class="vgr-btn" id="vgrMEdit" type="button">✏️ Edit profile</button>':'<div class="vgr-muted">'+esc(S.email)+'</div>')+
    '<button class="vgr-btn sec" id="vgrMShop" type="button" style="margin-top:12px">🏪 Shop (Customer view)</button>'+
-   '<button class="vgr-btn warn" id="vgrMOut" type="button">🚪 Log out</button>'+
+   '<button class="vgr-btn warn" id="vgrMOut" type="button">🚪 Log out</button>'+(me?'<button class="vgr-btn sec" id="vgrMDel" type="button" style="color:#d32f2f">🗑️ Delete Rider Account</button>':'')+
    '<button class="vgr-btn sec" id="vgrMClose" type="button">Band karo</button>';
   w.classList.add("show");
-  $("vgrMClose").onclick=function(){w.classList.remove("show")};
-  $("vgrMShop").onclick=function(){w.classList.remove("show");goShop()};
+  $("vgrMClose").onclick=function(){w.classList.remove("show")};var me2=$("vgrMEdit");if(me2)me2.onclick=function(){editProfile()};
+  $("vgrMShop").onclick=function(){w.classList.remove("show");goShop()};var md=$("vgrMDel");if(md)md.onclick=function(){w.classList.remove("show");deleteRiderAccount()};
   $("vgrMOut").onclick=async function(){
     w.classList.remove("show");
     if(S.active){toast("Pehle chalta hua order complete karo, phir logout karo",4000);return}
@@ -23574,6 +23641,16 @@ function showMenu(){
   };
   w.onclick=function(e){if(e.target===w)w.classList.remove("show")};
 }
+async function deleteRiderAccount(){
+  if(!S.me)return;
+  if(S.active){toast("Pehle chalta hua order complete karo, phir account delete karo",4200);return}
+  var ok=await ask("Rider account delete karna hai? Aapka naam, photo aur UPI hat jayega aur aapko order nahi aayenge. Ye wapas nahi hoga.","Haan, Delete","Nahi");if(!ok)return;
+  try{if(S.me.on_duty)await sb().rpc("rider_set_duty",{p_on:false})}catch(e){}
+  var r=await sb().rpc("rider_delete_account");
+  if(r.error){toast("❌ "+errMsg(r.error),4500);return}
+  lsDel(MODE_KEY);teardown();toast("✅ Rider account delete ho gaya",3500);
+}
+window.vgRiderDelete=function(){if(!S.me)return;openOverlay();setTimeout(deleteRiderAccount,250)};
 async function riderLogout(){
   lsDel(MODE_KEY);
   try{teardown();var e=await sb().auth.signOut();if(e&&e.error)throw e.error}catch(err){console.warn(err)}
@@ -23737,12 +23814,12 @@ async function adminLoadRiders(){
   if(rs.error){var rr=await c.rpc("admin_list_riders");if(!rr.error)rs={data:rr.data,error:null}}
   var msg=$("vgrAdminMsg"),list=$("vgrAdminList");if(!list)return;
   if(rs.error){msg.textContent="Riders load nahi hue: "+rs.error.message+" (rider_setup.sql run kiya?)";return}
-  var od=await c.from("orders").select("rider_id,order_status,rider_stage,rider_earning,delivery_charge,rider_delivered_at,order_id").not("rider_id","is",null).limit(2000);
+  var od=await c.from("orders").select("rider_id,order_status,rider_stage,rider_earning,delivery_charge,rider_delivered_at,order_id,tip_amount").not("rider_id","is",null).limit(2000);
   var by={};
   (od.data||[]).forEach(function(o){
-    var k=o.rider_id;by[k]=by[k]||{total:0,count:0,today:0,active:null};
+    var k=o.rider_id;by[k]=by[k]||{total:0,count:0,today:0,active:null,tips:0};
     if(String(o.order_status).toLowerCase()==="delivered"){
-      var e=Number(o.rider_earning||o.delivery_charge||0);by[k].total+=e;by[k].count++;
+      var e=Number(o.rider_earning||o.delivery_charge||0);by[k].total+=e;by[k].count++;by[k].tips+=Number(o.tip_amount||0);
       if(o.rider_delivered_at&&new Date(o.rider_delivered_at).toDateString()===new Date().toDateString())by[k].today+=e;
     }else if(!/^(cancelled|canceled|cancelled_by_admin|rejected|completed)$/i.test(o.order_status||""))by[k].active=o.order_id;
   });
@@ -23751,9 +23828,9 @@ async function adminLoadRiders(){
   list.innerHTML=rows.map(function(r){
     var st=by[r.user_id]||{total:0,count:0,today:0,active:null};
     var dutyTag=r.on_duty?'<span class="vgr-tag on">🟢 On Duty</span>':'<span class="vgr-tag off">⚪ Off Duty</span>';
-    return '<div class="vgr-ar"><div class="vgr-ar-top"><b class="vgr-ar-name">'+esc(r.full_name)+'</b><span class="vgr-ar-tags">'+dutyTag+(r.blocked?'<span class="vgr-tag blk">⛔ BLOCKED</span>':'')+'</span></div>'+
-      '<div class="vgr-ar-info"><div><span>📞 Mobile</span><b>'+esc(r.phone)+'</b></div><div><span>🎂 Age</span><b>'+esc(r.age)+'</b></div><div class="wide"><span>📧 Email</span><b>'+esc(r.email||"—")+'</b></div></div>'+
-      '<div class="vgr-ar-stats"><div><b>'+money(st.today)+'</b><span>Aaj</span></div><div><b>'+money(st.total)+'</b><span>Total</span></div><div><b>'+st.count+'</b><span>Orders</span></div></div>'+
+    return '<div class="vgr-ar"><div class="vgr-ar-top">'+(r.photo?'<img class="vgr-ar-img" src="'+esc(r.photo)+'" alt="">':'<span class="vgr-ar-img" style="display:grid;place-items:center;background:#e3f5ea;font-size:22px">🏍️</span>')+'<b class="vgr-ar-name">'+esc(r.full_name)+'</b><span class="vgr-ar-tags">'+dutyTag+(r.blocked?'<span class="vgr-tag blk">⛔ BLOCKED</span>':'')+'</span></div>'+
+      '<div class="vgr-ar-info"><div><span>📞 Mobile</span><b>'+esc(r.phone)+'</b></div><div><span>🎂 Age</span><b>'+esc(r.age)+'</b></div><div class="wide"><span>📧 Email</span><b>'+esc(r.email||"—")+'</b></div><div class="wide"><span>💸 UPI ID (tip)</span><b>'+esc(r.upi_id||"—")+'</b></div></div>'+
+      '<div class="vgr-ar-stats"><div><b>'+money(st.today)+'</b><span>Aaj</span></div><div><b>'+money(st.total)+'</b><span>Total</span></div><div><b>'+st.count+'</b><span>Orders</span></div><div><b>'+money(st.tips||0)+'</b><span>🎁 Tips</span></div></div>'+
       (st.active?'<div class="vgr-ar-live">🔴 Live order: #'+esc(shortId(st.active))+'</div>':'')+
       '<button class="admin-btn vgr-ar-btn" type="button" data-vgr-block="'+esc(r.user_id)+'" data-b="'+(r.blocked?1:0)+'">'+(r.blocked?'✅ Unblock':'⛔ Block')+'</button></div>';
   }).join("");
@@ -23837,7 +23914,7 @@ var TR=[
 ["Naam likho","Enter your name","नाम लिखें"],["Pehle login karo","Please log in first","पहले लॉगिन करें"],["Order #","Order #","ऑर्डर #"],
 [" khatam ho gaya"," is finished"," पूरा हो गया"],["✅ Cash ","✅ Cash ","✅ कैश "],[" mil gaya"," received"," मिल गया"],["Nahi","No","नहीं"],["Login: ","Login: ","लॉगिन: "]
 ];
-TR.push(["🎁 Tips ","🎁 Tips ","🎁 टिप "],["🏍️ Ride shuru! Customer ke paas chalo","🏍️ Ride started! Head to the customer","🏍️ राइड शुरू! कस्टमर के पास चलें"],["📍 Aap shop pe pahunch gaye!","📍 You have reached the shop!","📍 आप शॉप पर पहुँच गए!"],["Order uthao aur I have reached dabao","Pick up the order and tap Start Ride","ऑर्डर उठाएँ और स्टार्ट राइड दबाएँ"],["Order sahi salamat deliver karo","Deliver the order safely","ऑर्डर सुरक्षित डिलीवर करें"],["Shabaash! Delivery complete","Well done! Delivery complete","शाबाश! डिलीवरी पूरी हुई"],["🎯 Aaj ka target","🎯 Today’s goal","🎯 आज का टारगेट"],["Target badalne ke liye tap karo","Tap to change target","टारगेट बदलने के लिए टैप करें"],["🎉 Target poora! Shabaash","🎉 Goal reached! Well done","🎉 टारगेट पूरा! शाबाश"],[" Avg / delivery "," Avg / delivery "," औसत / डिलीवरी "],["🥉 Bronze Rider","🥉 Bronze Rider","🥉 ब्रॉन्ज़ राइडर"],["🥈 Silver Rider","🥈 Silver Rider","🥈 सिल्वर राइडर"],["🥇 Gold Rider","🥇 Gold Rider","🥇 गोल्ड राइडर"],["💎 Platinum Rider","💎 Platinum Rider","💎 प्लैटिनम राइडर"],["Accepted","Accepted","स्वीकारा"],["At shop","At shop","शॉप पर"],["On the way","On the way","रास्ते में"],["Done","Done","पूरा"]);
+TR.push(["🗑️ Delete Rider Account","🗑️ Delete Rider Account","🗑️ राइडर अकाउंट डिलीट करें"],["Rider account delete karna hai? Aapka naam, photo aur UPI hat jayega aur aapko order nahi aayenge. Ye wapas nahi hoga.","Delete your rider account? Your name, photo and UPI will be removed and you will stop receiving orders. This cannot be undone.","राइडर अकाउंट डिलीट करना है? आपका नाम, फ़ोटो और UPI हट जाएगा और आपको ऑर्डर नहीं आएँगे। यह वापस नहीं होगा।"],["Haan, Delete","Yes, Delete","हाँ, डिलीट करें"],["✅ Rider account delete ho gaya","✅ Rider account deleted","✅ राइडर अकाउंट डिलीट हो गया"],["Pehle chalta hua order complete karo, phir account delete karo","Finish the running order first, then delete the account","पहले चल रहा ऑर्डर पूरा करें, फिर अकाउंट डिलीट करें"],["✨ New rider","✨ New rider","✨ नया राइडर"],[" Orders done"," Orders done"," ऑर्डर पूरे"],[" Tips earned"," Tips earned"," टिप मिली"],["✏️ Edit profile","✏️ Edit profile","✏️ प्रोफ़ाइल बदलें"],["💾 Save","💾 Save","💾 सेव करें"],["↩ Wapas","↩ Back","↩ वापस"],["Tip UPI ID — Optional","Tip UPI ID — Optional","टिप UPI ID — वैकल्पिक"],["Profile photo — Optional","Profile photo — Optional","प्रोफ़ाइल फ़ोटो — वैकल्पिक"],["🎁 Today’s tips","🎁 Today’s tips","🎁 आज की टिप"],["🎁 Total tips","🎁 Total tips","🎁 कुल टिप"],["📦 Orders done","📦 Orders done","📦 ऑर्डर पूरे"],["🎁 Tips earned","🎁 Tips earned","🎁 टिप मिली"],["📞 Mobile","📞 Mobile","📞 मोबाइल"],["🎂 Age","🎂 Age","🎂 उम्र"],["📧 Email","📧 Email","📧 ईमेल"],["🏍️ Vehicle","🏍️ Vehicle","🏍️ वाहन"],["💸 Tip UPI ID","💸 Tip UPI ID","💸 टिप UPI ID"],["✅ Photo updated","✅ Photo updated","✅ फ़ोटो बदल गई"],["✅ Profile saved","✅ Profile saved","✅ प्रोफ़ाइल सेव हुई"],["🎁 Tips ","🎁 Tips ","🎁 टिप "],["🏍️ Ride shuru! Customer ke paas chalo","🏍️ Ride started! Head to the customer","🏍️ राइड शुरू! कस्टमर के पास चलें"],["📍 Aap shop pe pahunch gaye!","📍 You have reached the shop!","📍 आप शॉप पर पहुँच गए!"],["Order uthao aur I have reached dabao","Pick up the order and tap Start Ride","ऑर्डर उठाएँ और स्टार्ट राइड दबाएँ"],["Order sahi salamat deliver karo","Deliver the order safely","ऑर्डर सुरक्षित डिलीवर करें"],["Shabaash! Delivery complete","Well done! Delivery complete","शाबाश! डिलीवरी पूरी हुई"],["🎯 Aaj ka target","🎯 Today’s goal","🎯 आज का टारगेट"],["Target badalne ke liye tap karo","Tap to change target","टारगेट बदलने के लिए टैप करें"],["🎉 Target poora! Shabaash","🎉 Goal reached! Well done","🎉 टारगेट पूरा! शाबाश"],[" Avg / delivery "," Avg / delivery "," औसत / डिलीवरी "],["🥉 Bronze Rider","🥉 Bronze Rider","🥉 ब्रॉन्ज़ राइडर"],["🥈 Silver Rider","🥈 Silver Rider","🥈 सिल्वर राइडर"],["🥇 Gold Rider","🥇 Gold Rider","🥇 गोल्ड राइडर"],["💎 Platinum Rider","💎 Platinum Rider","💎 प्लैटिनम राइडर"],["Accepted","Accepted","स्वीकारा"],["At shop","At shop","शॉप पर"],["On the way","On the way","रास्ते में"],["Done","Done","पूरा"]);
 var TRX=null,TRM={};
 function lang(){var R=document.documentElement,l=String(R.dataset.language||R.lang||"en").toLowerCase();return l.indexOf("hi")===0?2:1}
 function tr(s){
