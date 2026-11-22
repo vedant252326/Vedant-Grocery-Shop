@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script id="vg-perf-governor">
+(function(){
+  var si=window.setInterval;
+  window.setInterval=function(fn,ms){
+    var a=[].slice.call(arguments,2);
+    if(typeof fn!=='function')return si.apply(window,arguments);
+    return si.apply(window,[function(){if(document.hidden&&ms<10000)return;return fn.apply(this,arguments)},ms].concat(a));
+  };
+})();
+</script>
 <meta charset="UTF-8">
 <script id="vg-perf-shim">
 /* PERF: ~20 observers watch the whole page and each one re-ran on every tiny DOM change (that was the "processing" lag).
@@ -2642,7 +2652,7 @@ button,input,select,textarea{font:inherit}
 </head>
 
 <body>
-<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
+<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script id="vg-splash-failsafe">(function(){var s=document.getElementById('vgSplash');if(!s)return;var left=Math.max(2500,7000-Math.round(performance.now()));setTimeout(function(){var x=document.getElementById('vgSplash');if(!x)return;x.classList.add('out');setTimeout(function(){try{x.parentNode&&x.parentNode.removeChild(x)}catch(e){}document.documentElement.classList.remove('v-lang-wait')},900)},left)})();</script><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
 
 <div id="stvnCustomerLoginGate" class="notranslate" translate="no" lang="en" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
   <div class="stvn-customer-login-card">
@@ -9305,6 +9315,7 @@ return;
 if(requestId!==customerProductLoadRequest)return;
 window.customerProductsLoaded=true;
 window.customerProductsLoadError="";
+try{if(hasCachedProducts&&data&&data.length&&JSON.stringify(data)===localStorage.getItem(CUSTOMER_PRODUCTS_CACHE_KEY)){status.hidden=true;return}}catch(_e){}
 
 productsBox.innerHTML="";
 
@@ -16868,7 +16879,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#38533c}
    // on every frame and needlessly overloaded the main thread.
    observer=new MutationObserver(sync);
    observer.observe(document.body,{subtree:true,childList:true});
-   timer=setInterval(sync,1000);
+   timer=setInterval(sync,3000);
    var mobileQuery=window.matchMedia('(max-width:700px)');
    if(mobileQuery.addEventListener)mobileQuery.addEventListener('change',sync);
    else if(mobileQuery.addListener)mobileQuery.addListener(sync);
@@ -21606,7 +21617,7 @@ function tick(){
 }
 function boot(){
   restoreDark();tick();loadCoupons();
-  setInterval(tick,900);
+  setInterval(tick,3000);
   setInterval(loadCoupons,60000);
   W.addEventListener('focus',loadCoupons);
 }
@@ -21817,7 +21828,7 @@ function menu(){
   var b=D.createElement('button');b.id='vgxDel';b.type='button';b.textContent='🗑️ Rider account delete karo';b.onclick=delRider;
   out.insertAdjacentElement('afterend',b);
 }
-setInterval(function(){try{headerAdmin();toolbar();vip();menu()}catch(e){}},1000);
+setInterval(function(){try{headerAdmin();toolbar();vip();menu()}catch(e){}},3000);
 })();
 </script>
 <style id="vg-final-grade-20261121">
@@ -22781,7 +22792,7 @@ function addBtn(par,html,after){
   if(after&&after.nextSibling)par.insertBefore(b,after.nextSibling);else par.appendChild(b);
 }
 function boot(){
-  ensurePage();ensureUI();setInterval(ensureUI,900);
+  ensurePage();ensureUI();setInterval(ensureUI,3000);
   new MutationObserver(function(){D.querySelectorAll('.vg-theme-action').forEach(dk);var p=$('page-account');if(p&&p.classList.contains('active'))render()}).observe(D.body,{attributes:true,attributeFilter:['class']});
   new MutationObserver(function(){D.querySelectorAll('[data-page="account"]').forEach(function(b){var s=b.querySelector('span');if(s&&b.parentNode.classList.contains('modern-bottom-nav'))b.innerHTML='<span>👤</span>'+T('Account','अकाउंट')+'<small>अकाउंट</small>'});var p=$('page-account');if(p&&p.classList.contains('active'))render()}).observe(D.documentElement,{attributes:true,attributeFilter:['data-language','lang']});
 }
@@ -22900,7 +22911,7 @@ function refreshUI(p){
 }
 var g=window.getCustomerLocationForOrder;
 if(typeof g==='function'&&!g.__vgRoad){var w=async function(){var r=await g.apply(this,arguments);try{await ensureRoad()}catch(e){}return r};w.__vgRoad=1;window.getCustomerLocationForOrder=w}
-setInterval(function(){var p=cur();if(p&&C.key!==keyOf(p))ensureRoad()},1200);
+setInterval(function(){var p=cur();if(p&&C.key!==keyOf(p))ensureRoad()},3000);
 })();
 </script>
 <!-- ===================== VEDANT CHAT CORE (customer <-> rider) ===================== -->
@@ -24300,7 +24311,7 @@ function init(){
       if(session&&session.user&&(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"||ev==="USER_UPDATED"||ev==="TOKEN_REFRESHED"))onSession(session);
     },0);
   });
-  ensureMenu();setInterval(ensureMenu,1500);setInterval(watchdog,1500);setInterval(chatTick,2500);
+  ensureMenu();setInterval(ensureMenu,3000);setInterval(watchdog,3000);setInterval(chatTick,2500);
   try{if(/rider-signup/.test(location.hash)){lsSet("vgRiderSignup","1");setTimeout(function(){if(!S.uid&&typeof window.stvnRequireCustomerLogin==="function")window.stvnRequireCustomerLogin({message:"Rider account ke liye pehle apne Gmail se sign in karo.",action:{type:"page",page:"home"}});else if(S.uid&&!S.me)openRegister()},1800)}}catch(e){}
   A.t=setInterval(adminLoop,6000);
   setTimeout(bootOff,7000);
@@ -24760,7 +24771,7 @@ D.addEventListener('pointerdown',function(e){
 /* ---------- boot ---------- */
 function boot(){
   fetchOtp().then(refreshAll);
-  setInterval(function(){ensureAdminBtn();scanOrders();riderHint()},1200);
+  setInterval(function(){ensureAdminBtn();scanOrders();riderHint()},3000);
   setInterval(function(){fetchOtp()},20000);
 }
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boot();
@@ -25334,7 +25345,7 @@ function sync(){
 function init(){build();loadCfg(0);loadRange(0);radiusText()}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('load',function(){setTimeout(build,500)});
-setInterval(function(){if(!ui)build();sync()},600);
+setInterval(function(){if(!ui)build();sync()},3000);
 })();
 </script>
 <script id="vg3-js">
@@ -25466,7 +25477,7 @@ D.addEventListener('change',function(e){if(e.target&&e.target.id==='vgCaOn'){ca.
 function init(){sheet();card();adminUI();loadCa(0);var p=$('page-account');if(p&&!p.__vg3){p.__vg3=1;try{new MutationObserver(function(){card()}).observe(p,{childList:true,subtree:true})}catch(x){}}}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('load',function(){setTimeout(init,600)});
-setInterval(function(){card();adminUI()},1000);
+setInterval(function(){card();adminUI()},3000);
 })();
 </script>
 <!-- ===== END VG PATCH ===== -->
