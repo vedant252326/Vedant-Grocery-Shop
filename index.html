@@ -23850,7 +23850,7 @@ function normId(id){return String(id==null?'':id).trim().replace(/^#/,'').replac
 function pinFor(id){
   var s='vedant-delivery-pin|'+normId(id),h=2166136261>>>0;
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}
-  h^=h>>>15;h=Math.imul(h,2246822519)>>>0;h^=h>>>13;
+  h^=h>>>15;h=Math.imul(h,2246822519)>>>0;h=(h^(h>>>13))>>>0;
   return String(h%Math.pow(10,PIN_LEN)).padStart(PIN_LEN,'0');
 }
 function withTimeout(p,ms){return Promise.race([p,new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},ms)})])}
@@ -24095,59 +24095,7 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boo
 </script>
 <!-- ===================== END VEDANT v10 ===================== -->
 
-<!-- ===================== VEDANT v11: email the delivery PIN to the customer (additive) ===================== -->
-<script id="vedant-v11-pin-email">
-(function(){
-'use strict';
-if(window.__vgPinMail)return;window.__vgPinMail=true;
-var PIN_LEN=4;
-function normId(id){return String(id==null?'':id).trim().replace(/^#/,'').replace(/^VEDANT-/i,'').replace(/\s+/g,'')}
-function pinFor(id){
-  var s='vedant-delivery-pin|'+normId(id),h=2166136261>>>0;
-  for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}
-  h^=h>>>15;h=Math.imul(h,2246822519)>>>0;h^=h>>>13;
-  return String(h%Math.pow(10,PIN_LEN)).padStart(PIN_LEN,'0');
-}
-async function otpIsOn(){
-  try{
-    var c=window.supabaseClient,r=await c.from('shop_settings').select('maintenance_reason').eq('id',4).maybeSingle();
-    if(r&&!r.error&&r.data&&r.data.maintenance_reason)return !!JSON.parse(r.data.maintenance_reason).otp;
-  }catch(e){}
-  try{return localStorage.getItem('vgOtpOn')==='1'}catch(e){return false}
-}
-async function sendPinMail(order,email){
-  try{
-    var id=String(order&&(order.id||order.order_id)||'').trim();
-    if(!id||!email)return;
-    var k='vgPinMailed:'+id;
-    try{if(localStorage.getItem(k))return}catch(e){}
-    if(!(await otpIsOn()))return;
-    var res=await window.supabaseClient.functions.invoke('send-delivery-pin',{body:{
-      orderId:id,email:String(email).trim().toLowerCase(),pin:pinFor(id),
-      name:order.name||order.customer_name||'',total:order.total
-    }});
-    if(!res.error&&res.data&&res.data.success){try{localStorage.setItem(k,'1')}catch(e){}}
-    else console.warn('PIN email not sent:',(res.error&&res.error.message)||(res.data&&res.data.error));
-  }catch(e){console.warn('PIN email error',e)}
-}
-(function wrap(){
-  var o=window.vgSendOrderInvoiceEmail;
-  if(typeof o!=='function'){setTimeout(wrap,500);return}
-  if(o.__vgPM)return;
-  var w=async function(order,customerEmail){
-    var r;
-    try{r=await o.apply(this,arguments)}finally{
-      var em=customerEmail;
-      if(!em){try{var u=await window.supabaseClient.auth.getUser();em=u&&u.data&&u.data.user&&u.data.user.email}catch(e){}}
-      sendPinMail(order,em);
-    }
-    return r;
-  };
-  w.__vgPM=true;window.vgSendOrderInvoiceEmail=w;
-})();
-})();
-</script>
-<!-- ===================== END VEDANT v11 ===================== -->
+
 
 <style id="vgx-polish-20261121">
 /* ===== 1. Payment cards: cash (green bar) + online (blue bar) ===== */
