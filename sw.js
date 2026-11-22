@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'vedant-grocery-pwa-v8';
+const CACHE_NAME = 'vedant-grocery-pwa-v9';
 const APP_ROOT = new URL('./', self.registration.scope);
 const OFFLINE_PAGE = new URL('index.html', APP_ROOT).href;
 
@@ -45,28 +45,18 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;
   if (/\/(rest\/v1|auth|functions|storage\/v1)\//.test(url.pathname)) return;
 
+  // Page: always fresh from network, cache only when offline
   if (request.mode === 'navigate') {
-    // Login/redirect links with ?query always go to the network
-    if (url.search) return;
-
     event.respondWith((async () => {
-      const cache = await caches.open(CACHE_NAME);
-      const cached = await cache.match(OFFLINE_PAGE);
-
-      const update = fetch(request).then(response => {
-        if (response.ok) cache.put(OFFLINE_PAGE, response.clone());
-        return response;
-      });
-
-      if (cached) {
-        event.waitUntil(update.catch(() => {}));
-        return cached;
-      }
-
       try {
-        return await update;
+        return await fetch(request);
       } catch (error) {
-        return (await cache.match(APP_ROOT.href)) || Response.error();
+        const cache = await caches.open(CACHE_NAME);
+        return (
+          await cache.match(OFFLINE_PAGE) ||
+          await cache.match(APP_ROOT.href) ||
+          Response.error()
+        );
       }
     })());
     return;
@@ -74,29 +64,24 @@ self.addEventListener('fetch', event => {
 
   const dest = request.destination;
 
-  if (dest === 'script' || dest === 'style') {
-    event.respondWith((async () => {
-      const cache = await caches.open(CACHE_NAME);
-      try {
-        const response = await fetch(request, { cache: 'no-cache' });
-        if (response.ok) await cache.put(request, response.clone());
-        return response;
-      } catch (error) {
-        return (await cache.match(request)) || Response.error();
-      }
-    })());
-    return;
-  }
-
-  if (dest === 'image' || dest === 'font') {
+  // Scripts, styles, images, fonts: show cached copy instantly, refresh it in background
+  if (dest === 'script' || dest === 'style' || dest === 'image' || dest === 'font') {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const cached = await cache.match(request);
-      if (cached) return cached;
-      try {
-        const response = await fetch(request);
-        if (response.ok) await cache.put(request, response.clone());
+
+      const refresh = fetch(request).then(response => {
+        if (response.ok) cache.put(request, response.clone());
         return response;
+      });
+
+      if (cached) {
+        event.waitUntil(refresh.catch(() => {}));
+        return cached;
+      }
+
+      try {
+        return await refresh;
       } catch (error) {
         return Response.error();
       }
