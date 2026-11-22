@@ -1,43 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script id="vg-perf-governor">
-(function(){
-  var si=window.setInterval;
-  window.setInterval=function(fn,ms){
-    var a=[].slice.call(arguments,2);
-    if(typeof fn!=='function')return si.apply(window,arguments);
-    return si.apply(window,[function(){if(document.hidden&&ms<10000)return;return fn.apply(this,arguments)},ms].concat(a));
-  };
-})();
-</script>
+
 <meta charset="UTF-8">
-<script id="vg-perf-shim">
-/* PERF: ~20 observers watch the whole page and each one re-ran on every tiny DOM change (that was the "processing" lag).
-   Whole-page observers now get ONE batched call per frame; small/local observers stay instant. */
-(function(){
-  var Native=window.MutationObserver;if(!Native||Native.__vgPatched)return;
-  function Batched(cb){
-    var self=this,recs=[],pending=false,heavy=false;
-    function run(){if(!pending)return;pending=false;var q=recs;recs=[];if(q.length){try{cb.call(self,q,self)}catch(e){try{console.error(e)}catch(_){}}}}
-    var mo=new Native(function(r){
-      if(!heavy){cb.call(self,r,self);return}
-      for(var i=0;i<r.length;i++)recs.push(r[i]);
-      if(pending)return;pending=true;
-      if(window.requestAnimationFrame)requestAnimationFrame(run);
-      setTimeout(run,120); /* background-tab safety */
-    });
-    self.observe=function(t,o){
-      heavy=!!(o&&o.subtree&&t&&(t===document.body||t===document.documentElement));
-      return mo.observe(t,o);
-    };
-    self.disconnect=function(){recs=[];pending=false;return mo.disconnect()};
-    self.takeRecords=function(){var a=recs.concat(mo.takeRecords());recs=[];return a};
-  }
-  Batched.__vgPatched=true;
-  window.MutationObserver=Batched;
-})();
-</script>
+
 <!-- FAST START: splash logo + blocking script are requested before the big inline CSS is parsed -->
 <link rel="preload" as="image" href="logo.png" fetchpriority="high">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -2649,11 +2615,11 @@ button,input,select,textarea{font:inherit}
   .modern-bottom-nav { width:min(100%,1180px)!important; }
 }
 </style>
-<!-- Removed temporary 50ms speed-diagnostic polling overlay from production build. -->
+
 </head>
 
 <body>
-<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script id="vg-splash-failsafe">(function(){var s=document.getElementById('vgSplash');if(!s)return;var root=document.documentElement;var saved=root.classList.contains('v-lang-saved');var left=Math.max(1200,3500-Math.round(performance.now()));setTimeout(function(){var x=document.getElementById('vgSplash');if(x){x.classList.add('out');setTimeout(function(){try{x.parentNode&&x.parentNode.removeChild(x)}catch(e){}},600)}root.classList.remove('v-lang-wait');if(saved){root.style.visibility='visible'}},left)})();</script><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
+<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script id="vg-splash-failsafe">(function(){var s=document.getElementById('vgSplash');if(!s)return;var left=Math.max(2500,7000-Math.round(performance.now()));setTimeout(function(){var x=document.getElementById('vgSplash');if(!x)return;x.classList.add('out');setTimeout(function(){try{x.parentNode&&x.parentNode.removeChild(x)}catch(e){}document.documentElement.classList.remove('v-lang-wait')},900)},left)})();</script><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
 
 <div id="stvnCustomerLoginGate" class="notranslate" translate="no" lang="en" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
   <div class="stvn-customer-login-card">
