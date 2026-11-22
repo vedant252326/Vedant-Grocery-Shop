@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'vedant-grocery-pwa-v10';
+const CACHE_NAME = 'vedant-grocery-pwa-v11';
 const APP_ROOT = new URL('./', self.registration.scope);
 const OFFLINE_PAGE = new URL('index.html', APP_ROOT).href;
 
