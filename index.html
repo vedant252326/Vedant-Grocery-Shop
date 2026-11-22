@@ -14902,7 +14902,7 @@ Object.assign(enDict,{
     var root=document.documentElement,splash=document.getElementById('vgSplash'),css=document.getElementById('vgSplashCss');
     function unlockLang(){root.classList.remove('v-lang-wait');}
     if(!splash||root.classList.contains('vg-nosplash')){try{splash&&splash.remove();css&&css.remove()}catch(e){}unlockLang();return;}
-    try{sessionStorage.setItem('vgSplashSeen','1')}catch(e){}
+    var seen=false;try{seen=sessionStorage.getItem('vgSplashSeen')==='1';sessionStorage.setItem('vgSplashSeen','1')}catch(e){}
     var reduce=false;try{reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
     var t0=Date.now(),gone=false,removed=false;
     function cleanup(){if(removed)return;removed=true;try{splash.remove();css&&css.remove()}catch(e){}}
@@ -14922,10 +14922,10 @@ Object.assign(enDict,{
     splash.addEventListener('click',leave,{passive:true});
     /* PERF: hold the splash until the home screen is really built (header, hero, buttons) so no blank page shows after it. Max ~3s. */
     (function(){
-      var minMs=reduce?650:1300,maxMs=3000,t0=Date.now();
+      var minMs=(reduce||seen)?250:900,maxMs=1700,t0=Date.now();
       function ready(){
         try{
-          if(document.readyState!=='complete')return false;
+          if(document.readyState==='loading')return false;
           var h=document.querySelector('#page-home .vg-store-header');
           return !!(h&&h.querySelector('.vg-orders-action')&&document.querySelector('#page-home .vg-hero'));
         }catch(e){return true}
@@ -14933,12 +14933,12 @@ Object.assign(enDict,{
       (function poll(){
         if(gone)return;
         var el=Date.now()-t0;
-        if(el>=minMs&&(ready()||el>=maxMs)){setTimeout(tryLeave,250);return}
+        if(el>=minMs&&(ready()||el>=maxMs)){setTimeout(tryLeave,60);return}
         setTimeout(poll,100);
       })();
     })();
     // Fallback if the browser throttles animation frames while backgrounded.
-    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,750)},3600);
+    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,600)},2300);
   })();
 })();
 </script>
@@ -21298,7 +21298,7 @@ var FESTS=[['any','Any festival'],['diwali','Diwali'],['dhanteras','Dhanteras'],
 function festName(k){for(var i=0;i<FESTS.length;i++)if(FESTS[i][0]===k)return FESTS[i][1];return k}
 var coupons=[],active=null;
 var BUILTIN={code:'VEDANT10',discount_type:'percent',discount_value:10,min_order:0,max_discount:null,is_active:true};
-W.__vgCouponCode=function(){return active?active.code:(Number(discountAmount||0)>0?"VEDANT10":null)};
+W.__vgCouponCode=function(){return active?active.code:null};
 var FEST_EM={diwali:"🪔",dhanteras:"🪙",bhaidooj:"👫",holi:"🎨",rakhi:"🧿",navratri:"🔱",dussehra:"🏹",ganesh:"🐘",janmashtami:"🦚",eid:"🌙",christmas:"🎄",newyear:"🎆",sankranti:"🪁",tiranga:"🇮🇳"};
 function expired(c){
   if(!c.valid_till)return false;
@@ -21388,8 +21388,7 @@ W.applyCoupon=async function(){
     var r=await cl.from('store_coupons').select('*').eq('code',code).eq('is_active',true).limit(1);
     if(r.error)throw r.error;
     c=(r.data&&r.data[0])||null;
-    if(!c&&code==='VEDANT10')c=BUILTIN;
-  }catch(e){console.warn('Coupon lookup failed',e);if(code==='VEDANT10')c=BUILTIN;else{cmsg(T('❌ Could not check the coupon right now. Please try again.','❌ अभी कूपन जाँच नहीं हो पाया। कृपया दोबारा कोशिश करें।'));return}}
+  }catch(e){console.warn('Coupon lookup failed',e);{cmsg(T('❌ Could not check the coupon right now. Please try again.','❌ अभी कूपन जाँच नहीं हो पाया। कृपया दोबारा कोशिश करें।'));return}}
   if(!c||expired(c)){active=null;discountAmount=0;cmsg(T('❌ Invalid or expired coupon.','❌ कूपन गलत है या खत्म हो चुका है।'));updateCart();return}
   if(Number(c.min_order)>0&&sub<Number(c.min_order)){active=null;discountAmount=0;cmsg(T('❌ Add items worth ₹'+Number(c.min_order)+' or more to use '+esc(code)+'.','❌ '+esc(code)+' लगाने के लिए कम से कम ₹'+Number(c.min_order)+' का सामान जोड़ें।'));updateCart();return}
   active=c;
@@ -25474,27 +25473,36 @@ setInterval(function(){card();adminUI()},1000);
 
 <!-- ===== VEDANT PLATINUM NOIR + CART COUPON + PREMIUM DELIVERY PATCH ===== -->
 <style id="vgn-style">
-/* ---------- Premium cart coupon card ---------- */
-.vgn-cpn{margin:14px 0;padding:14px;border-radius:20px;background:linear-gradient(160deg,#0f0f12,#1b1c21);color:#eceef1;border:1px solid #3a3c43;box-shadow:0 10px 26px rgba(0,0,0,.18);box-sizing:border-box;width:100%}
+/* ---------- Cart coupon card (white, clean) ---------- */
+.vgn-cpn{margin:14px 0;padding:14px;border-radius:20px;background:#fff;color:#17201a;border:1.5px solid #cfe6d3;box-shadow:0 6px 18px rgba(18,66,24,.08);box-sizing:border-box;width:100%}
 .vgn-cpn *{box-sizing:border-box}
 .vgn-cpn-h{display:flex;align-items:center;gap:10px;margin:0 0 12px}
-.vgn-cpn-ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:linear-gradient(135deg,#f4f4f5,#9ea3ab);color:#111}
-.vgn-cpn-h b{display:block;font-size:15px;letter-spacing:.3px;color:#fff}
-.vgn-cpn-h small{display:block;font-size:11.5px;color:#a8adb5;margin-top:2px}
+.vgn-cpn-ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:#e8f6ea;color:#12651d}
+.vgn-cpn-h b{display:block;font-size:15px;letter-spacing:.2px;color:#17201a}
+.vgn-cpn-h small{display:block;font-size:11.5px;color:#607468;margin-top:2px}
 .vgn-cpn-row{display:flex;gap:8px;align-items:stretch}
-.vgn-cpn-row #coupon{flex:1 1 auto;min-width:0;width:auto!important;margin:0!important;height:48px;padding:0 14px!important;border-radius:14px!important;border:1px solid #4a4d55!important;background:#0b0b0d!important;color:#fff!important;font-size:16px!important;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}
-.vgn-cpn-row #coupon::placeholder{color:#7d828a;font-weight:600;letter-spacing:.3px;text-transform:none}
-.vgn-cpn-row #coupon:focus{outline:2px solid #d9dce1;outline-offset:1px}
-.vgn-cpn-row button{flex:0 0 auto;height:48px;margin:0!important;padding:0 18px!important;border:0!important;border-radius:14px!important;background:linear-gradient(135deg,#f6f6f7,#b9bdc4)!important;color:#0b0b0d!important;font-weight:900!important;font-size:14px!important;width:auto!important;white-space:nowrap}
+.vgn-cpn-row #coupon{flex:1 1 auto;min-width:0;width:auto!important;margin:0!important;height:48px;padding:0 14px!important;border-radius:14px!important;border:1.5px solid #cfd8d1!important;background:#f7faf7!important;color:#17201a!important;font-size:16px!important;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
+.vgn-cpn-row #coupon::placeholder{color:#8a948d;font-weight:600;letter-spacing:.3px;text-transform:none}
+.vgn-cpn-row #coupon:focus{outline:none;border-color:#0c831f!important;box-shadow:0 0 0 3px rgba(12,131,31,.15)}
+.vgn-cpn-row button{flex:0 0 auto;height:48px;margin:0!important;padding:0 18px!important;border:0!important;border-radius:14px!important;background:linear-gradient(135deg,#13a82d,#0c831f)!important;color:#fff!important;font-weight:900!important;font-size:14px!important;width:auto!important;white-space:nowrap}
 .vgn-cpn-row button:active{transform:scale(.97)}
-.vgn-cpn #coupon-message{margin:10px 0 0!important;min-height:0;font-size:13px;font-weight:700;color:#d6d9de;line-height:1.45}
-.vgn-cpn #coupon-message[style*="color"]{color:#8df2a0!important}
-.vgn-cpn #coupon-message .vgc-remove{color:#ffd9d9;margin-left:6px;text-decoration:underline}
+.vgn-cpn #coupon-message{margin:10px 0 0!important;min-height:0;font-size:13px;font-weight:700;color:#4a5750;line-height:1.45}
+.vgn-cpn #coupon-message:empty{display:none}
+.vgn-cpn #coupon-message[style*="color"]{color:#0b8a1f!important}
+.vgn-cpn #coupon-message .vgc-remove{color:#c62828;margin-left:6px;text-decoration:underline}
 .vgn-chips{display:flex;gap:8px;overflow-x:auto;margin:12px -2px 0;padding:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.vgn-chips:empty{display:none}
 .vgn-chips::-webkit-scrollbar{display:none}
-.vgn-chip{flex:0 0 auto;border:1px dashed #8e939b;background:#15161a;color:#f1f2f4;border-radius:12px;padding:8px 12px;font-size:12.5px;font-weight:800;letter-spacing:.8px;cursor:pointer}
-.vgn-chip small{display:block;font-weight:600;letter-spacing:0;color:#a8adb5;font-size:10.5px;margin-top:1px}
-.vgn-chips-t{margin:12px 0 0;font-size:11px;letter-spacing:1px;color:#8e939b;font-weight:800;text-transform:uppercase}
+.vgn-chip{flex:0 0 auto;border:1px dashed #0c831f;background:#f1faf2;color:#0c6b1b;border-radius:12px;padding:8px 12px;font-size:12.5px;font-weight:800;letter-spacing:.8px;cursor:pointer}
+.vgn-chip small{display:block;font-weight:600;letter-spacing:0;color:#607468;font-size:10.5px;margin-top:1px}
+.vgn-chips-t{margin:12px 0 0;font-size:11px;letter-spacing:1px;color:#7a877f;font-weight:800;text-transform:uppercase}
+body.dark .vgn-cpn{background:#16191a;color:#eef2ee;border-color:#2f4a34;box-shadow:none}
+body.dark .vgn-cpn-h b{color:#f1f5f1}
+body.dark .vgn-cpn-h small,body.dark .vgn-chips-t{color:#9aa79e}
+body.dark .vgn-cpn-ico{background:#1f3a24;color:#8df2a0}
+body.dark .vgn-cpn-row #coupon{background:#101312!important;border-color:#33433a!important;color:#fff!important}
+body.dark .vgn-cpn #coupon-message{color:#d5e0d8}
+body.dark .vgn-chip{background:#122016;color:#8df2a0;border-color:#2f6b3a}
 /* ---------- Premium delivery / checkout pages (phone first) ---------- */
 #page-checkout,#page-location,#page-order-review,#page-payment{--vgn-ink:#101114;--vgn-line:#dcdee2;--vgn-bg:#ffffff;--vgn-soft:#f4f5f7}
 body.dark #page-checkout,body.dark #page-location,body.dark #page-order-review,body.dark #page-payment{--vgn-ink:#f1f2f4;--vgn-line:#3a3c43;--vgn-bg:#16171b;--vgn-soft:#1e1f24}
@@ -25662,7 +25670,6 @@ function chipsFromShop(){
     var tt=card&&card.querySelector('.vgc-title,h4,strong');if(tt&&tt.textContent.trim().toUpperCase()!==c)sm=tt.textContent.trim().slice(0,28);
     out.push({c:c,s:sm});
   });
-  if(!seen.VEDANT10)out.unshift({c:'VEDANT10',s:'10% OFF'});
   return out;
 }
 function buildCoupon(){
@@ -25690,6 +25697,7 @@ function buildCoupon(){
 function paintChips(){
   var box=document.getElementById('vgn-chips');if(!box)return;
   var list=chipsFromShop(),sig=list.map(function(x){return x.c}).join('|')+hi();
+  var ct=box.previousElementSibling;if(ct&&ct.classList.contains('vgn-chips-t'))ct.style.display=list.length?'':'none';
   if(box.getAttribute('data-sig')===sig)return;box.setAttribute('data-sig',sig);
   box.innerHTML=list.map(function(x){return '<button type="button" class="vgn-chip" data-code="'+x.c+'">'+x.c+(x.s?'<small>'+x.s.replace(/</g,'&lt;')+'</small>':'')+'</button>'}).join('');
 }
@@ -25961,3 +25969,30 @@ setInterval(tick,2000);
 })();
 </script>
 <!-- ===== END VEDANT VIP COLOR THEMES ===== -->
+
+<!-- ===== VG FINAL FIX: stable "Delivering to" label (single owner) ===== -->
+<style id="vg-label-fix">
+html body:not(#bk1):not(#bk2):not(#bk3):not(#fx1):not(#fx2) .vg-store-header .vg-location-button .vg-location-label{font-size:0!important;line-height:0!important;min-height:16px}
+html body:not(#bk1):not(#bk2):not(#bk3):not(#fx1):not(#fx2) .vg-store-header .vg-location-button .vg-location-label::after{content:var(--vgl,"5 km area");font-size:13px;line-height:1.25;font-weight:900;white-space:nowrap}
+</style>
+<script id="vg-label-fix-js">
+(function(){
+  var R=document.documentElement,last='';
+  function lang(){return String(R.dataset.language||R.lang||'en').toLowerCase().indexOf('hi')===0}
+  function rad(){try{var r=Number(window.vgRadius());return r>0?r:5}catch(e){return 5}}
+  function paint(){
+    var r=rad(),km=NaN;
+    try{var l=JSON.parse(localStorage.getItem('vedantCustomerDeliveryLocationV1')||'null')||JSON.parse(localStorage.getItem('vedantCustomerLocationV1')||'null');if(l)km=Number(l.km)}catch(e){}
+    var out=isFinite(km)&&km>r,h=lang();
+    var txt=h?(out?'डिलीवरी क्षेत्र से बाहर':r+' किमी क्षेत्र'):(out?'Outside '+r+' km area':r+' km area');
+    if(txt===last)return;last=txt;
+    R.style.setProperty('--vgl',JSON.stringify(txt));
+  }
+  paint();
+  document.addEventListener('DOMContentLoaded',paint);
+  window.addEventListener('load',paint);
+  window.addEventListener('storage',paint);
+  setInterval(paint,1500);
+  try{new MutationObserver(paint).observe(R,{attributes:true,attributeFilter:['data-language','lang']})}catch(e){}
+})();
+</script>
