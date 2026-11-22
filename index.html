@@ -21436,8 +21436,6 @@ function toolbar(){
   var anchor=rd||eta;
   if(sh){sh.classList.add('vgx-sm');if(anchor&&sh.previousElementSibling!==anchor)anchor.insertAdjacentElement('afterend',sh)}
   if(sh&&otp&&sh.nextElementSibling!==otp)sh.insertAdjacentElement('afterend',otp);
-  var fest=$('admin-festival-toolbar-toggle'),fa=otp||sh;
-  if(fest&&fa&&fa.nextElementSibling!==fest)fa.insertAdjacentElement('afterend',fest);
 }
 /* ---- rider: VIP card ---- */
 var TIERS=[['🥉 Bronze Rider',0],['🥈 Silver Rider',25],['🥇 Gold Rider',100],['💎 Platinum VIP',250]],GOAL=10,lastSig='',W=null,RN='';
@@ -21603,6 +21601,65 @@ D.addEventListener('DOMContentLoaded',run);run();
 })();
 </script>
 
+
+<style id="vg-vip-swipe-admin-20261122">
+/* ===== swipe buttons ===== */
+html body #vgRider .vgr-btn.vgr-swipe{position:relative;display:block;width:100%;height:60px;min-height:60px;padding:0!important;margin-top:10px;border-radius:999px!important;overflow:hidden;background:linear-gradient(135deg,#1b1f1c,#0f1210)!important;border:1.5px solid #f5c54288!important;color:#ffe08a!important;box-shadow:0 10px 24px #0008,inset 0 0 18px #f5c54218!important;animation:none!important;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+html body #vgRider .vgr-swipe .vgs-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:linear-gradient(90deg,#16a34a,#4ade80);transition:none}
+html body #vgRider .vgr-swipe.back .vgs-fill,html body #vgRider .vgr-swipe.back .vgs-h{transition:transform .28s cubic-bezier(.2,1.3,.4,1),width .28s}
+html body #vgRider .vgr-swipe .vgs-label{position:absolute;inset:0;display:grid;place-items:center;padding:0 64px 0 72px;font-weight:900;font-size:15px;letter-spacing:.3px;text-align:center;pointer-events:none;background:linear-gradient(100deg,#b08a2a 0%,#fff3c4 45%,#b08a2a 90%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:vgsShine 2.4s linear infinite}
+html body #vgRider .vgr-swipe.busy .vgs-label,html body #vgRider .vgr-swipe.done .vgs-label{animation:none;background:none;color:#fff;-webkit-text-fill-color:#fff}
+html body #vgRider .vgr-swipe .vgs-h{position:absolute;left:4px;top:4px;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,#ffe08a,#f5c542 55%,#d99a00);box-shadow:0 4px 14px #0009,0 0 0 3px #f5c54233;cursor:grab;touch-action:none;z-index:2;animation:vgsNudge 1.8s ease-in-out infinite}
+html body #vgRider .vgr-swipe.drag .vgs-h{animation:none;cursor:grabbing;transform-origin:center}
+html body #vgRider .vgr-swipe.done .vgs-h,html body #vgRider .vgr-swipe.busy .vgs-h{animation:none}
+html body #vgRider .vgr-swipe.busy .vgs-h{opacity:0}
+html body #vgRider .vgr-swipe.busy .vgs-fill{width:100%!important;animation:vgsPulse 1s infinite}
+html body #vgRider .vgr-swipe:disabled:not(.busy){opacity:.55;filter:grayscale(.5)}
+html body #vgRider .vgr-swipe:disabled:not(.busy) .vgs-h{animation:none;background:#555;box-shadow:none}
+html body #vgRider .vgr-swipe.shake{animation:vgsShake .4s!important}
+html body #vgRider #vgrStart.vgr-swipe,html body #vgRider #vgrDone.vgr-swipe:not(:disabled){border-color:#4ade80aa!important}
+@keyframes vgsShine{to{background-position:-220% 0}}
+@keyframes vgsNudge{0%,60%,100%{margin-left:0}30%{margin-left:14px}}
+@keyframes vgsPulse{50%{opacity:.6}}
+@keyframes vgsShake{20%{transform:translateX(-6px)}60%{transform:translateX(6px)}}
+/* ===== rider page: extra VIP ===== */
+html body #vgRider .vgr-top{background:linear-gradient(135deg,#050505,#1d1a0d 60%,#2b2410);border-bottom:2px solid #f5c542;box-shadow:0 10px 28px #000c,0 1px 0 #ffe08a55 inset;position:relative;overflow:hidden}
+html body #vgRider .vgr-top:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,#ffe08a22 50%,transparent 60%);transform:translateX(-100%);animation:vgsSweep 5s ease-in-out infinite;pointer-events:none}
+html body #vgRider .vgr-brand{background:linear-gradient(90deg,#fff3c4,#f5c542,#fff3c4);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;font-weight:900;letter-spacing:.6px}
+html body #vgRider .vgr-card,html body #vgRider .vgx-week{border-radius:24px;border:1px solid #f5c54244;background:linear-gradient(160deg,#171a1c,#1d211d 60%,#232010);box-shadow:0 14px 30px #000a,inset 0 1px 0 #ffffff12;position:relative}
+html body #vgRider .vgr-card:before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#f5c542,transparent);opacity:.8}
+html body #vgRider .vgr-stat{border-radius:22px;backdrop-filter:blur(8px)}
+html body #vgRider .vgr-stat b{font-size:26px;text-shadow:0 0 16px currentColor}
+html body #vgRider .vgr-btn:not(.vgr-swipe){border-radius:18px;min-height:54px;font-weight:900;letter-spacing:.2px}
+html body #vgRider .vgr-pay{border-radius:16px;padding:12px 14px;font-weight:800}
+html body #vgRider .vgr-rbottom{border-radius:28px 28px 0 0;border-top:2px solid #f5c542;box-shadow:0 -14px 34px #000b;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+html body #vgRider .vgr-sheet{border-radius:28px 28px 0 0}
+@keyframes vgsSweep{0%,55%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+/* ===== admin toolbar: fixed tiles, no jumping ===== */
+@media(max-width:900px){
+html body #adminContent .admin-toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;padding:14px!important;border-radius:22px!important;background:radial-gradient(120% 90% at 0 0,#3b1d8f,#140a30 70%)!important;border:1px solid #f5c54299!important;position:relative}
+html body #adminContent .admin-toolbar:before{content:"👑 VIP Admin Control";grid-column:1/-1;order:-100;color:#ffe08a;font-weight:900;font-size:14px;letter-spacing:.8px}
+html body #adminContent .admin-toolbar>#admin-save-status{order:-90;grid-column:1/-1}
+html body #adminContent .admin-toolbar>.admin-btn,html body #adminContent .admin-toolbar>button{height:56px!important;min-height:56px!important;max-height:56px!important;padding:6px 8px!important;display:flex!important;align-items:center;justify-content:center;text-align:center;font-size:12.5px!important;line-height:1.2!important;font-weight:800;border-radius:15px!important;white-space:normal;overflow:hidden;box-sizing:border-box;margin:0!important;width:100%!important;transition:background .2s,box-shadow .2s!important;transform:none!important;backdrop-filter:blur(6px)}
+html body #adminContent .admin-toolbar>.admin-btn:active{filter:brightness(1.3)}
+html body #adminContent .admin-toolbar>#admin-shop-status-toolbar-toggle{font-size:12.5px!important;padding:6px 8px!important;min-height:56px!important;border-radius:15px!important}
+html body #adminContent .admin-toolbar>select,html body #adminContent .admin-toolbar>.admin-logout{grid-column:1/-1;order:200}
+/* fixed order (DOM moves by other scripts can no longer change what you see) */
+#admin-view-dashboard{order:-50}#admin-view-product-management{order:1}#admin-view-category-display{order:2}#admin-view-product-list{order:3}#admin-view-orders{order:4}#admin-view-customer-care{order:5}
+#vgrAdminBtn{order:6}#admin-sound-email-toggle{order:7}#admin-shop-status-toolbar-toggle{order:8}#vgOtpAdminBtn{order:9}#admin-view-withdrawal-status{order:10}#admin-coupon-toolbar-toggle{order:11}#stvnOfferQuickToggle{order:12}#stvnDeliveryQuickToggle{order:13}#admin-festival-toolbar-toggle{order:14}#admin-header-color-toggle{order:15}
+}
+/* ===== account page: VIP polish ===== */
+html body #page-account .vga-hero{border-radius:0 0 34px 34px;box-shadow:0 18px 40px #0007,0 2px 0 #f5c542 inset;padding-bottom:26px}
+html body #page-account .vga-av{box-shadow:0 0 0 3px #0b0b0b,0 0 0 6px #f5c542,0 12px 28px #000a}
+html body #page-account .vga-tile{border-radius:24px!important;border:1px solid #f5c54277!important;box-shadow:0 12px 24px -10px #b8860b66,inset 0 1px 0 #fff!important;transition:transform .15s}
+html body #page-account .vga-tile:active{transform:scale(.95)}
+html body #page-account .vga-rider{background:linear-gradient(120deg,#050505,#1d1a0d 55%,#6b5415)!important;border:1px solid #f5c542aa;box-shadow:0 16px 32px #0009,0 0 22px #f5c54233}
+html body #page-account .vga-rider b{background:linear-gradient(135deg,#ffe08a,#d99a00);color:#241a00}
+html body #page-account .vga-rider strong{color:#ffe08a}
+html body #page-account .vga-card{border-radius:26px!important;border:1px solid #f5c54233!important}
+html body #page-account .vga-row i,html body #page-account .vga-card summary i{border-radius:16px;box-shadow:0 4px 10px #0001}
+@media(prefers-reduced-motion:reduce){html body #vgRider .vgr-swipe *,html body #vgRider .vgr-top:after{animation:none!important}}
+</style>
 </body>
 </html>
 
@@ -22807,25 +22864,46 @@ function renderActive(){
   $("vgrRecA").onclick=function(){S.followPause=0;fitAll()};
   var sr=$("vgrShopReach");if(sr)sr.onclick=function(){try{S.rs=S.rs||{};S.rs[a.order_id]=1;localStorage.setItem("vgrRS",JSON.stringify(S.rs))}catch(e){}try{navigator.vibrate&&navigator.vibrate([60,40,60])}catch(e){}fx("reached","📍 Aap shop pe pahunch gaye!","Order uthao aur Out for Delivery dabao");renderActive()};
   var st=$("vgrStart");if(st)st.onclick=startRide;
+  vgsInit(sr,"I have reached","📍");vgsInit(st,"Out for Delivery","🏍️");
   var m=makeMap($("vgrMapA"),"mapA");
   if(m){placeTarget();updateRiderMarkers();refreshRoute(true)}
   startGeo();
 }
+
+/* ---------- swipe-to-confirm (Rapido style) ---------- */
+function vgsInit(b,label,ico){
+  if(!b)return;var dis=b.disabled;b.__vgsL=label;b.__vgsI=ico;
+  b.classList.add("vgr-swipe");b.classList.remove("vgr-glow");b.style.animation="none";
+  b.innerHTML='<span class="vgs-fill"></span><span class="vgs-label">'+(dis?"🔒 Pehle payment confirm karo":"Swipe ➜ "+label)+'</span><span class="vgs-h">'+ico+'</span>';
+  var h=b.querySelector(".vgs-h"),f=b.querySelector(".vgs-fill"),lb=b.querySelector(".vgs-label");
+  var x0=0,dx=0,drag=false,max=0;
+  function setX(v){dx=Math.max(0,Math.min(max,v));h.style.transform="translateX("+dx+"px)";f.style.width=(dx+h.offsetWidth)+"px";lb.style.opacity=String(Math.max(0,1-dx/(max*.7||1)))}
+  h.addEventListener("pointerdown",function(e){if(b.disabled||b.classList.contains("busy"))return;drag=true;x0=e.clientX-dx;max=b.clientWidth-h.offsetWidth-8;b.classList.add("drag");try{h.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()});
+  h.addEventListener("pointermove",function(e){if(!drag)return;setX(e.clientX-x0);if(dx>=max*.97)end()});
+  function end(){if(!drag)return;drag=false;b.classList.remove("drag");
+    if(dx>=max*.9){setX(max);b.classList.add("done");try{navigator.vibrate&&navigator.vibrate([30,30,60])}catch(x){}
+      setTimeout(function(){b.click();setTimeout(function(){if(document.body.contains(b)&&!b.classList.contains("busy"))vgsReset(b)},700)},160)}
+    else{b.classList.add("back");setX(0);setTimeout(function(){b.classList.remove("back")},300)}}
+  h.addEventListener("pointerup",end);h.addEventListener("pointercancel",end);
+}
+function vgsBusy(b,t){b.disabled=true;b.classList.add("busy");var l=b.querySelector(".vgs-label");if(l){l.style.opacity="1";l.textContent=t}else b.textContent=t}
+function vgsReset(b){if(!b)return;b.disabled=false;b.classList.remove("busy","done","drag","back");if(b.__vgsL)vgsInit(b,b.__vgsL,b.__vgsI)}
+window.addEventListener("click",function(e){var t=e.target&&e.target.closest?e.target.closest("#vgRider .vgr-swipe"):null;if(t&&e.isTrusted){e.stopImmediatePropagation();e.preventDefault();t.classList.add("shake");setTimeout(function(){t.classList.remove("shake")},400)}},true);
 async function startRide(){
   var a=S.active;if(!a)return;
   var t={lat:Number(a.latitude),lng:Number(a.longitude)};
   if(!okLL(t.lat,t.lng))return toast("Customer ki location order me nahi mili, admin se baat karo",5000);
   if(S.pos){
     var d=km(S.pos.lat,S.pos.lng,SHOP.lat,SHOP.lng);
-    if(d>0.6){var go=await ask("Aap shop se "+d.toFixed(1)+" km door ho. Phir bhi ride start karni hai?","Haan, Start","Nahi");if(!go)return}
+    if(d>0.6){var go=await ask("Aap shop se "+d.toFixed(1)+" km door ho. Phir bhi ride start karni hai?","Haan, Start","Nahi");if(!go){vgsReset($("vgrStart"));return}}
   }
-  var b=$("vgrStart");if(b){b.disabled=true;b.textContent="Start ho raha hai…"}
+  var b=$("vgrStart");if(b)vgsBusy(b,"Start ho raha hai…")
   var dd=S.pos?km(S.pos.lat||SHOP.lat,S.pos.lng||SHOP.lng,t.lat,t.lng):km(SHOP.lat,SHOP.lng,t.lat,t.lng);
   var mins=Math.max(5,Math.min(90,Math.round(dd/0.35)+3));
   var delivery=(typeof window.stvnEncodeDeliveryValue==="function")?window.stvnEncodeDeliveryValue(mins,new Date().toISOString()):(ETA_PREFIX+mins+"|"+new Date().toISOString());
   var p=S.pos||{lat:SHOP.lat,lng:SHOP.lng};
   var r=await sb().rpc("rider_start_ride",{p_order_id:a.order_id,p_delivery:delivery,p_lat:p.lat,p_lng:p.lng});
-  if(r.error){toast("❌ "+errMsg(r.error),4500);if(b){b.disabled=false;b.textContent="🏍️ Out for Delivery — Start Ride"}return}
+  if(r.error){toast("❌ "+errMsg(r.error),4500);if(b)vgsReset(b);return}
   S.active=r.data;S.lastPush=0;try{if(r.data&&!/^(out_for_delivery|shipped)$/i.test(String(r.data.order_status||"")))sb().from("orders").update({order_status:"out_for_delivery"}).eq("order_id",a.order_id).not("order_status","in","(delivered,cancelled,cancelled_by_admin)").then(function(){},function(){})}catch(e){}destroyMaps();S.layers={};render();pushLocation(true);fx("ride","🏍️ Ride shuru! Customer ke paas chalo","Order sahi salamat deliver karo");
 }
 function renderRide(){
@@ -22848,7 +22926,7 @@ function renderRide(){
   $("vgrNavC").onclick=function(){var t=curTarget();if(t)window.open(gmaps(t),"_blank")};
   var pb=$("vgrPayOk");if(pb)pb.onclick=confirmPay;
   S.fresh=null;
-  var dn=$("vgrDone");if(dn)dn.onclick=completeOrder;
+  var dn=$("vgrDone");if(dn){dn.onclick=completeOrder;vgsInit(dn,"Delivery Complete","🏁")}
   if(!S.mapB||!document.getElementById("vgrRideMap")||!S.mapB.getContainer||S.mapB.getContainer()!==$("vgrRideMap")){
     var m=makeMap($("vgrRideMap"),"mapB");
     if(m){placeTarget();updateRiderMarkers();refreshRoute(true)}
@@ -22864,13 +22942,13 @@ async function confirmPay(){
 }
 async function completeOrder(){
   var a=S.active;if(!a)return;
-  var ok=await ask("Order customer ko deliver ho gaya? Complete karne ke baad delivery charge aapke account me add ho jayega.","Haan, Delivered","Nahi");if(!ok)return;
-  var b=$("vgrDone");if(b){b.disabled=true;b.textContent="Ho raha hai…"}
+  var ok=await ask("Order customer ko deliver ho gaya? Complete karne ke baad delivery charge aapke account me add ho jayega.","Haan, Delivered","Nahi");if(!ok){vgsReset($("vgrDone"));return}
+  var b=$("vgrDone");if(b)vgsBusy(b,"Ho raha hai…")
   var r=await sb().rpc("rider_complete_order",{p_order_id:a.order_id});
   if(r.error){
     var m=errMsg(r.error);
     if(/PAYMENT_NOT_CONFIRMED/.test(m))toast("Pehle customer se payment lekar Confirm dabao",4500);else toast("❌ "+m,4500);
-    if(b){b.disabled=false;b.textContent="🏁 Delivery Complete"}return;
+    if(b)vgsReset(b);return;
   }
   var earn=r.data&&r.data.earning;
   destroyMaps();$("vgrRide").classList.remove("show");S.active=null;S.lastPushPos=null;
