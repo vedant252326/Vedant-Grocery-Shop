@@ -22623,6 +22623,302 @@ if(typeof g==='function'&&!g.__vgRoad){var w=async function(){var r=await g.appl
 setInterval(function(){var p=cur();if(p&&C.key!==keyOf(p))ensureRoad()},1200);
 })();
 </script>
+<!-- ===================== VEDANT CHAT CORE (customer <-> rider) ===================== -->
+<style id="vgc-style">
+#vgNotif{position:fixed;left:50%;top:0;z-index:2147483600;width:min(94vw,420px);transform:translate(-50%,-140%);transition:transform .38s cubic-bezier(.2,1.2,.4,1);margin-top:calc(8px + env(safe-area-inset-top,0px));display:flex;gap:11px;align-items:center;padding:11px 13px;border-radius:20px;background:rgba(20,28,23,.96);color:#fff;box-shadow:0 14px 34px #0008;border:1px solid #ffffff22;backdrop-filter:blur(10px);cursor:pointer;font-family:inherit}
+#vgNotif.show{transform:translate(-50%,0)}
+#vgNotif .vgn-i{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;font-size:21px;background:var(--fp,#16a34a);flex:0 0 auto}
+#vgNotif b{display:block;font-size:14px}#vgNotif span{display:block;font-size:13px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62vw}#vgNotif em{font-style:normal;font-size:11px;opacity:.6;margin-left:auto;align-self:flex-start}
+#vgChat{position:fixed;inset:0;z-index:2147483500;display:none;background:#0009;align-items:flex-end;justify-content:center;font-family:inherit}
+#vgChat.show{display:flex}
+#vgChat .vgc-box{width:100%;max-width:460px;height:100dvh;background:#f1f5f2;display:flex;flex-direction:column;overflow:hidden;animation:vgcUp .28s ease-out}
+@keyframes vgcUp{from{transform:translateY(40px);opacity:.4}}
+@media(min-width:700px){#vgChat{align-items:center}#vgChat .vgc-box{height:min(680px,92vh);border-radius:24px}}
+#vgChat .vgc-head{display:flex;align-items:center;gap:11px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 12px;background:var(--fh,linear-gradient(135deg,#0b1220,#14532d));color:#fff}
+#vgChat .vgc-av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#ffffff2e;font-size:22px}
+#vgChat .vgc-head b{display:block;font-size:16px}#vgChat .vgc-head small{opacity:.85;font-size:12px}
+html body #vgChat button{font-family:inherit;margin:0;box-shadow:none;text-transform:none;letter-spacing:0}
+html body #vgChat .vgc-x{width:40px!important;height:40px!important;padding:0!important;border-radius:50%!important;border:0!important;background:#ffffff2e!important;color:#fff!important;font-size:20px!important}
+#vgChat .vgc-list{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:6px;background:radial-gradient(circle at 20% 0,#e6f5ea,#f1f5f2 55%)}
+#vgChat .vgc-b{max-width:80%;padding:9px 12px;border-radius:16px;font-size:15px;line-height:1.35;word-break:break-word;color:#1d2a21;background:#fff;box-shadow:0 2px 6px #0001;align-self:flex-start;border-bottom-left-radius:5px}
+#vgChat .vgc-b.me{align-self:flex-end;background:var(--fb,linear-gradient(135deg,#16a34a,#0f7a34));color:#fff;border-radius:16px;border-bottom-right-radius:5px}
+#vgChat .vgc-b small{display:block;font-size:10px;opacity:.65;margin-top:3px;text-align:right}
+#vgChat .vgc-empty{margin:auto;text-align:center;color:#6b7a70;font-weight:700}
+#vgChat .vgc-quick{display:flex;gap:7px;overflow-x:auto;padding:8px 10px;background:#e7efe9;scrollbar-width:none}
+html body #vgChat .vgc-quick button{flex:0 0 auto;padding:8px 12px!important;border-radius:99px!important;border:1px solid #b8d4c0!important;background:#fff!important;color:#1d4a2b!important;font-size:13px!important;font-weight:700!important}
+#vgChat .vgc-in{display:flex;gap:8px;padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));background:#fff}
+#vgChat .vgc-in input{flex:1;min-width:0;padding:13px 14px;border-radius:99px;border:1.5px solid #d3e0d7;font-size:16px;background:#f7faf8;color:#1d2a21;margin:0;outline:0}
+html body #vgChat .vgc-send{width:48px!important;height:48px!important;padding:0!important;border-radius:50%!important;border:0!important;background:var(--fb,linear-gradient(135deg,#16a34a,#0f7a34))!important;color:#fff!important;font-size:19px!important}
+body.dark #vgChat .vgc-box{background:#0e1410}body.dark #vgChat .vgc-list{background:#0e1410}
+body.dark #vgChat .vgc-b{background:#1b251e;color:#eaf2ec}body.dark #vgChat .vgc-b.me{color:#fff}
+body.dark #vgChat .vgc-quick{background:#131b16}body.dark html #vgChat .vgc-quick button{background:#1b251e!important}
+body.dark #vgChat .vgc-in{background:#131b16}body.dark #vgChat .vgc-in input{background:#1b251e;border-color:#2c3a31;color:#eaf2ec}
+#vgrChatFab{position:absolute;right:12px;top:132px;z-index:60;width:52px;height:52px;border-radius:50%;border:0;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;font-size:24px;box-shadow:0 10px 22px #0005;padding:0;cursor:pointer}
+#vgrChatFab i,.vgt-badge{font-style:normal;position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:99px;background:#ef4444;color:#fff;font-size:11px;font-weight:900;display:none;place-items:center;padding:0 5px;border:2px solid #fff}
+#vgrChatFab i.on,.vgt-badge.on{display:grid}
+.vgr-tipb{display:inline-block;padding:1px 7px;border-radius:99px;background:#fff3c4;color:#7a5a00;font-size:11px;font-weight:800;margin-right:4px}
+</style>
+<script id="vg-chat-core">
+(function(){
+'use strict';
+if(window.VGChat)return;
+var D=document,M={},cur=null,tmr=null,AC=null,nt=null;
+function sbc(){return window.supabaseClient||(typeof supabaseClient!=='undefined'?supabaseClient:null)}
+function hi(){return String(D.documentElement.dataset.language||D.documentElement.lang||'en').toLowerCase().indexOf('hi')===0}
+function T(e,h){return hi()?h:e}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+var CFG={customer:{list:'customer_chat',send:'customer_send_message',other:'rider'},rider:{list:'rider_chat',send:'rider_send_message',other:'customer'}};
+function sk(w,o){return 'vgSeen:'+w+':'+o}
+function getSeen(w,o){try{return Number(localStorage.getItem(sk(w,o)))||0}catch(e){return 0}}
+function setSeen(w,o,v){try{localStorage.setItem(sk(w,o),String(v))}catch(e){}}
+function st(w,o){var k=w+':'+o;return M[k]||(M[k]={msgs:[],last:0,notified:0})}
+function unread(w,o){var s=st(w,o),sn=getSeen(w,o),other=CFG[w].other;return s.msgs.filter(function(m){return m.sender===other&&m.id>sn}).length}
+function emit(w,o){try{D.dispatchEvent(new CustomEvent('vgchat-unread',{detail:{who:w,orderId:String(o),unread:unread(w,o)}}))}catch(e){}}
+function ping(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var c=AC,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.25,c.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.35);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.4)}catch(e){}}
+function banner(title,text,onTap,icon){
+  var n=D.getElementById('vgNotif');
+  if(!n){n=D.createElement('div');n.id='vgNotif';D.body.appendChild(n);
+    var y0=null;n.addEventListener('touchstart',function(e){y0=e.touches[0].clientY},{passive:true});
+    n.addEventListener('touchmove',function(e){if(y0!=null&&e.touches[0].clientY-y0<-18){n.classList.remove('show');y0=null}},{passive:true});
+    n.addEventListener('click',function(){n.classList.remove('show');if(n._t)n._t()})}
+  n._t=onTap||null;
+  n.innerHTML='<div class="vgn-i">'+(icon||'💬')+'</div><div style="min-width:0"><b>'+esc(title)+'</b><span>'+esc(text)+'</span></div><em>'+T('now','अभी')+'</em>';
+  void n.offsetWidth;n.classList.add('show');ping();try{navigator.vibrate&&navigator.vibrate([70,40,70])}catch(e){}
+  clearTimeout(nt);nt=setTimeout(function(){n.classList.remove('show')},5200);
+}
+async function fetchNew(w,o){
+  var c=sbc();if(!c)return null;var s=st(w,o);
+  var r=await c.rpc(CFG[w].list,{p_order_id:String(o),p_after:s.last});
+  if(r.error||!Array.isArray(r.data))return null;
+  var added=r.data.filter(function(m){return !s.msgs.some(function(x){return x.id===m.id})});
+  s.msgs=s.msgs.filter(function(m){return m.id>0||!added.some(function(a){return a.sender===m.sender&&a.body===m.body})}).concat(added);
+  added.forEach(function(m){if(m.id>s.last)s.last=m.id});
+  return {s:s,added:added};
+}
+async function poll(w,o){
+  var r=await fetchNew(w,o);if(!r)return;
+  var s=r.s,isOpen=cur&&cur.w===w&&String(cur.o)===String(o);
+  if(isOpen){render();setSeen(w,o,s.last)}
+  else{
+    var fresh=r.added.filter(function(m){return m.sender===CFG[w].other&&m.id>getSeen(w,o)&&m.id>s.notified});
+    if(fresh.length){var m=fresh[fresh.length-1];s.notified=m.id;
+      if(Date.now()-new Date(m.created_at).getTime()<120000)banner((w==='customer'?T('Rider','राइडर'):T('Customer','कस्टमर'))+(cur&&cur.name?'':''),m.body,function(){open(w,o,w==='customer'?T('Rider','राइडर'):T('Customer','कस्टमर'))},w==='customer'?'🏍️':'🙋')}
+  }
+  emit(w,o);
+}
+function hm(iso){var d=new Date(iso);return isNaN(d)?'':d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}
+function render(){
+  var b=D.getElementById('vgChat');if(!b||!cur)return;
+  var l=b.querySelector('.vgc-list'),s=st(cur.w,cur.o),near=l.scrollHeight-l.scrollTop-l.clientHeight<90||!l._init;
+  l.innerHTML=s.msgs.length?s.msgs.map(function(m){return '<div class="vgc-b'+(m.sender===cur.w?' me':'')+'">'+esc(m.body)+'<small>'+hm(m.created_at)+'</small></div>'}).join(''):'<div class="vgc-empty">'+T('Say hi 👋','नमस्ते बोलिए 👋')+'<br><small>'+T('Messages go straight to the other side','मैसेज सीधे सामने वाले तक जाएगा')+'</small></div>';
+  if(near){l.scrollTop=l.scrollHeight;l._init=1}
+}
+function quick(w){return w==='customer'?[T('Hi 👋','हाय 👋'),T('Please come to the gate','गेट पर आ जाइए'),T('How long will it take?','कितना टाइम लगेगा?'),T('Please call me','कॉल कीजिए'),T('Thank you 🙏','धन्यवाद 🙏')]:[T('Hi 👋','हाय 👋'),T('I am on my way 🏍️','मैं निकल गया हूँ 🏍️'),T('Reaching in 5 minutes','5 मिनट में पहुँच रहा हूँ'),T('Please come to the gate','गेट पर आ जाइए'),T('Please share your location 📍','अपनी लोकेशन भेजिए 📍')]}
+function build(){
+  var b=D.getElementById('vgChat');if(b)return b;
+  b=D.createElement('div');b.id='vgChat';
+  b.innerHTML='<div class="vgc-box"><div class="vgc-head"><button type="button" class="vgc-x" data-c="x">←</button><div class="vgc-av">💬</div><div><b id="vgcName"></b><small id="vgcSub"></small></div></div><div class="vgc-list"></div><div class="vgc-quick"></div><div class="vgc-in"><input id="vgcIn" maxlength="300" autocomplete="off" enterkeyhint="send"><button type="button" class="vgc-send" data-c="send" aria-label="Send">➤</button></div></div>';
+  D.body.appendChild(b);
+  b.addEventListener('click',function(e){var t=e.target.closest('[data-c]');if(e.target===b){close();return}if(!t)return;var a=t.getAttribute('data-c');if(a==='x')close();else if(a==='send')send();else if(a==='q'){D.getElementById('vgcIn').value=t.textContent;send()}});
+  b.querySelector('#vgcIn').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();send()}});
+  return b;
+}
+function open(w,o,name){
+  var b=build();cur={w:w,o:String(o),name:name||''};
+  D.getElementById('vgcName').textContent=name||(w==='customer'?T('Your rider','आपका राइडर'):T('Customer','कस्टमर'));
+  D.getElementById('vgcSub').textContent=T('Order #','ऑर्डर #')+String(o).slice(-6);
+  b.querySelector('.vgc-av').textContent=w==='customer'?'🏍️':'🙋';
+  var inp=D.getElementById('vgcIn');inp.placeholder=T('Type a message…','मैसेज लिखें…');inp.value='';
+  b.querySelector('.vgc-quick').innerHTML=quick(w).map(function(q){return '<button type="button" data-c="q">'+esc(q)+'</button>'}).join('');
+  b.querySelector('.vgc-list')._init=0;b.classList.add('show');D.documentElement.style.overflow='hidden';
+  var n=D.getElementById('vgNotif');if(n)n.classList.remove('show');
+  render();poll(w,o);clearInterval(tmr);tmr=setInterval(function(){if(cur)poll(cur.w,cur.o)},2000);
+}
+function close(){var b=D.getElementById('vgChat');if(b)b.classList.remove('show');clearInterval(tmr);if(cur){setSeen(cur.w,cur.o,st(cur.w,cur.o).last);emit(cur.w,cur.o)}cur=null;D.documentElement.style.overflow=''}
+async function send(){
+  var inp=D.getElementById('vgcIn'),v=(inp.value||'').trim();if(!v||!cur)return;inp.value='';
+  var w=cur.w,o=cur.o,s=st(w,o);s.msgs.push({id:-Date.now(),sender:w,body:v,created_at:new Date().toISOString()});render();
+  var c=sbc(),r=c&&await c.rpc(CFG[w].send,{p_order_id:String(o),p_body:v});
+  if(!r||r.error){s.msgs=s.msgs.filter(function(m){return !(m.id<0&&m.body===v)});render();banner(T('Message not sent','मैसेज नहीं गया'),(r&&r.error&&r.error.message||'').replace(/^.*exception:?\s*/i,'')||T('Please try again','दोबारा कोशिश करें'),null,'⚠️');return}
+  poll(w,o);
+}
+window.VGChat={open:open,close:close,poll:poll,unread:unread,banner:banner,T:T,esc:esc};
+})();
+</script>
+<!-- ===================== END CHAT CORE ===================== -->
+<!-- ===================== VEDANT TRACK: RIDER CARD + CHAT + TIP + RATING ===================== -->
+<style id="vgt-style">
+#vgTrackRider{margin:12px 0;padding:14px;border-radius:22px;background:linear-gradient(160deg,#fff,#effaf2);border:1px solid #cfe8d6;box-shadow:0 12px 28px #0b12201c;color:#1d2a21}
+#vgTrackRider .vgt-top{display:flex;align-items:center;gap:12px}
+#vgTrackRider .vgt-av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:27px;background:linear-gradient(135deg,var(--fa,#fbbf24),#fff);box-shadow:0 0 0 3px var(--fp,#16a34a)}
+#vgTrackRider b{font-size:16px;display:block}#vgTrackRider small{color:#5f7066;font-weight:600;display:block;font-size:12px;margin-top:2px}
+#vgTrackRider .vgt-act{display:flex;gap:9px;margin-top:12px}
+html body #vgTrackRider .vgt-btn,html body #vgTrackRider a.vgt-btn{flex:1;position:relative;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 8px!important;border:0!important;border-radius:15px!important;font-size:14px!important;font-weight:900!important;text-decoration:none;color:#fff!important;background:linear-gradient(135deg,#3b82f6,#1d4ed8)!important;margin:0!important;cursor:pointer;box-shadow:0 8px 16px #1d4ed833!important}
+html body #vgTrackRider .vgt-btn.call{background:linear-gradient(135deg,#16a34a,#0f7a34)!important;box-shadow:0 8px 16px #0f7a3433!important}
+html body #vgTrackRider .vgt-btn.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b)!important;color:#2b2000!important;box-shadow:0 8px 16px #f59e0b33!important}
+#vgTrackRider .vgt-chip{display:inline-block;margin:10px 6px 0 0;padding:6px 12px;border-radius:99px;background:#fff3c4;color:#6e5200;font-weight:800;font-size:13px}
+body.dark #vgTrackRider{background:linear-gradient(160deg,#151e18,#1a261d);border-color:#2f4232;color:#eaf2ec}body.dark #vgTrackRider small{color:#9db2a3}body.dark #vgTrackRider .vgt-chip{background:#3b2f0a;color:#ffd978}
+#vgFlow{position:fixed;inset:0;z-index:2147483300;overflow-y:auto;display:flex;flex-direction:column;background:var(--fh,linear-gradient(160deg,#0b1220,#14532d 60%,#b8860b));color:#fff;font-family:inherit;animation:vgfIn .35s ease-out}
+@keyframes vgfIn{from{opacity:0;transform:scale(1.04)}}
+#vgFlow .vgf-hero{text-align:center;padding:calc(54px + env(safe-area-inset-top,0px)) 20px 26px}
+#vgFlow .vgf-ic{font-size:92px;line-height:1;animation:vgfPop .8s cubic-bezier(.2,1.7,.4,1);filter:drop-shadow(0 0 24px var(--fa,#fbbf24))}
+@keyframes vgfPop{0%{transform:scale(.1) rotate(-25deg);opacity:0}100%{transform:none;opacity:1}}
+#vgFlow h1{margin:10px 0 4px;font-size:30px;color:#fff}#vgFlow .vgf-hero p{margin:0;opacity:.9;font-size:15px}
+#vgFlow .vgf-card{flex:1;background:#fff;color:#1d2a21;border-radius:30px 30px 0 0;padding:22px 18px calc(24px + env(safe-area-inset-bottom,0px));text-align:center;box-shadow:0 -14px 40px #0006}
+#vgFlow .vgf-card h2{margin:0 0 4px;font-size:22px;color:#1d2a21}#vgFlow .vgf-card p{margin:0 0 14px;color:#667a6d;font-size:14px;font-weight:600}
+#vgFlow .vgf-av{width:74px;height:74px;margin:-58px auto 10px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:linear-gradient(135deg,var(--fa,#fbbf24),#fff);box-shadow:0 0 0 4px #fff,0 10px 24px #0004}
+#vgFlow .vgf-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:6px 0 12px}
+html body #vgFlow button{font-family:inherit;margin:0;text-transform:none;letter-spacing:0;box-shadow:none}
+html body #vgFlow .vgf-chip{padding:15px 0!important;border-radius:18px!important;border:2px solid #d9e6dc!important;background:#f6faf7!important;color:#1d2a21!important;font-size:19px!important;font-weight:900!important}
+html body #vgFlow .vgf-chip.on{border-color:var(--fp,#16a34a)!important;background:#e3f7e8!important;color:#0f6b2d!important;transform:scale(1.05)}
+#vgFlow input[type=number],#vgFlow textarea{width:100%;box-sizing:border-box;padding:14px;border-radius:16px;border:2px solid #d9e6dc;font-size:17px;background:#f9fcfa;color:#1d2a21;margin:0 0 12px;text-align:center;outline:0;font-family:inherit}
+#vgFlow textarea{text-align:left;font-size:15px;min-height:70px;resize:none}
+html body #vgFlow .vgf-main{width:100%;padding:17px!important;border:0!important;border-radius:18px!important;background:var(--fb,linear-gradient(135deg,#16a34a,#0f7a34))!important;color:#fff!important;font-size:18px!important;font-weight:900!important;box-shadow:0 12px 24px #0f7a3444!important}
+html body #vgFlow .vgf-main:disabled{opacity:.45}
+html body #vgFlow .vgf-sec{width:100%;margin-top:10px!important;padding:13px!important;border:0!important;background:transparent!important;color:#6a7b70!important;font-size:15px!important;font-weight:800!important}
+html body #vgFlow .vgf-x{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:14px;width:42px!important;height:42px!important;padding:0!important;border-radius:50%!important;border:1px solid #ffffff55!important;background:#ffffff2e!important;color:#fff!important;font-size:20px!important}
+#vgFlow .vgf-stars{display:flex;justify-content:center;gap:4px;margin:6px 0 4px}
+html body #vgFlow .vgf-star{width:54px!important;height:58px!important;padding:0!important;border:0!important;background:transparent!important;font-size:46px!important;line-height:1;color:#d3dcd6!important;transition:transform .15s}
+html body #vgFlow .vgf-star.on{color:#fbbf24!important;transform:scale(1.12);text-shadow:0 4px 14px #f59e0b88}
+#vgFlow .vgf-lbl{height:26px;font-weight:900;font-size:17px;color:#b45309;margin-bottom:8px}
+#vgFlow .vgf-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
+html body #vgFlow .vgf-tag{padding:9px 14px!important;border-radius:99px!important;border:2px solid #d9e6dc!important;background:#f6faf7!important;color:#33473a!important;font-size:14px!important;font-weight:800!important}
+html body #vgFlow .vgf-tag.on{border-color:var(--fp,#16a34a)!important;background:#e3f7e8!important;color:#0f6b2d!important}
+#vgFlow .vgf-msg{min-height:20px;color:#c62828;font-weight:800;font-size:13px;margin-bottom:6px}
+#vgFlow .vgf-upi{font-size:13px;color:#667a6d;margin:8px 0}
+#vgFlow i.cf{position:fixed;top:-20px;width:10px;height:16px;border-radius:2px;pointer-events:none;animation:vgfCf linear forwards;z-index:5}
+@keyframes vgfCf{to{top:110%;transform:translateX(30px) rotate(720deg)}}
+body.dark #vgFlow .vgf-card{background:#121a15;color:#eaf2ec}body.dark #vgFlow .vgf-card h2{color:#f2f7f3}body.dark #vgFlow .vgf-card p{color:#9db2a3}
+body.dark html #vgFlow .vgf-chip,body.dark #vgFlow .vgf-tag{background:#1b251e!important;border-color:#2c3a31!important;color:#eaf2ec!important}
+body.dark #vgFlow input[type=number],body.dark #vgFlow textarea{background:#1b251e;border-color:#2c3a31;color:#eaf2ec}
+@media(min-width:700px){#vgFlow{align-items:center}#vgFlow .vgf-card{width:460px;flex:none;border-radius:30px}}
+</style>
+<script id="vg-track-extras">
+(function(){
+'use strict';
+var D=document,S=null,busy=false,flowOpen=false,sel={tip:0,rate:0,tags:{}};
+function sb(){return window.supabaseClient||(typeof supabaseClient!=='undefined'?supabaseClient:null)}
+function T(e,h){return window.VGChat.T(e,h)}
+function esc(s){return window.VGChat.esc(s)}
+function oid(){try{return String((typeof trackedOrderId!=='undefined'&&trackedOrderId)||localStorage.getItem('vedantTrackedOrderId')||'')}catch(e){return ''}}
+function fget(id){try{return JSON.parse(localStorage.getItem('vgFb:'+id)||'{}')||{}}catch(e){return {}}}
+function fset(id,o){try{localStorage.setItem('vgFb:'+id,JSON.stringify(Object.assign(fget(id),o)))}catch(e){}}
+function money(n){return '₹'+Math.round(Number(n)||0)}
+var isDone=function(s){return /delivered/i.test(s&&s.order_status||'')};
+/* ---------- rider card on track page ---------- */
+function card(s){
+  var page=D.getElementById('page-track'),c=D.getElementById('vgTrackRider');
+  if(!page||!s||!s.has_rider||/cancel/i.test(s.order_status||'')){if(c)c.remove();return}
+  var id=s.id,un=window.VGChat.unread('customer',id),done=isDone(s),nm=s.rider_name||T('Your rider','आपका राइडर');
+  var h='<div class="vgt-top"><div class="vgt-av">🏍️</div><div><b>'+esc(nm)+'</b><small>'+(done?T('Delivered your order ✅','आपका ऑर्डर डिलीवर किया ✅'):(s.rider_stage==='picked'?T('On the way to you 🛵','आपकी ओर आ रहे हैं 🛵'):T('Going to the shop to pick up your order','आपका ऑर्डर लेने शॉप जा रहे हैं')))+'</small></div></div>';
+  if(!done){h+='<div class="vgt-act">'+(s.rider_phone?'<a class="vgt-btn call" href="tel:'+esc(s.rider_phone)+'">📞 '+T('Call','कॉल')+'</a>':'')+'<button type="button" class="vgt-btn" data-vgt="chat">💬 '+T('Message','मैसेज')+'<span class="vgt-badge'+(un?' on':'')+'">'+un+'</span></button></div>'}
+  else{
+    h+=(s.tip>0?'<span class="vgt-chip">🎁 '+T('Tip','टिप')+' '+money(s.tip)+'</span>':'')+(s.rating?'<span class="vgt-chip">'+'★'.repeat(s.rating)+' '+T('Rated','रेटिंग')+'</span>':'');
+    h+='<div class="vgt-act">'+(s.tip>0?'':'<button type="button" class="vgt-btn gold" data-vgt="tip">🎁 '+T('Give tip','टिप दें')+'</button>')+(s.rating?'':'<button type="button" class="vgt-btn" data-vgt="rate">⭐ '+T('Rate rider','रेटिंग दें')+'</button>')+'</div>';
+  }
+  if(!c){c=D.createElement('section');c.id='vgTrackRider';var box=D.getElementById('customer-tracking-box');if(box&&box.parentNode===page)page.insertBefore(c,box.nextSibling);else page.appendChild(c)}
+  if(c._h!==h){c._h=h;c.innerHTML=h}
+}
+/* ---------- polling ---------- */
+async function tick(){
+  var id=oid(),c=sb();if(!id||!c||busy)return;busy=true;
+  try{
+    var r=await c.rpc('customer_order_state',{p_order_id:id}),s=r&&r.data;
+    if(!r||r.error||!s||!s.found){card(null);return}
+    s.id=id;S=s;card(s);
+    if(s.has_rider&&!isDone(s)&&!/cancel/i.test(s.order_status||''))await window.VGChat.poll('customer',id);
+    if(isDone(s)&&s.has_rider)maybeFlow(s,id);
+  }catch(e){}finally{busy=false}
+}
+D.addEventListener('vgchat-unread',function(e){if(S&&e.detail.orderId===S.id)card(S)});
+D.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('[data-vgt]');if(!b)return;var a=b.getAttribute('data-vgt');
+  if(a==='chat'&&S)window.VGChat.open('customer',S.id,S.rider_name);
+  else if(a==='tip'&&S)showTip(S,S.id);else if(a==='rate'&&S)showRate(S,S.id);
+});
+/* ---------- full screen flow ---------- */
+function maybeFlow(s,id){
+  if(flowOpen)return;var f=fget(id),recent=s.delivered_at?(Date.now()-new Date(s.delivered_at).getTime())<3*3600*1000:true;if(!recent)return;
+  if(!f.tip&&!(s.tip>0)&&!f.tipSkip)showTip(s,id);else if(!f.rate&&!s.rating&&!f.rateSkip)showRate(s,id);
+}
+function shell(inner){
+  var o=D.getElementById('vgFlow');if(!o){o=D.createElement('div');o.id='vgFlow';D.body.appendChild(o)}
+  o.innerHTML=inner;flowOpen=true;D.documentElement.style.overflow='hidden';return o;
+}
+function closeFlow(){var o=D.getElementById('vgFlow');if(o)o.remove();flowOpen=false;D.documentElement.style.overflow=''}
+function confetti(){
+  var o=D.getElementById('vgFlow');if(!o)return;var cols=['#fbbf24','#22c55e','#3b82f6','#ef4444','#a855f7','#fff'],h='';
+  for(var i=0;i<46;i++)h+='<i class="cf" style="left:'+(Math.random()*100)+'%;background:'+cols[i%6]+';animation-duration:'+(1.8+Math.random()*1.6)+'s;animation-delay:'+(Math.random()*.5)+'s"></i>';
+  var w=D.createElement('div');w.innerHTML=h;while(w.firstChild)o.appendChild(w.firstChild);
+}
+function showTip(s,id){
+  sel.tip=0;var nm=esc(s.rider_name||T('your rider','आपके राइडर'));
+  var o=shell('<button type="button" class="vgf-x" data-f="skip" aria-label="Close">✕</button><div class="vgf-hero"><div class="vgf-ic">🎉</div><h1>'+T('Order Delivered!','ऑर्डर डिलीवर हो गया!')+'</h1><p>'+nm+' '+T('delivered your order','ने आपका ऑर्डर पहुँचाया')+'</p></div>'+
+   '<div class="vgf-card"><div class="vgf-av">🏍️</div><h2>'+T('Tip your rider','राइडर को टिप दें')+'</h2><p>'+T('A small thank you makes their day','छोटा सा धन्यवाद उनका दिन बना देता है')+'</p>'+
+   '<div class="vgf-chips">'+[10,20,30,50].map(function(a){return '<button type="button" class="vgf-chip" data-f="amt" data-a="'+a+'">₹'+a+'</button>'}).join('')+'</div>'+
+   '<input id="vgfAmt" type="number" inputmode="numeric" min="1" max="2000" placeholder="'+T('Or enter your amount ₹','या अपनी राशि लिखें ₹')+'"><div class="vgf-msg" id="vgfMsg"></div>'+
+   '<button type="button" class="vgf-main" data-f="pay" id="vgfPay" disabled>'+T('Choose an amount','राशि चुनें')+'</button><button type="button" class="vgf-sec" data-f="skip">'+T('Not now, thanks','अभी नहीं, धन्यवाद')+'</button></div>');
+  o._s=s;o._id=id;
+}
+function setAmt(v){
+  sel.tip=Math.max(0,Math.min(2000,Math.round(Number(v)||0)));
+  D.querySelectorAll('#vgFlow .vgf-chip').forEach(function(b){b.classList.toggle('on',Number(b.getAttribute('data-a'))===sel.tip)});
+  var p=D.getElementById('vgfPay');if(p){p.disabled=!sel.tip;p.textContent=sel.tip?T('Pay ₹'+sel.tip+' tip','₹'+sel.tip+' टिप दें'):T('Choose an amount','राशि चुनें')}
+}
+function payTip(){
+  var o=D.getElementById('vgFlow'),id=o._id,s=o._s;if(!sel.tip)return;
+  var upi=(typeof VEDANT_UPI_ID!=='undefined'?VEDANT_UPI_ID:'');
+  var url='upi://pay?pa='+encodeURIComponent(upi)+'&pn='+encodeURIComponent('Vedant Grocery Shop')+'&am='+sel.tip+'&cu=INR&tn='+encodeURIComponent('Rider tip '+id);
+  var card=o.querySelector('.vgf-card');
+  card.innerHTML='<div class="vgf-av">💸</div><h2>'+T('Pay ₹'+sel.tip+' in your UPI app','अपने UPI ऐप में ₹'+sel.tip+' दें')+'</h2><p>'+T('After paying, come back and tap the green button','पेमेंट के बाद वापस आकर हरा बटन दबाएँ')+'</p><div class="vgf-upi">UPI: <b>'+esc(upi)+'</b></div><div class="vgf-msg" id="vgfMsg"></div>'+
+   '<a class="vgf-main" href="'+url+'" style="display:block;text-decoration:none;box-sizing:border-box;padding:17px;border-radius:18px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;font-size:18px;font-weight:900;margin-bottom:10px">📲 '+T('Open UPI app','UPI ऐप खोलें')+'</a>'+
+   '<button type="button" class="vgf-main" data-f="paid">✅ '+T('I have paid the tip','मैंने टिप दे दी')+'</button><button type="button" class="vgf-sec" data-f="back">↩ '+T('Change amount','राशि बदलें')+'</button>';
+}
+async function saveTip(){
+  var o=D.getElementById('vgFlow'),id=o._id,s=o._s,m=D.getElementById('vgfMsg'),c=sb();
+  var r=c&&await c.rpc('customer_submit_tip',{p_order_id:id,p_tip:sel.tip});
+  if(!r||r.error){if(m)m.textContent=(r&&r.error&&r.error.message||'').replace(/^.*exception:?\s*/i,'')||T('Could not save, try again','सेव नहीं हुआ, फिर कोशिश करें');return}
+  fset(id,{tip:1});s.tip=sel.tip;confetti();
+  o.querySelector('.vgf-card').innerHTML='<div class="vgf-av">🙏</div><h2>'+T('Thank you!','धन्यवाद!')+'</h2><p>'+T('Your tip is on its way to the rider','आपकी टिप राइडर तक पहुँच जाएगी')+'</p>';
+  setTimeout(function(){closeFlow();tick();if(!s.rating)showRate(s,id)},1300);
+}
+var LBL=function(n){return [T('Very bad','बहुत खराब'),T('Bad','खराब'),T('Okay','ठीक-ठाक'),T('Good','अच्छा'),T('Excellent! 🤩','शानदार! 🤩')][n-1]||''};
+function showRate(s,id){
+  sel.rate=0;sel.tags={};var nm=esc(s.rider_name||T('your rider','आपके राइडर'));
+  var tags=[['⚡',T('Fast','तेज़')],['😊',T('Polite','विनम्र')],['📦',T('Careful','सावधान')],['⏱️',T('On time','समय पर')],['🧼',T('Neat','साफ़-सुथरा')]];
+  var o=shell('<button type="button" class="vgf-x" data-f="rskip" aria-label="Close">✕</button><div class="vgf-hero"><div class="vgf-ic">⭐</div><h1>'+T('Rate your delivery','डिलीवरी को रेट करें')+'</h1><p>'+T('How was ','कैसा रहा ')+nm+T('’s service?',' का काम?')+'</p></div>'+
+   '<div class="vgf-card"><div class="vgf-av">🏍️</div><div class="vgf-stars">'+[1,2,3,4,5].map(function(n){return '<button type="button" class="vgf-star" data-f="star" data-n="'+n+'">★</button>'}).join('')+'</div><div class="vgf-lbl" id="vgfLbl"></div>'+
+   '<div class="vgf-tags">'+tags.map(function(t,i){return '<button type="button" class="vgf-tag" data-f="tag" data-i="'+i+'" data-t="'+esc(t[1])+'">'+t[0]+' '+esc(t[1])+'</button>'}).join('')+'</div>'+
+   '<textarea id="vgfCm" maxlength="200" placeholder="'+T('Write something (optional)','कुछ लिखें (वैकल्पिक)')+'"></textarea><div class="vgf-msg" id="vgfMsg"></div>'+
+   '<button type="button" class="vgf-main" data-f="rsub" id="vgfRs" disabled>'+T('Submit rating','रेटिंग भेजें')+'</button><button type="button" class="vgf-sec" data-f="rskip">'+T('Skip','छोड़ें')+'</button></div>');
+  o._s=s;o._id=id;
+}
+async function saveRate(){
+  var o=D.getElementById('vgFlow'),id=o._id,s=o._s,m=D.getElementById('vgfMsg'),c=sb();if(!sel.rate)return;
+  var tg=Object.keys(sel.tags).map(function(k){return sel.tags[k]}).join(', '),cm=(D.getElementById('vgfCm').value||'').trim();
+  var r=c&&await c.rpc('customer_submit_rating',{p_order_id:id,p_rating:sel.rate,p_tags:tg,p_comment:cm});
+  if(!r||r.error){if(m)m.textContent=(r&&r.error&&r.error.message||'').replace(/^.*exception:?\s*/i,'')||T('Could not save, try again','सेव नहीं हुआ, फिर कोशिश करें');return}
+  fset(id,{rate:1});s.rating=sel.rate;confetti();
+  o.querySelector('.vgf-card').innerHTML='<div class="vgf-av">💚</div><h2>'+T('Thanks for your feedback!','आपकी राय के लिए धन्यवाद!')+'</h2><p>'+T('We will keep improving','हम और बेहतर करेंगे')+'</p>';
+  setTimeout(function(){closeFlow();tick()},1500);
+}
+D.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('#vgFlow [data-f]');if(!b)return;var a=b.getAttribute('data-f'),o=D.getElementById('vgFlow');
+  if(a==='amt'){D.getElementById('vgfAmt').value='';setAmt(b.getAttribute('data-a'))}
+  else if(a==='pay')payTip();else if(a==='paid')saveTip();
+  else if(a==='back')showTip(o._s,o._id);
+  else if(a==='skip'){var id=o._id,s=o._s;fset(id,{tipSkip:1});closeFlow();if(!s.rating&&!fget(id).rate&&!fget(id).rateSkip)showRate(s,id);tick()}
+  else if(a==='star'){sel.rate=Number(b.getAttribute('data-n'));D.querySelectorAll('#vgFlow .vgf-star').forEach(function(x){x.classList.toggle('on',Number(x.getAttribute('data-n'))<=sel.rate)});D.getElementById('vgfLbl').textContent=LBL(sel.rate);D.getElementById('vgfRs').disabled=false;try{navigator.vibrate&&navigator.vibrate(20)}catch(x){}}
+  else if(a==='tag'){var i=b.getAttribute('data-i');if(sel.tags[i]){delete sel.tags[i];b.classList.remove('on')}else{sel.tags[i]=b.getAttribute('data-t');b.classList.add('on')}}
+  else if(a==='rsub')saveRate();
+  else if(a==='rskip'){fset(o._id,{rateSkip:1});closeFlow();tick()}
+});
+D.addEventListener('input',function(e){if(e.target&&e.target.id==='vgfAmt')setAmt(e.target.value)});
+setInterval(function(){if(!D.hidden||Math.random()<.2)tick()},3000);
+setTimeout(tick,1500);
+})();
+</script>
+<!-- ===================== END TRACK EXTRAS ===================== -->
 <!-- ===================== VEDANT RIDER MODULE (additive, does not edit older code) ===================== -->
 <style id="vgr-style">
 html.vgr-boot::before{content:"";position:fixed;inset:0;background:#0b1220;z-index:2147481000}
@@ -22890,6 +23186,9 @@ async function loadDash(force){
   if(r.error){console.warn("rider_dashboard",r.error.message);return}
   var d=r.data||{};
   S.stats=d;S.hist=d.history||[];
+  try{var tt=Number(d.total_tips||0),rc=Number(d.rating_count||0),pt=lsGet("vgrTipSeen"),pr=lsGet("vgrRateSeen");
+    if(pt===null||pt===undefined||pt===""){lsSet("vgrTipSeen",String(tt))}else if(tt>Number(pt)){lsSet("vgrTipSeen",String(tt));if(window.VGChat)VGChat.banner(VGChat.T("Tip received! 🎁","टिप मिली! 🎁"),VGChat.T("Customer tipped you ","कस्टमर ने टिप दी ")+money(tt-Number(pt)),null,"🎁");fxTip()}
+    if(pr===null||pr===undefined||pr===""){lsSet("vgrRateSeen",String(rc))}else if(rc>Number(pr)){lsSet("vgrRateSeen",String(rc));if(window.VGChat)VGChat.banner(VGChat.T("New rating ⭐","नई रेटिंग ⭐"),VGChat.T("Your average is ","आपकी औसत रेटिंग ")+Number(d.rating_avg).toFixed(1),null,"⭐")}}catch(e){}
   var prev=S.active&&S.active.order_id,prevStage=S.active&&S.active.rider_stage,prevSig=S.active&&(S.active.payment_status+"|"+S.active.rider_payment_confirmed);
   S.active=d.active||null;
   if(prev&&!S.active){onActiveGone(prev)}
@@ -23145,7 +23444,7 @@ function renderDashBody(){
   var ws=me.on_duty?"1":"0",wb=$("vgrWait");
   if(wb.getAttribute("data-s")!==ws){wb.setAttribute("data-s",ws);wb.innerHTML=ws==="1"?'<div class="vgr-card vgr-wait"><div class="vgr-pulse">🏍️</div><b>Order ka intezaar…</b><div class="vgr-muted">Screen on rakho aur ye app khula rakho, naya order aate hi ringtone bajegi.</div></div>':'<div class="vgr-card vgr-wait vgx-off"><div class="vgx-sleep">😴</div><b>Duty OFF</b><div class="vgr-muted">Duty ON karo tabhi naye orders aayenge.</div></div>'}
   var h=S.hist||[];
-  var hhtml=h.length?h.map(function(x){var d=x.at?new Date(x.at):null;return '<div class="vgr-hist"><span>#'+esc(shortId(x.order_id))+(d?' • '+d.toLocaleDateString("en-IN",{day:"2-digit",month:"short"})+' '+d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):'')+'</span><b>+'+money(x.earning)+'</b></div>'}).join(""):'<div class="vgr-muted">Abhi koi delivery nahi hui.</div>';var hh=$("vgrHist");if(hh._h!==hhtml){hh._h=hhtml;hh.innerHTML=hhtml}
+  var hhtml=h.length?h.map(function(x){var d=x.at?new Date(x.at):null;return '<div class="vgr-hist"><span>#'+esc(shortId(x.order_id))+(d?' • '+d.toLocaleDateString("en-IN",{day:"2-digit",month:"short"})+' '+d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):'')+'</span><b>'+(Number(x.tip)>0?'<span class="vgr-tipb">🎁 '+money(x.tip)+'</span>':'')+(x.rating?'<span class="vgr-tipb">⭐ '+x.rating+'</span>':'')+'+'+money(x.earning)+'</b></div>'}).join(""):'<div class="vgr-muted">Abhi koi delivery nahi hui.</div>';var hh=$("vgrHist");if(hh._h!==hhtml){hh._h=hhtml;hh.innerHTML=hhtml}
 }
 function renderActive(){
   var a=S.active;if(!a)return;
@@ -23538,7 +23837,7 @@ var TR=[
 ["Naam likho","Enter your name","नाम लिखें"],["Pehle login karo","Please log in first","पहले लॉगिन करें"],["Order #","Order #","ऑर्डर #"],
 [" khatam ho gaya"," is finished"," पूरा हो गया"],["✅ Cash ","✅ Cash ","✅ कैश "],[" mil gaya"," received"," मिल गया"],["Nahi","No","नहीं"],["Login: ","Login: ","लॉगिन: "]
 ];
-TR.push(["🏍️ Ride shuru! Customer ke paas chalo","🏍️ Ride started! Head to the customer","🏍️ राइड शुरू! कस्टमर के पास चलें"],["📍 Aap shop pe pahunch gaye!","📍 You have reached the shop!","📍 आप शॉप पर पहुँच गए!"],["Order uthao aur I have reached dabao","Pick up the order and tap Start Ride","ऑर्डर उठाएँ और स्टार्ट राइड दबाएँ"],["Order sahi salamat deliver karo","Deliver the order safely","ऑर्डर सुरक्षित डिलीवर करें"],["Shabaash! Delivery complete","Well done! Delivery complete","शाबाश! डिलीवरी पूरी हुई"],["🎯 Aaj ka target","🎯 Today’s goal","🎯 आज का टारगेट"],["Target badalne ke liye tap karo","Tap to change target","टारगेट बदलने के लिए टैप करें"],["🎉 Target poora! Shabaash","🎉 Goal reached! Well done","🎉 टारगेट पूरा! शाबाश"],[" Avg / delivery "," Avg / delivery "," औसत / डिलीवरी "],["🥉 Bronze Rider","🥉 Bronze Rider","🥉 ब्रॉन्ज़ राइडर"],["🥈 Silver Rider","🥈 Silver Rider","🥈 सिल्वर राइडर"],["🥇 Gold Rider","🥇 Gold Rider","🥇 गोल्ड राइडर"],["💎 Platinum Rider","💎 Platinum Rider","💎 प्लैटिनम राइडर"],["Accepted","Accepted","स्वीकारा"],["At shop","At shop","शॉप पर"],["On the way","On the way","रास्ते में"],["Done","Done","पूरा"]);
+TR.push(["🎁 Tips ","🎁 Tips ","🎁 टिप "],["🏍️ Ride shuru! Customer ke paas chalo","🏍️ Ride started! Head to the customer","🏍️ राइड शुरू! कस्टमर के पास चलें"],["📍 Aap shop pe pahunch gaye!","📍 You have reached the shop!","📍 आप शॉप पर पहुँच गए!"],["Order uthao aur I have reached dabao","Pick up the order and tap Start Ride","ऑर्डर उठाएँ और स्टार्ट राइड दबाएँ"],["Order sahi salamat deliver karo","Deliver the order safely","ऑर्डर सुरक्षित डिलीवर करें"],["Shabaash! Delivery complete","Well done! Delivery complete","शाबाश! डिलीवरी पूरी हुई"],["🎯 Aaj ka target","🎯 Today’s goal","🎯 आज का टारगेट"],["Target badalne ke liye tap karo","Tap to change target","टारगेट बदलने के लिए टैप करें"],["🎉 Target poora! Shabaash","🎉 Goal reached! Well done","🎉 टारगेट पूरा! शाबाश"],[" Avg / delivery "," Avg / delivery "," औसत / डिलीवरी "],["🥉 Bronze Rider","🥉 Bronze Rider","🥉 ब्रॉन्ज़ राइडर"],["🥈 Silver Rider","🥈 Silver Rider","🥈 सिल्वर राइडर"],["🥇 Gold Rider","🥇 Gold Rider","🥇 गोल्ड राइडर"],["💎 Platinum Rider","💎 Platinum Rider","💎 प्लैटिनम राइडर"],["Accepted","Accepted","स्वीकारा"],["At shop","At shop","शॉप पर"],["On the way","On the way","रास्ते में"],["Done","Done","पूरा"]);
 var TRX=null,TRM={};
 function lang(){var R=document.documentElement,l=String(R.dataset.language||R.lang||"en").toLowerCase();return l.indexOf("hi")===0?2:1}
 function tr(s){
@@ -23608,13 +23907,22 @@ function renderExtra(){
   var st=S.stats,goal=Number(lsGet("vgrGoal"))||500,td=Number(st.today_earning)||0,pct=Math.min(100,Math.round(td/goal*100));
   var at=Number(lsGet("vgrDutyAt")),on=S.me&&S.me.on_duty&&at,mins=on?Math.max(0,Math.round((Date.now()-at)/60000)):0;
   var tc=Number(st.total_count)||0,avg=tc?(Number(st.total_earning)||0)/tc:0;
-  b.innerHTML='<div class="vgr-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="vgr-lvl">'+lvl(tc)+'</span><span class="vgr-muted">'+(on?'⏱ '+Math.floor(mins/60)+'h '+(mins%60)+'m':'')+'</span></div>'+
+  b.innerHTML='<div class="vgr-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="vgr-lvl">'+lvl(tc)+'</span>'+(st.rating_count?'<span class="vgr-lvl" style="background:#fff3c4">⭐ '+Number(st.rating_avg).toFixed(1)+' ('+st.rating_count+')</span>':'')+'<span class="vgr-muted">'+(on?'⏱ '+Math.floor(mins/60)+'h '+(mins%60)+'m':'')+'</span></div>'+
    '<div style="display:flex;justify-content:space-between;margin-top:12px;font-weight:800"><span>🎯 Aaj ka target</span><span>'+money(td)+' / '+money(goal)+'</span></div>'+
    '<div class="vgr-goal"><b style="width:'+pct+'%"></b></div>'+
-   '<div class="vgr-muted" id="vgrGoalEdit" style="cursor:pointer">'+(pct>=100?'🎉 Target poora! Shabaash':'Target badalne ke liye tap karo')+' • Avg / delivery '+money(avg)+'</div></div>';
+   '<div class="vgr-muted" id="vgrGoalEdit" style="cursor:pointer">'+(pct>=100?'🎉 Target poora! Shabaash':'Target badalne ke liye tap karo')+' • Avg / delivery '+money(avg)+' • 🎁 Tips '+money(st.today_tips)+'</div></div>';
   var ge=$("vgrGoalEdit");if(ge)ge.onclick=function(){var v=parseInt(prompt("Daily target (₹)",goal),10);if(v>=50){lsSet("vgrGoal",String(v));renderExtra()}};
 }
 
+function fxTip(){try{fx("done","🎁 Tip mili!","",null)}catch(e){}}
+function chatTick(){
+  var a=S.active,f=$("vgrChatFab"),o=$("vgRider");if(!o||!window.VGChat)return;
+  if(!a||!S.me){if(f)f.style.display="none";return}
+  if(!f){f=document.createElement("button");f.id="vgrChatFab";f.type="button";f.setAttribute("aria-label","Chat");f.innerHTML='💬<i id="vgrChatBadge"></i>';
+    f.onclick=function(){if(S.active)VGChat.open("rider",S.active.order_id,S.active.customer_name||"Customer")};o.appendChild(f)}
+  f.style.display="";VGChat.poll("rider",a.order_id);
+}
+document.addEventListener("vgchat-unread",function(e){var b=$("vgrChatBadge");if(b&&S.active&&e.detail.who==="rider"&&e.detail.orderId===String(S.active.order_id)){b.textContent=e.detail.unread;b.classList.toggle("on",e.detail.unread>0)}});
 /* ---------- init ---------- */
 function init(){
   var c=sb();
@@ -23627,7 +23935,7 @@ function init(){
       if(session&&session.user&&(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"||ev==="USER_UPDATED"||ev==="TOKEN_REFRESHED"))onSession(session);
     },0);
   });
-  ensureMenu();setInterval(ensureMenu,1500);setInterval(watchdog,1500);
+  ensureMenu();setInterval(ensureMenu,1500);setInterval(watchdog,1500);setInterval(chatTick,2500);
   try{if(/rider-signup/.test(location.hash)){lsSet("vgRiderSignup","1");setTimeout(function(){if(!S.uid&&typeof window.stvnRequireCustomerLogin==="function")window.stvnRequireCustomerLogin({message:"Rider account ke liye pehle apne Gmail se sign in karo.",action:{type:"page",page:"home"}});else if(S.uid&&!S.me)openRegister()},1800)}}catch(e){}
   A.t=setInterval(adminLoop,6000);
   setTimeout(bootOff,7000);
