@@ -1,48 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script id="vg-perf-governor">
-(function(){
-  var si=window.setInterval;
-  window.setInterval=function(fn,ms){
-    var a=[].slice.call(arguments,2);
-    if(typeof fn!=='function')return si.apply(window,arguments);
-    return si.apply(window,[function(){if(document.hidden&&ms<10000)return;return fn.apply(this,arguments)},ms].concat(a));
-  };
-})();
-</script>
 <meta charset="UTF-8">
-<script id="vg-perf-shim">
-/* PERF: ~20 observers watch the whole page and each one re-ran on every tiny DOM change (that was the "processing" lag).
-   Whole-page observers now get ONE batched call per frame; small/local observers stay instant. */
-(function(){
-  var Native=window.MutationObserver;if(!Native||Native.__vgPatched)return;
-  function Batched(cb){
-    var self=this,recs=[],pending=false,heavy=false;
-    function run(){if(!pending)return;pending=false;var q=recs;recs=[];if(q.length){try{cb.call(self,q,self)}catch(e){try{console.error(e)}catch(_){}}}}
-    var mo=new Native(function(r){
-      if(!heavy){cb.call(self,r,self);return}
-      for(var i=0;i<r.length;i++)recs.push(r[i]);
-      if(pending)return;pending=true;
-      if(window.requestAnimationFrame)requestAnimationFrame(run);
-      setTimeout(run,120); /* background-tab safety */
-    });
-    self.observe=function(t,o){
-      heavy=!!(o&&o.subtree&&t&&(t===document.body||t===document.documentElement));
-      return mo.observe(t,o);
-    };
-    self.disconnect=function(){recs=[];pending=false;return mo.disconnect()};
-    self.takeRecords=function(){var a=recs.concat(mo.takeRecords());recs=[];return a};
-  }
-  Batched.__vgPatched=true;
-  window.MutationObserver=Batched;
-})();
-</script>
-<!-- FAST START: splash logo + blocking script are requested before the big inline CSS is parsed -->
-<link rel="preload" as="image" href="logo.png" fetchpriority="high">
-<link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="preconnect" href="https://unpkg.com">
-<link rel="preload" as="script" href="supabase.js">
 <script id="vg-range-early">(function(){var r=5;try{var v=Number(localStorage.getItem("vgRange"));if(v>=1&&v<=50)r=v}catch(e){}window.vgRadius=function(){return r};window.vgRadiusBoot=r})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Google Search Console verification -->
@@ -80,8 +39,7 @@
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
 
 <!-- Browser tab, supported search previews, and Apple touch icon -->
-<link rel="icon" type="image/png" sizes="48x48" href="https://vedantgrocery.shop/favicon-48.png">
-<link rel="icon" type="image/png" href="https://vedantgrocery.shop/logo.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://vedantgrocery.shop/logo.png">
 <link rel="apple-touch-icon" href="https://vedantgrocery.shop/logo.png">
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#fbd34a">
@@ -1215,9 +1173,8 @@ body.dark .modern-bottom-nav{background:rgba(26,27,26,.92)}
 .stvn-map-note{margin:8px 0;color:var(--muted);font-size:13px}
 .stvn-admin-only{display:none!important}
 </style>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" async></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 <style id="stvn-customer-login-gate-css">
 
 /* ===== CUSTOMER LOGIN GATE: opened only for protected actions ===== */
@@ -2218,6 +2175,7 @@ body.stvn-detail-open{overflow:hidden}
   document.documentElement.classList.remove('vg-nosplash');
 })();</script>
 
+<link rel="preload" as="image" href="https://vedantgrocery.shop/logo.png">
 <style id="vgSplashCss">
 /* Entry animation v2: no logo tile, paints on first frame, transform/opacity only (GPU smooth). Total ~2.1s */
 html{background:var(--vgy,#fbd34a)}
@@ -2649,20 +2607,10 @@ button,input,select,textarea{font:inherit}
   .modern-bottom-nav { width:min(100%,1180px)!important; }
 }
 </style>
-<script id="vg-debug-timing">(function(){try{
-var T={},t0=performance.timeOrigin;function mark(k){if(!T[k])T[k]=Math.round(performance.now())}
-document.addEventListener('DOMContentLoaded',function(){mark('DOMContentLoaded')});
-window.addEventListener('load',function(){mark('load')});
-var iv=setInterval(function(){if(document.querySelector('#page-home .vg-store-header .vg-orders-action')){mark('home_built');clearInterval(iv)}},50);
-try{new PerformanceObserver(function(l){l.getEntries().forEach(function(e){if(e.name==='first-contentful-paint')mark('first_paint')})}).observe({type:'paint',buffered:true})}catch(e){}
-setTimeout(function(){var n=performance.getEntriesByType('navigation')[0]||{},r=performance.getEntriesByType('resource'),o=['HTML downloaded: '+Math.round(n.responseEnd||0)+' ms'];
-['first_paint','DOMContentLoaded','home_built','load'].forEach(function(k){o.push(k+': '+(T[k]!=null?T[k]+' ms':'not yet'))});
-r.forEach(function(e){if(/supabase\.js|leaflet|logo\.png|manifest/.test(e.name))o.push(e.name.split('/').pop().slice(0,22)+': '+Math.round(e.responseEnd)+' ms (took '+Math.round(e.duration)+')')});
-var d=document.createElement('div');d.style.cssText='position:fixed;top:60px;left:6px;right:6px;z-index:2147483647;background:#000d;color:#0f0;font:12px/1.5 monospace;padding:10px;border-radius:8px;white-space:pre-wrap';d.textContent='SPEED TEST (screenshot this)\n'+o.join('\n');d.onclick=function(){d.remove()};document.body.appendChild(d)},12000)}catch(e){}})();</script>
 </head>
 
 <body>
-<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script id="vg-splash-failsafe">(function(){var s=document.getElementById('vgSplash');if(!s)return;var left=Math.max(2500,7000-Math.round(performance.now()));setTimeout(function(){var x=document.getElementById('vgSplash');if(!x)return;x.classList.add('out');setTimeout(function(){try{x.parentNode&&x.parentNode.removeChild(x)}catch(e){}document.documentElement.classList.remove('v-lang-wait')},900)},left)})();</script><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
+<div id="vgSplash" role="presentation"><div class="vgs-glow"></div><div class="vgs-food" aria-hidden="true"><span style="left:6%;animation-delay:0.00s;animation-duration:2.40s;font-size:26px">🍅</span><span style="left:22%;animation-delay:0.25s;animation-duration:2.60s;font-size:32px">🥬</span><span style="left:38%;animation-delay:0.50s;animation-duration:2.80s;font-size:36px">🥕</span><span style="left:54%;animation-delay:0.15s;animation-duration:2.40s;font-size:28px">🍎</span><span style="left:70%;animation-delay:0.40s;animation-duration:2.70s;font-size:34px">🍞</span><span style="left:86%;animation-delay:0.65s;animation-duration:2.50s;font-size:28px">🍌</span></div><div class="vgs-center"><div class="vgs-logo"><span class="vgs-ring"></span><span class="vgs-tile"><img src="https://vedantgrocery.shop/logo.png" alt="" width="150" height="150" decoding="async" fetchpriority="high" onerror="this.style.display='none';this.parentNode.classList.add('noimg')"><i>🛒</i></span></div><h1 class="vgs-word" aria-label="Vedant Grocery Shop"><b style="animation-delay:0.30s">V</b><b style="animation-delay:0.37s">E</b><b style="animation-delay:0.44s">D</b><b style="animation-delay:0.51s">A</b><b style="animation-delay:0.58s">N</b><b style="animation-delay:0.65s">T</b></h1><div class="vgs-sub">GROCERY SHOP</div><div class="vgs-badge">⚡ Delivery in 10–20 minutes</div><p class="vgs-tag">Fresh • Fast • Trusted</p></div><div class="vgs-road"><span class="vgs-lines"></span><span class="vgs-scooter">🛵</span></div><div class="vgs-bar"><i></i></div></div><script>(function(){try{var k=document.documentElement.getAttribute('data-festival');if(!k)return;var S={"diwali": [["🪔", "✨", "🎆", "🌼"], "Happy Diwali", "शुभ दीपावली"], "dhanteras": [["🪙", "✨", "🌟", "🪔"], "Happy Dhanteras", "शुभ धनतेरस"], "bhaidooj": [["🌸", "🌺", "✨", "🪔"], "Happy Bhai Dooj", "भाई दूज की शुभकामनाएँ"], "holi": [["🎨", "🌈", "💜", "🎉"], "Happy Holi", "होली की हार्दिक शुभकामनाएँ"], "rakhi": [["🧵", "🌸", "🎀", "✨"], "Happy Raksha Bandhan", "रक्षाबंधन की शुभकामनाएँ"], "navratri": [["🔱", "🪔", "🌺", "✨"], "Happy Navratri", "शुभ नवरात्रि"], "dussehra": [["🏹", "🔥", "✨", "🪔"], "Happy Dussehra", "विजयादशमी की शुभकामनाएँ"], "ganesh": [["🌼", "🐘", "🪷", "✨"], "Ganpati Bappa Morya", "गणपति बप्पा मोरया"], "janmashtami": [["🦚", "💙", "✨", "🪔"], "Happy Janmashtami", "जन्माष्टमी की शुभकामनाएँ"], "eid": [["🌙", "⭐", "✨", "🕌"], "Eid Mubarak", "ईद मुबारक"], "christmas": [["🎄", "❄️", "⭐", "🎁"], "Merry Christmas", "मेरी क्रिसमस"], "newyear": [["🎆", "🎉", "✨", "🥂"], "Happy New Year", "नववर्ष की शुभकामनाएँ"], "sankranti": [["🪁", "☀️", "✨", "🌾"], "Happy Makar Sankranti", "मकर संक्रांति की शुभकामनाएँ"], "tiranga": [["🇮🇳", "🪁", "✨", "☸️"], "Jai Hind", "जय हिंद"]};var e=S[k];if(!e)return;var sp=document.querySelectorAll('#vgSplash .vgs-food span');for(var i=0;i<sp.length;i++)sp[i].textContent=e[0][i%e[0].length];var t=document.querySelector('#vgSplash .vgs-tag');if(t)t.textContent=e[0][0]+' '+(window.vgT?window.vgT(e[1],e[2]):e[1])+' '+e[0][0]}catch(x){}})();</script>
 
 <div id="stvnCustomerLoginGate" class="notranslate" translate="no" lang="en" role="dialog" aria-modal="true" aria-labelledby="stvnCustomerLoginTitle">
   <div class="stvn-customer-login-card">
@@ -3497,8 +3445,7 @@ Log in to load orders.
 
 
 
-<script src="supabase.js"></script>
-<script>window.supabase||document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/scr'+'ipt>')</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <script>
@@ -3527,11 +3474,6 @@ SUPABASE_PUBLISHABLE_KEY,
 );
 // Share the same authenticated client with the account, wallet and tracking modules.
 window.supabaseClient = supabaseClient;
-/* PERF: 19 places call auth.getUser() (a network request each). Share one result for 4s. */
-(function(){var a=supabaseClient.auth,g=a.getUser.bind(a),p=null,t=0;
-a.getUser=function(jwt){if(jwt)return g(jwt);var n=Date.now();if(p&&n-t<4000)return p;t=n;
-p=g().then(function(r){if(r&&r.error)p=null;return r},function(e){p=null;throw e});return p};
-try{a.onAuthStateChange(function(){p=null})}catch(e){}})();
 
 
 /* ===== CUSTOMER FRONT-PAGE LOGIN GATE (kept separate from admin login code) ===== */
@@ -9331,7 +9273,6 @@ return;
 if(requestId!==customerProductLoadRequest)return;
 window.customerProductsLoaded=true;
 window.customerProductsLoadError="";
-try{if(hasCachedProducts&&data&&data.length&&JSON.stringify(data)===localStorage.getItem(CUSTOMER_PRODUCTS_CACHE_KEY)){status.hidden=true;return}}catch(_e){}
 
 productsBox.innerHTML="";
 
@@ -14929,7 +14870,7 @@ Object.assign(enDict,{
     var root=document.documentElement,splash=document.getElementById('vgSplash'),css=document.getElementById('vgSplashCss');
     function unlockLang(){root.classList.remove('v-lang-wait');}
     if(!splash||root.classList.contains('vg-nosplash')){try{splash&&splash.remove();css&&css.remove()}catch(e){}unlockLang();return;}
-    var seen=false;try{seen=sessionStorage.getItem('vgSplashSeen')==='1';sessionStorage.setItem('vgSplashSeen','1')}catch(e){}
+    try{sessionStorage.setItem('vgSplashSeen','1')}catch(e){}
     var reduce=false;try{reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
     var t0=Date.now(),gone=false,removed=false;
     function cleanup(){if(removed)return;removed=true;try{splash.remove();css&&css.remove()}catch(e){}}
@@ -14947,25 +14888,9 @@ Object.assign(enDict,{
       else leave();
     }
     splash.addEventListener('click',leave,{passive:true});
-    /* PERF: hold the splash until the home screen is really built (header, hero, buttons) so no blank page shows after it. Max ~3s. */
-    (function(){
-      var minMs=(reduce||seen)?250:900,maxMs=1700,t0=Date.now();
-      function ready(){
-        try{
-          if(document.readyState==='loading')return false;
-          var h=document.querySelector('#page-home .vg-store-header');
-          return !!(h&&h.querySelector('.vg-orders-action')&&document.querySelector('#page-home .vg-hero'));
-        }catch(e){return true}
-      }
-      (function poll(){
-        if(gone)return;
-        var el=Date.now()-t0;
-        if(el>=minMs&&(ready()||el>=maxMs)){setTimeout(tryLeave,60);return}
-        setTimeout(poll,100);
-      })();
-    })();
+    setTimeout(tryLeave,reduce?650:2100);
     // Fallback if the browser throttles animation frames while backgrounded.
-    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,600)},2300);
+    setTimeout(function(){if(!gone)leave();setTimeout(cleanup,750)},3600);
   })();
 })();
 </script>
@@ -14973,7 +14898,7 @@ Object.assign(enDict,{
 
 <script id="vedant-reference-shop-header">
 (function(){
-  const brandMark='<span class="vg-brand-mark" aria-hidden="true"><img src="logo.png" alt="" width="46" height="46" decoding="async"></span>';
+  const brandMark='<span class="vg-brand-mark" aria-hidden="true"><img src="https://vedantgrocery.shop/logo.png" alt="" width="46" height="46" decoding="async"></span>';
   function makeHeader(){
     const header=document.createElement('div');
     header.className='vg-store-header';
@@ -16895,7 +16820,7 @@ body.dark #page-admin .admin-order .admin-actions {border-top-color:#38533c}
    // on every frame and needlessly overloaded the main thread.
    observer=new MutationObserver(sync);
    observer.observe(document.body,{subtree:true,childList:true});
-   timer=setInterval(sync,3000);
+   timer=setInterval(sync,1000);
    var mobileQuery=window.matchMedia('(max-width:700px)');
    if(mobileQuery.addEventListener)mobileQuery.addEventListener('change',sync);
    else if(mobileQuery.addListener)mobileQuery.addListener(sync);
@@ -20874,7 +20799,7 @@ w.vgFestSave=async function(){
     if(typeof supabaseClient==='undefined')throw new Error('Supabase is not available.');
     var s=await supabaseClient.auth.getSession();
     if(!s.data||!s.data.session)throw new Error('Please log in as Admin first.');
-    var r=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify({f:cur,m:m.en,h:m.hi,c:(window.vgBrandYellowSaved?window.vgBrandYellowSaved():''),t:(window.vgVipSaved?window.vgVipSaved():'')}),updated_at:new Date().toISOString()},{onConflict:'id'});
+    var r=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify({f:cur,m:m.en,h:m.hi,c:(window.vgBrandYellowSaved?window.vgBrandYellowSaved():'')}),updated_at:new Date().toISOString()},{onConflict:'id'});
     if(r.error)throw r.error;
     store(cur,m);msg=cur?m:{en:'',hi:''};dirty=false;banners();
     st.textContent=cur?'✅ '+F[cur][3]+' theme saved. All customers will now see it.':'✅ Normal theme saved. All customers will see the normal look.';
@@ -21325,7 +21250,7 @@ var FESTS=[['any','Any festival'],['diwali','Diwali'],['dhanteras','Dhanteras'],
 function festName(k){for(var i=0;i<FESTS.length;i++)if(FESTS[i][0]===k)return FESTS[i][1];return k}
 var coupons=[],active=null;
 var BUILTIN={code:'VEDANT10',discount_type:'percent',discount_value:10,min_order:0,max_discount:null,is_active:true};
-W.__vgCouponCode=function(){return active?active.code:null};
+W.__vgCouponCode=function(){return active?active.code:(Number(discountAmount||0)>0?"VEDANT10":null)};
 var FEST_EM={diwali:"🪔",dhanteras:"🪙",bhaidooj:"👫",holi:"🎨",rakhi:"🧿",navratri:"🔱",dussehra:"🏹",ganesh:"🐘",janmashtami:"🦚",eid:"🌙",christmas:"🎄",newyear:"🎆",sankranti:"🪁",tiranga:"🇮🇳"};
 function expired(c){
   if(!c.valid_till)return false;
@@ -21415,7 +21340,8 @@ W.applyCoupon=async function(){
     var r=await cl.from('store_coupons').select('*').eq('code',code).eq('is_active',true).limit(1);
     if(r.error)throw r.error;
     c=(r.data&&r.data[0])||null;
-  }catch(e){console.warn('Coupon lookup failed',e);{cmsg(T('❌ Could not check the coupon right now. Please try again.','❌ अभी कूपन जाँच नहीं हो पाया। कृपया दोबारा कोशिश करें।'));return}}
+    if(!c&&code==='VEDANT10')c=BUILTIN;
+  }catch(e){console.warn('Coupon lookup failed',e);if(code==='VEDANT10')c=BUILTIN;else{cmsg(T('❌ Could not check the coupon right now. Please try again.','❌ अभी कूपन जाँच नहीं हो पाया। कृपया दोबारा कोशिश करें।'));return}}
   if(!c||expired(c)){active=null;discountAmount=0;cmsg(T('❌ Invalid or expired coupon.','❌ कूपन गलत है या खत्म हो चुका है।'));updateCart();return}
   if(Number(c.min_order)>0&&sub<Number(c.min_order)){active=null;discountAmount=0;cmsg(T('❌ Add items worth ₹'+Number(c.min_order)+' or more to use '+esc(code)+'.','❌ '+esc(code)+' लगाने के लिए कम से कम ₹'+Number(c.min_order)+' का सामान जोड़ें।'));updateCart();return}
   active=c;
@@ -21633,7 +21559,7 @@ function tick(){
 }
 function boot(){
   restoreDark();tick();loadCoupons();
-  setInterval(tick,3000);
+  setInterval(tick,900);
   setInterval(loadCoupons,60000);
   W.addEventListener('focus',loadCoupons);
 }
@@ -21844,7 +21770,7 @@ function menu(){
   var b=D.createElement('button');b.id='vgxDel';b.type='button';b.textContent='🗑️ Rider account delete karo';b.onclick=delRider;
   out.insertAdjacentElement('afterend',b);
 }
-setInterval(function(){try{headerAdmin();toolbar();vip();menu()}catch(e){}},3000);
+setInterval(function(){try{headerAdmin();toolbar();vip();menu()}catch(e){}},1000);
 })();
 </script>
 <style id="vg-final-grade-20261121">
@@ -22247,23 +22173,6 @@ setInterval(function(){var b=D.getElementById('stvn-live-order-bar');if(!b||!b.c
 body.dark .vg-rider{background:#151e18;border-color:#2f4232;color:#eaf2ec}body.dark .vg-rin small{color:#9db2a3}.vg-rav{overflow:hidden}.vg-rav img{width:100%;height:100%;object-fit:cover;border-radius:50%}</style>
 <script>document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vgrc]');if(!b)return;var id=b.getAttribute('data-vgrc'),o=window.stvnCustomerOrdersById&&window.stvnCustomerOrdersById[id];if(window.VGChat)window.VGChat.open('customer',id,o&&o.rider_name)});</script>
 </body>
-<script id="vg-prewarm-products">
-/* PERF: products used to start loading only after the customer tapped "Shop" -> blank list, then slow fill.
-   Now they load quietly in the background right after the page is up, so the list is already there. */
-(function(){
-  function go(){
-    try{
-      if(typeof loadCustomerProducts==='function'&&typeof supabaseClient!=='undefined'){
-        var p=loadCustomerProducts();if(p&&p.catch)p.catch(function(){});return true;
-      }
-    }catch(e){}
-    return false;
-  }
-  function start(){var n=0;(function t(){if(go()||++n>40)return;setTimeout(t,250)})()}
-  function run(){(window.requestIdleCallback||function(f){setTimeout(f,300)})(start,{timeout:2000})}
-  if(document.readyState==='complete')run();else window.addEventListener('load',run);
-})();
-</script>
 </html>
 
 <style id="vg-login-final-corrections">
@@ -22808,7 +22717,7 @@ function addBtn(par,html,after){
   if(after&&after.nextSibling)par.insertBefore(b,after.nextSibling);else par.appendChild(b);
 }
 function boot(){
-  ensurePage();ensureUI();setInterval(ensureUI,3000);
+  ensurePage();ensureUI();setInterval(ensureUI,900);
   new MutationObserver(function(){D.querySelectorAll('.vg-theme-action').forEach(dk);var p=$('page-account');if(p&&p.classList.contains('active'))render()}).observe(D.body,{attributes:true,attributeFilter:['class']});
   new MutationObserver(function(){D.querySelectorAll('[data-page="account"]').forEach(function(b){var s=b.querySelector('span');if(s&&b.parentNode.classList.contains('modern-bottom-nav'))b.innerHTML='<span>👤</span>'+T('Account','अकाउंट')+'<small>अकाउंट</small>'});var p=$('page-account');if(p&&p.classList.contains('active'))render()}).observe(D.documentElement,{attributes:true,attributeFilter:['data-language','lang']});
 }
@@ -22927,7 +22836,7 @@ function refreshUI(p){
 }
 var g=window.getCustomerLocationForOrder;
 if(typeof g==='function'&&!g.__vgRoad){var w=async function(){var r=await g.apply(this,arguments);try{await ensureRoad()}catch(e){}return r};w.__vgRoad=1;window.getCustomerLocationForOrder=w}
-setInterval(function(){var p=cur();if(p&&C.key!==keyOf(p))ensureRoad()},3000);
+setInterval(function(){var p=cur();if(p&&C.key!==keyOf(p))ensureRoad()},1200);
 })();
 </script>
 <!-- ===================== VEDANT CHAT CORE (customer <-> rider) ===================== -->
@@ -24327,7 +24236,7 @@ function init(){
       if(session&&session.user&&(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"||ev==="USER_UPDATED"||ev==="TOKEN_REFRESHED"))onSession(session);
     },0);
   });
-  ensureMenu();setInterval(ensureMenu,3000);setInterval(watchdog,3000);setInterval(chatTick,2500);
+  ensureMenu();setInterval(ensureMenu,1500);setInterval(watchdog,1500);setInterval(chatTick,2500);
   try{if(/rider-signup/.test(location.hash)){lsSet("vgRiderSignup","1");setTimeout(function(){if(!S.uid&&typeof window.stvnRequireCustomerLogin==="function")window.stvnRequireCustomerLogin({message:"Rider account ke liye pehle apne Gmail se sign in karo.",action:{type:"page",page:"home"}});else if(S.uid&&!S.me)openRegister()},1800)}}catch(e){}
   A.t=setInterval(adminLoop,6000);
   setTimeout(bootOff,7000);
@@ -24787,7 +24696,7 @@ D.addEventListener('pointerdown',function(e){
 /* ---------- boot ---------- */
 function boot(){
   fetchOtp().then(refreshAll);
-  setInterval(function(){ensureAdminBtn();scanOrders();riderHint()},3000);
+  setInterval(function(){ensureAdminBtn();scanOrders();riderHint()},1200);
   setInterval(function(){fetchOtp()},20000);
 }
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boot();
@@ -24915,7 +24824,7 @@ async function save(){
     if(!s.data||!s.data.session)throw new Error('Please log in as Admin first.');
     var r=await supabaseClient.from('shop_settings').select('maintenance_reason').eq('id',3).maybeSingle();
     var o={f:'',m:'',h:''};
-    if(r&&r.data){try{var j=JSON.parse(r.data.maintenance_reason||'{}');o.f=j.f||'';o.m=j.m||'';o.h=j.h||'';o.t=j.t||''}catch(e){}}
+    if(r&&r.data){try{var j=JSON.parse(r.data.maintenance_reason||'{}');o.f=j.f||'';o.m=j.m||'';o.h=j.h||''}catch(e){}}
     o.c=chosen;
     var u=await supabaseClient.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify(o),updated_at:new Date().toISOString()},{onConflict:'id'});
     if(u.error)throw u.error;
@@ -24941,7 +24850,7 @@ function initColor(){
   chosen=(window.vgBrandYellowChosen&&window.vgBrandYellowChosen())||'';paint();
 }
 /* keep the Header Color button right after the Festival button */
-function place(){var f=$('admin-festival-toolbar-toggle'),b=$('admin-header-color-toggle'),v=$('admin-vip-theme-toggle'),a=v||f;if(a&&b&&a.nextElementSibling!==b)a.after(b)}
+function place(){var f=$('admin-festival-toolbar-toggle'),b=$('admin-header-color-toggle');if(f&&b&&f.nextElementSibling!==b)f.after(b)}
 function run(){watch();initColor();place()}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',run);else run();
 setInterval(place,2500);
@@ -25361,7 +25270,7 @@ function sync(){
 function init(){build();loadCfg(0);loadRange(0);radiusText()}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('load',function(){setTimeout(build,500)});
-setInterval(function(){if(!ui)build();sync()},3000);
+setInterval(function(){if(!ui)build();sync()},600);
 })();
 </script>
 <script id="vg3-js">
@@ -25493,43 +25402,34 @@ D.addEventListener('change',function(e){if(e.target&&e.target.id==='vgCaOn'){ca.
 function init(){sheet();card();adminUI();loadCa(0);var p=$('page-account');if(p&&!p.__vg3){p.__vg3=1;try{new MutationObserver(function(){card()}).observe(p,{childList:true,subtree:true})}catch(x){}}}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('load',function(){setTimeout(init,600)});
-setInterval(function(){card();adminUI()},3000);
+setInterval(function(){card();adminUI()},1000);
 })();
 </script>
 <!-- ===== END VG PATCH ===== -->
 
 <!-- ===== VEDANT PLATINUM NOIR + CART COUPON + PREMIUM DELIVERY PATCH ===== -->
 <style id="vgn-style">
-/* ---------- Cart coupon card (white, clean) ---------- */
-.vgn-cpn{margin:14px 0;padding:14px;border-radius:20px;background:#fff;color:#17201a;border:1.5px solid #cfe6d3;box-shadow:0 6px 18px rgba(18,66,24,.08);box-sizing:border-box;width:100%}
+/* ---------- Premium cart coupon card ---------- */
+.vgn-cpn{margin:14px 0;padding:14px;border-radius:20px;background:linear-gradient(160deg,#0f0f12,#1b1c21);color:#eceef1;border:1px solid #3a3c43;box-shadow:0 10px 26px rgba(0,0,0,.18);box-sizing:border-box;width:100%}
 .vgn-cpn *{box-sizing:border-box}
 .vgn-cpn-h{display:flex;align-items:center;gap:10px;margin:0 0 12px}
-.vgn-cpn-ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:#e8f6ea;color:#12651d}
-.vgn-cpn-h b{display:block;font-size:15px;letter-spacing:.2px;color:#17201a}
-.vgn-cpn-h small{display:block;font-size:11.5px;color:#607468;margin-top:2px}
+.vgn-cpn-ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:linear-gradient(135deg,#f4f4f5,#9ea3ab);color:#111}
+.vgn-cpn-h b{display:block;font-size:15px;letter-spacing:.3px;color:#fff}
+.vgn-cpn-h small{display:block;font-size:11.5px;color:#a8adb5;margin-top:2px}
 .vgn-cpn-row{display:flex;gap:8px;align-items:stretch}
-.vgn-cpn-row #coupon{flex:1 1 auto;min-width:0;width:auto!important;margin:0!important;height:48px;padding:0 14px!important;border-radius:14px!important;border:1.5px solid #cfd8d1!important;background:#f7faf7!important;color:#17201a!important;font-size:16px!important;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
-.vgn-cpn-row #coupon::placeholder{color:#8a948d;font-weight:600;letter-spacing:.3px;text-transform:none}
-.vgn-cpn-row #coupon:focus{outline:none;border-color:#0c831f!important;box-shadow:0 0 0 3px rgba(12,131,31,.15)}
-.vgn-cpn-row button{flex:0 0 auto;height:48px;margin:0!important;padding:0 18px!important;border:0!important;border-radius:14px!important;background:linear-gradient(135deg,#13a82d,#0c831f)!important;color:#fff!important;font-weight:900!important;font-size:14px!important;width:auto!important;white-space:nowrap}
+.vgn-cpn-row #coupon{flex:1 1 auto;min-width:0;width:auto!important;margin:0!important;height:48px;padding:0 14px!important;border-radius:14px!important;border:1px solid #4a4d55!important;background:#0b0b0d!important;color:#fff!important;font-size:16px!important;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}
+.vgn-cpn-row #coupon::placeholder{color:#7d828a;font-weight:600;letter-spacing:.3px;text-transform:none}
+.vgn-cpn-row #coupon:focus{outline:2px solid #d9dce1;outline-offset:1px}
+.vgn-cpn-row button{flex:0 0 auto;height:48px;margin:0!important;padding:0 18px!important;border:0!important;border-radius:14px!important;background:linear-gradient(135deg,#f6f6f7,#b9bdc4)!important;color:#0b0b0d!important;font-weight:900!important;font-size:14px!important;width:auto!important;white-space:nowrap}
 .vgn-cpn-row button:active{transform:scale(.97)}
-.vgn-cpn #coupon-message{margin:10px 0 0!important;min-height:0;font-size:13px;font-weight:700;color:#4a5750;line-height:1.45}
-.vgn-cpn #coupon-message:empty{display:none}
-.vgn-cpn #coupon-message[style*="color"]{color:#0b8a1f!important}
-.vgn-cpn #coupon-message .vgc-remove{color:#c62828;margin-left:6px;text-decoration:underline}
+.vgn-cpn #coupon-message{margin:10px 0 0!important;min-height:0;font-size:13px;font-weight:700;color:#d6d9de;line-height:1.45}
+.vgn-cpn #coupon-message[style*="color"]{color:#8df2a0!important}
+.vgn-cpn #coupon-message .vgc-remove{color:#ffd9d9;margin-left:6px;text-decoration:underline}
 .vgn-chips{display:flex;gap:8px;overflow-x:auto;margin:12px -2px 0;padding:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.vgn-chips:empty{display:none}
 .vgn-chips::-webkit-scrollbar{display:none}
-.vgn-chip{flex:0 0 auto;border:1px dashed #0c831f;background:#f1faf2;color:#0c6b1b;border-radius:12px;padding:8px 12px;font-size:12.5px;font-weight:800;letter-spacing:.8px;cursor:pointer}
-.vgn-chip small{display:block;font-weight:600;letter-spacing:0;color:#607468;font-size:10.5px;margin-top:1px}
-.vgn-chips-t{margin:12px 0 0;font-size:11px;letter-spacing:1px;color:#7a877f;font-weight:800;text-transform:uppercase}
-body.dark .vgn-cpn{background:#16191a;color:#eef2ee;border-color:#2f4a34;box-shadow:none}
-body.dark .vgn-cpn-h b{color:#f1f5f1}
-body.dark .vgn-cpn-h small,body.dark .vgn-chips-t{color:#9aa79e}
-body.dark .vgn-cpn-ico{background:#1f3a24;color:#8df2a0}
-body.dark .vgn-cpn-row #coupon{background:#101312!important;border-color:#33433a!important;color:#fff!important}
-body.dark .vgn-cpn #coupon-message{color:#d5e0d8}
-body.dark .vgn-chip{background:#122016;color:#8df2a0;border-color:#2f6b3a}
+.vgn-chip{flex:0 0 auto;border:1px dashed #8e939b;background:#15161a;color:#f1f2f4;border-radius:12px;padding:8px 12px;font-size:12.5px;font-weight:800;letter-spacing:.8px;cursor:pointer}
+.vgn-chip small{display:block;font-weight:600;letter-spacing:0;color:#a8adb5;font-size:10.5px;margin-top:1px}
+.vgn-chips-t{margin:12px 0 0;font-size:11px;letter-spacing:1px;color:#8e939b;font-weight:800;text-transform:uppercase}
 /* ---------- Premium delivery / checkout pages (phone first) ---------- */
 #page-checkout,#page-location,#page-order-review,#page-payment{--vgn-ink:#101114;--vgn-line:#dcdee2;--vgn-bg:#ffffff;--vgn-soft:#f4f5f7}
 body.dark #page-checkout,body.dark #page-location,body.dark #page-order-review,body.dark #page-payment{--vgn-ink:#f1f2f4;--vgn-line:#3a3c43;--vgn-bg:#16171b;--vgn-soft:#1e1f24}
@@ -25697,6 +25597,7 @@ function chipsFromShop(){
     var tt=card&&card.querySelector('.vgc-title,h4,strong');if(tt&&tt.textContent.trim().toUpperCase()!==c)sm=tt.textContent.trim().slice(0,28);
     out.push({c:c,s:sm});
   });
+  if(!seen.VEDANT10)out.unshift({c:'VEDANT10',s:'10% OFF'});
   return out;
 }
 function buildCoupon(){
@@ -25724,7 +25625,6 @@ function buildCoupon(){
 function paintChips(){
   var box=document.getElementById('vgn-chips');if(!box)return;
   var list=chipsFromShop(),sig=list.map(function(x){return x.c}).join('|')+hi();
-  var ct=box.previousElementSibling;if(ct&&ct.classList.contains('vgn-chips-t'))ct.style.display=list.length?'':'none';
   if(box.getAttribute('data-sig')===sig)return;box.setAttribute('data-sig',sig);
   box.innerHTML=list.map(function(x){return '<button type="button" class="vgn-chip" data-code="'+x.c+'">'+x.c+(x.s?'<small>'+x.s.replace(/</g,'&lt;')+'</small>':'')+'</button>'}).join('');
 }
@@ -25792,234 +25692,3 @@ document.addEventListener('click',function(){setTimeout(tick,120)},true);
 })();
 </script>
 <!-- ===== END VEDANT PLATINUM NOIR PATCH ===== -->
-
-<!-- ===== VEDANT VIP COLOR THEMES (20) + ADMIN THEME BUTTON ===== -->
-<style id="vgv-style">
-#admin-vip-theme-toggle[aria-expanded="true"]{outline:2px solid currentColor}
-#vgVipPanel{margin:12px 0;padding:14px;border-radius:18px;border:1px solid rgba(127,127,127,.35);background:rgba(127,127,127,.07);box-sizing:border-box}
-#vgVipPanel[hidden]{display:none}
-#vgVipPanel *{box-sizing:border-box}
-#vgVipPanel .vgv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
-#vgVipPanel .vgv-top h3{margin:0;font-size:17px}
-#vgVipPanel .vgv-hint{margin:0 0 10px;font-size:12.5px;opacity:.8;line-height:1.45}
-#vgVipPanel .vgv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media(min-width:560px){#vgVipPanel .vgv-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:900px){#vgVipPanel .vgv-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-#vgVipPanel button.vgv-card{position:relative!important;display:block!important;width:100%!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;text-align:left!important;border:2px solid rgba(127,127,127,.35)!important;border-radius:16px!important;background:#fff!important;color:#14161a!important;box-shadow:none!important;cursor:pointer;font:inherit;line-height:1.3!important}
-#vgVipPanel .vgv-card:active{transform:scale(.98)}
-#vgVipPanel button.vgv-card[aria-pressed="true"]{border-color:#111!important;box-shadow:0 0 0 3px rgba(17,17,17,.18)!important}
-#vgVipPanel .vgv-card[aria-pressed="true"]:after{content:"✓";position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-weight:900;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
-#vgVipPanel .vgv-sw{display:block;width:100%;height:58px;position:relative}
-#vgVipPanel .vgv-sw i{position:absolute;left:10px;bottom:9px;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.85)}
-#vgVipPanel .vgv-sw b{position:absolute;left:32px;bottom:9px;width:44px;height:14px;border-radius:8px}
-#vgVipPanel .vgv-nm{display:block;padding:8px 10px 9px;background:#fff;color:#14161a}
-#vgVipPanel .vgv-nm strong{display:block;font-size:13px;line-height:1.25;color:#14161a}
-#vgVipPanel .vgv-nm small{display:block;font-size:11.5px;color:#5d636c;margin-top:1px}
-#vgVipPanel button.vgv-save{display:block!important;width:100%!important;min-height:50px;margin:14px 0 0!important;border:0!important;border-radius:14px!important;font-weight:900;font-size:15px;background:linear-gradient(135deg,#0b0b0d,#2c2d33)!important;color:#f3f4f6!important;cursor:pointer}
-#vgVipPanel .vgv-save[disabled]{opacity:.6}
-#vgVipPanel .vgv-st{margin:10px 0 0;font-size:13px;font-weight:700;line-height:1.45}
-#vgVipPanel .vgv-warn{margin:8px 0 0;padding:9px 11px;border-radius:12px;background:#fff4d6;color:#6b4a00;font-size:12.5px;font-weight:700}
-#vgVipPanel .vgv-warn[hidden]{display:none}
-</style>
-
-<script id="vgv-patch">
-(function(){
-'use strict';
-var D=document,R=D.documentElement,W=window,KEY='vedantVipTheme';
-function hex(a){return '#'+a.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16)}).join('')}
-function rgb(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
-function mix(h,p){return hex(rgb(h).map(function(v){return v+(255-v)*p}))}
-
-/* [key, English, Hindi, primary, deep, accent, header stops(3), button stops(2)] */
-var TH=[
- ['royalgold','Royal Black & Gold','रॉयल ब्लैक & गोल्ड','#9a7424','#5e4510','#e0b84a',['#0a0a0c','#1b1913','#3d3112'],['#b8892a','#7a5a10']],
- ['emerald','Emerald Luxe','एमरल्ड लक्स','#0f6b4a','#064430','#d9c27a',['#03231a','#0b5d42','#127a57'],['#138a5e','#0a5a3d']],
- ['midnight','Midnight Navy','मिडनाइट नेवी','#1e3a8a','#0f1f4d','#e5c46a',['#050b24','#10214f','#1f3a86'],['#2a4fb5','#14307e']],
- ['maroon','Maroon & Ivory','मरून & आइवरी','#8a1c2b','#4d0b16','#f1e3c4',['#2c050c','#6b1424','#9a2a3a'],['#a82a3c','#6d1120']],
- ['platinum','Platinum Noir','प्लैटिनम नॉयर','#4b5563','#111318','#d5d9df',['#08080a','#1a1b20','#3b3e46'],['#3a3d45','#0f1013']],
- ['blackcard','Black Card','ब्लैक कार्ड','#222326','#000000','#f1f1f2',['#000000','#0d0d0e','#232325'],['#2a2b2f','#000000']],
- ['amethyst','Royal Amethyst','रॉयल एमेथिस्ट','#6d28d9','#2e1065','#f2d27a',['#1a0838','#4c1d95','#7e3fd1'],['#7c3aed','#4c1d95']],
- ['rosegold','Rose Gold','रोज़ गोल्ड','#b0606c','#7a3b45','#f4c9c0',['#4a1f27','#a8586a','#e0a39a'],['#c0727d','#8f4551']],
- ['sapphire','Sapphire Blue','सैफायर ब्लू','#1d4ed8','#172554','#93c5fd',['#06143b','#1e40af','#3b82f6'],['#2563eb','#1e3a8a']],
- ['champagne','Champagne Gold','शैम्पेन गोल्ड','#9c7a2e','#6d5520','#f7e7b4',['#3b2e0c','#8a6d22','#c8a84e'],['#b8932f','#80621c']],
- ['wine','Burgundy Wine','बरगंडी वाइन','#7b1e3a','#3f0d1d','#e9b8c4',['#200610','#5a1230','#8c2147'],['#9b2a4a','#5e1428']],
- ['teal','Teal Luxe','टील लक्स','#0f766e','#042f2c','#99f6e4',['#021f1d','#0f5f58','#14938a'],['#12877e','#0a554f']],
- ['copper','Copper Bronze','कॉपर ब्रॉन्ज़','#a9552a','#5a2a12','#f2c29b',['#2e1408','#7c3a1b','#b9622f'],['#bf6a37','#80401c']],
- ['pearl','Ocean Pearl','ओशन पर्ल','#0e7490','#083a4d','#bae6fd',['#052a38','#0e7490','#38b6d4'],['#0f8aab','#0a566e']],
- ['forest','Forest Velvet','फॉरेस्ट वेलवेट','#166534','#052e16','#cfe8b0',['#04200f','#14532d','#2f7a45'],['#1c7a42','#0e4a26']],
- ['ruby','Ruby Red','रूबी रेड','#b91c1c','#5f0a0a','#fecaca',['#2d0505','#8a1212','#c62828'],['#d02f2f','#8f1414']],
- ['graphite','Graphite Silver','ग्रेफाइट सिल्वर','#475569','#1e293b','#cbd5e1',['#0f172a','#334155','#64748b'],['#4b5b70','#273449']],
- ['lavender','Lavender Mist','लैवेंडर मिस्ट','#7c5cc4','#3f2a78','#e9ddff',['#2a1856','#6d4bb8','#a58be0'],['#8a68d0','#5a3da0']],
- ['amber','Sunset Amber','सनसेट एम्बर','#c2620a','#6b2f03','#fde1a8',['#3a1600','#b45309','#f59e0b'],['#d97706','#9a4a05']],
- ['ivory','Ivory Pearl','आइवरी पर्ल','#7a6a4a','#4a3f2a','#efe6d2',['#4b4230','#8c7c5b','#c9b98f'],['#9d8b62','#6a5b3c']]
-];
-var MAP={};TH.forEach(function(t){MAP[t[0]]=t});
-function grad(t){return 'linear-gradient(135deg,'+t[6][0]+','+t[6][1]+' 55%,'+t[6][2]+')'}
-
-/* theme colour variables (same variable names the festival themes use) */
-(function(){
-  var css=TH.map(function(t){
-    return 'html[data-vip][data-vip="'+t[0]+'"]{--fp:'+t[3]+';--fq:'+t[4]+';--fa:'+t[5]+';--fs:'+mix(t[3],.88)+';--fs2:'+mix(t[3],.76)+';--fbg:'+mix(t[3],.95)+';--fh:'+grad(t)+';--fb:linear-gradient(135deg,'+t[7][0]+','+t[7][1]+');--fon:#fff}';
-  }).join('\n');
-  var st=D.createElement('style');st.id='vgv-vars';st.textContent=css;(D.body||D.head).appendChild(st);
-})();
-
-/* copy every "html[data-festival]" rule so the whole site restyles for html[data-vip] */
-var cloned=false;
-function splitTop(sel){var out=[],d=0,q='',c='',i,ch;for(i=0;i<sel.length;i++){ch=sel[i];if(q){c+=ch;if(ch===q&&sel[i-1]!=='\\')q='';continue}if(ch==='"'||ch==="'"){q=ch;c+=ch;continue}if(ch==='('||ch==='[')d++;else if(ch===')'||ch===']')d--;if(ch===','&&d===0){out.push(c);c=''}else c+=ch}out.push(c);return out}
-function conv(rule){
-  try{
-    if(rule.type===1){
-      var parts=splitTop(rule.selectorText).filter(function(p){return p.indexOf('[data-festival]')>-1});
-      if(!parts.length)return '';
-      return parts.map(function(p){return p.split('[data-festival]').join('[data-vip]')}).join(',')+'{'+rule.style.cssText+'}';
-    }
-    if(rule.type===4||rule.type===12){
-      var inner='';for(var i=0;i<rule.cssRules.length;i++)inner+=conv(rule.cssRules[i]);
-      if(!inner)return '';
-      return rule.type===4?'@media '+rule.media.mediaText+'{'+inner+'}':'@supports '+rule.conditionText+'{'+inner+'}';
-    }
-  }catch(e){}
-  return '';
-}
-function cloneRules(){
-  if(cloned)return;cloned=true;
-  var out=[];
-  for(var s=0;s<D.styleSheets.length;s++){
-    var sh=D.styleSheets[s],rules;
-    if(sh.ownerNode&&(sh.ownerNode.id==='vgv-clone'||sh.ownerNode.id==='vgv-vars'))continue;
-    try{rules=sh.cssRules}catch(e){continue}
-    if(!rules)continue;
-    for(var r=0;r<rules.length;r++){var c=conv(rules[r]);if(c)out.push(c)}
-  }
-  var st=D.createElement('style');st.id='vgv-clone';st.textContent=out.join('\n');
-  /* clone first, colour variables after it so the theme colours win */
-  var host=D.body||D.head;host.appendChild(st);host.appendChild(D.getElementById('vgv-vars'));
-}
-
-/* ---------- apply ---------- */
-var cur='',saved='',dirty=false;
-var meta=D.querySelector('meta[name=theme-color]');
-function dom(){
-  var fest=R.getAttribute('data-festival');
-  if(cur&&!fest){
-    cloneRules();
-    if(R.getAttribute('data-vip')!==cur)R.setAttribute('data-vip',cur);
-    var d=D.body&&D.body.classList.contains('dark');
-    if(meta&&!d)meta.setAttribute('content',MAP[cur][4]);
-  }else if(R.hasAttribute('data-vip')){
-    R.removeAttribute('data-vip');
-    if(!cur&&!fest&&meta&&W.vgBrandYellowCur)meta.setAttribute('content',W.vgBrandYellowCur());
-  }
-  var w=D.getElementById('vgvWarn');if(w)w.hidden=!(fest&&cur);
-}
-function apply(k){cur=MAP[k]?k:'';dom();ui()}
-W.vgVipApply=apply;W.vgVipCur=function(){return cur};W.vgVipSaved=function(){return saved};
-try{new MutationObserver(dom).observe(R,{attributes:true,attributeFilter:['data-festival']})}catch(e){}
-try{apply(localStorage.getItem(KEY)||'');saved=cur}catch(e){}
-
-/* ---------- customers: read the saved theme (same shop_settings row as the festival) ---------- */
-function sbc(){try{return typeof supabaseClient!=='undefined'?supabaseClient:null}catch(e){return null}}
-async function pull(){
-  var c=sbc();if(dirty||!c)return;
-  try{
-    var r=await c.from('shop_settings').select('maintenance_reason').eq('id',3).maybeSingle();
-    if(r.error||!r.data)return;
-    var j={};try{j=JSON.parse(r.data.maintenance_reason||'{}')}catch(e){}
-    var t=MAP[j.t]?j.t:'';
-    saved=t;try{t?localStorage.setItem(KEY,t):localStorage.removeItem(KEY)}catch(e){}
-    apply(t);
-  }catch(e){console.warn('VIP theme load failed',e)}
-}
-(function wait(n){sbc()?pull():(n<40&&setTimeout(function(){wait(n+1)},500))})(0);
-W.addEventListener('focus',pull);
-D.addEventListener('visibilitychange',function(){if(!D.hidden)pull()});
-
-/* ---------- admin: "VIP Theme" button beside the Festival button ---------- */
-function $(id){return D.getElementById(id)}
-function ui(){
-  [].forEach.call(D.querySelectorAll('#vgVipPanel .vgv-card'),function(b){b.setAttribute('aria-pressed',String((b.getAttribute('data-k')||'')===cur))});
-  var l=$('vgvLive');if(l)l.textContent=cur?('Current VIP theme: '+MAP[cur][1]):'Current VIP theme: Normal';
-}
-function build(){
-  var fb=$('admin-festival-toolbar-toggle');if(!fb||$('admin-vip-theme-toggle'))return;
-  var b=D.createElement('button');b.id='admin-vip-theme-toggle';b.type='button';b.className=fb.className||'admin-btn';
-  b.setAttribute('aria-expanded','false');b.setAttribute('aria-controls','vgVipPanel');b.textContent='🎨 VIP Theme';
-  fb.after(b);
-  var p=D.createElement('section');p.id='vgVipPanel';p.hidden=true;
-  p.innerHTML='<div class="vgv-top"><h3>🎨 VIP Color Themes</h3><button type="button" class="admin-btn vg-panel-x" id="vgvClose">✕ Close</button></div>'
-   +'<p class="vgv-hint">Pick a premium look for the whole shop (header, buttons, cart, bottom menu). Tap a theme to preview, then press Save to show it to all customers. “Normal” brings back the usual look. A Festival theme, when ON, is shown instead of a VIP theme.</p>'
-   +'<div class="vgv-warn" id="vgvWarn" hidden>⚠️ A Festival theme is ON right now, so customers will see the festival look. Set Festival to Normal to show your VIP theme.</div>'
-   +'<p class="vgv-st" id="vgvLive"></p>'
-   +'<div class="vgv-grid" id="vgvGrid"></div>'
-   +'<button type="button" class="vgv-save" id="vgvSave">💾 Save &amp; show to all Customers</button>'
-   +'<p class="vgv-st" id="vgvStatus" role="status" aria-live="polite"></p>';
-  var anchor=$('adminFestivalSection')||$('adminFestivalPanel');
-  if(anchor&&anchor.parentNode)anchor.insertAdjacentElement('afterend',p);
-  else{var tb=D.querySelector('#adminContent .admin-toolbar')||fb.parentElement;tb.insertAdjacentElement('afterend',p)}
-  var g=p.querySelector('#vgvGrid');
-  g.innerHTML='<button type="button" class="vgv-card" data-k="" aria-pressed="false"><span class="vgv-sw" style="background:linear-gradient(135deg,#fbd34a,#f5b800)"><i style="background:#16a34a"></i></span><span class="vgv-nm"><strong>🛒 Normal</strong><small>सामान्य थीम</small></span></button>'
-   +TH.map(function(t){return '<button type="button" class="vgv-card" data-k="'+t[0]+'" aria-pressed="false"><span class="vgv-sw" style="background:'+grad(t)+'"><i style="background:'+t[5]+'"></i><b style="background:linear-gradient(90deg,'+t[7][0]+','+t[7][1]+')"></b></span><span class="vgv-nm"><strong>'+t[1].replace(/&/g,'&amp;')+'</strong><small>'+t[2]+'</small></span></button>'}).join('');
-  g.addEventListener('click',function(e){
-    var c=e.target.closest&&e.target.closest('.vgv-card');if(!c)return;
-    dirty=true;apply(c.getAttribute('data-k')||'');
-    $('vgvStatus').textContent=cur?('👁️ Preview: '+MAP[cur][1]+' — press Save to show it to all customers.'):'👁️ Preview: Normal — press Save.';
-  });
-  b.addEventListener('click',function(){var o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){ui();dom();try{p.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}}});
-  p.querySelector('#vgvClose').addEventListener('click',function(){p.hidden=true;b.setAttribute('aria-expanded','false')});
-  $('vgvSave').addEventListener('click',save);
-  ui();dom();
-}
-async function save(){
-  var st=$('vgvStatus'),btn=$('vgvSave'),k=cur;
-  btn.disabled=true;st.textContent='⏳ Saving…';
-  try{
-    var c=sbc();if(!c)throw new Error('Database is not available.');
-    var s=await c.auth.getSession();if(!s.data||!s.data.session)throw new Error('Please log in as Admin first.');
-    var r=await c.from('shop_settings').select('maintenance_reason').eq('id',3).maybeSingle();
-    var o={f:'',m:'',h:'',c:''};
-    if(r&&r.data){try{var j=JSON.parse(r.data.maintenance_reason||'{}');o.f=j.f||'';o.m=j.m||'';o.h=j.h||'';o.c=j.c||''}catch(e){}}
-    o.t=k;
-    var u=await c.from('shop_settings').upsert({id:3,is_open:true,maintenance_reason:JSON.stringify(o),updated_at:new Date().toISOString()},{onConflict:'id'});
-    if(u.error)throw u.error;
-    saved=k;dirty=false;try{k?localStorage.setItem(KEY,k):localStorage.removeItem(KEY)}catch(e){}
-    st.textContent=k?('✅ '+MAP[k][1]+' saved. All customers will now see it.'):'✅ Normal theme saved. All customers will see the normal look.';
-  }catch(x){
-    try{k?localStorage.setItem(KEY,k):localStorage.removeItem(KEY)}catch(e){}
-    st.textContent='❌ Could not save to the database ('+((x&&x.message)||x)+'). The theme is applied on this phone only. Check the Supabase shop_settings table policy.';
-  }
-  btn.disabled=false;
-}
-function tick(){try{build();var f=$('admin-festival-toolbar-toggle'),v=$('admin-vip-theme-toggle');if(f&&v&&f.nextElementSibling!==v)f.after(v)}catch(e){}}
-if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',tick);else tick();
-setInterval(tick,2000);
-})();
-</script>
-<!-- ===== END VEDANT VIP COLOR THEMES ===== -->
-
-<!-- ===== VG FINAL FIX: stable "Delivering to" label (single owner) ===== -->
-<style id="vg-label-fix">
-html body:not(#bk1):not(#bk2):not(#bk3):not(#fx1):not(#fx2):not(#fx3):not(#fx4):not(#fx5) .vg-store-header .vg-location-button .vg-location-label{font-size:0!important;line-height:0!important;min-height:16px}
-html body:not(#bk1):not(#bk2):not(#bk3):not(#fx1):not(#fx2):not(#fx3):not(#fx4):not(#fx5) .vg-store-header .vg-location-button .vg-location-label::after{content:var(--vgl,"5 km area");font-size:13px;line-height:1.25;font-weight:900;white-space:nowrap}
-</style>
-<script id="vg-label-fix-js">
-(function(){
-  var R=document.documentElement,last='';
-  function lang(){return String(R.dataset.language||R.lang||'en').toLowerCase().indexOf('hi')===0}
-  function rad(){try{var r=Number(window.vgRadius());return r>0?r:5}catch(e){return 5}}
-  function paint(){
-    var r=rad(),km=NaN;
-    try{var l=JSON.parse(localStorage.getItem('vedantCustomerDeliveryLocationV1')||'null')||JSON.parse(localStorage.getItem('vedantCustomerLocationV1')||'null');if(l)km=Number(l.km)}catch(e){}
-    var out=isFinite(km)&&km>r,h=lang();
-    var txt=h?(out?'डिलीवरी क्षेत्र से बाहर':r+' किमी क्षेत्र'):(out?'Outside '+r+' km area':r+' km area');
-    if(txt===last)return;last=txt;
-    R.style.setProperty('--vgl',JSON.stringify(txt));
-  }
-  paint();
-  document.addEventListener('DOMContentLoaded',paint);
-  window.addEventListener('load',paint);
-  window.addEventListener('storage',paint);
-  setInterval(paint,1500);
-  try{new MutationObserver(paint).observe(R,{attributes:true,attributeFilter:['data-language','lang']})}catch(e){}
-})();
-</script>
