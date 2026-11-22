@@ -13075,7 +13075,7 @@ document.addEventListener("DOMContentLoaded",syncVedantPaymentAccordion);
   // Relocate the pre-existing account menu control into the visible account slot, retaining its original handlers.
   document.querySelectorAll('.vg-store-header').forEach(header=>{const slot=header.querySelector('.vg-account-action');const bar=document.getElementById('stvnProfileBar');if(slot&&!slot.dataset.vgBound){slot.dataset.vgBound='1';slot.addEventListener('click',()=>{if(bar&&bar.parentElement!==header){header.appendChild(bar);bar.classList.add('vg-account-host');}if(typeof window.stvnToggleProfileMenu==='function')window.stvnToggleProfileMenu();});}});
   // Keep location label in sync with the existing saved-location component.
-  const update=()=>{const saved=document.querySelector('.stvn-delivery-location-name');const label=document.querySelector('.vg-location-label');if(saved&&label&&saved.textContent.trim()&&!/अपनी वर्तमान|choose|select/i.test(saved.textContent))label.textContent=saved.textContent.trim().slice(0,34);};
+  const update=()=>{if(typeof window.vgPaintLocation==='function'){window.vgPaintLocation();return}const saved=document.querySelector('.stvn-delivery-location-name');const label=document.querySelector('.vg-location-label');if(saved&&label&&saved.textContent.trim()&&!/अपनी वर्तमान|choose|select/i.test(saved.textContent))label.textContent=saved.textContent.trim().slice(0,34);};
   update();const target=document.querySelector('.stvn-delivery-location-card');if(target)new MutationObserver(update).observe(target,{subtree:true,childList:true,characterData:true});
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,250));else setTimeout(init,250);
@@ -13229,6 +13229,7 @@ body > .modern-nav, .modern-nav{display:none!important}
   if(banner&&anchor&&banner!==anchor.previousElementSibling)anchor.insertAdjacentElement('beforebegin',banner);
  }
  function updateLocationLabel(){
+  if(typeof window.vgPaintLocation==='function'){window.vgPaintLocation();return}
   const labels=document.querySelectorAll('.vg-location-label');
   let loc=null;try{loc=JSON.parse(localStorage.getItem('vedantCustomerDeliveryLocationV1')||'null')}catch(e){}
   if(!loc){try{loc=JSON.parse(localStorage.getItem('vedantCustomerLocationV1')||'null')}catch(e){}}
@@ -18166,13 +18167,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const locationText=Number.isFinite(km)?(km<=window.vgRadius()?'Delivery available · '+km.toFixed(2)+' km':'Outside delivery area · '+km.toFixed(2)+' km'):'Current location';
    document.querySelectorAll('.vg-location-label').forEach(el=>{if(el.textContent!==locationText)el.textContent=locationText;if(el.title!==locationText)el.title=locationText;});
  }
+ window.vgPaintLocation=paintLocation;
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',paintLocation,{once:true});else paintLocation();
  window.addEventListener('storage',paintLocation);
  const obs=new MutationObserver(records=>{
    // Ignore the text-node replacements performed by paintLocation itself.
    const relevant=records.some(record=>{
      const target=record.target.nodeType===Node.ELEMENT_NODE?record.target:record.target.parentElement;
-     return !target?.closest?.('.vg-current-location-name,.vg-location-label');
+     return !!target;
    });
    if(relevant)paintLocation();
  });
@@ -18721,7 +18723,7 @@ html body:not(#vq1):not(#vq2):not(#vq3):not(#vq4):not(#vq5) .vg-store-header .vg
      var km=Number(cur.km),txt=n+(isFinite(km)?' · '+km.toFixed(2)+' km from shop':'');
      document.querySelectorAll('.vg-current-location-name').forEach(function(el){el.textContent=txt;el.title=txt})}).catch(function(){})
  }
- setTimeout(refreshSaved,2500);
+ /* disabled: superseded by the newer resolver below (two resolvers made the name flicker) */
  /* ---------- B) cart icon: wrap the emoji so it can be tinted white ---------- */
  function decorate(){
    document.querySelectorAll('.vg-cart-action').forEach(function(b){
@@ -19627,7 +19629,23 @@ html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #page-loca
     p.then(function(n){if(!n)delete CACHE[key]},function(){delete CACHE[key]});
     return(CACHE[key]=p);
   }
-  window.vgVillageName=resolve;window.vgReverseGeocodeName=resolve;
+  /* Sticky name: the 3 online lookups sometimes fail and fall back to the city ("Varanasi"), so the header name used to flip
+     between village and city. Keep the good village name for this spot (within 1.5 km); a city/coordinate result never replaces it. */
+  var PIN='vedantLocNamePinV1';
+  function weakName(n){return /varanasi|वाराणसी|uttar pradesh|india|^-?\d+\.\d+,\s*-?\d+\.\d+$/i.test(String(n||''))}
+  function stickyResolve(lat,lng){
+    lat=Number(lat);lng=Number(lng);var lang=hi()?'h':'e',pin=null;
+    try{pin=JSON.parse(localStorage.getItem(PIN)||'null')}catch(e){}
+    var near=!!(pin&&pin.name&&pin.lang===lang&&isFinite(pin.lat)&&isFinite(pin.lng)&&hav(lat,lng,pin.lat,pin.lng)<=1.5);
+    if(near&&!weakName(pin.name))return Promise.resolve(pin.name);
+    return resolve(lat,lng).then(function(n){
+      if(!n)return near?pin.name:n;
+      if(near&&weakName(n))return pin.name;
+      try{localStorage.setItem(PIN,JSON.stringify({lat:lat,lng:lng,name:n,lang:lang}))}catch(e){}
+      return n;
+    });
+  }
+  window.vgVillageName=stickyResolve;window.vgReverseGeocodeName=stickyResolve;
 
   /* Re-resolve an already saved location once (older versions saved a district name) */
   function paint(name,km){
@@ -19638,7 +19656,7 @@ html body:not(#vz1):not(#vz2):not(#vz3):not(#vz4):not(#vz5):not(#vz6) #page-loca
   function refreshSaved(){
     var loc=null;try{loc=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
     if(!loc||!isFinite(loc.lat)||!isFinite(loc.lng)||loc.vgV5===VER)return;
-    resolve(loc.lat,loc.lng).then(function(n){
+    stickyResolve(loc.lat,loc.lng).then(function(n){
       if(!n)return;var cur=null;try{cur=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
       if(!cur||cur.lat!==loc.lat||cur.lng!==loc.lng)return;
       cur.currentName=n;cur.vgV5=VER;cur.vgV4=1;
