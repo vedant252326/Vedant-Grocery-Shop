@@ -1,7 +1,8 @@
-
 'use strict';
 
-const CACHE_NAME = 'vedant-grocery-pwa-v6';
+// FIX: version bumped (v6 -> v7). Every time you change index.html or supabase.js,
+// bump this number again so old cached files are deleted on all phones.
+const CACHE_NAME = 'vedant-grocery-pwa-v7';
 const APP_ROOT = new URL('./', self.registration.scope);
 const OFFLINE_PAGE = new URL('index.html', APP_ROOT).href;
 
@@ -18,7 +19,7 @@ self.addEventListener('install', event => {
     await Promise.all(
       APP_FILES.map(async url => {
         try {
-          const response = await fetch(url);
+          const response = await fetch(url, { cache: 'reload' });
           if (response.ok) {
             await cache.put(url, response);
           }
@@ -62,6 +63,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // Pages: network first, offline fallback (unchanged)
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
       try {
@@ -80,7 +82,32 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (['style', 'script', 'image', 'font'].includes(request.destination)) {
+  // FIX: scripts (supabase.js etc.) and styles are NETWORK FIRST.
+  // Before, they were cache-first forever, so a new index.html could run
+  // together with an OLD cached supabase.js and break the app.
+  if (['script', 'style'].includes(request.destination)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+
+      try {
+        const response = await fetch(request, { cache: 'no-cache' });
+
+        if (response.ok) {
+          await cache.put(request, response.clone());
+        }
+
+        return response;
+      } catch (error) {
+        const cached = await cache.match(request);
+        return cached || Response.error();
+      }
+    })());
+
+    return;
+  }
+
+  // Images and fonts: cache first (they rarely change)
+  if (['image', 'font'].includes(request.destination)) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const cached = await cache.match(request);
