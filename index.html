@@ -22042,7 +22042,8 @@ async function sync(){var c=cl(),L=D.getElementById('customer-tracking-orders');
   var h='<span>Order '+(ORD[i]||(i+1))+'<i>#'+id+' · '+st+'</i></span><b>₹'+Number(o.total||0)+'</b>';if(lab._h!==h){lab._h=h;lab.innerHTML=h}
   var rc=card.querySelector(':scope > .vg-rider');
   if(o.rider_id&&o.rider_name){var rs=o.rider_stage==='picked'?'On the way to you \ud83d\udef5':'Going to the shop to pick up your order';
-   var rh='<div class="vg-rav">\ud83c\udfcd\ufe0f</div><div class="vg-rin"><b>'+String(o.rider_name).replace(/</g,'&lt;')+'</b><small>'+rs+'</small></div>'+(o.rider_phone?'<a class="vg-rb call" href="tel:'+String(o.rider_phone).replace(/[^0-9+]/g,'')+'">\ud83d\udcde Call</a>':'')+'<button type="button" class="vg-rb msg" data-vgrc="'+id+'">\ud83d\udcac Message</button>';
+   window.__vgPh=window.__vgPh||{};if(window.__vgPh[o.rider_id]===undefined){window.__vgPh[o.rider_id]='';try{c.rpc('customer_rider_photo',{p_order_id:id}).then(function(x){if(x&&x.data&&x.data.photo){window.__vgPh[o.rider_id]=x.data.photo;if(rc)rc._h=''}})}catch(e){}}
+   var ph=window.__vgPh[o.rider_id];var rh='<div class="vg-rav">'+(ph?'<img src="'+ph.replace(/"/g,'')+'" alt="">':'\ud83c\udfcd\ufe0f')+'</div><div class="vg-rin"><b>'+String(o.rider_name).replace(/</g,'&lt;')+'</b><small>'+rs+'</small></div>'+(o.rider_phone?'<a class="vg-rb call" href="tel:'+String(o.rider_phone).replace(/[^0-9+]/g,'')+'">\ud83d\udcde Call</a>':'')+'<button type="button" class="vg-rb msg" data-vgrc="'+id+'">\ud83d\udcac Message</button>';
    if(!rc){rc=D.createElement('div');rc.className='vg-rider';lab.after(rc)}if(rc._h!==rh){rc._h=rh;rc.innerHTML=rh}}else if(rc)rc.remove();
   /* open panel: force map/status redraw when the order changed (same rate for every order) */
   var panel=card.querySelector('.stvn-order-tracking-panel');
@@ -22063,7 +22064,7 @@ setInterval(function(){var b=D.getElementById('stvn-live-order-bar');if(!b||!b.c
 <style id="vg-rider-card">#vgTrackRider{display:none!important}.vg-rider{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:10px;border-radius:14px;background:linear-gradient(160deg,#fff,#effaf2);border:1px solid #cfe8d6;color:#1d2a21}
 .vg-rav{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:#fff3c4;flex:0 0 40px}.vg-rin{flex:1;min-width:0}.vg-rin b{display:block;font-size:14px}.vg-rin small{display:block;font-size:11px;color:#5f7066;font-weight:600}
 .vg-rb{padding:9px 10px;border:0;border-radius:12px;font-size:12px;font-weight:900;color:#fff;text-decoration:none;white-space:nowrap}.vg-rb.call{background:linear-gradient(135deg,#16a34a,#0f7a34)}.vg-rb.msg{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
-body.dark .vg-rider{background:#151e18;border-color:#2f4232;color:#eaf2ec}body.dark .vg-rin small{color:#9db2a3}</style>
+body.dark .vg-rider{background:#151e18;border-color:#2f4232;color:#eaf2ec}body.dark .vg-rin small{color:#9db2a3}.vg-rav{overflow:hidden}.vg-rav img{width:100%;height:100%;object-fit:cover;border-radius:50%}</style>
 <script>document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vgrc]');if(!b)return;var id=b.getAttribute('data-vgrc'),o=window.stvnCustomerOrdersById&&window.stvnCustomerOrdersById[id];if(window.VGChat)window.VGChat.open('customer',id,o&&o.rider_name)});</script>
 </body>
 </html>
@@ -23343,7 +23344,7 @@ async function tick(force){
     await loadDash(force);
     if(S.me.on_duty&&!S.active){
       var r=await sb().rpc("rider_available_orders");
-      if(!r.error)handleAvail((r.data||[]).filter(function(o){var t=Date.parse(o.created_at||o.placed_at||o.order_date||"");return !t||Date.now()-t>=(window.STVN_CUSTOMER_CANCEL_WINDOW_MS||120000)-30000}));
+      if(!r.error)handleAvail((r.data||[]).filter(function(o){var t=Date.parse(o.created_at||o.placed_at||o.order_date||"");return /^(confirmed|preparing)$/i.test(o.order_status||"")||!t||Date.now()-t>=(window.STVN_CUSTOMER_CANCEL_WINDOW_MS||120000)-30000}));
     }else if(S.incoming){hideIncoming(true)}
   }catch(e){console.warn("tick",e)}
   if(S.open&&S.view==="dash")renderDashBody();
